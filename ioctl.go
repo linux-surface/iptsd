@@ -7,26 +7,26 @@ import (
 	"syscall"
 )
 
-func _IOC(dir uint, typ uint, nr uint, size uint) uint {
+func _IOC(dir uintptr, typ uintptr, nr uintptr, size uintptr) uintptr {
 	return (dir << C._IOC_DIRSHIFT) |
 		(typ << C._IOC_TYPESHIFT) |
 		(nr << C._IOC_NRSHIFT) |
 		(size << C._IOC_SIZESHIFT)
 }
 
-func _IO(typ uint, nr uint) uint {
+func _IO(typ uintptr, nr uintptr) uintptr {
 	return _IOC(C._IOC_NONE, typ, nr, 0)
 }
 
-func _IOR(typ uint, nr uint, size uint) uint {
+func _IOR(typ uintptr, nr uintptr, size uintptr) uintptr {
 	return _IOC(C._IOC_READ, typ, nr, size)
 }
 
-func _IOW(typ uint, nr uint, size uint) uint {
+func _IOW(typ uintptr, nr uintptr, size uintptr) uintptr {
 	return _IOC(C._IOC_WRITE, typ, nr, size)
 }
 
-func _IOWR(typ uint, nr uint, size uint) uint {
+func _IOWR(typ uintptr, nr uintptr, size uintptr) uintptr {
 	return _IOC(C._IOC_READ|C._IOC_WRITE, typ, nr, size)
 }
 

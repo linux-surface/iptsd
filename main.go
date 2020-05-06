@@ -1,22 +1,41 @@
 package main
 
 import (
-	"os"
-)
-
-var (
-	IPTS_DEVICE = "/dev/ipts"
-
-	IPTS_UAPI_INFO  = _IOR(0x86, 0x01, 44)
-	IPTS_UAPI_START = _IO(0x86, 0x02)
-	IPTS_UAPI_STOP  = _IO(0x86, 0x03)
+	"fmt"
+	"time"
 )
 
 func main() {
-	file, err := os.OpenFile("/dev/ipts", os.O_RDONLY, 0660)
-	if err != nil {
-		panic(err)
-	}
+	ipts := &IPTS{}
 
-	defer file.Close()
+	ipts.Open()
+	defer ipts.Close()
+
+	fmt.Printf("Connected to device %04x:%04x\n",
+		ipts.DeviceInfo.Vendor, ipts.DeviceInfo.Device)
+
+	channel := make(chan []byte)
+	go IptsDataHandleChannel(ipts, channel)
+
+	ipts.Start()
+	defer ipts.Stop()
+
+	timeout := time.Now().Add(5 * time.Second)
+
+	for {
+		buffer := make([]byte, ipts.DeviceInfo.DataSize)
+		count := ipts.Read(buffer)
+
+		if count > 0 {
+			timeout = time.Now().Add(5 * time.Second)
+			channel <- buffer
+			continue
+		}
+
+		if timeout.After(time.Now()) {
+			time.Sleep(15 * time.Millisecond)
+		} else {
+			time.Sleep(200 * time.Millisecond)
+		}
+	}
 }
