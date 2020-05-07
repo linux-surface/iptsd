@@ -39,39 +39,58 @@ func (ipts *IPTS) Open() {
 	ipts.DeviceInfo = device
 }
 
+func (ipts *IPTS) Start() {
+	if ipts.file == nil {
+		return
+	}
+
+	if ipts.started {
+		return
+	}
+
+	err := ioctl(ipts.file, IPTS_UAPI_START, uintptr(0))
+	if err != nil {
+		panic(err)
+	}
+
+	ipts.started = true
+}
+
+func (ipts *IPTS) Stop() {
+	if ipts.file == nil {
+		return
+	}
+
+	if !ipts.started {
+		return
+	}
+
+	err := ioctl(ipts.file, IPTS_UAPI_STOP, uintptr(0))
+	if err != nil {
+		panic(err)
+	}
+
+	ipts.started = false
+}
+
 func (ipts *IPTS) Close() {
+	if ipts.file == nil {
+		return
+	}
+
 	ipts.Stop()
+
 	err := ipts.file.Close()
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (ipts *IPTS) Start() {
-	if ipts.started {
-		return
-	}
-
-	ipts.started = true
-	err := ioctl(ipts.file, IPTS_UAPI_START, uintptr(0))
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (ipts *IPTS) Stop() {
-	if !ipts.started {
-		return
-	}
-
-	ipts.started = false
-	err := ioctl(ipts.file, IPTS_UAPI_STOP, uintptr(0))
-	if err != nil {
-		panic(err)
-	}
-}
-
 func (ipts *IPTS) Read(buffer []byte) int {
+	if ipts.file == nil {
+		return 0
+	}
+
 	n, _ := ipts.file.Read(buffer)
 	return n
 }
