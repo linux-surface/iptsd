@@ -21,14 +21,15 @@ func main() {
 	defer ipts.Stop()
 
 	timeout := time.Now().Add(5 * time.Second)
+	buffer := make([]byte, ipts.DeviceInfo.DataSize)
 
 	for {
-		buffer := make([]byte, ipts.DeviceInfo.DataSize)
 		count := ipts.Read(buffer)
 
 		if count > 0 {
 			timeout = time.Now().Add(5 * time.Second)
 			channel <- buffer
+			buffer = make([]byte, ipts.DeviceInfo.DataSize)
 			continue
 		}
 
