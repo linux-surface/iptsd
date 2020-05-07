@@ -59,3 +59,36 @@ func IptsDeviceCreateStylus(ipts *IPTS) *UinputDevice {
 
 	return dev
 }
+
+func IptsDeviceCreateSingletouch(ipts *IPTS) *UinputDevice {
+	dev := &UinputDevice{
+		Name:    "IPTS Singletouch",
+		Vendor:  ipts.DeviceInfo.Vendor,
+		Product: ipts.DeviceInfo.Device,
+		Version: uint16(ipts.DeviceInfo.FwRevision),
+	}
+
+	dev.Open()
+
+	dev.SetEvbit(EV_ABS)
+	dev.SetEvbit(EV_KEY)
+
+	dev.SetPropbit(INPUT_PROP_DIRECT)
+	dev.SetKeybit(BTN_TOUCH)
+
+	dev.SetAbsInfo(ABS_X, UinputAbsInfo{
+		Minimum:    0,
+		Maximum:    32767,
+		Resolution: 112,
+	})
+
+	dev.SetAbsInfo(ABS_Y, UinputAbsInfo{
+		Minimum:    0,
+		Maximum:    32767,
+		Resolution: 199,
+	})
+
+	dev.Create()
+
+	return dev
+}

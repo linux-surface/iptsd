@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 )
 
 type IptsSingletouchReport struct {
@@ -16,8 +15,9 @@ func IptsSingletouchHandleInput(ipts *IPTS, buffer *bytes.Reader) {
 
 	IptsUtilsRead(buffer, &report)
 
-	fmt.Printf("=====\n")
-	fmt.Printf("Touch: %d\n", report.Touch)
-	fmt.Printf("X: %d\n", report.X)
-	fmt.Printf("Y: %d\n", report.Y)
+	ipts.Singletouch.Emit(EV_KEY, BTN_TOUCH, int32(report.Touch))
+	ipts.Singletouch.Emit(EV_ABS, ABS_X, int32(report.X))
+	ipts.Singletouch.Emit(EV_ABS, ABS_Y, int32(report.Y))
+
+	ipts.Singletouch.Emit(EV_SYN, SYN_REPORT, 0)
 }

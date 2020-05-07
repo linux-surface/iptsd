@@ -27,8 +27,9 @@ type IPTS struct {
 	file    *os.File
 	started bool
 
-	DeviceInfo IptsDeviceInfo
-	Stylus     *UinputDevice
+	DeviceInfo  IptsDeviceInfo
+	Stylus      *UinputDevice
+	Singletouch *UinputDevice
 }
 
 func (ipts *IPTS) Open() {
@@ -60,6 +61,7 @@ func (ipts *IPTS) Start() {
 	}
 
 	ipts.Stylus = IptsDeviceCreateStylus(ipts)
+	ipts.Singletouch = IptsDeviceCreateSingletouch(ipts)
 
 	err := ioctl(ipts.file, IPTS_UAPI_START, uintptr(0))
 	if err != nil {
@@ -79,6 +81,7 @@ func (ipts *IPTS) Stop() {
 	}
 
 	ipts.Stylus.Close()
+	ipts.Singletouch.Close()
 
 	err := ioctl(ipts.file, IPTS_UAPI_STOP, uintptr(0))
 	if err != nil {
