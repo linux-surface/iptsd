@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"fmt"
+	"math"
 	"unsafe"
 )
 
@@ -37,16 +37,53 @@ type IptsStylusReportDataNoTilt struct {
 	Reserved2 uint8
 }
 
+const (
+	IPTS_STYLUS_REPORT_MODE_PROX   = 1 << 0
+	IPTS_STYLUS_REPORT_MODE_TOUCH  = 1 << 1
+	IPTS_STYLUS_REPORT_MODE_BUTTON = 1 << 2
+	IPTS_STYLUS_REPORT_MODE_RUBBER = 1 << 3
+)
+
 func IptsStylusHandleData(ipts *IPTS, data IptsStylusReportData) {
-	fmt.Printf("======\n")
-	fmt.Printf("Timestamp: %d\n", data.Timestamp)
-	fmt.Printf("Mode: %d\n", data.Mode)
-	fmt.Printf("X: %d\n", data.X)
-	fmt.Printf("Y: %d\n", data.Y)
-	fmt.Printf("Pressure: %d\n", data.Pressure)
-	fmt.Printf("Altitude: %d\n", data.Altitude)
-	fmt.Printf("Azimuth: %d\n", data.Azimuth)
-	fmt.Printf("======\n")
+	prox := (data.Mode & IPTS_STYLUS_REPORT_MODE_PROX) >> 0
+	touch := (data.Mode & IPTS_STYLUS_REPORT_MODE_TOUCH) >> 1
+	button := (data.Mode & IPTS_STYLUS_REPORT_MODE_BUTTON) >> 2
+	rubber := (data.Mode & IPTS_STYLUS_REPORT_MODE_RUBBER) >> 3
+
+	btn_pen := prox * (1 - rubber)
+	btn_rubber := prox * rubber
+
+	tx := float64(0)
+	ty := float64(0)
+
+	if data.Altitude > 0 {
+		sin_alt := math.Sin(float64(data.Altitude))
+		sin_azm := math.Sin(float64(data.Azimuth))
+
+		cos_alt := math.Cos(float64(data.Altitude))
+		cos_azm := math.Cos(float64(data.Azimuth))
+
+		atan_x := math.Atan2(cos_alt, sin_alt*cos_azm)
+		atan_y := math.Atan2(cos_alt, sin_alt*sin_azm)
+
+		tx = 9000 - (atan_x * 4500 / (math.Pi / 4))
+		ty = (atan_y * 4500 / (math.Pi / 4)) - 9000
+	}
+
+	ipts.Stylus.Emit(EV_KEY, BTN_TOUCH, int32(touch))
+	ipts.Stylus.Emit(EV_KEY, BTN_TOOL_PEN, int32(btn_pen))
+	ipts.Stylus.Emit(EV_KEY, BTN_TOOL_RUBBER, int32(btn_rubber))
+	ipts.Stylus.Emit(EV_KEY, BTN_STYLUS, int32(button))
+
+	ipts.Stylus.Emit(EV_ABS, ABS_X, int32(data.X))
+	ipts.Stylus.Emit(EV_ABS, ABS_Y, int32(data.Y))
+	ipts.Stylus.Emit(EV_ABS, ABS_PRESSURE, int32(data.Pressure))
+	ipts.Stylus.Emit(EV_ABS, ABS_MISC, int32(data.Timestamp))
+
+	ipts.Stylus.Emit(EV_ABS, ABS_TILT_X, int32(tx))
+	ipts.Stylus.Emit(EV_ABS, ABS_TILT_Y, int32(ty))
+
+	ipts.Stylus.Emit(EV_SYN, SYN_REPORT, 0)
 }
 
 func IptsStylusHandleReportSerial(ipts *IPTS, buffer *bytes.Reader) {

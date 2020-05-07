@@ -13,11 +13,22 @@ var (
 	IPTS_UAPI_STOP  = _IO(0x86, 0x03)
 )
 
+type IptsDeviceInfo struct {
+	Vendor       uint16
+	Device       uint16
+	HwRevision   uint32
+	FwRevision   uint32
+	DataSize     uint32
+	FeedbackSize uint32
+	Reserved     [24]uint8
+}
+
 type IPTS struct {
 	file    *os.File
 	started bool
 
 	DeviceInfo IptsDeviceInfo
+	Stylus     *UinputDevice
 }
 
 func (ipts *IPTS) Open() {
@@ -48,6 +59,8 @@ func (ipts *IPTS) Start() {
 		return
 	}
 
+	ipts.Stylus = IptsDeviceCreateStylus(ipts)
+
 	err := ioctl(ipts.file, IPTS_UAPI_START, uintptr(0))
 	if err != nil {
 		panic(err)
@@ -64,6 +77,8 @@ func (ipts *IPTS) Stop() {
 	if !ipts.started {
 		return
 	}
+
+	ipts.Stylus.Close()
 
 	err := ioctl(ipts.file, IPTS_UAPI_STOP, uintptr(0))
 	if err != nil {
