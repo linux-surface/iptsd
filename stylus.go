@@ -45,6 +45,8 @@ const (
 )
 
 func IptsStylusHandleData(ipts *IPTS, data IptsStylusReportData) {
+	stylus := ipts.ActiveStylus.Device
+
 	prox := (data.Mode & IPTS_STYLUS_REPORT_MODE_PROX) >> 0
 	touch := (data.Mode & IPTS_STYLUS_REPORT_MODE_TOUCH) >> 1
 	button := (data.Mode & IPTS_STYLUS_REPORT_MODE_BUTTON) >> 2
@@ -70,20 +72,49 @@ func IptsStylusHandleData(ipts *IPTS, data IptsStylusReportData) {
 		ty = (atan_y * 4500 / (math.Pi / 4)) - 9000
 	}
 
-	ipts.Stylus.Emit(EV_KEY, BTN_TOUCH, int32(touch))
-	ipts.Stylus.Emit(EV_KEY, BTN_TOOL_PEN, int32(btn_pen))
-	ipts.Stylus.Emit(EV_KEY, BTN_TOOL_RUBBER, int32(btn_rubber))
-	ipts.Stylus.Emit(EV_KEY, BTN_STYLUS, int32(button))
+	stylus.Emit(EV_KEY, BTN_TOUCH, int32(touch))
+	stylus.Emit(EV_KEY, BTN_TOOL_PEN, int32(btn_pen))
+	stylus.Emit(EV_KEY, BTN_TOOL_RUBBER, int32(btn_rubber))
+	stylus.Emit(EV_KEY, BTN_STYLUS, int32(button))
 
-	ipts.Stylus.Emit(EV_ABS, ABS_X, int32(data.X))
-	ipts.Stylus.Emit(EV_ABS, ABS_Y, int32(data.Y))
-	ipts.Stylus.Emit(EV_ABS, ABS_PRESSURE, int32(data.Pressure))
-	ipts.Stylus.Emit(EV_ABS, ABS_MISC, int32(data.Timestamp))
+	stylus.Emit(EV_ABS, ABS_X, int32(data.X))
+	stylus.Emit(EV_ABS, ABS_Y, int32(data.Y))
+	stylus.Emit(EV_ABS, ABS_PRESSURE, int32(data.Pressure))
+	stylus.Emit(EV_ABS, ABS_MISC, int32(data.Timestamp))
 
-	ipts.Stylus.Emit(EV_ABS, ABS_TILT_X, int32(tx))
-	ipts.Stylus.Emit(EV_ABS, ABS_TILT_Y, int32(ty))
+	stylus.Emit(EV_ABS, ABS_TILT_X, int32(tx))
+	stylus.Emit(EV_ABS, ABS_TILT_Y, int32(ty))
 
-	ipts.Stylus.Emit(EV_SYN, SYN_REPORT, 0)
+	stylus.Emit(EV_SYN, SYN_REPORT, 0)
+}
+
+func IptsStylusHandleSerialChange(ipts *IPTS, serial uint32) {
+	for _, stylus := range ipts.Styli {
+		if stylus.Serial != serial {
+			continue
+		}
+
+		ipts.ActiveStylus = stylus
+		return
+	}
+
+	/*
+	 * Before touching the screen for the first time, the stylus
+	 * will report its serial as 0. Once you touch the screen,
+	 * the serial will be reported correctly until you restart
+	 * the machine.
+	 */
+	if ipts.ActiveStylus.Serial == 0 {
+		ipts.ActiveStylus.Serial = serial
+		return
+	}
+
+	newStylus := &IptsStylusDevice{
+		Device: IptsDeviceCreateStylus(ipts),
+		Serial: serial,
+	}
+	ipts.Styli = append(ipts.Styli, newStylus)
+	ipts.ActiveStylus = newStylus
 }
 
 func IptsStylusHandleReportSerial(ipts *IPTS, buffer *bytes.Reader) {
@@ -91,7 +122,9 @@ func IptsStylusHandleReportSerial(ipts *IPTS, buffer *bytes.Reader) {
 
 	IptsUtilsRead(buffer, &report)
 
-	// TODO: Track serial number and support multiple styli
+	if ipts.ActiveStylus.Serial != report.Serial {
+		IptsStylusHandleSerialChange(ipts, report.Serial)
+	}
 
 	for i := uint8(0); i < report.Elements; i++ {
 		data := IptsStylusReportData{}

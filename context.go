@@ -23,13 +23,20 @@ type IptsDeviceInfo struct {
 	Reserved     [24]uint8
 }
 
+type IptsStylusDevice struct {
+	Serial uint32
+	Device *UinputDevice
+}
+
 type IPTS struct {
 	file    *os.File
 	started bool
 
 	DeviceInfo  IptsDeviceInfo
-	Stylus      *UinputDevice
 	Singletouch *UinputDevice
+
+	ActiveStylus *IptsStylusDevice
+	Styli        []*IptsStylusDevice
 }
 
 func (ipts *IPTS) Open() {
@@ -60,8 +67,12 @@ func (ipts *IPTS) Start() {
 		return
 	}
 
-	ipts.Stylus = IptsDeviceCreateStylus(ipts)
 	ipts.Singletouch = IptsDeviceCreateSingletouch(ipts)
+
+	ipts.ActiveStylus = &IptsStylusDevice{
+		Device: IptsDeviceCreateStylus(ipts),
+	}
+	ipts.Styli = []*IptsStylusDevice{ipts.ActiveStylus}
 
 	err := ioctl(ipts.file, IPTS_UAPI_START, uintptr(0))
 	if err != nil {
@@ -80,8 +91,10 @@ func (ipts *IPTS) Stop() {
 		return
 	}
 
-	ipts.Stylus.Close()
 	ipts.Singletouch.Close()
+	for _, stylus := range ipts.Styli {
+		stylus.Device.Close()
+	}
 
 	err := ioctl(ipts.file, IPTS_UAPI_STOP, uintptr(0))
 	if err != nil {
