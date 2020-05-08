@@ -48,8 +48,7 @@ func IptsPayloadHandleInput(ipts *IPTS, buffer *bytes.Reader) {
 			IptsStylusHandleInput(ipts, buffer, frame)
 			break
 		case IPTS_PAYLOAD_FRAME_TYPE_TOUCH:
-			// ignored (for now)
-			IptsUtilsSkip(buffer, frame.Size)
+			IptsTouchHandleInput(ipts, buffer, frame)
 			break
 		default:
 			// ignored
