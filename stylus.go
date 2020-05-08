@@ -59,11 +59,14 @@ func IptsStylusHandleData(ipts *IPTS, data IptsStylusReportData) {
 	ty := float64(0)
 
 	if data.Altitude > 0 {
-		sin_alt := math.Sin(float64(data.Altitude))
-		sin_azm := math.Sin(float64(data.Azimuth))
+		alt := float64(data.Altitude) / 18000 * math.Pi
+		azm := float64(data.Azimuth) / 18000 * math.Pi
 
-		cos_alt := math.Cos(float64(data.Altitude))
-		cos_azm := math.Cos(float64(data.Azimuth))
+		sin_alt := math.Sin(alt)
+		sin_azm := math.Sin(azm)
+
+		cos_alt := math.Cos(alt)
+		cos_azm := math.Cos(azm)
 
 		atan_x := math.Atan2(cos_alt, sin_alt*cos_azm)
 		atan_y := math.Atan2(cos_alt, sin_alt*sin_azm)
