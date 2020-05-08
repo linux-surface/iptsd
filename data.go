@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 )
 
 const (
@@ -26,20 +25,6 @@ func IptsDataHandleInput(ipts *IPTS, data []byte) {
 
 	IptsUtilsRead(buffer, &header)
 
-	fmt.Printf("===============\n")
-
-	for i := uint32(0); i < header.Size; i += 30 {
-		n := uint32(30)
-		if i+30 >= header.Size {
-			n = header.Size - i
-		}
-
-		for j := uint32(0); j < n; j++ {
-			fmt.Printf("%02x ", data[i+j+64])
-		}
-		fmt.Printf("\n")
-	}
-
 	switch header.Type {
 	case IPTS_DATA_TYPE_PAYLOAD:
 		IptsPayloadHandleInput(ipts, buffer)
@@ -48,8 +33,6 @@ func IptsDataHandleInput(ipts *IPTS, data []byte) {
 		IptsHidHandleInput(ipts, buffer)
 		break
 	}
-
-	fmt.Printf("===============\n")
 }
 
 func IptsDataHandleChannel(ipts *IPTS, channel chan []byte) {
