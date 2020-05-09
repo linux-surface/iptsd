@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 )
 
@@ -40,6 +41,7 @@ func main() {
 	}
 
 	buffer := make([]byte, ipts.DeviceInfo.DataSize)
+	reader := bytes.NewReader(buffer)
 
 	for {
 		count, err := ipts.Control.Read(buffer)
@@ -52,7 +54,13 @@ func main() {
 			continue
 		}
 
-		err = IptsDataHandleInput(ipts, buffer)
+		err = IptsDataHandleInput(ipts, reader)
+		if err != nil {
+			fmt.Printf("%+v\n", err)
+			break
+		}
+
+		err = IptsUtilsReset(reader)
 		if err != nil {
 			fmt.Printf("%+v\n", err)
 			break

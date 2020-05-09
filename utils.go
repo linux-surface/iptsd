@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"io"
 
 	"github.com/pkg/errors"
 )
@@ -17,6 +18,19 @@ func IptsUtilsRead(buffer *bytes.Reader, object interface{}) error {
 }
 
 func IptsUtilsSkip(buffer *bytes.Reader, count uint32) error {
-	data := make([]byte, count)
-	return IptsUtilsRead(buffer, &data)
+	_, err := buffer.Seek(int64(count), io.SeekCurrent)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return nil
+}
+
+func IptsUtilsReset(buffer *bytes.Reader) error {
+	_, err := buffer.Seek(0, io.SeekStart)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return nil
 }
