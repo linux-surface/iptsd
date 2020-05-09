@@ -19,10 +19,14 @@ type IptsData struct {
 	Reserved [52]uint8
 }
 
-func IptsDataHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
-	header := IptsData{}
+var (
+	headerCache IptsData
+)
 
-	err := IptsUtilsRead(buffer, &header)
+func IptsDataHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
+	header := &headerCache
+
+	err := IptsUtilsRead(buffer, header)
 	if err != nil {
 		return err
 	}

@@ -33,18 +33,24 @@ type IptsReport struct {
 	Size uint16
 }
 
-func IptsPayloadHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
-	payload := IptsPayload{}
+var (
+	payloadCache      IptsPayload
+	payloadFrameCache IptsPayloadFrame
+	reportCache       IptsReport
+)
 
-	err := IptsUtilsRead(buffer, &payload)
+func IptsPayloadHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
+	payload := &payloadCache
+
+	err := IptsUtilsRead(buffer, payload)
 	if err != nil {
 		return err
 	}
 
 	for i := uint32(0); i < payload.Frames; i++ {
-		frame := IptsPayloadFrame{}
+		frame := &payloadFrameCache
 
-		err = IptsUtilsRead(buffer, &frame)
+		err = IptsUtilsRead(buffer, frame)
 		if err != nil {
 			return err
 		}

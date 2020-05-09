@@ -10,9 +10,7 @@ import (
  * in the future, seperated from the actual singletouch implementation.
  */
 func IptsHidHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
-	id := uint8(0)
-
-	err := IptsUtilsRead(buffer, &id)
+	id, err := buffer.ReadByte()
 	if err != nil {
 		return err
 	}

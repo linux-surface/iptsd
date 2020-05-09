@@ -9,10 +9,15 @@ type IptsTouchHeatmap struct {
 	Height  uint8
 	Width   uint8
 	Size    uint16
-	Heatmap []byte
+	Heatmap *[]byte
 }
 
-func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap IptsTouchHeatmap) error {
+var (
+	heatmapCache       IptsTouchHeatmap
+	heatmapBufferCache map[uint16]*[]byte = make(map[uint16]*[]byte)
+)
+
+func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap *IptsTouchHeatmap) error {
 	return nil
 }
 
@@ -35,28 +40,34 @@ func IptsTouchParseHeatmapDim(buffer *bytes.Reader, heatmap *IptsTouchHeatmap) e
 	return nil
 }
 
-func IptsTouchHandleInput(ipts *IptsContext, buffer *bytes.Reader, frame IptsPayloadFrame) error {
+func IptsTouchHandleInput(ipts *IptsContext, buffer *bytes.Reader, frame *IptsPayloadFrame) error {
 	size := uint32(0)
-	heatmap := IptsTouchHeatmap{}
+	heatmap := &heatmapCache
 
 	for size < frame.Size {
-		report := IptsReport{}
+		report := &reportCache
 
-		err := IptsUtilsRead(buffer, &report)
+		err := IptsUtilsRead(buffer, report)
 		if err != nil {
 			return err
 		}
 
-		size += uint32(report.Size) + uint32(unsafe.Sizeof(report))
+		size += uint32(report.Size) + uint32(unsafe.Sizeof(*report))
 
 		switch report.Type {
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP_DIM:
-			err = IptsTouchParseHeatmapDim(buffer, &heatmap)
+			err = IptsTouchParseHeatmapDim(buffer, heatmap)
 			break
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP:
 			heatmap.Size = report.Size
-			heatmap.Heatmap = make([]byte, heatmap.Size)
-			err = IptsUtilsRead(buffer, &heatmap.Heatmap)
+			hmb, ok := heatmapBufferCache[heatmap.Size]
+			if !ok {
+				newBuf := make([]byte, heatmap.Size)
+				hmb = &newBuf
+				heatmapBufferCache[heatmap.Size] = hmb
+			}
+			heatmap.Heatmap = hmb
+			err = IptsUtilsRead(buffer, hmb)
 			break
 		default:
 			// ignored

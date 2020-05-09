@@ -10,11 +10,15 @@ type IptsSingletouchReport struct {
 	Y     uint16
 }
 
+var (
+	singletouchReportCache IptsSingletouchReport
+)
+
 func IptsSingletouchHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
 	singletouch := ipts.Devices.Singletouch
-	report := IptsSingletouchReport{}
+	report := &singletouchReportCache
 
-	err := IptsUtilsRead(buffer, &report)
+	err := IptsUtilsRead(buffer, report)
 	if err != nil {
 		return err
 	}
