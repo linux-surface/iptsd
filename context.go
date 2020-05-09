@@ -120,15 +120,10 @@ func (ipts *IPTS) Close() {
 	ipts.epoll.Destroy()
 }
 
-func (ipts *IPTS) Restart() bool {
-	if _, err := os.Stat(IPTS_DEVICE); os.IsNotExist(err) {
-		return false
-	}
-
+func (ipts *IPTS) Restart() {
 	ipts.Close()
 	ipts.Open()
 	ipts.Start()
-	return true
 }
 
 func (ipts *IPTS) Read(buffer []byte) int {
@@ -143,8 +138,8 @@ func (ipts *IPTS) Read(buffer []byte) int {
 	ipts.epoll.Wait(ipts.events)
 
 	for _, event := range ipts.events {
-		hup := event.Events&syscall.EPOLLHUP > 0
-		in := event.Events&syscall.EPOLLIN > 0
+		hup := (event.Events & syscall.EPOLLHUP) > 0
+		in := (event.Events & syscall.EPOLLIN) > 0
 
 		if hup {
 			ipts.Restart()
