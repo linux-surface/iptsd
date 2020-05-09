@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"syscall"
 	"unsafe"
 )
 
@@ -29,8 +30,10 @@ type IptsStylusDevice struct {
 }
 
 type IPTS struct {
-	file    *os.File
 	started bool
+	epoll   *Epoll
+	file    *os.File
+	events  []syscall.EpollEvent
 
 	DeviceInfo  IptsDeviceInfo
 	Singletouch *UinputDevice
@@ -56,6 +59,13 @@ func (ipts *IPTS) Open() {
 	}
 
 	ipts.DeviceInfo = device
+
+	epoll := &Epoll{}
+	epoll.Create()
+	epoll.Listen(file, syscall.EPOLLIN|syscall.EPOLLHUP)
+
+	ipts.epoll = epoll
+	ipts.events = make([]syscall.EpollEvent, 10)
 }
 
 func (ipts *IPTS) Start() {
@@ -96,11 +106,7 @@ func (ipts *IPTS) Stop() {
 		stylus.Device.Close()
 	}
 
-	err := ioctl(ipts.file, IPTS_UAPI_STOP, uintptr(0))
-	if err != nil {
-		panic(err)
-	}
-
+	ioctl(ipts.file, IPTS_UAPI_STOP, uintptr(0))
 	ipts.started = false
 }
 
@@ -110,11 +116,19 @@ func (ipts *IPTS) Close() {
 	}
 
 	ipts.Stop()
+	ipts.file.Close()
+	ipts.epoll.Destroy()
+}
 
-	err := ipts.file.Close()
-	if err != nil {
-		panic(err)
+func (ipts *IPTS) Restart() bool {
+	if _, err := os.Stat(IPTS_DEVICE); os.IsNotExist(err) {
+		return false
 	}
+
+	ipts.Close()
+	ipts.Open()
+	ipts.Start()
+	return true
 }
 
 func (ipts *IPTS) Read(buffer []byte) int {
@@ -122,6 +136,26 @@ func (ipts *IPTS) Read(buffer []byte) int {
 		return 0
 	}
 
-	n, _ := ipts.file.Read(buffer)
-	return n
+	if !ipts.started {
+		return 0
+	}
+
+	ipts.epoll.Wait(ipts.events)
+
+	for _, event := range ipts.events {
+		hup := event.Events&syscall.EPOLLHUP > 0
+		in := event.Events&syscall.EPOLLIN > 0
+
+		if hup {
+			ipts.Restart()
+			return 0
+		}
+
+		if in {
+			n, _ := ipts.file.Read(buffer)
+			return n
+		}
+	}
+
+	return 0
 }

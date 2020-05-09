@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 func main() {
@@ -20,23 +19,14 @@ func main() {
 	ipts.Start()
 	defer ipts.Stop()
 
-	timeout := time.Now().Add(5 * time.Second)
 	buffer := make([]byte, ipts.DeviceInfo.DataSize)
 
 	for {
-		count := ipts.Read(buffer)
-
-		if count > 0 {
-			timeout = time.Now().Add(5 * time.Second)
-			channel <- buffer
-			buffer = make([]byte, ipts.DeviceInfo.DataSize)
+		if ipts.Read(buffer) == 0 {
 			continue
 		}
 
-		if timeout.After(time.Now()) {
-			time.Sleep(15 * time.Millisecond)
-		} else {
-			time.Sleep(200 * time.Millisecond)
-		}
+		channel <- buffer
+		buffer = make([]byte, ipts.DeviceInfo.DataSize)
 	}
 }
