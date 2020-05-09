@@ -4,29 +4,69 @@ import (
 	"fmt"
 )
 
-func main() {
-	ipts := &IPTS{}
+type IptsContext struct {
+	Control    *IptsControl
+	DeviceInfo *IptsDeviceInfo
+	Devices    *IptsDevices
+}
 
-	ipts.Open()
-	defer ipts.Close()
+func main() {
+	ipts := &IptsContext{}
+	ipts.Control = &IptsControl{}
+
+	err := ipts.Control.Start()
+	if err != nil {
+		fmt.Printf("%+v\n", err)
+		return
+	}
+
+	info, err := ipts.Control.DeviceInfo()
+	if err != nil {
+		fmt.Printf("%+v\n", err)
+		return
+	}
+
+	ipts.DeviceInfo = info
 
 	fmt.Printf("Connected to device %04x:%04x\n",
 		ipts.DeviceInfo.Vendor, ipts.DeviceInfo.Device)
 
-	channel := make(chan []byte)
-	go IptsDataHandleChannel(ipts, channel)
+	ipts.Devices = &IptsDevices{}
 
-	ipts.Start()
-	defer ipts.Stop()
+	err = ipts.Devices.Create(ipts.DeviceInfo)
+	if err != nil {
+		fmt.Printf("%+v\n", err)
+		return
+	}
 
 	buffer := make([]byte, ipts.DeviceInfo.DataSize)
 
 	for {
-		if ipts.Read(buffer) == 0 {
+		count, err := ipts.Control.Read(buffer)
+		if err != nil {
+			fmt.Printf("%+v\n", err)
+			return
+		}
+
+		if count == 0 {
 			continue
 		}
 
-		channel <- buffer
-		buffer = make([]byte, ipts.DeviceInfo.DataSize)
+		err = IptsDataHandleInput(ipts, buffer)
+		if err != nil {
+			fmt.Printf("%+v\n", err)
+			break
+		}
+	}
+
+	err = ipts.Devices.Destroy()
+	if err != nil {
+		fmt.Printf("%+v\n", err)
+		return
+	}
+
+	err = ipts.Control.Stop()
+	if err != nil {
+		fmt.Printf("%+v\n", err)
 	}
 }

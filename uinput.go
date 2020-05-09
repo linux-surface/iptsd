@@ -9,6 +9,8 @@ import (
 	"encoding/binary"
 	"os"
 	"unsafe"
+
+	"github.com/pkg/errors"
 )
 
 var (
@@ -66,24 +68,17 @@ type UinputAbsInfo struct {
 	Resolution int32
 }
 
-func (dev *UinputDevice) Open() {
+func (dev *UinputDevice) Open() error {
 	file, err := os.OpenFile(UINPUT_DEVICE, os.O_WRONLY, 0660)
 	if err != nil {
-		panic(err)
+		return errors.WithStack(err)
 	}
 
 	dev.file = file
+	return nil
 }
 
-func (dev *UinputDevice) Create() {
-	if dev.file == nil {
-		return
-	}
-
-	if dev.created {
-		return
-	}
-
+func (dev *UinputDevice) Create() error {
 	setup := C.struct_uinput_setup{}
 	setup.id.bustype = C.ushort(BUS_VIRTUAL)
 	setup.id.vendor = C.ushort(dev.Vendor)
@@ -96,76 +91,59 @@ func (dev *UinputDevice) Create() {
 
 	err := ioctl(dev.file, UI_DEV_SETUP, uintptr(unsafe.Pointer(&setup)))
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	err = ioctl(dev.file, UI_DEV_CREATE, uintptr(0))
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	dev.created = true
+	return nil
 }
 
-func (dev *UinputDevice) Destroy() {
-	if dev.file == nil {
-		return
-	}
-
-	if !dev.created {
-		return
-	}
-
+func (dev *UinputDevice) Destroy() error {
 	err := ioctl(dev.file, UI_DEV_DESTROY, uintptr(0))
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	dev.created = false
-}
-
-func (dev *UinputDevice) Close() {
-	if dev.file == nil {
-		return
-	}
-
-	dev.Destroy()
-
-	err := dev.file.Close()
+	err = dev.file.Close()
 	if err != nil {
-		panic(err)
+		return errors.WithStack(err)
 	}
+
+	return nil
 }
 
-func (dev *UinputDevice) SetEvbit(value uint16) {
-	err := ioctl(dev.file, UI_SET_EVBIT, uintptr(uint32(value)))
+func (dev *UinputDevice) SetEvbit(value uint16) error {
+	err := ioctl(dev.file, UI_SET_EVBIT, uintptr(value))
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }
 
-func (dev *UinputDevice) SetKeybit(value uint16) {
-	err := ioctl(dev.file, UI_SET_KEYBIT, uintptr(uint32(value)))
+func (dev *UinputDevice) SetKeybit(value uint16) error {
+	err := ioctl(dev.file, UI_SET_KEYBIT, uintptr(value))
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }
 
-func (dev *UinputDevice) SetAbsbit(value uint16) {
-	err := ioctl(dev.file, UI_SET_ABSBIT, uintptr(uint32(value)))
+func (dev *UinputDevice) SetPropbit(value uint16) error {
+	err := ioctl(dev.file, UI_SET_PROPBIT, uintptr(value))
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }
 
-func (dev *UinputDevice) SetPropbit(value uint16) {
-	err := ioctl(dev.file, UI_SET_PROPBIT, uintptr(uint32(value)))
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (dev *UinputDevice) SetAbsInfo(axis uint16, info UinputAbsInfo) {
+func (dev *UinputDevice) SetAbsInfo(axis uint16, info UinputAbsInfo) error {
 	setup := C.struct_uinput_abs_setup{}
 	setup.code = C.ushort(axis)
 	setup.absinfo.value = C.int(info.Value)
@@ -177,11 +155,13 @@ func (dev *UinputDevice) SetAbsInfo(axis uint16, info UinputAbsInfo) {
 
 	err := ioctl(dev.file, UI_ABS_SETUP, uintptr(unsafe.Pointer(&setup)))
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }
 
-func (dev *UinputDevice) Emit(event uint16, code uint16, value int32) {
+func (dev *UinputDevice) Emit(event uint16, code uint16, value int32) error {
 	ie := C.struct_input_event{}
 	ie.__type = C.ushort(event)
 	ie.code = C.ushort(code)
@@ -189,6 +169,8 @@ func (dev *UinputDevice) Emit(event uint16, code uint16, value int32) {
 
 	err := binary.Write(dev.file, binary.LittleEndian, &ie)
 	if err != nil {
-		panic(err)
+		return errors.WithStack(err)
 	}
+
+	return nil
 }

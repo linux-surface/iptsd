@@ -5,6 +5,8 @@ import "C"
 import (
 	"os"
 	"syscall"
+
+	"github.com/pkg/errors"
 )
 
 func _IOC(dir uintptr, typ uintptr, nr uintptr, size uintptr) uintptr {
@@ -33,7 +35,7 @@ func _IOWR(typ uintptr, nr uintptr, size uintptr) uintptr {
 func ioctl(file *os.File, cmd uintptr, arg uintptr) error {
 	_, _, err := syscall.Syscall(syscall.SYS_IOCTL, file.Fd(), cmd, arg)
 	if err != 0 {
-		return err
+		return errors.WithStack(err)
 	}
 	return nil
 }

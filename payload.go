@@ -33,27 +33,44 @@ type IptsReport struct {
 	Size uint16
 }
 
-func IptsPayloadHandleInput(ipts *IPTS, buffer *bytes.Reader) {
+func IptsPayloadHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
 	payload := IptsPayload{}
 
-	IptsUtilsRead(buffer, &payload)
+	err := IptsUtilsRead(buffer, &payload)
+	if err != nil {
+		return err
+	}
 
 	for i := uint32(0); i < payload.Frames; i++ {
 		frame := IptsPayloadFrame{}
 
-		IptsUtilsRead(buffer, &frame)
+		err = IptsUtilsRead(buffer, &frame)
+		if err != nil {
+			return err
+		}
 
 		switch frame.Type {
 		case IPTS_PAYLOAD_FRAME_TYPE_STYLUS:
-			IptsStylusHandleInput(ipts, buffer, frame)
+			err = IptsStylusHandleInput(ipts, buffer, frame)
+			if err != nil {
+				return err
+			}
 			break
 		case IPTS_PAYLOAD_FRAME_TYPE_TOUCH:
-			IptsTouchHandleInput(ipts, buffer, frame)
+			err = IptsTouchHandleInput(ipts, buffer, frame)
+			if err != nil {
+				return err
+			}
 			break
 		default:
 			// ignored
-			IptsUtilsSkip(buffer, frame.Size)
+			err = IptsUtilsSkip(buffer, frame.Size)
+			if err != nil {
+				return err
+			}
 			break
 		}
 	}
+
+	return nil
 }

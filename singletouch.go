@@ -10,14 +10,23 @@ type IptsSingletouchReport struct {
 	Y     uint16
 }
 
-func IptsSingletouchHandleInput(ipts *IPTS, buffer *bytes.Reader) {
+func IptsSingletouchHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
+	singletouch := ipts.Devices.Singletouch
 	report := IptsSingletouchReport{}
 
-	IptsUtilsRead(buffer, &report)
+	err := IptsUtilsRead(buffer, &report)
+	if err != nil {
+		return err
+	}
 
-	ipts.Singletouch.Emit(EV_KEY, BTN_TOUCH, int32(report.Touch))
-	ipts.Singletouch.Emit(EV_ABS, ABS_X, int32(report.X))
-	ipts.Singletouch.Emit(EV_ABS, ABS_Y, int32(report.Y))
+	singletouch.Emit(EV_KEY, BTN_TOUCH, int32(report.Touch))
+	singletouch.Emit(EV_ABS, ABS_X, int32(report.X))
+	singletouch.Emit(EV_ABS, ABS_Y, int32(report.Y))
 
-	ipts.Singletouch.Emit(EV_SYN, SYN_REPORT, 0)
+	err = singletouch.Emit(EV_SYN, SYN_REPORT, 0)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

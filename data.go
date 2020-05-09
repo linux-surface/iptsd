@@ -19,25 +19,29 @@ type IptsData struct {
 	Reserved [52]uint8
 }
 
-func IptsDataHandleInput(ipts *IPTS, data []byte) {
+func IptsDataHandleInput(ipts *IptsContext, data []byte) error {
 	buffer := bytes.NewReader(data)
 	header := IptsData{}
 
-	IptsUtilsRead(buffer, &header)
+	err := IptsUtilsRead(buffer, &header)
+	if err != nil {
+		return err
+	}
 
 	switch header.Type {
 	case IPTS_DATA_TYPE_PAYLOAD:
-		IptsPayloadHandleInput(ipts, buffer)
+		err = IptsPayloadHandleInput(ipts, buffer)
+		if err != nil {
+			return err
+		}
 		break
 	case IPTS_DATA_TYPE_HID_REPORT:
-		IptsHidHandleInput(ipts, buffer)
+		err = IptsHidHandleInput(ipts, buffer)
+		if err != nil {
+			return err
+		}
 		break
 	}
-}
 
-func IptsDataHandleChannel(ipts *IPTS, channel chan []byte) {
-	for {
-		buffer := <-channel
-		IptsDataHandleInput(ipts, buffer)
-	}
+	return nil
 }
