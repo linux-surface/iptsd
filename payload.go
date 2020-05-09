@@ -52,23 +52,18 @@ func IptsPayloadHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
 		switch frame.Type {
 		case IPTS_PAYLOAD_FRAME_TYPE_STYLUS:
 			err = IptsStylusHandleInput(ipts, buffer, frame)
-			if err != nil {
-				return err
-			}
 			break
 		case IPTS_PAYLOAD_FRAME_TYPE_TOUCH:
 			err = IptsTouchHandleInput(ipts, buffer, frame)
-			if err != nil {
-				return err
-			}
 			break
 		default:
 			// ignored
 			err = IptsUtilsSkip(buffer, frame.Size)
-			if err != nil {
-				return err
-			}
 			break
+		}
+
+		if err != nil {
+			return err
 		}
 	}
 

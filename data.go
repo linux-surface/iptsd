@@ -31,16 +31,14 @@ func IptsDataHandleInput(ipts *IptsContext, data []byte) error {
 	switch header.Type {
 	case IPTS_DATA_TYPE_PAYLOAD:
 		err = IptsPayloadHandleInput(ipts, buffer)
-		if err != nil {
-			return err
-		}
 		break
 	case IPTS_DATA_TYPE_HID_REPORT:
 		err = IptsHidHandleInput(ipts, buffer)
-		if err != nil {
-			return err
-		}
 		break
+	}
+
+	if err != nil {
+		return err
 	}
 
 	return nil
