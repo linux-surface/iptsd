@@ -52,6 +52,7 @@ var (
 type UinputDevice struct {
 	file    *os.File
 	created bool
+	ieCache C.struct_input_event
 
 	Name    string
 	Vendor  uint16
@@ -75,6 +76,8 @@ func (dev *UinputDevice) Open() error {
 	}
 
 	dev.file = file
+	dev.ieCache = C.struct_input_event{}
+
 	return nil
 }
 
@@ -162,12 +165,11 @@ func (dev *UinputDevice) SetAbsInfo(axis uint16, info UinputAbsInfo) error {
 }
 
 func (dev *UinputDevice) Emit(event uint16, code uint16, value int32) error {
-	ie := C.struct_input_event{}
-	ie.__type = C.ushort(event)
-	ie.code = C.ushort(code)
-	ie.value = C.int(value)
+	dev.ieCache.__type = C.ushort(event)
+	dev.ieCache.code = C.ushort(code)
+	dev.ieCache.value = C.int(value)
 
-	err := binary.Write(dev.file, binary.LittleEndian, &ie)
+	err := binary.Write(dev.file, binary.LittleEndian, &dev.ieCache)
 	if err != nil {
 		return errors.WithStack(err)
 	}
