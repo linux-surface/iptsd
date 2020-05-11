@@ -49,6 +49,9 @@ var (
 	stylusReportSerialCache     IptsStylusReportSerial
 	stylusReportDataCache       IptsStylusReportData
 	stylusReportDataNoTiltCache IptsStylusReportDataNoTilt
+
+	xCache []uint16
+	yCache []uint16
 )
 
 func IptsStylusHandleData(ipts *IptsContext, data *IptsStylusReportData) error {
@@ -82,13 +85,39 @@ func IptsStylusHandleData(ipts *IptsContext, data *IptsStylusReportData) error {
 		ty = (atan_y * 4500 / (math.Pi / 4)) - 9000
 	}
 
+	if len(xCache) == 5 {
+		xCache[0] = xCache[1]
+		xCache[1] = xCache[2]
+		xCache[2] = xCache[3]
+		xCache[3] = xCache[4]
+		xCache[4] = data.X
+
+		yCache[0] = yCache[1]
+		yCache[1] = yCache[2]
+		yCache[2] = yCache[3]
+		yCache[3] = yCache[4]
+		yCache[4] = data.Y
+	} else {
+		xCache = append(xCache, data.X)
+		yCache = append(yCache, data.Y)
+	}
+
+	x := uint16(0)
+	y := uint16(0)
+	for i := 0; i < len(xCache); i++ {
+		x = x + xCache[i]
+		y = y + yCache[i]
+	}
+	x = x / uint16(len(xCache))
+	y = y / uint16(len(yCache))
+
 	stylus.Emit(EV_KEY, BTN_TOUCH, int32(touch))
 	stylus.Emit(EV_KEY, BTN_TOOL_PEN, int32(btn_pen))
 	stylus.Emit(EV_KEY, BTN_TOOL_RUBBER, int32(btn_rubber))
 	stylus.Emit(EV_KEY, BTN_STYLUS, int32(button))
 
-	stylus.Emit(EV_ABS, ABS_X, int32(data.X))
-	stylus.Emit(EV_ABS, ABS_Y, int32(data.Y))
+	stylus.Emit(EV_ABS, ABS_X, int32(x))
+	stylus.Emit(EV_ABS, ABS_Y, int32(y))
 	stylus.Emit(EV_ABS, ABS_PRESSURE, int32(data.Pressure))
 	stylus.Emit(EV_ABS, ABS_MISC, int32(data.Timestamp))
 
