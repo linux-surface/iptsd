@@ -6,7 +6,6 @@ package main
 // #include <string.h>
 import "C"
 import (
-	"encoding/binary"
 	"os"
 	"unsafe"
 
@@ -52,7 +51,7 @@ var (
 type UinputDevice struct {
 	file    *os.File
 	created bool
-	ieCache C.struct_input_event
+	ieCache []byte
 
 	Name    string
 	Vendor  uint16
@@ -76,7 +75,7 @@ func (dev *UinputDevice) Open() error {
 	}
 
 	dev.file = file
-	dev.ieCache = C.struct_input_event{}
+	dev.ieCache = make([]byte, unsafe.Sizeof(C.struct_input_event{}))
 
 	return nil
 }
@@ -165,11 +164,18 @@ func (dev *UinputDevice) SetAbsInfo(axis uint16, info UinputAbsInfo) error {
 }
 
 func (dev *UinputDevice) Emit(event uint16, code uint16, value int32) error {
-	dev.ieCache.__type = C.ushort(event)
-	dev.ieCache.code = C.ushort(code)
-	dev.ieCache.value = C.int(value)
+	l := len(dev.ieCache)
 
-	err := binary.Write(dev.file, binary.LittleEndian, &dev.ieCache)
+	dev.ieCache[l-8] = byte(event & 0xFF)
+	dev.ieCache[l-7] = byte(event >> 8)
+	dev.ieCache[l-6] = byte(code & 0xFF)
+	dev.ieCache[l-5] = byte(code >> 8)
+	dev.ieCache[l-4] = byte(value & 0xFF)
+	dev.ieCache[l-3] = byte((value >> 8) & 0xFF)
+	dev.ieCache[l-2] = byte((value >> 16) & 0xFF)
+	dev.ieCache[l-1] = byte((value >> 24) & 0xFF)
+
+	_, err := dev.file.Write(dev.ieCache)
 	if err != nil {
 		return errors.WithStack(err)
 	}

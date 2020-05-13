@@ -1,19 +1,22 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
+
+	. "github.com/linux-surface/iptsd/protocol"
 )
 
 type IptsContext struct {
 	Control    *IptsControl
 	DeviceInfo *IptsDeviceInfo
 	Devices    *IptsDevices
+	Protocol   *IptsProtocol
 }
 
 func main() {
 	ipts := &IptsContext{}
 	ipts.Control = &IptsControl{}
+	ipts.Protocol = &IptsProtocol{}
 
 	err := ipts.Control.Start()
 	if err != nil {
@@ -41,7 +44,7 @@ func main() {
 	}
 
 	buffer := make([]byte, ipts.DeviceInfo.DataSize)
-	reader := bytes.NewReader(buffer)
+	ipts.Protocol.Create(buffer)
 
 	for {
 		count, err := ipts.Control.Read(buffer)
@@ -54,13 +57,13 @@ func main() {
 			continue
 		}
 
-		err = IptsDataHandleInput(ipts, reader)
+		err = IptsDataHandleInput(ipts)
 		if err != nil {
 			fmt.Printf("%+v\n", err)
 			break
 		}
 
-		err = IptsUtilsReset(reader)
+		err = ipts.Protocol.Reset()
 		if err != nil {
 			fmt.Printf("%+v\n", err)
 			break

@@ -1,60 +1,18 @@
 package main
 
 import (
-	"bytes"
 	"math"
 	"unsafe"
-)
 
-type IptsStylusReport struct {
-	Elements uint8
-	Reserved [3]uint8
-}
-
-type IptsStylusReportSerial struct {
-	Elements uint8
-	Reserved [3]uint8
-	Serial   uint32
-}
-
-type IptsStylusReportData struct {
-	Timestamp uint16
-	Mode      uint16
-	X         uint16
-	Y         uint16
-	Pressure  uint16
-	Altitude  uint16
-	Azimuth   uint16
-	Reserved  uint16
-}
-
-type IptsStylusReportDataNoTilt struct {
-	Reserved  [4]uint8
-	Mode      uint8
-	X         uint16
-	Y         uint16
-	Pressure  uint16
-	Reserved2 uint8
-}
-
-const (
-	IPTS_STYLUS_REPORT_MODE_PROX   = 1 << 0
-	IPTS_STYLUS_REPORT_MODE_TOUCH  = 1 << 1
-	IPTS_STYLUS_REPORT_MODE_BUTTON = 1 << 2
-	IPTS_STYLUS_REPORT_MODE_RUBBER = 1 << 3
+	. "github.com/linux-surface/iptsd/protocol"
 )
 
 var (
-	stylusReportCache           IptsStylusReport
-	stylusReportSerialCache     IptsStylusReportSerial
-	stylusReportDataCache       IptsStylusReportData
-	stylusReportDataNoTiltCache IptsStylusReportDataNoTilt
-
 	xCache []uint16
 	yCache []uint16
 )
 
-func IptsStylusHandleData(ipts *IptsContext, data *IptsStylusReportData) error {
+func IptsStylusHandleData(ipts *IptsContext, data IptsStylusData) error {
 	stylus := ipts.Devices.ActiveStylus.Device
 
 	prox := (data.Mode & IPTS_STYLUS_REPORT_MODE_PROX) >> 0
@@ -161,10 +119,8 @@ func IptsStylusHandleSerialChange(ipts *IptsContext, serial uint32) error {
 	return nil
 }
 
-func IptsStylusHandleReportSerial(ipts *IptsContext, buffer *bytes.Reader) error {
-	report := &stylusReportSerialCache
-
-	err := IptsUtilsRead(buffer, report)
+func IptsStylusHandleReportSerial(ipts *IptsContext) error {
+	report, err := ipts.Protocol.ReadStylusReportSerial()
 	if err != nil {
 		return err
 	}
@@ -177,9 +133,7 @@ func IptsStylusHandleReportSerial(ipts *IptsContext, buffer *bytes.Reader) error
 	}
 
 	for i := uint8(0); i < report.Elements; i++ {
-		data := &stylusReportDataCache
-
-		err = IptsUtilsRead(buffer, data)
+		data, err := ipts.Protocol.ReadStylusData()
 		if err != nil {
 			return err
 		}
@@ -193,18 +147,14 @@ func IptsStylusHandleReportSerial(ipts *IptsContext, buffer *bytes.Reader) error
 	return nil
 }
 
-func IptsStylusHandleReportTilt(ipts *IptsContext, buffer *bytes.Reader) error {
-	report := &stylusReportCache
-
-	err := IptsUtilsRead(buffer, report)
+func IptsStylusHandleReportTilt(ipts *IptsContext) error {
+	report, err := ipts.Protocol.ReadStylusReport()
 	if err != nil {
 		return err
 	}
 
 	for i := uint8(0); i < report.Elements; i++ {
-		data := &stylusReportDataCache
-
-		err = IptsUtilsRead(buffer, data)
+		data, err := ipts.Protocol.ReadStylusData()
 		if err != nil {
 			return err
 		}
@@ -218,10 +168,8 @@ func IptsStylusHandleReportTilt(ipts *IptsContext, buffer *bytes.Reader) error {
 	return nil
 }
 
-func IptsStylusHandleReportNoTilt(ipts *IptsContext, buffer *bytes.Reader) error {
-	report := &stylusReportSerialCache
-
-	err := IptsUtilsRead(buffer, report)
+func IptsStylusHandleReportNoTilt(ipts *IptsContext) error {
+	report, err := ipts.Protocol.ReadStylusReportSerial()
 	if err != nil {
 		return err
 	}
@@ -234,22 +182,22 @@ func IptsStylusHandleReportNoTilt(ipts *IptsContext, buffer *bytes.Reader) error
 	}
 
 	for i := uint8(0); i < report.Elements; i++ {
-		data := &stylusReportDataNoTiltCache
-
-		err = IptsUtilsRead(buffer, data)
+		data, err := ipts.Protocol.ReadStylusDataNoTilt()
 		if err != nil {
 			return err
 		}
 
-		stylusReportDataCache.Mode = uint16(data.Mode)
-		stylusReportDataCache.X = data.X
-		stylusReportDataCache.Y = data.Y
-		stylusReportDataCache.Pressure = data.Pressure * 4
-		stylusReportDataCache.Altitude = 0
-		stylusReportDataCache.Azimuth = 0
-		stylusReportDataCache.Timestamp = 0
+		fullData := IptsStylusData{
+			Mode:      uint16(data.Mode),
+			X:         data.X,
+			Y:         data.Y,
+			Pressure:  data.Pressure * 4,
+			Altitude:  0,
+			Azimuth:   0,
+			Timestamp: 0,
+		}
 
-		err = IptsStylusHandleData(ipts, &stylusReportDataCache)
+		err = IptsStylusHandleData(ipts, fullData)
 		if err != nil {
 			return err
 		}
@@ -258,32 +206,30 @@ func IptsStylusHandleReportNoTilt(ipts *IptsContext, buffer *bytes.Reader) error
 	return nil
 }
 
-func IptsStylusHandleInput(ipts *IptsContext, buffer *bytes.Reader, frame *IptsPayloadFrame) error {
+func IptsStylusHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 	size := uint32(0)
 
 	for size < frame.Size {
-		report := &reportCache
-
-		err := IptsUtilsRead(buffer, report)
+		report, err := ipts.Protocol.ReadReport()
 		if err != nil {
 			return err
 		}
 
-		size += uint32(report.Size) + uint32(unsafe.Sizeof(*report))
+		size += uint32(report.Size) + uint32(unsafe.Sizeof(report))
 
 		switch report.Type {
 		case IPTS_REPORT_TYPE_STYLUS_NO_TILT:
-			err = IptsStylusHandleReportNoTilt(ipts, buffer)
+			err = IptsStylusHandleReportNoTilt(ipts)
 			break
 		case IPTS_REPORT_TYPE_STYLUS_TILT:
-			err = IptsStylusHandleReportTilt(ipts, buffer)
+			err = IptsStylusHandleReportTilt(ipts)
 			break
 		case IPTS_REPORT_TYPE_STYLUS_TILT_SERIAL:
-			err = IptsStylusHandleReportSerial(ipts, buffer)
+			err = IptsStylusHandleReportSerial(ipts)
 			break
 		default:
 			// ignored
-			err = IptsUtilsSkip(buffer, uint32(report.Size))
+			err = ipts.Protocol.Skip(uint32(report.Size))
 			break
 		}
 

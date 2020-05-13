@@ -1,42 +1,21 @@
 package main
 
 import (
-	"bytes"
+	. "github.com/linux-surface/iptsd/protocol"
 )
 
-const (
-	IPTS_DATA_TYPE_PAYLOAD      = 0
-	IPTS_DATA_TYPE_ERROR        = 1
-	IPTS_DATA_TYPE_VENDOR_DATA  = 2
-	IPTS_DATA_TYPE_HID_REPORT   = 3
-	IPTS_DATA_TYPE_GET_FEATURES = 4
-)
-
-type IptsData struct {
-	Type     uint32
-	Size     uint32
-	Buffer   uint32
-	Reserved [52]uint8
-}
-
-var (
-	headerCache IptsData
-)
-
-func IptsDataHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
-	header := &headerCache
-
-	err := IptsUtilsRead(buffer, header)
+func IptsDataHandleInput(ipts *IptsContext) error {
+	header, err := ipts.Protocol.ReadData()
 	if err != nil {
 		return err
 	}
 
 	switch header.Type {
 	case IPTS_DATA_TYPE_PAYLOAD:
-		err = IptsPayloadHandleInput(ipts, buffer)
+		err = IptsPayloadHandleInput(ipts)
 		break
 	case IPTS_DATA_TYPE_HID_REPORT:
-		err = IptsHidHandleInput(ipts, buffer)
+		err = IptsHidHandleInput(ipts)
 		break
 	}
 

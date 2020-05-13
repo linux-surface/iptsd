@@ -1,77 +1,66 @@
 package main
 
 import (
-	"bytes"
 	"unsafe"
+
+	. "github.com/linux-surface/iptsd/protocol"
 )
 
 type IptsTouchHeatmap struct {
 	Height  uint8
 	Width   uint8
 	Size    uint16
-	Heatmap *[]byte
+	Heatmap []byte
 }
 
 var (
 	heatmapCache       IptsTouchHeatmap
-	heatmapBufferCache map[uint16]*[]byte = make(map[uint16]*[]byte)
+	heatmapBufferCache map[uint16][]byte = make(map[uint16][]byte)
 )
 
-func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap *IptsTouchHeatmap) error {
+func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap IptsTouchHeatmap) error {
 	return nil
 }
 
-func IptsTouchParseHeatmapDim(buffer *bytes.Reader, heatmap *IptsTouchHeatmap) error {
-	err := IptsUtilsRead(buffer, &heatmap.Height)
-	if err != nil {
-		return err
-	}
-
-	err = IptsUtilsRead(buffer, &heatmap.Width)
-	if err != nil {
-		return err
-	}
-
-	err = IptsUtilsSkip(buffer, uint32(6))
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func IptsTouchHandleInput(ipts *IptsContext, buffer *bytes.Reader, frame *IptsPayloadFrame) error {
+func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 	size := uint32(0)
-	heatmap := &heatmapCache
+	heatmap := IptsTouchHeatmap{}
 
 	for size < frame.Size {
-		report := &reportCache
-
-		err := IptsUtilsRead(buffer, report)
+		report, err := ipts.Protocol.ReadReport()
 		if err != nil {
 			return err
 		}
 
-		size += uint32(report.Size) + uint32(unsafe.Sizeof(*report))
+		size += uint32(report.Size) + uint32(unsafe.Sizeof(report))
 
 		switch report.Type {
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP_DIM:
-			err = IptsTouchParseHeatmapDim(buffer, heatmap)
+			heatmap.Height, err = ipts.Protocol.ReadByte()
+			if err != nil {
+				break
+			}
+
+			heatmap.Width, err = ipts.Protocol.ReadByte()
+			if err != nil {
+				break
+			}
+
+			err = ipts.Protocol.Skip(6)
 			break
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP:
 			heatmap.Size = report.Size
 			hmb, ok := heatmapBufferCache[heatmap.Size]
 			if !ok {
-				newBuf := make([]byte, heatmap.Size)
-				hmb = &newBuf
+				hmb = make([]byte, heatmap.Size)
 				heatmapBufferCache[heatmap.Size] = hmb
 			}
 			heatmap.Heatmap = hmb
-			err = IptsUtilsRead(buffer, hmb)
+			err = ipts.Protocol.Read(hmb)
 			break
 		default:
 			// ignored
-			err = IptsUtilsSkip(buffer, uint32(report.Size))
+			err = ipts.Protocol.Skip(uint32(report.Size))
 			break
 		}
 

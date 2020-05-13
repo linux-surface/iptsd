@@ -1,4 +1,4 @@
-module github.com/StollD/iptsd
+module github.com/linux-surface/iptsd
 
 go 1.14
 

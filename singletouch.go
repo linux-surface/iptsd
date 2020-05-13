@@ -1,31 +1,16 @@
 package main
 
-import (
-	"bytes"
-)
-
-type IptsSingletouchReport struct {
-	Touch uint8
-	X     uint16
-	Y     uint16
-}
-
-var (
-	singletouchReportCache IptsSingletouchReport
-)
-
-func IptsSingletouchHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
+func IptsSingletouchHandleInput(ipts *IptsContext) error {
 	singletouch := ipts.Devices.Singletouch
-	report := &singletouchReportCache
 
-	err := IptsUtilsRead(buffer, report)
+	data, err := ipts.Protocol.ReadSingletouchData()
 	if err != nil {
 		return err
 	}
 
-	singletouch.Emit(EV_KEY, BTN_TOUCH, int32(report.Touch))
-	singletouch.Emit(EV_ABS, ABS_X, int32(report.X))
-	singletouch.Emit(EV_ABS, ABS_Y, int32(report.Y))
+	singletouch.Emit(EV_KEY, BTN_TOUCH, int32(data.Touch))
+	singletouch.Emit(EV_ABS, ABS_X, int32(data.X))
+	singletouch.Emit(EV_ABS, ABS_Y, int32(data.Y))
 
 	err = singletouch.Emit(EV_SYN, SYN_REPORT, 0)
 	if err != nil {

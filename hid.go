@@ -1,16 +1,12 @@
 package main
 
-import (
-	"bytes"
-)
-
 /*
  * IPTS on surface gen7 appears to make heavy use of HID reports, unlike
  * previous generations. This file can be used to implement handling for them
  * in the future, seperated from the actual singletouch implementation.
  */
-func IptsHidHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
-	id, err := buffer.ReadByte()
+func IptsHidHandleInput(ipts *IptsContext) error {
+	id, err := ipts.Protocol.ReadByte()
 	if err != nil {
 		return err
 	}
@@ -22,7 +18,7 @@ func IptsHidHandleInput(ipts *IptsContext, buffer *bytes.Reader) error {
 		return nil
 	}
 
-	err = IptsSingletouchHandleInput(ipts, buffer)
+	err = IptsSingletouchHandleInput(ipts)
 	if err != nil {
 		return err
 	}
