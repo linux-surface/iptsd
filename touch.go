@@ -3,28 +3,40 @@ package main
 import (
 	"unsafe"
 
+	. "github.com/linux-surface/iptsd/processing"
 	. "github.com/linux-surface/iptsd/protocol"
 )
 
-type IptsTouchHeatmap struct {
-	Height  uint8
-	Width   uint8
-	Size    uint16
-	Heatmap []byte
-}
-
 var (
-	heatmapCache       IptsTouchHeatmap
 	heatmapBufferCache map[uint16][]byte = make(map[uint16][]byte)
+	points             []ContactPoint    = make([]ContactPoint, 10)
 )
 
-func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap IptsTouchHeatmap) error {
+func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap Heatmap) error {
+	touch := ipts.Devices.Singletouch
+	count := heatmap.ContactPoints(points)
+
+	if count > 0 {
+		p := heatmap.GetCoords(points[0])
+
+		touch.Emit(EV_KEY, BTN_TOUCH, 1)
+		touch.Emit(EV_ABS, ABS_X, int32(p.X))
+		touch.Emit(EV_ABS, ABS_Y, int32(p.Y))
+	} else {
+		touch.Emit(EV_KEY, BTN_TOUCH, 0)
+	}
+
+	err := touch.Emit(EV_SYN, SYN_REPORT, 0)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 	size := uint32(0)
-	heatmap := IptsTouchHeatmap{}
+	hm := Heatmap{}
 
 	for size < frame.Size {
 		report, err := ipts.Protocol.ReadReport()
@@ -36,26 +48,28 @@ func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 
 		switch report.Type {
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP_DIM:
-			heatmap.Height, err = ipts.Protocol.ReadByte()
+			height, err := ipts.Protocol.ReadByte()
 			if err != nil {
 				break
 			}
 
-			heatmap.Width, err = ipts.Protocol.ReadByte()
+			width, err := ipts.Protocol.ReadByte()
 			if err != nil {
 				break
 			}
+
+			hm.Height = int(height)
+			hm.Width = int(width)
 
 			err = ipts.Protocol.Skip(6)
 			break
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP:
-			heatmap.Size = report.Size
-			hmb, ok := heatmapBufferCache[heatmap.Size]
+			hmb, ok := heatmapBufferCache[report.Size]
 			if !ok {
-				hmb = make([]byte, heatmap.Size)
-				heatmapBufferCache[heatmap.Size] = hmb
+				hmb = make([]byte, report.Size)
+				heatmapBufferCache[report.Size] = hmb
 			}
-			heatmap.Heatmap = hmb
+			hm.Data = hmb
 			err = ipts.Protocol.Read(hmb)
 			break
 		default:
@@ -69,16 +83,19 @@ func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 		}
 	}
 
-	if heatmap.Size == 0 {
+	if len(hm.Data) == 0 {
 		return nil
 	}
 
-	mapsize := uint16(heatmap.Width) * uint16(heatmap.Height)
-	if heatmap.Size != mapsize {
+	if len(hm.Data) != hm.Width*hm.Height {
 		return nil
 	}
 
-	err := IptsTouchHandleHeatmap(ipts, heatmap)
+	for i := 0; i < len(hm.Data); i++ {
+		hm.Data[i] = 255 - hm.Data[i]
+	}
+
+	err := IptsTouchHandleHeatmap(ipts, hm)
 	if err != nil {
 		return err
 	}
