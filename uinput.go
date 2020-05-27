@@ -46,6 +46,11 @@ var (
 	ABS_TILT_Y   = uint16(C.ABS_TILT_Y)
 	ABS_PRESSURE = uint16(C.ABS_PRESSURE)
 	ABS_MISC     = uint16(C.ABS_MISC)
+
+	ABS_MT_SLOT        = uint16(C.ABS_MT_SLOT)
+	ABS_MT_TRACKING_ID = uint16(C.ABS_MT_TRACKING_ID)
+	ABS_MT_POSITION_X  = uint16(C.ABS_MT_POSITION_X)
+	ABS_MT_POSITION_Y  = uint16(C.ABS_MT_POSITION_Y)
 )
 
 type UinputDevice struct {

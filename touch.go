@@ -13,17 +13,21 @@ var (
 )
 
 func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap Heatmap) error {
-	touch := ipts.Devices.Singletouch
+	touch := ipts.Devices.Touch
 	count := heatmap.ContactPoints(points)
 
-	if count > 0 {
-		p := heatmap.GetCoords(points[0])
+	for i := 0; i < count; i++ {
+		p := heatmap.GetCoords(points[i])
 
-		touch.Emit(EV_KEY, BTN_TOUCH, 1)
-		touch.Emit(EV_ABS, ABS_X, int32(p.X))
-		touch.Emit(EV_ABS, ABS_Y, int32(p.Y))
-	} else {
-		touch.Emit(EV_KEY, BTN_TOUCH, 0)
+		touch.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
+		touch.Emit(EV_ABS, ABS_MT_TRACKING_ID, int32(i))
+		touch.Emit(EV_ABS, ABS_MT_POSITION_X, int32(p.X))
+		touch.Emit(EV_ABS, ABS_MT_POSITION_Y, int32(p.Y))
+	}
+
+	for i := count; i < len(points); i++ {
+		touch.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
+		touch.Emit(EV_ABS, ABS_MT_TRACKING_ID, -1)
 	}
 
 	err := touch.Emit(EV_SYN, SYN_REPORT, 0)

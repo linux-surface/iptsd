@@ -7,6 +7,7 @@ type IptsStylusDevice struct {
 
 type IptsDevices struct {
 	Singletouch *UinputDevice
+	Touch       *UinputDevice
 
 	ActiveStylus *IptsStylusDevice
 	Styli        []*IptsStylusDevice
@@ -78,6 +79,50 @@ func IptsDevicesCreateStylus(info *IptsDeviceInfo) (*UinputDevice, error) {
 	return dev, nil
 }
 
+func IptsDevicesCreateTouch(info *IptsDeviceInfo) (*UinputDevice, error) {
+	dev := &UinputDevice{
+		Name:    "IPTS Touch",
+		Vendor:  info.Vendor,
+		Product: info.Device,
+		Version: uint16(info.FwRevision),
+	}
+
+	err := dev.Open()
+	if err != nil {
+		return nil, err
+	}
+
+	dev.SetEvbit(EV_ABS)
+	dev.SetPropbit(INPUT_PROP_DIRECT)
+
+	dev.SetAbsInfo(ABS_MT_SLOT, UinputAbsInfo{
+		Minimum: 0,
+		Maximum: 10,
+	})
+
+	dev.SetAbsInfo(ABS_MT_TRACKING_ID, UinputAbsInfo{
+		Minimum: 0,
+		Maximum: 10,
+	})
+
+	dev.SetAbsInfo(ABS_MT_POSITION_X, UinputAbsInfo{
+		Minimum: 0,
+		Maximum: 32767,
+	})
+
+	dev.SetAbsInfo(ABS_MT_POSITION_Y, UinputAbsInfo{
+		Minimum: 0,
+		Maximum: 32767,
+	})
+
+	err = dev.Create()
+	if err != nil {
+		return nil, err
+	}
+
+	return dev, nil
+}
+
 func IptsDevicesCreateSingletouch(info *IptsDeviceInfo) (*UinputDevice, error) {
 	dev := &UinputDevice{
 		Name:    "IPTS Singletouch",
@@ -138,7 +183,13 @@ func (devices *IptsDevices) Create(info *IptsDeviceInfo) error {
 		return err
 	}
 
+	touch, err := IptsDevicesCreateTouch(info)
+	if err != nil {
+		return err
+	}
+
 	devices.Singletouch = singletouch
+	devices.Touch = touch
 	devices.AddStylus(info, uint32(0))
 
 	return nil
