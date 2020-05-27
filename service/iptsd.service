@@ -1,0 +1,12 @@
+[Unit]
+Description=Intel Precise Touch & Stylus Daemon
+Documentation=https://github.com/linux-surface/iptsd
+After=dev-ipts.device
+Wants=dev-ipts.device
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/iptsd
+
+[Install]
+WantedBy=multi-user.target
