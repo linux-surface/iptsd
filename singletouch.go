@@ -1,18 +1,24 @@
 package main
 
 func IptsSingletouchHandleInput(ipts *IptsContext) error {
-	singletouch := ipts.Devices.Singletouch
+	touch := ipts.Devices.Touch
 
 	data, err := ipts.Protocol.ReadSingletouchData()
 	if err != nil {
 		return err
 	}
 
-	singletouch.Emit(EV_KEY, BTN_TOUCH, int32(data.Touch))
-	singletouch.Emit(EV_ABS, ABS_X, int32(data.X))
-	singletouch.Emit(EV_ABS, ABS_Y, int32(data.Y))
+	touch.Emit(EV_ABS, ABS_MT_SLOT, 0)
 
-	err = singletouch.Emit(EV_SYN, SYN_REPORT, 0)
+	if data.Touch > 0 {
+		touch.Emit(EV_ABS, ABS_MT_TRACKING_ID, 0)
+		touch.Emit(EV_ABS, ABS_MT_POSITION_X, int32(data.X))
+		touch.Emit(EV_ABS, ABS_MT_POSITION_Y, int32(data.Y))
+	} else {
+		touch.Emit(EV_ABS, ABS_MT_TRACKING_ID, -1)
+	}
+
+	err = touch.Emit(EV_SYN, SYN_REPORT, 0)
 	if err != nil {
 		return err
 	}

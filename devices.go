@@ -6,8 +6,7 @@ type IptsStylusDevice struct {
 }
 
 type IptsDevices struct {
-	Singletouch *UinputDevice
-	Touch       *UinputDevice
+	Touch *UinputDevice
 
 	ActiveStylus *IptsStylusDevice
 	Styli        []*IptsStylusDevice
@@ -123,45 +122,6 @@ func IptsDevicesCreateTouch(info *IptsDeviceInfo) (*UinputDevice, error) {
 	return dev, nil
 }
 
-func IptsDevicesCreateSingletouch(info *IptsDeviceInfo) (*UinputDevice, error) {
-	dev := &UinputDevice{
-		Name:    "IPTS Singletouch",
-		Vendor:  info.Vendor,
-		Product: info.Product,
-		Version: uint16(info.Version),
-	}
-
-	err := dev.Open()
-	if err != nil {
-		return nil, err
-	}
-
-	dev.SetEvbit(EV_ABS)
-	dev.SetEvbit(EV_KEY)
-
-	dev.SetPropbit(INPUT_PROP_DIRECT)
-	dev.SetKeybit(BTN_TOUCH)
-
-	dev.SetAbsInfo(ABS_X, UinputAbsInfo{
-		Minimum:    0,
-		Maximum:    32767,
-		Resolution: 112,
-	})
-
-	dev.SetAbsInfo(ABS_Y, UinputAbsInfo{
-		Minimum:    0,
-		Maximum:    32767,
-		Resolution: 199,
-	})
-
-	err = dev.Create()
-	if err != nil {
-		return nil, err
-	}
-
-	return dev, nil
-}
-
 func (devices *IptsDevices) AddStylus(info *IptsDeviceInfo, serial uint32) error {
 	stylus, err := IptsDevicesCreateStylus(info)
 	if err != nil {
@@ -178,17 +138,11 @@ func (devices *IptsDevices) AddStylus(info *IptsDeviceInfo, serial uint32) error
 }
 
 func (devices *IptsDevices) Create(info *IptsDeviceInfo) error {
-	singletouch, err := IptsDevicesCreateSingletouch(info)
-	if err != nil {
-		return err
-	}
-
 	touch, err := IptsDevicesCreateTouch(info)
 	if err != nil {
 		return err
 	}
 
-	devices.Singletouch = singletouch
 	devices.Touch = touch
 	devices.AddStylus(info, uint32(0))
 
@@ -196,7 +150,7 @@ func (devices *IptsDevices) Create(info *IptsDeviceInfo) error {
 }
 
 func (devices *IptsDevices) Destroy() error {
-	err := devices.Singletouch.Destroy()
+	err := devices.Touch.Destroy()
 	if err != nil {
 		return err
 	}
