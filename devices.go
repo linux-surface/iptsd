@@ -97,12 +97,12 @@ func IptsDevicesCreateTouch(info *IptsDeviceInfo) (*UinputDevice, error) {
 
 	dev.SetAbsInfo(ABS_MT_SLOT, UinputAbsInfo{
 		Minimum: 0,
-		Maximum: 10,
+		Maximum: int32(info.MaxTouchPoints),
 	})
 
 	dev.SetAbsInfo(ABS_MT_TRACKING_ID, UinputAbsInfo{
 		Minimum: 0,
-		Maximum: 10,
+		Maximum: int32(info.MaxTouchPoints),
 	})
 
 	dev.SetAbsInfo(ABS_MT_POSITION_X, UinputAbsInfo{

@@ -8,12 +8,17 @@ import (
 )
 
 var (
-	heatmapBufferCache map[uint16][]byte = make(map[uint16][]byte)
-	points             []ContactPoint    = make([]ContactPoint, 10)
+	heatmapCache map[uint16][]byte = make(map[uint16][]byte)
+	points       []ContactPoint
 )
 
 func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap Heatmap) error {
 	touch := ipts.Devices.Touch
+
+	if points == nil {
+		points = make([]ContactPoint, ipts.DeviceInfo.MaxTouchPoints)
+	}
+
 	count := heatmap.ContactPoints(points)
 
 	for i := 0; i < count; i++ {
@@ -68,10 +73,10 @@ func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 			err = ipts.Protocol.Skip(6)
 			break
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP:
-			hmb, ok := heatmapBufferCache[report.Size]
+			hmb, ok := heatmapCache[report.Size]
 			if !ok {
 				hmb = make([]byte, report.Size)
-				heatmapBufferCache[report.Size] = hmb
+				heatmapCache[report.Size] = hmb
 			}
 			hm.Data = hmb
 			err = ipts.Protocol.Read(hmb)
