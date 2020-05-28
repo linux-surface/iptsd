@@ -17,8 +17,8 @@ func IptsDevicesCreateStylus(info *IptsDeviceInfo) (*UinputDevice, error) {
 	dev := &UinputDevice{
 		Name:    "IPTS Stylus",
 		Vendor:  info.Vendor,
-		Product: info.Device,
-		Version: uint16(info.FwRevision),
+		Product: info.Product,
+		Version: uint16(info.Version),
 	}
 
 	err := dev.Open()
@@ -83,8 +83,8 @@ func IptsDevicesCreateTouch(info *IptsDeviceInfo) (*UinputDevice, error) {
 	dev := &UinputDevice{
 		Name:    "IPTS Touch",
 		Vendor:  info.Vendor,
-		Product: info.Device,
-		Version: uint16(info.FwRevision),
+		Product: info.Product,
+		Version: uint16(info.Version),
 	}
 
 	err := dev.Open()
@@ -127,8 +127,8 @@ func IptsDevicesCreateSingletouch(info *IptsDeviceInfo) (*UinputDevice, error) {
 	dev := &UinputDevice{
 		Name:    "IPTS Singletouch",
 		Vendor:  info.Vendor,
-		Product: info.Device,
-		Version: uint16(info.FwRevision),
+		Product: info.Product,
+		Version: uint16(info.Version),
 	}
 
 	err := dev.Open()

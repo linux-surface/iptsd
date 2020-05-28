@@ -33,7 +33,7 @@ func main() {
 	ipts.DeviceInfo = info
 
 	fmt.Printf("Connected to device %04x:%04x\n",
-		ipts.DeviceInfo.Vendor, ipts.DeviceInfo.Device)
+		ipts.DeviceInfo.Vendor, ipts.DeviceInfo.Product)
 
 	ipts.Devices = &IptsDevices{}
 
@@ -43,7 +43,7 @@ func main() {
 		return
 	}
 
-	buffer := make([]byte, ipts.DeviceInfo.DataSize)
+	buffer := make([]byte, ipts.DeviceInfo.BufferSize)
 	ipts.Protocol.Create(buffer)
 
 	for {
