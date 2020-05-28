@@ -1,6 +1,5 @@
 package main
 
-// #define type __type
 // #include <linux/uinput.h>
 // #include <stdlib.h>
 // #include <string.h>
