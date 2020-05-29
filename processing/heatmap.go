@@ -106,8 +106,8 @@ func (hm Heatmap) Coords(points []TouchPoint, count int) {
 		y = float32(hm.Height) - (y + 1)
 
 		// TODO: Don't use singletouch values for screensize?
-		x = x / float32(hm.Width) * 32767
-		y = y / float32(hm.Height) * 32767
+		x = x / float32(hm.Width-1) * 32767
+		y = y / float32(hm.Height-1) * 32767
 
 		points[i].X = int(x)
 		points[i].Y = int(y)
