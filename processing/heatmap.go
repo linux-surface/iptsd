@@ -3,7 +3,11 @@ package processing
 type Heatmap struct {
 	Width  int
 	Height int
-	Data   []byte
+
+	InvertX bool
+	InvertY bool
+
+	Data []byte
 }
 
 type TouchPoint struct {
@@ -102,8 +106,13 @@ func (hm Heatmap) Coords(points []TouchPoint, count int) {
 		y += float32(hm.Value(points[i].X, points[i].Y+1)) / val
 		y -= float32(hm.Value(points[i].X, points[i].Y-1)) / val
 
-		// TODO: SB2 specific quirk, create generic implementation
-		y = float32(hm.Height) - (y + 1)
+		if hm.InvertX {
+			x = float32(hm.Width-1) - x
+		}
+
+		if hm.InvertY {
+			y = float32(hm.Height-1) - y
+		}
 
 		// TODO: Don't use singletouch values for screensize?
 		x = x / float32(hm.Width-1) * 32767

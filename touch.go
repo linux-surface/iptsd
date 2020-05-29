@@ -42,6 +42,9 @@ func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 	size := uint32(0)
 	hm := Heatmap{}
 
+	hm.InvertX = ipts.Quirks.Has(IPTS_QUIRKS_HEATMAP_INVERT_X)
+	hm.InvertY = ipts.Quirks.Has(IPTS_QUIRKS_HEATMAP_INVERT_Y)
+
 	for size < frame.Size {
 		report, err := ipts.Protocol.ReadReport()
 		if err != nil {

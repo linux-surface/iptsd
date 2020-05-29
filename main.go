@@ -11,12 +11,14 @@ type IptsContext struct {
 	DeviceInfo *IptsDeviceInfo
 	Devices    *IptsDevices
 	Protocol   *IptsProtocol
+	Quirks     *IptsQuirks
 }
 
 func main() {
 	ipts := &IptsContext{}
 	ipts.Control = &IptsControl{}
 	ipts.Protocol = &IptsProtocol{}
+	ipts.Quirks = &IptsQuirks{}
 
 	err := ipts.Control.Start()
 	if err != nil {
@@ -42,6 +44,8 @@ func main() {
 		fmt.Printf("%+v\n", err)
 		return
 	}
+
+	ipts.Quirks.Init(ipts.DeviceInfo)
 
 	buffer := make([]byte, ipts.DeviceInfo.BufferSize)
 	ipts.Protocol.Create(buffer)
