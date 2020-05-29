@@ -95,7 +95,8 @@ func (ipts *IptsControl) Restart() error {
 func (ipts *IptsControl) DeviceInfo() (*IptsDeviceInfo, error) {
 	info := &IptsDeviceInfo{}
 
-	err := ioctl(ipts.file, IPTS_UAPI_INFO, uintptr(unsafe.Pointer(info)))
+	ptr := unsafe.Pointer(info)
+	err := ioctl(ipts.file, IPTS_UAPI_INFO, uintptr(ptr))
 	if err != nil {
 		return nil, err
 	}

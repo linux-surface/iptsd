@@ -95,7 +95,8 @@ func (dev *UinputDevice) Create() error {
 	C.strcpy(&setup.name[0], name)
 	C.free(unsafe.Pointer(name))
 
-	err := ioctl(dev.file, UI_DEV_SETUP, uintptr(unsafe.Pointer(&setup)))
+	ptr := unsafe.Pointer(&setup)
+	err := ioctl(dev.file, UI_DEV_SETUP, uintptr(ptr))
 	if err != nil {
 		return err
 	}
@@ -159,7 +160,8 @@ func (dev *UinputDevice) SetAbsInfo(axis uint16, info UinputAbsInfo) error {
 	setup.absinfo.flat = C.int(info.Flat)
 	setup.absinfo.resolution = C.int(info.Resolution)
 
-	err := ioctl(dev.file, UI_ABS_SETUP, uintptr(unsafe.Pointer(&setup)))
+	ptr := unsafe.Pointer(&setup)
+	err := ioctl(dev.file, UI_ABS_SETUP, uintptr(ptr))
 	if err != nil {
 		return err
 	}
