@@ -14,6 +14,25 @@ func Max(x int, y int) int {
 	return y
 }
 
+func BubbleSort(v []int, less func(i, j int) bool) {
+	swapped := true
+
+	for n := len(v); swapped; n-- {
+		swapped = false
+
+		for i := 1; i < n; i++ {
+			if !less(i, i-1) {
+				continue
+			}
+
+			tmp := v[i-1]
+			v[i-1] = v[i]
+			v[i] = tmp
+			swapped = true
+		}
+	}
+}
+
 /*
  * This mimicks the behaviour of pythons (a1, a2, a3) >= (b1, b2, b3)
  */

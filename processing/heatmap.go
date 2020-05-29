@@ -6,6 +6,12 @@ type Heatmap struct {
 	Data   []byte
 }
 
+type TouchPoint struct {
+	X     int
+	Y     int
+	Index int
+}
+
 func (hm Heatmap) Average() float32 {
 	value := float32(0)
 
@@ -26,7 +32,7 @@ func (hm Heatmap) Value(x int, y int) byte {
 	return hm.Data[pos]
 }
 
-func (hm Heatmap) ContactPoints(points []ContactPoint) int {
+func (hm Heatmap) ContactPoints(points []TouchPoint) int {
 	threshold := hm.Average() + 1
 	p := 0
 
@@ -71,7 +77,7 @@ func (hm Heatmap) ContactPoints(points []ContactPoint) int {
 				continue
 			}
 
-			points[p] = ContactPoint{X: x, Y: y}
+			points[p] = TouchPoint{X: x, Y: y, Index: -1}
 			p++
 
 			if p == len(points) {
@@ -81,4 +87,42 @@ func (hm Heatmap) ContactPoints(points []ContactPoint) int {
 	}
 
 	return p
+}
+
+func (hm Heatmap) Coords(points []TouchPoint, count int) {
+	for i := 0; i < count; i++ {
+		x := float32(points[i].X)
+		y := float32(points[i].Y)
+
+		val := float32(hm.Value(points[i].X, points[i].Y))
+
+		x += float32(hm.Value(points[i].X+1, points[i].Y)) / val
+		x -= float32(hm.Value(points[i].X-1, points[i].Y)) / val
+
+		y += float32(hm.Value(points[i].X, points[i].Y+1)) / val
+		y -= float32(hm.Value(points[i].X, points[i].Y-1)) / val
+
+		// TODO: SB2 specific quirk, create generic implementation
+		y = float32(hm.Height) - (y + 1)
+
+		// TODO: Don't use singletouch values for screensize?
+		x = x / float32(hm.Width) * 32767
+		y = y / float32(hm.Height) * 32767
+
+		points[i].X = int(x)
+		points[i].Y = int(y)
+	}
+}
+
+func (hm Heatmap) GetInputs(points []TouchPoint) {
+	count := hm.ContactPoints(points)
+
+	hm.Coords(points, count)
+	TrackFingers(points, count)
+
+	for i := count; i < len(points); i++ {
+		points[i].X = 0
+		points[i].Y = 0
+		points[i].Index = -1
+	}
 }

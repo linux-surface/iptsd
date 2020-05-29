@@ -9,30 +9,25 @@ import (
 
 var (
 	heatmapCache map[uint16][]byte = make(map[uint16][]byte)
-	points       []ContactPoint
+	points       []TouchPoint
 )
 
 func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap Heatmap) error {
 	touch := ipts.Devices.Touch
 
 	if points == nil {
-		points = make([]ContactPoint, ipts.DeviceInfo.MaxTouchPoints)
+		points = make([]TouchPoint, ipts.DeviceInfo.MaxTouchPoints)
 	}
 
-	count := heatmap.ContactPoints(points)
+	heatmap.GetInputs(points)
 
-	for i := 0; i < count; i++ {
-		p := heatmap.GetCoords(points[i])
+	for i := 0; i < len(points); i++ {
+		p := points[i]
 
 		touch.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
-		touch.Emit(EV_ABS, ABS_MT_TRACKING_ID, int32(i))
+		touch.Emit(EV_ABS, ABS_MT_TRACKING_ID, int32(p.Index))
 		touch.Emit(EV_ABS, ABS_MT_POSITION_X, int32(p.X))
 		touch.Emit(EV_ABS, ABS_MT_POSITION_Y, int32(p.Y))
-	}
-
-	for i := count; i < len(points); i++ {
-		touch.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
-		touch.Emit(EV_ABS, ABS_MT_TRACKING_ID, -1)
 	}
 
 	err := touch.Emit(EV_SYN, SYN_REPORT, 0)
