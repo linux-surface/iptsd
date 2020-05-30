@@ -39,4 +39,8 @@ func (quirks *IptsQuirks) Init(info *IptsDeviceInfo) {
 	// Surface Pro 5
 	quirks.AddForModel(info, 0x1B96, 0x001F, IPTS_QUIRKS_HEATMAP_INVERT_X)
 	quirks.AddForModel(info, 0x1B96, 0x001F, IPTS_QUIRKS_HEATMAP_INVERT_Y)
+
+	// Surface Pro 6
+	quirks.AddForModel(info, 0x045E, 0x001F, IPTS_QUIRKS_HEATMAP_INVERT_X)
+	quirks.AddForModel(info, 0x045E, 0x001F, IPTS_QUIRKS_HEATMAP_INVERT_Y)
 }
