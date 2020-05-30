@@ -9,7 +9,7 @@ outside of the ME and then relayed into the HID / input subsystem of the OS.
 This daemon relies on a kernel driver that can be found here: 
 https://github.com/linux-surface/intel-precise-touch/tree/feature/uapi
 
-The driver will establish and managed the connection to the IPTS hardware. It
+The driver will establish and manage the connection to the IPTS hardware. It
 will also set up an API that can be used by userspace to read the touch data
 from IPTS.
 
@@ -38,10 +38,15 @@ which are not allowed in the kernel.
  * HP Spectre 13 x2
    * Entirely untested
 
-**NOTE:** The multitouch code has only been tested on a Surface Book 2. It is
-very likely that it will need adjustments to run correctly on other devices.
-If you have a different device with IPTS and want to test it, feel free to
+**NOTE:** The multitouch code has not been tested on all devices. It is
+very likely that it will still need adjustments to run correctly on some
+devices. If you have a device with IPTS and want to test it, feel free to
 open an issue or join ##linux-surface on Freenode IRC and get in touch.
+
+Tested Devices:
+ * Surface Book 2
+ * Surface Pro 5
+ * Surface Pro 6
 
 ### Building
 You need to have a recent Go toolchain installed. It is developed with Go
