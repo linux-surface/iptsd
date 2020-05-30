@@ -21,17 +21,16 @@ which are not allowed in the kernel.
 ### What is working?
  * MS Surface Gen 4-6:
    * Stylus Input
-   * Multitouch Input (basic support)
+   * Multitouch Finger Input
  * MS Surface Gen 7:
-   * Singletouch Input
+   * Singletouch Finger Input
  * HP Spectre 13 x2 (only non-surface device to use IPTS)
    * Entirely untested
 
 ### What doesn't work?
  * MS Surface Gen 4-6:
    * Multitouch pressure / contact area calculation
-   * Finger tracking is very simplified and can glitch
-   * Singletouch Input (won't be supported)
+   * Finger tracking can glitch when pressing hard on the display
  * MS Surface Gen 7:
    * Multitouch Input
    * Stylus Input
