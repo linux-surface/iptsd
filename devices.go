@@ -1,12 +1,22 @@
 package main
 
+import (
+	. "github.com/linux-surface/iptsd/processing"
+)
+
 type IptsStylusDevice struct {
-	Serial uint32
-	Device *UinputDevice
+	Serial    uint32
+	Device    *UinputDevice
+	Processor *StylusProcessor
+}
+
+type IptsTouchDevice struct {
+	Device    *UinputDevice
+	Processor *TouchProcessor
 }
 
 type IptsDevices struct {
-	Touch *UinputDevice
+	Touch *IptsTouchDevice
 
 	ActiveStylus *IptsStylusDevice
 	Styli        []*IptsStylusDevice
@@ -106,12 +116,12 @@ func IptsDevicesCreateTouch(info *IptsDeviceInfo) (*UinputDevice, error) {
 
 	dev.SetAbsInfo(ABS_MT_POSITION_X, UinputAbsInfo{
 		Minimum: 0,
-		Maximum: 32767,
+		Maximum: 9600,
 	})
 
 	dev.SetAbsInfo(ABS_MT_POSITION_Y, UinputAbsInfo{
 		Minimum: 0,
-		Maximum: 32767,
+		Maximum: 7200,
 	})
 
 	err = dev.Create()
@@ -128,29 +138,43 @@ func (devices *IptsDevices) AddStylus(info *IptsDeviceInfo, serial uint32) error
 		return err
 	}
 
+	processor := &StylusProcessor{}
+	processor.Flush()
+
 	devices.ActiveStylus = &IptsStylusDevice{
-		Device: stylus,
-		Serial: serial,
+		Device:    stylus,
+		Serial:    serial,
+		Processor: processor,
 	}
 	devices.Styli = append(devices.Styli, devices.ActiveStylus)
 
 	return nil
 }
 
-func (devices *IptsDevices) Create(info *IptsDeviceInfo) error {
+func (devices *IptsDevices) Create(info *IptsDeviceInfo, quirks *IptsQuirks) error {
 	touch, err := IptsDevicesCreateTouch(info)
 	if err != nil {
 		return err
 	}
 
-	devices.Touch = touch
+	processor := &TouchProcessor{
+		InvertX:        quirks.Has(IPTS_QUIRKS_HEATMAP_INVERT_X),
+		InvertY:        quirks.Has(IPTS_QUIRKS_HEATMAP_INVERT_Y),
+		MaxTouchPoints: int(info.MaxTouchPoints),
+	}
+
+	devices.Touch = &IptsTouchDevice{
+		Device:    touch,
+		Processor: processor,
+	}
+
 	devices.AddStylus(info, uint32(0))
 
 	return nil
 }
 
 func (devices *IptsDevices) Destroy() error {
-	err := devices.Touch.Destroy()
+	err := devices.Touch.Device.Destroy()
 	if err != nil {
 		return err
 	}

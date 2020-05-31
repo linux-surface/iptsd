@@ -37,15 +37,15 @@ func main() {
 	fmt.Printf("Connected to device %04x:%04x\n",
 		ipts.DeviceInfo.Vendor, ipts.DeviceInfo.Product)
 
+	ipts.Quirks.Init(ipts.DeviceInfo)
+
 	ipts.Devices = &IptsDevices{}
 
-	err = ipts.Devices.Create(ipts.DeviceInfo)
+	err = ipts.Devices.Create(ipts.DeviceInfo, ipts.Quirks)
 	if err != nil {
 		fmt.Printf("%+v\n", err)
 		return
 	}
-
-	ipts.Quirks.Init(ipts.DeviceInfo)
 
 	buffer := make([]byte, ipts.DeviceInfo.BufferSize)
 	ipts.Protocol.Create(buffer)

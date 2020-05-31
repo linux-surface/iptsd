@@ -3,34 +3,28 @@ package main
 import (
 	"unsafe"
 
-	. "github.com/linux-surface/iptsd/processing"
+	. "github.com/linux-surface/iptsd/processing/heatmap"
 	. "github.com/linux-surface/iptsd/protocol"
 )
 
 var (
 	heatmapCache map[uint16][]byte = make(map[uint16][]byte)
-	points       []TouchPoint
 )
 
 func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap Heatmap) error {
 	touch := ipts.Devices.Touch
-
-	if points == nil {
-		points = make([]TouchPoint, ipts.DeviceInfo.MaxTouchPoints)
-	}
-
-	heatmap.GetInputs(points)
+	points := touch.Processor.Inputs(heatmap)
 
 	for i := 0; i < len(points); i++ {
 		p := points[i]
 
-		touch.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
-		touch.Emit(EV_ABS, ABS_MT_TRACKING_ID, int32(p.Index))
-		touch.Emit(EV_ABS, ABS_MT_POSITION_X, int32(p.X))
-		touch.Emit(EV_ABS, ABS_MT_POSITION_Y, int32(p.Y))
+		touch.Device.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
+		touch.Device.Emit(EV_ABS, ABS_MT_TRACKING_ID, int32(p.Index))
+		touch.Device.Emit(EV_ABS, ABS_MT_POSITION_X, int32(p.X))
+		touch.Device.Emit(EV_ABS, ABS_MT_POSITION_Y, int32(p.Y))
 	}
 
-	err := touch.Emit(EV_SYN, SYN_REPORT, 0)
+	err := touch.Device.Emit(EV_SYN, SYN_REPORT, 0)
 	if err != nil {
 		return err
 	}
@@ -41,9 +35,6 @@ func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap Heatmap) error {
 func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 	size := uint32(0)
 	hm := Heatmap{}
-
-	hm.InvertX = ipts.Quirks.Has(IPTS_QUIRKS_HEATMAP_INVERT_X)
-	hm.InvertY = ipts.Quirks.Has(IPTS_QUIRKS_HEATMAP_INVERT_Y)
 
 	for size < frame.Size {
 		report, err := ipts.Protocol.ReadReport()
@@ -96,10 +87,6 @@ func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 
 	if len(hm.Data) != hm.Width*hm.Height {
 		return nil
-	}
-
-	for i := 0; i < len(hm.Data); i++ {
-		hm.Data[i] = 255 - hm.Data[i]
 	}
 
 	err := IptsTouchHandleHeatmap(ipts, hm)

@@ -1,19 +1,13 @@
 package main
 
 import (
-	"math"
 	"unsafe"
 
 	. "github.com/linux-surface/iptsd/protocol"
 )
 
-var (
-	xCache []uint16
-	yCache []uint16
-)
-
 func IptsStylusHandleData(ipts *IptsContext, data IptsStylusData) error {
-	stylus := ipts.Devices.ActiveStylus.Device
+	stylus := ipts.Devices.ActiveStylus
 
 	prox := (data.Mode & IPTS_STYLUS_REPORT_MODE_PROX) >> 0
 	touch := (data.Mode & IPTS_STYLUS_REPORT_MODE_TOUCH) >> 1
@@ -23,66 +17,27 @@ func IptsStylusHandleData(ipts *IptsContext, data IptsStylusData) error {
 	btn_pen := prox * (1 - rubber)
 	btn_rubber := prox * rubber
 
-	tx := float64(0)
-	ty := float64(0)
+	sx, sy := stylus.Processor.Smooth(int(data.X), int(data.Y))
+	tx, ty := stylus.Processor.Tilt(int(data.Altitude), int(data.Azimuth))
 
-	if data.Altitude > 0 {
-		alt := float64(data.Altitude) / 18000 * math.Pi
-		azm := float64(data.Azimuth) / 18000 * math.Pi
-
-		sin_alt := math.Sin(alt)
-		sin_azm := math.Sin(azm)
-
-		cos_alt := math.Cos(alt)
-		cos_azm := math.Cos(azm)
-
-		atan_x := math.Atan2(cos_alt, sin_alt*cos_azm)
-		atan_y := math.Atan2(cos_alt, sin_alt*sin_azm)
-
-		tx = 9000 - (atan_x * 4500 / (math.Pi / 4))
-		ty = (atan_y * 4500 / (math.Pi / 4)) - 9000
+	if prox == 0 {
+		stylus.Processor.Flush()
 	}
 
-	if len(xCache) == 5 {
-		xCache[0] = xCache[1]
-		xCache[1] = xCache[2]
-		xCache[2] = xCache[3]
-		xCache[3] = xCache[4]
-		xCache[4] = data.X
+	stylus.Device.Emit(EV_KEY, BTN_TOUCH, int32(touch))
+	stylus.Device.Emit(EV_KEY, BTN_TOOL_PEN, int32(btn_pen))
+	stylus.Device.Emit(EV_KEY, BTN_TOOL_RUBBER, int32(btn_rubber))
+	stylus.Device.Emit(EV_KEY, BTN_STYLUS, int32(button))
 
-		yCache[0] = yCache[1]
-		yCache[1] = yCache[2]
-		yCache[2] = yCache[3]
-		yCache[3] = yCache[4]
-		yCache[4] = data.Y
-	} else {
-		xCache = append(xCache, data.X)
-		yCache = append(yCache, data.Y)
-	}
+	stylus.Device.Emit(EV_ABS, ABS_X, int32(sx))
+	stylus.Device.Emit(EV_ABS, ABS_Y, int32(sy))
+	stylus.Device.Emit(EV_ABS, ABS_PRESSURE, int32(data.Pressure))
+	stylus.Device.Emit(EV_ABS, ABS_MISC, int32(data.Timestamp))
 
-	x := uint16(0)
-	y := uint16(0)
-	for i := 0; i < len(xCache); i++ {
-		x = x + xCache[i]
-		y = y + yCache[i]
-	}
-	x = x / uint16(len(xCache))
-	y = y / uint16(len(yCache))
+	stylus.Device.Emit(EV_ABS, ABS_TILT_X, int32(tx))
+	stylus.Device.Emit(EV_ABS, ABS_TILT_Y, int32(ty))
 
-	stylus.Emit(EV_KEY, BTN_TOUCH, int32(touch))
-	stylus.Emit(EV_KEY, BTN_TOOL_PEN, int32(btn_pen))
-	stylus.Emit(EV_KEY, BTN_TOOL_RUBBER, int32(btn_rubber))
-	stylus.Emit(EV_KEY, BTN_STYLUS, int32(button))
-
-	stylus.Emit(EV_ABS, ABS_X, int32(x))
-	stylus.Emit(EV_ABS, ABS_Y, int32(y))
-	stylus.Emit(EV_ABS, ABS_PRESSURE, int32(data.Pressure))
-	stylus.Emit(EV_ABS, ABS_MISC, int32(data.Timestamp))
-
-	stylus.Emit(EV_ABS, ABS_TILT_X, int32(tx))
-	stylus.Emit(EV_ABS, ABS_TILT_Y, int32(ty))
-
-	err := stylus.Emit(EV_SYN, SYN_REPORT, 0)
+	err := stylus.Device.Emit(EV_SYN, SYN_REPORT, 0)
 	if err != nil {
 		return err
 	}
