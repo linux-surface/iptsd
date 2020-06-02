@@ -81,6 +81,14 @@ func (tp *TouchProcessor) Inputs(hm Heatmap) []TouchInput {
 		}
 	}
 
+	for i := count; i < tp.MaxTouchPoints; i++ {
+		tp.inputs[i] = TouchInput{
+			X:     0,
+			Y:     0,
+			Index: -1,
+		}
+	}
+
 	if tp.last == nil {
 		tp.last = make([]TouchInput, tp.MaxTouchPoints)
 		tp.distances = make([][]float64, tp.MaxTouchPoints)
@@ -97,14 +105,6 @@ func (tp *TouchProcessor) Inputs(hm Heatmap) []TouchInput {
 	}
 
 	tp.TrackFingers(count)
-
-	for i := count; i < tp.MaxTouchPoints; i++ {
-		tp.inputs[i] = TouchInput{
-			X:     0,
-			Y:     0,
-			Index: -1,
-		}
-	}
 
 	tp.Save()
 	return tp.inputs
