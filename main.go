@@ -11,14 +11,15 @@ type IptsContext struct {
 	DeviceInfo *IptsDeviceInfo
 	Devices    *IptsDevices
 	Protocol   *IptsProtocol
-	Quirks     *IptsQuirks
+	Config     *IptsConfig
 }
 
 func main() {
 	ipts := &IptsContext{}
 	ipts.Control = &IptsControl{}
 	ipts.Protocol = &IptsProtocol{}
-	ipts.Quirks = &IptsQuirks{}
+	ipts.Devices = &IptsDevices{}
+	ipts.Config = &IptsConfig{}
 
 	err := ipts.Control.Start()
 	if err != nil {
@@ -37,11 +38,13 @@ func main() {
 	fmt.Printf("Connected to device %04x:%04x\n",
 		ipts.DeviceInfo.Vendor, ipts.DeviceInfo.Product)
 
-	ipts.Quirks.Init(ipts.DeviceInfo)
+	err = ipts.Config.Load(info)
+	if err != nil {
+		fmt.Printf("%+v\n", err)
+		return
+	}
 
-	ipts.Devices = &IptsDevices{}
-
-	err = ipts.Devices.Create(ipts.DeviceInfo, ipts.Quirks)
+	err = ipts.Devices.Create(ipts)
 	if err != nil {
 		fmt.Printf("%+v\n", err)
 		return

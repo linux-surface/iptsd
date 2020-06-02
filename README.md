@@ -75,6 +75,7 @@ You need to run the steps from "Building" first.
 ```bash
 $ sudo cp iptsd /usr/bin/
 $ sudo cp service/iptsd.service /etc/systemd/system/
+$ sudo cp -r config/ /usr/share/ipts
 $ sudo systemctl enable --now iptsd
 ```
 

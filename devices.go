@@ -1,7 +1,10 @@
 package main
 
 import (
+	"math"
+
 	. "github.com/linux-surface/iptsd/processing"
+	"github.com/pkg/errors"
 )
 
 type IptsStylusDevice struct {
@@ -22,12 +25,17 @@ type IptsDevices struct {
 	Styli        []*IptsStylusDevice
 }
 
-func IptsDevicesCreateStylus(info *IptsDeviceInfo) (*UinputDevice, error) {
+func IptsDevicesGetRes(virt int, phys int) int32 {
+	res := float64(virt*10) / float64(phys)
+	return int32(math.Round(res))
+}
+
+func IptsDevicesCreateStylus(ipts *IptsContext) (*UinputDevice, error) {
 	dev := &UinputDevice{
 		Name:    "IPTS Stylus",
-		Vendor:  info.Vendor,
-		Product: info.Product,
-		Version: uint16(info.Version),
+		Vendor:  ipts.DeviceInfo.Vendor,
+		Product: ipts.DeviceInfo.Product,
+		Version: uint16(ipts.DeviceInfo.Version),
 	}
 
 	err := dev.Open()
@@ -49,13 +57,13 @@ func IptsDevicesCreateStylus(info *IptsDeviceInfo) (*UinputDevice, error) {
 	dev.SetAbsInfo(ABS_X, UinputAbsInfo{
 		Minimum:    0,
 		Maximum:    9600,
-		Resolution: 34,
+		Resolution: IptsDevicesGetRes(9600, ipts.Config.Width),
 	})
 
 	dev.SetAbsInfo(ABS_Y, UinputAbsInfo{
 		Minimum:    0,
 		Maximum:    7200,
-		Resolution: 38,
+		Resolution: IptsDevicesGetRes(7200, ipts.Config.Height),
 	})
 
 	dev.SetAbsInfo(ABS_PRESSURE, UinputAbsInfo{
@@ -88,12 +96,12 @@ func IptsDevicesCreateStylus(info *IptsDeviceInfo) (*UinputDevice, error) {
 	return dev, nil
 }
 
-func IptsDevicesCreateTouch(info *IptsDeviceInfo) (*UinputDevice, error) {
+func IptsDevicesCreateTouch(ipts *IptsContext) (*UinputDevice, error) {
 	dev := &UinputDevice{
 		Name:    "IPTS Touch",
-		Vendor:  info.Vendor,
-		Product: info.Product,
-		Version: uint16(info.Version),
+		Vendor:  ipts.DeviceInfo.Vendor,
+		Product: ipts.DeviceInfo.Product,
+		Version: uint16(ipts.DeviceInfo.Version),
 	}
 
 	err := dev.Open()
@@ -106,22 +114,24 @@ func IptsDevicesCreateTouch(info *IptsDeviceInfo) (*UinputDevice, error) {
 
 	dev.SetAbsInfo(ABS_MT_SLOT, UinputAbsInfo{
 		Minimum: 0,
-		Maximum: int32(info.MaxTouchPoints),
+		Maximum: int32(ipts.DeviceInfo.MaxTouchPoints),
 	})
 
 	dev.SetAbsInfo(ABS_MT_TRACKING_ID, UinputAbsInfo{
 		Minimum: 0,
-		Maximum: int32(info.MaxTouchPoints),
+		Maximum: int32(ipts.DeviceInfo.MaxTouchPoints),
 	})
 
 	dev.SetAbsInfo(ABS_MT_POSITION_X, UinputAbsInfo{
-		Minimum: 0,
-		Maximum: 9600,
+		Minimum:    0,
+		Maximum:    9600,
+		Resolution: IptsDevicesGetRes(9600, ipts.Config.Width),
 	})
 
 	dev.SetAbsInfo(ABS_MT_POSITION_Y, UinputAbsInfo{
-		Minimum: 0,
-		Maximum: 7200,
+		Minimum:    0,
+		Maximum:    7200,
+		Resolution: IptsDevicesGetRes(7200, ipts.Config.Height),
 	})
 
 	err = dev.Create()
@@ -132,8 +142,8 @@ func IptsDevicesCreateTouch(info *IptsDeviceInfo) (*UinputDevice, error) {
 	return dev, nil
 }
 
-func (devices *IptsDevices) AddStylus(info *IptsDeviceInfo, serial uint32) error {
-	stylus, err := IptsDevicesCreateStylus(info)
+func (devices *IptsDevices) AddStylus(ipts *IptsContext, serial uint32) error {
+	stylus, err := IptsDevicesCreateStylus(ipts)
 	if err != nil {
 		return err
 	}
@@ -151,16 +161,20 @@ func (devices *IptsDevices) AddStylus(info *IptsDeviceInfo, serial uint32) error
 	return nil
 }
 
-func (devices *IptsDevices) Create(info *IptsDeviceInfo, quirks *IptsQuirks) error {
-	touch, err := IptsDevicesCreateTouch(info)
+func (devices *IptsDevices) Create(ipts *IptsContext) error {
+	if ipts.Config.Width == 0 || ipts.Config.Height == 0 {
+		return errors.Errorf("Display size is 0")
+	}
+
+	touch, err := IptsDevicesCreateTouch(ipts)
 	if err != nil {
 		return err
 	}
 
 	processor := &TouchProcessor{
-		InvertX:        quirks.Has(IPTS_QUIRKS_HEATMAP_INVERT_X),
-		InvertY:        quirks.Has(IPTS_QUIRKS_HEATMAP_INVERT_Y),
-		MaxTouchPoints: int(info.MaxTouchPoints),
+		InvertX:        ipts.Config.InvertX,
+		InvertY:        ipts.Config.InvertY,
+		MaxTouchPoints: int(ipts.DeviceInfo.MaxTouchPoints),
 	}
 
 	devices.Touch = &IptsTouchDevice{
@@ -168,7 +182,7 @@ func (devices *IptsDevices) Create(info *IptsDeviceInfo, quirks *IptsQuirks) err
 		Processor: processor,
 	}
 
-	devices.AddStylus(info, uint32(0))
+	devices.AddStylus(ipts, uint32(0))
 
 	return nil
 }

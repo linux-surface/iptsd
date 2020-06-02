@@ -66,7 +66,7 @@ func IptsStylusHandleSerialChange(ipts *IptsContext, serial uint32) error {
 		return nil
 	}
 
-	err := ipts.Devices.AddStylus(ipts.DeviceInfo, serial)
+	err := ipts.Devices.AddStylus(ipts, serial)
 	if err != nil {
 		return err
 	}
