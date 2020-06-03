@@ -3,17 +3,17 @@
 # Remove once we are tagging releases
 %global commit master
 
-Name:		iptsd
-Version:	0
-Summary:	Userspace daemon for Intel Precise Touch & Stylus
-License:	GPLv2+
+Name: iptsd
+Version: 0
+Summary: Userspace daemon for Intel Precise Touch & Stylus
+License: GPLv2+
 
 %gometa
 
-Release:        1%{?dist}
+Release: 1%{?dist}
 
-URL:		%{gourl}
-Source0:	%{gosource}
+URL: %{gourl}
+Source0: %{gosource}
 
 %global common_description %{expand:
 iptsd is a userspace daemon that processes touch events from the IPTS
@@ -39,11 +39,15 @@ BuildRequires: golang(gopkg.in/ini.v1)
 
 %install
 %gopkginstall
-install -m 0755 -vd                     %{buildroot}%{_bindir}
+
+# Install iptsd binary
+install -m 0755 -vd %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 
+# Install iptsd service
 install -Dpm 0644 service/iptsd.service %{buildroot}%{_unitdir}/%{name}.service
 
+# Install iptsd device configs
 install -m 0755 -vd %{buildroot}%{_datadir}/ipts
 install -Dpm 0644 config/* %{buildroot}%{_datadir}/ipts/
 
