@@ -128,7 +128,7 @@ func (ipts *IptsControl) Read(buffer []byte) (int, error) {
 
 		if in {
 			n, err := ipts.file.Read(buffer)
-			if err != nil && !errors.Is(err, io.EOF) {
+			if err != nil && err != io.EOF {
 				return 0, errors.WithStack(err)
 			}
 
