@@ -11,16 +11,6 @@ type Contact struct {
 	Y int
 }
 
-func (hm Heatmap) Average() float32 {
-	value := float32(0)
-
-	for i := 0; i < len(hm.Data); i++ {
-		value += float32(hm.Data[i])
-	}
-
-	return value / float32(len(hm.Data))
-}
-
 func (hm Heatmap) Value(x int, y int) byte {
 	pos := y*hm.Width + x
 

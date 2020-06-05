@@ -1,7 +1,6 @@
 package heatmap
 
 func (hm Heatmap) Contacts(contacts []Contact) int {
-	threshold := hm.Average() + 1
 	c := 0
 
 	if len(contacts) == 0 {
@@ -10,7 +9,7 @@ func (hm Heatmap) Contacts(contacts []Contact) int {
 
 	for x := 0; x < hm.Width; x++ {
 		for y := 0; y < hm.Height; y++ {
-			if float32(hm.Value(x, y)) < threshold {
+			if hm.Value(x, y) < 127 {
 				continue
 			}
 
