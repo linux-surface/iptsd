@@ -19,7 +19,7 @@ func (hm Heatmap) Average() float32 {
 func (hm *Heatmap) Value(x int, y int) byte {
 	pos := y*hm.Width + x
 
-	if pos >= len(hm.Data) || pos < 0 {
+	if x < 0 || x >= hm.Width || y < 0 || y >= hm.Height {
 		return 0
 	}
 
