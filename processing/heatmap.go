@@ -1,9 +1,10 @@
 package processing
 
 type Heatmap struct {
-	Width  int
-	Height int
-	Data   []byte
+	Width   int
+	Height  int
+	Data    []byte
+	Visited []bool
 }
 
 func (hm Heatmap) Average() float32 {
@@ -31,4 +32,24 @@ func (hm *Heatmap) Compare(x1 int, y1 int, x2 int, y2 int) bool {
 	v2 := int(hm.Value(x2, y2))
 
 	return CompareTriple(v1, x1, y1, v2, x2, y2)
+}
+
+func (hm *Heatmap) GetVisited(x int, y int) bool {
+	pos := y*hm.Width + x
+
+	if x < 0 || x >= hm.Width || y < 0 || y >= hm.Height {
+		return false
+	}
+
+	return hm.Visited[pos]
+}
+
+func (hm *Heatmap) SetVisited(x int, y int, value bool) {
+	pos := y*hm.Width + x
+
+	if x < 0 || x >= hm.Width || y < 0 || y >= hm.Height {
+		return
+	}
+
+	hm.Visited[pos] = value
 }

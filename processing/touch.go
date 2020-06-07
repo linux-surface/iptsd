@@ -24,9 +24,10 @@ type TouchProcessor struct {
 }
 
 type TouchInput struct {
-	X     int
-	Y     int
-	Index int
+	X      int
+	Y      int
+	Index  int
+	IsPalm bool
 }
 
 func (ti TouchInput) Dist(other TouchInput) float64 {
@@ -46,6 +47,7 @@ func (tp *TouchProcessor) GetHeatmap(width int, height int) *Heatmap {
 	if !ok {
 		hm = &Heatmap{}
 		hm.Data = make([]byte, size)
+		hm.Visited = make([]bool, size)
 
 		tp.heatmapCache[size] = hm
 	}
@@ -90,7 +92,10 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 	count := hm.Contacts(tp.contacts)
 
 	for i := 0; i < count; i++ {
-		x, y := hm.Coords(tp.contacts[i])
+		x, y := tp.contacts[i].Mean()
+
+		x /= float32(hm.Width - 1)
+		y /= float32(hm.Height - 1)
 
 		if tp.InvertX {
 			x = 1 - x
@@ -101,9 +106,10 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 		}
 
 		tp.inputs[i] = TouchInput{
-			X:     int(x * 9600),
-			Y:     int(y * 7200),
-			Index: i,
+			X:      int(x * 9600),
+			Y:      int(y * 7200),
+			Index:  i,
+			IsPalm: tp.contacts[i].Palm(),
 		}
 	}
 
