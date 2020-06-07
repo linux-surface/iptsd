@@ -78,8 +78,13 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 		tp.contacts = make([]Contact, tp.MaxTouchPoints)
 	}
 
+	avg := byte(hm.Average())
 	for i := 0; i < len(hm.Data); i++ {
-		hm.Data[i] = 255 - hm.Data[i]
+		if hm.Data[i] < avg {
+			hm.Data[i] = avg - hm.Data[i]
+		} else {
+			hm.Data[i] = 0
+		}
 	}
 
 	count := hm.Contacts(tp.contacts)
