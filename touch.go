@@ -3,7 +3,7 @@ package main
 import (
 	"unsafe"
 
-	. "github.com/linux-surface/iptsd/processing/heatmap"
+	. "github.com/linux-surface/iptsd/processing"
 	. "github.com/linux-surface/iptsd/protocol"
 )
 

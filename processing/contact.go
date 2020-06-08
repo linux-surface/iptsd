@@ -1,4 +1,9 @@
-package heatmap
+package processing
+
+type Contact struct {
+	X int
+	Y int
+}
 
 func (hm Heatmap) Contacts(contacts []Contact) int {
 	c := 0

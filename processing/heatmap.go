@@ -1,14 +1,9 @@
-package heatmap
+package processing
 
 type Heatmap struct {
 	Width  int
 	Height int
 	Data   []byte
-}
-
-type Contact struct {
-	X int
-	Y int
 }
 
 func (hm Heatmap) Value(x int, y int) byte {

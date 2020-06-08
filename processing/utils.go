@@ -1,4 +1,4 @@
-package heatmap
+package processing
 
 func Min(x int, y int) int {
 	if x < y {

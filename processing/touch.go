@@ -2,8 +2,6 @@ package processing
 
 import (
 	"math"
-
-	. "github.com/linux-surface/iptsd/processing/heatmap"
 )
 
 type TouchProcessor struct {
