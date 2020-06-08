@@ -19,6 +19,8 @@ type TouchProcessor struct {
 	indices   [][]int
 
 	freeIndices []bool
+
+	heatmapCache map[int]*Heatmap
 }
 
 type TouchInput struct {
@@ -31,6 +33,27 @@ func (ti TouchInput) Dist(other TouchInput) float64 {
 	dx := float64(ti.X - other.X)
 	dy := float64(ti.Y - other.Y)
 	return math.Sqrt(dx*dx + dy*dy)
+}
+
+func (tp *TouchProcessor) GetHeatmap(width int, height int) *Heatmap {
+	if tp.heatmapCache == nil {
+		tp.heatmapCache = make(map[int]*Heatmap)
+	}
+
+	size := width * height
+
+	hm, ok := tp.heatmapCache[size]
+	if !ok {
+		hm = &Heatmap{}
+		hm.Data = make([]byte, size)
+
+		tp.heatmapCache[size] = hm
+	}
+
+	hm.Width = width
+	hm.Height = height
+
+	return hm
 }
 
 func (tp *TouchProcessor) Save() {
@@ -49,7 +72,7 @@ func (tp *TouchProcessor) Save() {
 	}
 }
 
-func (tp *TouchProcessor) Inputs(hm Heatmap) []TouchInput {
+func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 	if tp.inputs == nil {
 		tp.inputs = make([]TouchInput, tp.MaxTouchPoints)
 		tp.contacts = make([]Contact, tp.MaxTouchPoints)

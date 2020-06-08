@@ -6,7 +6,7 @@ type Heatmap struct {
 	Data   []byte
 }
 
-func (hm Heatmap) Value(x int, y int) byte {
+func (hm *Heatmap) Value(x int, y int) byte {
 	pos := y*hm.Width + x
 
 	if pos >= len(hm.Data) || pos < 0 {
@@ -16,7 +16,7 @@ func (hm Heatmap) Value(x int, y int) byte {
 	return hm.Data[pos]
 }
 
-func (hm Heatmap) Compare(x1 int, y1 int, x2 int, y2 int) bool {
+func (hm *Heatmap) Compare(x1 int, y1 int, x2 int, y2 int) bool {
 	v1 := int(hm.Value(x1, y1))
 	v2 := int(hm.Value(x2, y2))
 
