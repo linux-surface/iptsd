@@ -14,14 +14,17 @@ func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap *Heatmap) error {
 	for i := 0; i < len(points); i++ {
 		p := points[i]
 
-		tool := MT_TOOL_FINGER
+		touch.Device.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
+
 		if p.IsPalm {
-			tool = MT_TOOL_PALM
+			touch.Device.Emit(EV_ABS, ABS_MT_TRACKING_ID, -1)
+			touch.Device.Emit(EV_ABS, ABS_MT_POSITION_X, 0)
+			touch.Device.Emit(EV_ABS, ABS_MT_POSITION_Y, 0)
+
+			continue
 		}
 
-		touch.Device.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
 		touch.Device.Emit(EV_ABS, ABS_MT_TRACKING_ID, int32(p.Index))
-		touch.Device.Emit(EV_ABS, ABS_MT_TOOL_TYPE, int32(tool))
 		touch.Device.Emit(EV_ABS, ABS_MT_POSITION_X, int32(p.X))
 		touch.Device.Emit(EV_ABS, ABS_MT_POSITION_Y, int32(p.Y))
 	}
