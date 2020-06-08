@@ -1,7 +1,7 @@
 package processing
 
 const (
-	TOUCH_THRESHOLD = byte(10)
+	TOUCH_THRESHOLD = byte(30)
 )
 
 type Contact struct {
@@ -111,5 +111,5 @@ func (c *Contact) Cov() (float32, float32, float32) {
 
 func (c *Contact) Palm() bool {
 	x, y, _ := c.Cov()
-	return x > 2.5 || y > 2.5
+	return x > 1.5 || y > 1.5
 }
