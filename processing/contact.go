@@ -1,16 +1,21 @@
 package processing
 
+import (
+	"math"
+)
+
 const (
 	TOUCH_THRESHOLD = byte(30)
 )
 
 type Contact struct {
-	X  int
-	Y  int
-	XX int
-	YY int
-	XY int
-	W  int
+	X      int
+	Y      int
+	XX     int
+	YY     int
+	XY     int
+	W      int
+	isPalm bool
 }
 
 func (hm *Heatmap) GetCluster(x int, y int, res *Contact) {
@@ -57,6 +62,8 @@ func (hm *Heatmap) Contacts(contacts []Contact) int {
 			contacts[c] = Contact{}
 
 			hm.GetCluster(x, y, &contacts[c])
+			//fmt.Println(contacts[c].Mean())
+			//fmt.Println(contacts[c].Cov())
 			c += 1
 
 			if c == len(contacts) {
@@ -77,13 +84,17 @@ func (c *Contact) Add(x int, y int, w int) {
 	c.W += w
 }
 
-func (c *Contact) Join(d Contact) {
-	c.X += d.X
-	c.Y += d.Y
-	c.XX += d.XX
-	c.YY += d.YY
-	c.XY += d.XY
-	c.W += d.W
+func (c *Contact) Near(other Contact) bool {
+	x1, y1 := c.Mean()
+	x2, y2 := other.Mean()
+	dx, dy := math.Abs(float64(x1-x2)), math.Abs(float64(y1-y2))
+
+	vx, vy, _ := other.Cov()
+
+	sx := 3.2*math.Sqrt(float64(vx)) + 10
+	sy := 3.2*math.Sqrt(float64(vy)) + 10
+
+	return dx <= sx && dy <= sy
 }
 
 func (c *Contact) Mean() (float32, float32) {
@@ -109,7 +120,20 @@ func (c *Contact) Cov() (float32, float32, float32) {
 	return r1, r2, r3
 }
 
-func (c *Contact) Palm() bool {
-	x, y, _ := c.Cov()
-	return x > 1.5 || y > 1.5
+func GetPalms(contacts []Contact, count int) {
+	for i := 0; i < count; i++ {
+		vx, vy, _ := contacts[i].Cov()
+		if vx < 1.5 && vy < 1.5 {
+			continue
+		}
+		contacts[i].isPalm = true
+		for j := 0; j < count; j++ {
+			if j == i || contacts[j].isPalm {
+				continue
+			}
+			if contacts[j].Near(contacts[i]) {
+				contacts[j].isPalm = true
+			}
+		}
+	}
 }

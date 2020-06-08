@@ -92,6 +92,7 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 	}
 
 	count := hm.Contacts(tp.contacts)
+	GetPalms(tp.contacts, count)
 
 	for i := 0; i < count; i++ {
 		x, y := tp.contacts[i].Mean()
@@ -111,7 +112,7 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 			X:       int(x * 9600),
 			Y:       int(y * 7200),
 			Index:   i,
-			IsPalm:  tp.contacts[i].Palm(),
+			IsPalm:  tp.contacts[i].isPalm,
 			contact: &tp.contacts[i],
 		}
 	}
