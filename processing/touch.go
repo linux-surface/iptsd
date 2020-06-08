@@ -28,6 +28,8 @@ type TouchInput struct {
 	Y      int
 	Index  int
 	IsPalm bool
+
+	contact *Contact
 }
 
 func (ti TouchInput) Dist(other TouchInput) float64 {
@@ -106,18 +108,20 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 		}
 
 		tp.inputs[i] = TouchInput{
-			X:      int(x * 9600),
-			Y:      int(y * 7200),
-			Index:  i,
-			IsPalm: tp.contacts[i].Palm(),
+			X:       int(x * 9600),
+			Y:       int(y * 7200),
+			Index:   i,
+			IsPalm:  tp.contacts[i].Palm(),
+			contact: &tp.contacts[i],
 		}
 	}
 
 	for i := count; i < tp.MaxTouchPoints; i++ {
 		tp.inputs[i] = TouchInput{
-			X:     0,
-			Y:     0,
-			Index: -1,
+			X:       0,
+			Y:       0,
+			Index:   -1,
+			contact: &tp.contacts[i],
 		}
 	}
 

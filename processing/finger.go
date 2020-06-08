@@ -93,9 +93,10 @@ func (tp *TouchProcessor) FindDuplicates(count int, itr int) bool {
 		}
 
 		last := tp.last[tp.indices[i][itr]]
+		contact := tp.inputs[i].contact
 
 		tp.inputs[i].Index = last.Index
-		tp.inputs[i].IsPalm = tp.inputs[i].IsPalm || last.IsPalm
+		tp.inputs[i].IsPalm = contact.Palm() || last.IsPalm
 
 		duplicates--
 
@@ -139,9 +140,10 @@ func (tp *TouchProcessor) TrackFingers(count int) {
 	 */
 	for i := 0; i < count; i++ {
 		last := tp.last[tp.indices[i][0]]
+		contact := tp.inputs[i].contact
 
 		tp.inputs[i].Index = last.Index
-		tp.inputs[i].IsPalm = tp.inputs[i].IsPalm || last.IsPalm
+		tp.inputs[i].IsPalm = contact.Palm() || last.IsPalm
 	}
 
 	/*
