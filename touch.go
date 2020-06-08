@@ -72,6 +72,10 @@ func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 		}
 	}
 
+	if hm == nil {
+		return nil
+	}
+
 	err := IptsTouchHandleHeatmap(ipts, hm)
 	if err != nil {
 		return err
