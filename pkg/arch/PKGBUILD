@@ -1,0 +1,42 @@
+pkgname=iptsd
+pkgver=master # Change once we start tagging releases
+pkgrel=1
+pkgdesc='Userspace daemon for Intel Precise Touch & Stylus'
+arch=('x86_64')
+url='https://github.com/linux-surface/iptsd'
+license=('GPL')
+makedepends=('go')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+	cd "$pkgname-$pkgver"
+	mkdir -p bin
+}
+
+build() {
+	cd "$pkgname-$pkgver"
+
+	export CGO_CPPFLAGS="$CPPFLAGS"
+	export CGO_CFLAGS="$CFLAGS"
+	export CGO_CXXFLAGS="$CXXFLAGS"
+	export CGO_LDFLAGS="$LDFLAGS"
+	export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw"
+
+	go build -o "bin/$pkgname" .
+}
+
+package() {
+	cd "$pkgname-$pkgver"
+
+	# Install iptsd binary
+	install -Dpm 0755 "bin/$pkgname" "$pkgdir/usr/bin/$pkgname"
+
+	# Install iptsd service
+	install -Dpm 0644 service/iptsd.service \
+		"$pkgdir/usr/lib/systemd/system/$pkgname.service"
+
+	# Install iptsd device configs
+	install -dm 0755 "$pkgdir/usr/share/ipts"
+	install -Dpm 0644 config/* "$pkgdir/usr/share/ipts"
+}
