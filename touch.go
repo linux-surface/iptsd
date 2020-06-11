@@ -3,15 +3,11 @@ package main
 import (
 	"unsafe"
 
-	. "github.com/linux-surface/iptsd/processing/heatmap"
+	. "github.com/linux-surface/iptsd/processing"
 	. "github.com/linux-surface/iptsd/protocol"
 )
 
-var (
-	heatmapCache map[uint16][]byte = make(map[uint16][]byte)
-)
-
-func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap Heatmap) error {
+func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap *Heatmap) error {
 	touch := ipts.Devices.Touch
 	points := touch.Processor.Inputs(heatmap)
 
@@ -19,6 +15,15 @@ func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap Heatmap) error {
 		p := points[i]
 
 		touch.Device.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
+
+		if p.IsPalm {
+			touch.Device.Emit(EV_ABS, ABS_MT_TRACKING_ID, -1)
+			touch.Device.Emit(EV_ABS, ABS_MT_POSITION_X, 0)
+			touch.Device.Emit(EV_ABS, ABS_MT_POSITION_Y, 0)
+
+			continue
+		}
+
 		touch.Device.Emit(EV_ABS, ABS_MT_TRACKING_ID, int32(p.Index))
 		touch.Device.Emit(EV_ABS, ABS_MT_POSITION_X, int32(p.X))
 		touch.Device.Emit(EV_ABS, ABS_MT_POSITION_Y, int32(p.Y))
@@ -34,7 +39,7 @@ func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap Heatmap) error {
 
 func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 	size := uint32(0)
-	hm := Heatmap{}
+	var hm *Heatmap
 
 	for size < frame.Size {
 		report, err := ipts.Protocol.ReadReport()
@@ -56,19 +61,13 @@ func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 				break
 			}
 
-			hm.Height = int(height)
-			hm.Width = int(width)
+			dev := ipts.Devices.Touch
+			hm = dev.Processor.GetHeatmap(int(width), int(height))
 
 			err = ipts.Protocol.Skip(6)
 			break
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP:
-			hmb, ok := heatmapCache[report.Size]
-			if !ok {
-				hmb = make([]byte, report.Size)
-				heatmapCache[report.Size] = hmb
-			}
-			hm.Data = hmb
-			err = ipts.Protocol.Read(hmb)
+			err = ipts.Protocol.Read(hm.Data)
 			break
 		default:
 			// ignored
@@ -81,11 +80,7 @@ func IptsTouchHandleInput(ipts *IptsContext, frame IptsPayloadFrame) error {
 		}
 	}
 
-	if len(hm.Data) == 0 {
-		return nil
-	}
-
-	if len(hm.Data) != hm.Width*hm.Height {
+	if hm == nil {
 		return nil
 	}
 
