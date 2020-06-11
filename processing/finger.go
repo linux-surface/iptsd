@@ -186,14 +186,4 @@ func (tp *TouchProcessor) TrackFingers(count int) {
 			break
 		}
 	}
-
-	/*
-	 * Finally, we need to save the current list of points to use them in
-	 * the next cycle of course.
-	 *
-	 * Since the points list is a cached array, we cannot just assign it,
-	 * because then "points" and "last" would be identical. Instead we
-	 * need to go through them and copy over every element.
-	 */
-	tp.Save()
 }

@@ -62,8 +62,6 @@ func (hm *Heatmap) Contacts(contacts []Contact) int {
 			contacts[c] = Contact{}
 
 			hm.GetCluster(x, y, &contacts[c])
-			//fmt.Println(contacts[c].Mean())
-			//fmt.Println(contacts[c].Cov())
 			c += 1
 
 			if c == len(contacts) {
@@ -123,14 +121,18 @@ func (c *Contact) Cov() (float32, float32, float32) {
 func GetPalms(contacts []Contact, count int) {
 	for i := 0; i < count; i++ {
 		vx, vy, _ := contacts[i].Cov()
+
 		if vx < 1.5 && vy < 1.5 {
 			continue
 		}
+
 		contacts[i].isPalm = true
+
 		for j := 0; j < count; j++ {
 			if j == i || contacts[j].isPalm {
 				continue
 			}
+
 			if contacts[j].Near(contacts[i]) {
 				contacts[j].isPalm = true
 			}

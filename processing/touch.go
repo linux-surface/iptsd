@@ -143,6 +143,11 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 
 	tp.TrackFingers(count)
 
+	/*
+	 * We need to save the current list of points to use them in
+	 * the next cycle, to track finger movements.
+	 */
 	tp.Save()
+
 	return tp.inputs
 }
