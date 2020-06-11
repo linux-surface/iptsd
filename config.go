@@ -16,6 +16,8 @@ type IptsConfig struct {
 
 	Width  int
 	Height int
+
+	BlockOnPalm bool
 }
 
 func (cfg *IptsConfig) LoadFromDir(info *IptsDeviceInfo, dir string) error {

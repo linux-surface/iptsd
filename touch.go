@@ -10,13 +10,20 @@ import (
 func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap *Heatmap) error {
 	touch := ipts.Devices.Touch
 	points := touch.Processor.Inputs(heatmap)
+	blocked := false
+
+	if ipts.Config.BlockOnPalm {
+		for i := 0; i < len(points); i++ {
+			blocked = blocked || points[i].IsPalm
+		}
+	}
 
 	for i := 0; i < len(points); i++ {
 		p := points[i]
 
 		touch.Device.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
 
-		if p.IsPalm {
+		if p.IsPalm || blocked {
 			touch.Device.Emit(EV_ABS, ABS_MT_TRACKING_ID, -1)
 			touch.Device.Emit(EV_ABS, ABS_MT_POSITION_X, 0)
 			touch.Device.Emit(EV_ABS, ABS_MT_POSITION_Y, 0)
