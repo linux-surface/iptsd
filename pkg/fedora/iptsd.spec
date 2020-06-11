@@ -25,6 +25,7 @@ kernel driver, and sends them back to the kernel using uinput devices.
 
 BuildRequires: golang(github.com/pkg/errors)
 BuildRequires: golang(gopkg.in/ini.v1)
+BuildRequires: systemd-rpm-macros
 
 %description
 %{common_description}
@@ -41,15 +42,14 @@ BuildRequires: golang(gopkg.in/ini.v1)
 %gopkginstall
 
 # Install iptsd binary
-install -m 0755 -vd %{buildroot}%{_bindir}
-install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
+install -Dpm 0755 %{gobuilddir}/bin/%{name} %{buildroot}%{_bindir}/%{name}
 
 # Install iptsd service
 install -Dpm 0644 service/iptsd.service %{buildroot}%{_unitdir}/%{name}.service
 
 # Install iptsd device configs
-install -m 0755 -vd %{buildroot}%{_datadir}/ipts
-install -Dpm 0644 config/* %{buildroot}%{_datadir}/ipts/
+install -dm 0755 %{buildroot}%{_datadir}/ipts
+install -Dpm 0644 config/* %{buildroot}%{_datadir}/ipts
 
 %check
 %gocheck
@@ -61,12 +61,12 @@ install -Dpm 0644 config/* %{buildroot}%{_datadir}/ipts/
 %systemd_preun %{name}.service
 
 %postun
-%systemd_postuin %{name}.service
+%systemd_postun_with_restart %{name}.service
 
 %files
 %license %{golicenses}
 %doc %{godocs}
-%{_bindir}/*
+%{_bindir}/%{name}
 %{_unitdir}/%{name}.service
 %{_datadir}/ipts/*
 
