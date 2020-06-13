@@ -74,7 +74,11 @@ func (hm *Heatmap) Contacts(contacts []Contact) int {
 			contacts[c] = Contact{}
 
 			hm.GetCluster(x, y, &contacts[c])
-			c += 1
+			vx, vy, _ := contacts[c].Cov()
+			// ignore 0 variance contacts
+			if vx > 0 && vy > 0 {
+				c += 1
+			}
 
 			if c == len(contacts) {
 				return c
