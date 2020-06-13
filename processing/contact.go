@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	TOUCH_THRESHOLD = byte(30)
+	TOUCH_THRESHOLD = byte(10)
 )
 
 func Abs(x float32) float32 {
@@ -164,7 +164,11 @@ func GetPalms(contacts []Contact, count int) {
 	for i := 0; i < count; i++ {
 		vx, vy := contacts[i].Eigenvalues()
 
-		if vx < 1.5 && vy < 1.5 {
+		if vx < 1.0 && vy < 1.0 { // Regular touch
+			continue
+		}
+
+		if vx < 3.0 && vx/vy > 1.8 && vx/vy < 3.4 { // Thumb
 			continue
 		}
 
