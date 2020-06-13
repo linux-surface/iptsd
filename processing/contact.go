@@ -8,6 +8,18 @@ const (
 	TOUCH_THRESHOLD = byte(30)
 )
 
+func Abs(x float32) float32 {
+	return float32(math.Abs(float64(x)))
+}
+
+func Sqrt(x float32) float32 {
+	return float32(math.Sqrt(float64(x)))
+}
+
+func Hypot(x float32, y float32) float32 {
+	return float32(math.Hypot(float64(x), float64(y)))
+}
+
 type Contact struct {
 	X      int
 	Y      int
@@ -82,19 +94,6 @@ func (c *Contact) Add(x int, y int, w int) {
 	c.W += w
 }
 
-func (c *Contact) Near(other Contact) bool {
-	x1, y1 := c.Mean()
-	x2, y2 := other.Mean()
-	dx, dy := math.Abs(float64(x1-x2)), math.Abs(float64(y1-y2))
-
-	vx, vy, _ := other.Cov()
-
-	sx := 3.2*math.Sqrt(float64(vx)) + 10
-	sy := 3.2*math.Sqrt(float64(vy)) + 10
-
-	return dx <= sx && dy <= sy
-}
-
 func (c *Contact) Mean() (float32, float32) {
 	fX := float32(c.X)
 	fY := float32(c.Y)
@@ -118,9 +117,52 @@ func (c *Contact) Cov() (float32, float32, float32) {
 	return r1, r2, r3
 }
 
+func (c *Contact) Eigenvalues() (float32, float32) {
+	vx, vy, cv := c.Cov()
+	sqrtd := Sqrt(((vx-vy)*(vx-vy) + 4*cv*cv))
+
+	r1 := (vx + vy + sqrtd) / 2
+	r2 := (vx + vy - sqrtd) / 2
+
+	return r1, r2
+}
+
+func (c *Contact) PCA(x float32, y float32) (float32, float32) {
+	vx, vy, cv := c.Cov()
+
+	l1, l2 := c.Eigenvalues()
+
+	qx1 := vx + cv - l2
+	qy1 := vy + cv - l2
+	d1 := Hypot(qx1, qy1)
+	qx1 /= d1
+	qy1 /= d1
+
+	qx2 := vx + cv - l1
+	qy2 := vy + cv - l1
+	d2 := Hypot(qx2, qy2)
+	qx2 /= d2
+	qy2 /= d2
+
+	return qx1*x + qx2*y, qy1*x + qy2*y
+}
+
+func (c *Contact) Near(other Contact) bool {
+	x1, y1 := c.Mean()
+	x2, y2 := other.Mean()
+	dx, dy := other.PCA(x1-x2, y1-y2)
+	dx, dy = Abs(dx), Abs(dy)
+
+	vx, vy := other.Eigenvalues()
+	dx /= 3.2*Sqrt(vx) + 5
+	dy /= 3.2*Sqrt(vy) + 5
+
+	return dx*dx+dy*dy <= 1
+}
+
 func GetPalms(contacts []Contact, count int) {
 	for i := 0; i < count; i++ {
-		vx, vy, _ := contacts[i].Cov()
+		vx, vy := contacts[i].Eigenvalues()
 
 		if vx < 1.5 && vy < 1.5 {
 			continue
