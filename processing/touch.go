@@ -95,10 +95,8 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 	GetPalms(tp.contacts, count)
 
 	for i := 0; i < count; i++ {
-		x, y := tp.contacts[i].Mean()
-
-		x /= float32(hm.Width - 1)
-		y /= float32(hm.Height - 1)
+		x := tp.contacts[i].X / float32(hm.Width-1)
+		y := tp.contacts[i].Y / float32(hm.Height-1)
 
 		if tp.InvertX {
 			x = 1 - x
