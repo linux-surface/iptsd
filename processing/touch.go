@@ -110,24 +110,26 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 		}
 
 		tp.inputs[i] = TouchInput{
-			X:       int(x * 9600),
-			Y:       int(y * 7200),
-			Ev1:     tp.contacts[i].Ev1,
-			Ev2:     tp.contacts[i].Ev2,
-			Index:   i,
-			IsPalm:  tp.contacts[i].isPalm,
-			contact: &tp.contacts[i],
+			X:        int(x * 9600),
+			Y:        int(y * 7200),
+			Ev1:      tp.contacts[i].Ev1,
+			Ev2:      tp.contacts[i].Ev2,
+			Index:    i,
+			IsStable: false,
+			IsPalm:   tp.contacts[i].isPalm,
+			contact:  &tp.contacts[i],
 		}
 	}
 
 	for i := count; i < tp.MaxTouchPoints; i++ {
 		tp.inputs[i] = TouchInput{
-			X:       0,
-			Y:       0,
-			Ev1:     0,
-			Ev2:     0,
-			Index:   -1,
-			contact: &tp.contacts[i],
+			X:        0,
+			Y:        0,
+			Ev1:      0,
+			Ev2:      0,
+			Index:    -1,
+			IsStable: false,
+			contact:  &tp.contacts[i],
 		}
 	}
 

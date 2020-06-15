@@ -23,7 +23,11 @@ func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap *Heatmap) error {
 
 		touch.Device.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
 
-		if p.IsPalm || !p.IsStable || blocked {
+		if p.Index != -1 && !p.IsStable {
+			continue
+		}
+
+		if p.IsPalm || blocked {
 			touch.Device.Emit(EV_ABS, ABS_MT_TRACKING_ID, -1)
 			touch.Device.Emit(EV_ABS, ABS_MT_POSITION_X, 0)
 			touch.Device.Emit(EV_ABS, ABS_MT_POSITION_Y, 0)
