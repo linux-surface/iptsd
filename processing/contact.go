@@ -1,24 +1,8 @@
 package processing
 
-import (
-	"math"
-)
-
 const (
 	TOUCH_THRESHOLD = byte(10)
 )
-
-func Abs(x float32) float32 {
-	return float32(math.Abs(float64(x)))
-}
-
-func Sqrt(x float32) float32 {
-	return float32(math.Sqrt(float64(x)))
-}
-
-func Hypot(x float32, y float32) float32 {
-	return float32(math.Hypot(float64(x), float64(y)))
-}
 
 type Cluster struct {
 	X    int
@@ -40,7 +24,7 @@ type Contact struct {
 	qx2    float32
 	qy2    float32
 	MaxV   int
-	isPalm bool
+	IsPalm bool
 }
 
 func (hm *Heatmap) GetCluster(x int, y int, res *Cluster) {
@@ -74,8 +58,6 @@ func (hm *Heatmap) Contacts(contacts []Contact) int {
 		hm.Visited[i] = false
 	}
 
-	var cluster Cluster
-
 	for x := 0; x < hm.Width; x++ {
 		for y := 0; y < hm.Height; y++ {
 			if hm.Value(x, y) < TOUCH_THRESHOLD {
@@ -86,10 +68,10 @@ func (hm *Heatmap) Contacts(contacts []Contact) int {
 				continue
 			}
 
-			cluster = Cluster{}
-
+			cluster := Cluster{}
 			hm.GetCluster(x, y, &cluster)
 			contacts[c].GetFromCluster(cluster)
+
 			// ignore 0 variance contacts
 			if contacts[c].Ev2 > 0 {
 				c += 1
@@ -172,7 +154,7 @@ func (c *Contact) GetFromCluster(cluster Cluster) {
 
 	c.MaxV = cluster.MaxV
 
-	c.isPalm = false
+	c.IsPalm = false
 }
 
 func (c *Contact) PCA(x float32, y float32) (float32, float32) {
@@ -201,15 +183,15 @@ func GetPalms(contacts []Contact, count int) {
 			continue
 		}
 
-		contacts[i].isPalm = true
+		contacts[i].IsPalm = true
 
 		for j := 0; j < count; j++ {
-			if j == i || contacts[j].isPalm {
+			if j == i || contacts[j].IsPalm {
 				continue
 			}
 
 			if contacts[j].Near(contacts[i]) {
-				contacts[j].isPalm = true
+				contacts[j].IsPalm = true
 			}
 		}
 	}

@@ -101,7 +101,7 @@ func (tp *TouchProcessor) FindDuplicates(count int, itr int) bool {
 		dev2 := tp.inputs[i].Ev2 - last.Ev2
 
 		tp.inputs[i].Index = last.Index
-		tp.inputs[i].IsPalm = contact.isPalm || last.IsPalm
+		tp.inputs[i].IsPalm = contact.IsPalm || last.IsPalm
 		tp.inputs[i].IsStable = dev1 < STABILITY_THRESHOLD && dev2 < STABILITY_THRESHOLD
 
 		duplicates--
@@ -151,7 +151,7 @@ func (tp *TouchProcessor) TrackFingers(count int) {
 		dev2 := tp.inputs[i].Ev2 - last.Ev2
 
 		tp.inputs[i].Index = last.Index
-		tp.inputs[i].IsPalm = contact.isPalm || last.IsPalm
+		tp.inputs[i].IsPalm = contact.IsPalm || last.IsPalm
 		tp.inputs[i].IsStable = dev1 < STABILITY_THRESHOLD && dev2 < STABILITY_THRESHOLD
 	}
 

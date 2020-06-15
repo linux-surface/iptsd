@@ -116,7 +116,7 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 			Ev2:      tp.contacts[i].Ev2,
 			Index:    i,
 			IsStable: false,
-			IsPalm:   tp.contacts[i].isPalm,
+			IsPalm:   tp.contacts[i].IsPalm,
 			contact:  &tp.contacts[i],
 		}
 	}

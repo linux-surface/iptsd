@@ -1,5 +1,7 @@
 package processing
 
+import "math"
+
 func Min(x int, y int) int {
 	if x < y {
 		return x
@@ -12,6 +14,18 @@ func Max(x int, y int) int {
 		return x
 	}
 	return y
+}
+
+func Abs(x float32) float32 {
+	return float32(math.Abs(float64(x)))
+}
+
+func Sqrt(x float32) float32 {
+	return float32(math.Sqrt(float64(x)))
+}
+
+func Hypot(x float32, y float32) float32 {
+	return float32(math.Hypot(float64(x), float64(y)))
 }
 
 /*
