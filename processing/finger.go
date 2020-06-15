@@ -1,5 +1,7 @@
 package processing
 
+const STABILITY_THRESHOLD = 0.1
+
 /*
  * Go doesn't really provide a way to sort a list using a custom
  * comparison, without also allocating a new list. The solution is
@@ -97,6 +99,8 @@ func (tp *TouchProcessor) FindDuplicates(count int, itr int) bool {
 
 		tp.inputs[i].Index = last.Index
 		tp.inputs[i].IsPalm = contact.isPalm || last.IsPalm
+		tp.inputs[i].IsStable = Abs(last.Ev1-tp.inputs[i].Ev1) < STABILITY_THRESHOLD ||
+			Abs(last.Ev2-tp.inputs[i].Ev2) < STABILITY_THRESHOLD
 
 		duplicates--
 
@@ -141,9 +145,12 @@ func (tp *TouchProcessor) TrackFingers(count int) {
 	for i := 0; i < count; i++ {
 		last := tp.last[tp.indices[i][0]]
 		contact := tp.inputs[i].contact
+		dev1 := Abs(last.Ev1 - tp.inputs[i].Ev1)
+		dev2 := Abs(last.Ev2 - tp.inputs[i].Ev2)
 
 		tp.inputs[i].Index = last.Index
 		tp.inputs[i].IsPalm = contact.isPalm || last.IsPalm
+		tp.inputs[i].IsStable = dev1 < STABILITY_THRESHOLD && dev2 < STABILITY_THRESHOLD
 	}
 
 	/*
