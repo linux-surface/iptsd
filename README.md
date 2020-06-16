@@ -45,7 +45,7 @@ open an issue or join ##linux-surface on Freenode IRC and get in touch.
 Tested Devices:
  * Surface Book 1
  * Surface Book 2 (13" and 15")
- * Surface Pro 4
+ * Surface Pro 4 (`1B96:006A` variant)
  * Surface Pro 5
  * Surface Pro 6
 
