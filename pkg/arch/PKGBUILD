@@ -33,8 +33,12 @@ package() {
 	install -Dpm 0755 "bin/$pkgname" "$pkgdir/usr/bin/$pkgname"
 
 	# Install iptsd service
-	install -Dpm 0644 service/iptsd.service \
+	install -Dpm 0644 etc/systemd/iptsd.service \
 		"$pkgdir/usr/lib/systemd/system/$pkgname.service"
+
+	# Install udev configuration
+	install -Dpm 0644 etc/udev/50-ipts.rules \
+		"$pkgdir/usr/lib/udev/rules.d/50-ipts.rules"
 
 	# Install iptsd device configs
 	install -dm 0755 "$pkgdir/usr/share/ipts"

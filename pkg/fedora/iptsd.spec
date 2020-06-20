@@ -45,7 +45,12 @@ BuildRequires: systemd-rpm-macros
 install -Dpm 0755 %{gobuilddir}/bin/%{name} %{buildroot}%{_bindir}/%{name}
 
 # Install iptsd service
-install -Dpm 0644 service/iptsd.service %{buildroot}%{_unitdir}/%{name}.service
+install -Dpm 0644 etc/systemd/iptsd.service \
+	%{buildroot}%{_unitdir}/%{name}.service
+
+# Install udev configuration
+install -Dpm 0644 etc/udev/50-ipts.rules \
+	%{buildroot}%{_udevrulesdir}/50-ipts.rules
 
 # Install iptsd device configs
 install -dm 0755 %{buildroot}%{_datadir}/ipts
@@ -68,6 +73,7 @@ install -Dpm 0644 config/* %{buildroot}%{_datadir}/ipts
 %doc %{godocs}
 %{_bindir}/%{name}
 %{_unitdir}/%{name}.service
+%{_udevrulesdir}/50-ipts.rules
 %{_datadir}/ipts/*
 
 %gopkgfiles
