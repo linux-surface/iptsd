@@ -24,10 +24,13 @@ type TouchProcessor struct {
 }
 
 type TouchInput struct {
-	X      int
-	Y      int
-	Index  int
-	IsPalm bool
+	X        int
+	Y        int
+	Ev1      float32
+	Ev2      float32
+	Index    int
+	IsStable bool
+	IsPalm   bool
 
 	contact *Contact
 }
@@ -95,10 +98,8 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 	GetPalms(tp.contacts, count)
 
 	for i := 0; i < count; i++ {
-		x, y := tp.contacts[i].Mean()
-
-		x /= float32(hm.Width - 1)
-		y /= float32(hm.Height - 1)
+		x := tp.contacts[i].X / float32(hm.Width-1)
+		y := tp.contacts[i].Y / float32(hm.Height-1)
 
 		if tp.InvertX {
 			x = 1 - x
@@ -109,20 +110,26 @@ func (tp *TouchProcessor) Inputs(hm *Heatmap) []TouchInput {
 		}
 
 		tp.inputs[i] = TouchInput{
-			X:       int(x * 9600),
-			Y:       int(y * 7200),
-			Index:   i,
-			IsPalm:  tp.contacts[i].isPalm,
-			contact: &tp.contacts[i],
+			X:        int(x * 9600),
+			Y:        int(y * 7200),
+			Ev1:      tp.contacts[i].Ev1,
+			Ev2:      tp.contacts[i].Ev2,
+			Index:    i,
+			IsStable: false,
+			IsPalm:   tp.contacts[i].IsPalm,
+			contact:  &tp.contacts[i],
 		}
 	}
 
 	for i := count; i < tp.MaxTouchPoints; i++ {
 		tp.inputs[i] = TouchInput{
-			X:       0,
-			Y:       0,
-			Index:   -1,
-			contact: &tp.contacts[i],
+			X:        0,
+			Y:        0,
+			Ev1:      0,
+			Ev2:      0,
+			Index:    -1,
+			IsStable: false,
+			contact:  &tp.contacts[i],
 		}
 	}
 
