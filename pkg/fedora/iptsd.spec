@@ -30,8 +30,6 @@ BuildRequires: systemd-rpm-macros
 %description
 %{common_description}
 
-%gopkg
-
 %prep
 %goprep
 
@@ -39,8 +37,6 @@ BuildRequires: systemd-rpm-macros
 %gobuild -o %{gobuilddir}/bin/%{name} %{goipath}
 
 %install
-%gopkginstall
-
 # Install iptsd binary
 install -Dpm 0755 %{gobuilddir}/bin/%{name} %{buildroot}%{_bindir}/%{name}
 
@@ -75,8 +71,6 @@ install -Dpm 0644 config/* %{buildroot}%{_datadir}/ipts
 %{_unitdir}/%{name}.service
 %{_udevrulesdir}/50-ipts.rules
 %{_datadir}/ipts/*
-
-%gopkgfiles
 
 %changelog
 * Wed Jun 03 2020 Dorian Stoll <dorian.stoll@tmsp.io> - 0-1
