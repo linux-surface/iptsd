@@ -9,7 +9,7 @@ func IptsSingletouchHandleInput(ipts *IptsContext) error {
 	}
 
 	x := float32(data.X) / 32767 * 9600
-	y := float32(data.Y) / 32762 * 7200
+	y := float32(data.Y) / 32767 * 7200
 
 	touch.Device.Emit(EV_ABS, ABS_MT_SLOT, 0)
 
