@@ -1,0 +1,50 @@
+#!/bin/bash
+set -e
+
+branch="HEAD"
+basepath="pkg/debian"
+
+
+pushd() {
+    command pushd "$@" > /dev/null
+}
+
+popd() {
+    command popd "$@" > /dev/null
+}
+
+
+chkdir() {
+    if [ ! -d ".git" ]
+    then
+        echo "Error: Script must be run from the root directory"
+        exit 1
+    fi
+}
+
+prepare() {
+    archive="src.tar"
+
+    git archive --format tar "$branch" > "$basepath/$archive"
+
+    mkdir -p "$basepath/src"
+    tar xf "$basepath/$archive" --directory "$basepath/src"
+
+    cp -r "$basepath/debian" "$basepath/src/"
+}
+
+build() {
+    pushd "$basepath/src"
+    dpkg-buildpackage -b -d -us -uc
+    popd
+}
+
+
+clean() {
+    echo "TODO"
+}
+
+
+chkdir
+prepare
+build

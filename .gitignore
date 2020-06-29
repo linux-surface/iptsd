@@ -3,3 +3,4 @@ iptsd
 pkg/*
 !pkg/fedora/iptsd.spec
 !pkg/arch/PKGBUILD
+!pkg/debian
