@@ -179,9 +179,15 @@ func (tp *TouchProcessor) TrackFingers(count int) {
 	 * we go through every possible index to see if it is already used by
 	 * other inputs. If we cannot find an input using the index we assign
 	 * it and continue to the next one.
+	 *
+	 * We also need to assign unused slot ID's to all inputs that don't
+	 * touch the screen. For the remaining inputs, we simply reuse the
+	 * finger index as the slot ID. The slot ID needs to stay consistent,
+	 * to prevent errors from libinput.
 	 */
-	for i := 0; i < count; i++ {
+	for i := 0; i < tp.MaxTouchPoints; i++ {
 		if tp.inputs[i].Index != -1 {
+			tp.inputs[i].Slot = tp.inputs[i].Index
 			continue
 		}
 
@@ -191,7 +197,10 @@ func (tp *TouchProcessor) TrackFingers(count int) {
 			}
 
 			tp.freeIndices[k] = false
-			tp.inputs[i].Index = k
+			tp.inputs[i].Slot = k
+			if i < count {
+				tp.inputs[i].Index = k
+			}
 			break
 		}
 	}

@@ -29,6 +29,7 @@ type TouchInput struct {
 	Ev1      float32
 	Ev2      float32
 	Index    int
+	Slot     int
 	IsStable bool
 	IsPalm   bool
 

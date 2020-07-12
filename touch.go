@@ -21,7 +21,7 @@ func IptsTouchHandleHeatmap(ipts *IptsContext, heatmap *Heatmap) error {
 	for i := 0; i < len(points); i++ {
 		p := points[i]
 
-		touch.Device.Emit(EV_ABS, ABS_MT_SLOT, int32(i))
+		touch.Device.Emit(EV_ABS, ABS_MT_SLOT, int32(p.Slot))
 
 		if p.Index != -1 && !p.IsStable {
 			continue
