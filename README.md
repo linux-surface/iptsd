@@ -7,7 +7,7 @@ controller, returning raw capacitive touch data. This data is processed
 outside of the ME and then relayed into the HID / input subsystem of the OS.
 
 This daemon relies on a kernel driver that can be found here: 
-https://github.com/linux-surface/intel-precise-touch/tree/feature/uapi
+https://github.com/linux-surface/intel-precise-touch
 
 The driver will establish and manage the connection to the IPTS hardware. It
 will also set up an API that can be used by userspace to read the touch data
@@ -56,7 +56,7 @@ You need to have a recent Go toolchain installed. It is developed with Go
 Reports and / or patches are welcome!
 
 You also need to have the UAPI version of the IPTS kernel driver installed:
-https://github.com/linux-surface/intel-precise-touch/tree/feature/uapi
+https://github.com/linux-surface/intel-precise-touch
 
 ```bash
 $ git clone https://github.com/linux-surface/iptsd
