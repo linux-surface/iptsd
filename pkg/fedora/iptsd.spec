@@ -27,6 +27,8 @@ BuildRequires: golang(github.com/pkg/errors)
 BuildRequires: golang(gopkg.in/ini.v1)
 BuildRequires: systemd-rpm-macros
 
+%global debug_package %{nil}
+
 %description
 %{common_description}
 

@@ -30,6 +30,9 @@ override_dh_install:
 	install -dm 0755 "$(pkgdir)/usr/share/ipts"
 	install -Dpm 0644 config/* "$(pkgdir)/usr/share/ipts"
 
+override_dh_strip:
+	dh_strip --no-automatic-dbgsym
+
 %:
 	dh $@
 
