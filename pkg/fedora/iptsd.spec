@@ -1,10 +1,7 @@
 %global goipath github.com/linux-surface/iptsd
 
-# Remove once we are tagging releases
-%global commit master
-
 Name: iptsd
-Version: 0
+Version: 0.1
 Summary: Userspace daemon for Intel Precise Touch & Stylus
 License: GPLv2+
 
@@ -75,6 +72,9 @@ install -Dpm 0644 config/* %{buildroot}%{_datadir}/ipts
 %{_datadir}/ipts/*
 
 %changelog
+* Thu Aug 06 2020 Dorian Stoll <dorian.stoll@tmsp.io> - 0.1-1
+- iptsd v0.1
+
 * Wed Jun 03 2020 Dorian Stoll <dorian.stoll@tmsp.io> - 0-1
 - Initial creation
 

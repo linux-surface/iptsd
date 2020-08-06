@@ -1,12 +1,12 @@
 pkgname=iptsd
-pkgver=master # Change once we start tagging releases
+pkgver=0.1
 pkgrel=1
 pkgdesc='Userspace daemon for Intel Precise Touch & Stylus'
 arch=('x86_64')
 url='https://github.com/linux-surface/iptsd'
 license=('GPL')
 makedepends=('go')
-source=("$pkgname-$pkgver.tar.gz::$url/archive/$pkgver.tar.gz")
+source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
 sha256sums=('SKIP')
 
 prepare() {
