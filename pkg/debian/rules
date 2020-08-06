@@ -1,0 +1,38 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+
+pkgname = iptsd
+pkgdir = debian/$(pkgname)
+
+clean:
+	dh clean
+	go clean
+
+build:
+	dh build
+	mkdir -p bin
+	go build -o "bin/$(pkgname)"
+
+override_dh_install:
+	# Install iptsd binary
+	install -Dpm 0755 "bin/$(pkgname)" "$(pkgdir)/usr/bin/$(pkgname)"
+
+	# Install iptsd service
+	install -Dpm 0644 etc/systemd/iptsd.service \
+		"$(pkgdir)/usr/lib/systemd/system/$(pkgname).service"
+
+	# Install udev configuration
+	install -Dpm 0644 etc/udev/50-ipts.rules \
+		"$(pkgdir)/usr/lib/udev/rules.d/50-ipts.rules"
+
+	# Install iptsd device configs
+	install -dm 0755 "$(pkgdir)/usr/share/ipts"
+	install -Dpm 0644 config/* "$(pkgdir)/usr/share/ipts"
+
+override_dh_strip:
+	dh_strip --no-automatic-dbgsym
+
+%:
+	dh $@
+
