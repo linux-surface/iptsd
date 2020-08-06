@@ -29,6 +29,10 @@ jobs:
         export PKGEXT='.pkg.tar.zst'
         export COMPRESSZST=(zstd -c -T0 --ultra -20 -)
 
+        # Golang settings
+        export GOCACHE="/tmp/gocache"
+        export GOPATH="/tmp/gopath"
+
         # Build
         su nobody --pty -p -s /bin/bash -c 'makepkg -f --noconfirm'
 
@@ -72,26 +76,26 @@ jobs:
         apt-get -y install build-essential fakeroot debhelper dpkg-sig git golang
 
     - name: Build package
-      run: ./pkg/debian/makedeb
+      run: |
+        ln -s pkg/debian debian
+        dpkg-buildpackage -b -us -uc
 
     - name: Sign package
       env:
         GPG_KEY_ID: 56C464BAAC421453
         GPG_KEY: ${{ secrets.SURFACE_GPG_KEY }}
       run: |
-        cd pkg/debian
-
         # import GPG key
         echo "$GPG_KEY" | base64 -d | gpg --import --no-tty --batch --yes
         export GPG_TTY=$(tty)
 
         # sign package
-        dpkg-sig -g "--batch --no-tty" --sign builder -k $GPG_KEY_ID ./*.deb
+        dpkg-sig -g "--batch --no-tty" --sign builder -k $GPG_KEY_ID ../*.deb
 
     - name: Prepare release
       run: |
         mkdir release
-        mv ./pkg/debian/*.deb release
+        mv ../*.deb release
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v1

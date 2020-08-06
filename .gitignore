@@ -3,4 +3,7 @@ iptsd
 pkg/*
 !pkg/fedora/iptsd.spec
 !pkg/arch/PKGBUILD
-!pkg/debian
+!pkg/debian/changelog
+!pkg/debian/compat
+!pkg/debian/control
+!pkg/debian/rules
