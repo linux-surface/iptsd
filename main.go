@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	. "github.com/linux-surface/iptsd/protocol"
 )
 
 type IptsContext struct {
 	Control    *IptsControl
-	DeviceInfo *IptsDeviceInfo
 	Devices    *IptsDevices
 	Protocol   *IptsProtocol
 	Config     *IptsConfig
+	DeviceInfo IptsDeviceInfo
 }
 
 func main() {
@@ -53,27 +54,53 @@ func main() {
 	buffer := make([]byte, ipts.DeviceInfo.BufferSize)
 	ipts.Protocol.Create(buffer)
 
+	timeout := time.Now().Add(5 * time.Second)
+
 	for {
-		count, err := ipts.Control.Read(buffer)
-		if err != nil {
-			fmt.Printf("%+v\n", err)
-			return
-		}
-
-		if count == 0 {
-			continue
-		}
-
-		err = IptsDataHandleInput(ipts)
+		doorbell, err := ipts.Control.Doorbell()
 		if err != nil {
 			fmt.Printf("%+v\n", err)
 			break
 		}
 
-		err = ipts.Protocol.Reset()
-		if err != nil {
-			fmt.Printf("%+v\n", err)
-			break
+		for doorbell != ipts.Control.CurrentDoorbell() {
+			timeout = time.Now().Add(5 * time.Second)
+
+			count, err := ipts.Control.Read(buffer)
+			if err != nil {
+				fmt.Printf("%+v\n", err)
+				return
+			}
+
+			if count == 0 {
+				continue
+			}
+
+			err = IptsDataHandleInput(ipts)
+			if err != nil {
+				fmt.Printf("%+v\n", err)
+				return
+			}
+
+			err = ipts.Protocol.Reset()
+			if err != nil {
+				fmt.Printf("%+v\n", err)
+				return
+			}
+
+			err = ipts.Control.SendFeedback()
+			if err != nil {
+				fmt.Printf("%+v\n", err)
+				return
+			}
+
+			ipts.Control.IncrementDoorbell()
+		}
+
+		if time.Now().Before(timeout) {
+			time.Sleep(10 * time.Millisecond)
+		} else {
+			time.Sleep(200 * time.Millisecond)
 		}
 	}
 
