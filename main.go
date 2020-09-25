@@ -79,7 +79,7 @@ func main() {
 			HandleError(ipts, err)
 		}
 
-		for doorbell != ipts.Control.CurrentDoorbell() {
+		for doorbell > ipts.Control.CurrentDoorbell() {
 			timeout = time.Now().Add(5 * time.Second)
 
 			count, err := ipts.Control.Read(buffer)
