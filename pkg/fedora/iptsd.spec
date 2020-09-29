@@ -1,7 +1,7 @@
 %global goipath github.com/linux-surface/iptsd
 
 Name: iptsd
-Version: 0.1
+Version: 0.1.1
 Summary: Userspace daemon for Intel Precise Touch & Stylus
 License: GPLv2+
 
@@ -72,6 +72,9 @@ install -Dpm 0644 config/* %{buildroot}%{_datadir}/ipts
 %{_datadir}/ipts/*
 
 %changelog
+* Tue Sep 29 2020 Dorian Stoll <dorian.stoll@tmsp.io> - 0.1.1-1
+- Bump release to build for Fedora 33
+
 * Thu Aug 06 2020 Dorian Stoll <dorian.stoll@tmsp.io> - 0.1-1
 - iptsd v0.1
 

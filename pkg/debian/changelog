@@ -1,3 +1,9 @@
+iptsd (0.1.1-1) unstable; urgency=medium
+
+  * Bump release to build for Fedora 33
+
+ -- Dorian Stoll <dorian.stoll@tmsp.io>  Tue, 29 Sep 2020 18:08:36 +0200
+
 iptsd (0.1-1) unstable; urgency=medium
 
   * iptsd v0.1
