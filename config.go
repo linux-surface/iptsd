@@ -20,7 +20,7 @@ type IptsConfig struct {
 	BlockOnPalm bool
 }
 
-func (cfg *IptsConfig) LoadFromDir(info *IptsDeviceInfo, dir string) error {
+func (cfg *IptsConfig) LoadFromDir(info IptsDeviceInfo, dir string) error {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		return nil
 	}
@@ -89,7 +89,7 @@ func (cfg *IptsConfig) LoadFromDir(info *IptsDeviceInfo, dir string) error {
 	return nil
 }
 
-func (cfg *IptsConfig) Load(info *IptsDeviceInfo) error {
+func (cfg *IptsConfig) Load(info IptsDeviceInfo) error {
 	err := cfg.LoadFromDir(info, "/usr/share/ipts")
 	if err != nil {
 		return err

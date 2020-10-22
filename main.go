@@ -2,16 +2,31 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	. "github.com/linux-surface/iptsd/protocol"
 )
 
 type IptsContext struct {
 	Control    *IptsControl
-	DeviceInfo *IptsDeviceInfo
 	Devices    *IptsDevices
 	Protocol   *IptsProtocol
 	Config     *IptsConfig
+	DeviceInfo IptsDeviceInfo
+}
+
+func Shutdown(ipts *IptsContext) {
+	ipts.Devices.Destroy()
+	ipts.Control.Stop()
+	os.Exit(1)
+}
+
+func HandleError(ipts *IptsContext, err error) {
+	fmt.Printf("%+v\n", err)
+	Shutdown(ipts)
 }
 
 func main() {
@@ -21,16 +36,21 @@ func main() {
 	ipts.Devices = &IptsDevices{}
 	ipts.Config = &IptsConfig{}
 
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	go func() {
+		<-sc
+		Shutdown(ipts)
+	}()
+
 	err := ipts.Control.Start()
 	if err != nil {
-		fmt.Printf("%+v\n", err)
-		return
+		HandleError(ipts, err)
 	}
 
 	info, err := ipts.Control.DeviceInfo()
 	if err != nil {
-		fmt.Printf("%+v\n", err)
-		return
+		HandleError(ipts, err)
 	}
 
 	ipts.DeviceInfo = info
@@ -40,51 +60,59 @@ func main() {
 
 	err = ipts.Config.Load(info)
 	if err != nil {
-		fmt.Printf("%+v\n", err)
-		return
+		HandleError(ipts, err)
 	}
 
 	err = ipts.Devices.Create(ipts)
 	if err != nil {
-		fmt.Printf("%+v\n", err)
-		return
+		HandleError(ipts, err)
 	}
 
 	buffer := make([]byte, ipts.DeviceInfo.BufferSize)
 	ipts.Protocol.Create(buffer)
 
+	timeout := time.Now().Add(5 * time.Second)
+
 	for {
-		count, err := ipts.Control.Read(buffer)
+		doorbell, err := ipts.Control.Doorbell()
 		if err != nil {
-			fmt.Printf("%+v\n", err)
-			return
+			HandleError(ipts, err)
 		}
 
-		if count == 0 {
-			continue
+		for doorbell > ipts.Control.CurrentDoorbell() {
+			timeout = time.Now().Add(5 * time.Second)
+
+			count, err := ipts.Control.Read(buffer)
+			if err != nil {
+				HandleError(ipts, err)
+			}
+
+			if count == 0 {
+				continue
+			}
+
+			err = IptsDataHandleInput(ipts)
+			if err != nil {
+				HandleError(ipts, err)
+			}
+
+			err = ipts.Protocol.Reset()
+			if err != nil {
+				HandleError(ipts, err)
+			}
+
+			err = ipts.Control.SendFeedback()
+			if err != nil {
+				HandleError(ipts, err)
+			}
+
+			ipts.Control.IncrementDoorbell()
 		}
 
-		err = IptsDataHandleInput(ipts)
-		if err != nil {
-			fmt.Printf("%+v\n", err)
-			break
+		if time.Now().Before(timeout) {
+			time.Sleep(10 * time.Millisecond)
+		} else {
+			time.Sleep(200 * time.Millisecond)
 		}
-
-		err = ipts.Protocol.Reset()
-		if err != nil {
-			fmt.Printf("%+v\n", err)
-			break
-		}
-	}
-
-	err = ipts.Devices.Destroy()
-	if err != nil {
-		fmt.Printf("%+v\n", err)
-		return
-	}
-
-	err = ipts.Control.Stop()
-	if err != nil {
-		fmt.Printf("%+v\n", err)
 	}
 }
