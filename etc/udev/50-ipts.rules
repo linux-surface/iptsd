@@ -1,1 +1,1 @@
-KERNEL=="ipts", TAG+="systemd"
+KERNEL=="ipts/*", TAG+="systemd"
