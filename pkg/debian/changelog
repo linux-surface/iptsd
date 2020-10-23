@@ -1,3 +1,9 @@
+iptsd (0.2.1-1) unstable; urgency=medium
+
+  * Fix systemd service dependencies
+
+ -- Dorian Stoll <dorian.stoll@tmsp.io>  Fri, 23 Oct 2020 10:08:09 +0200
+
 iptsd (0.2-1) unstable; urgency=medium
 
   * Implement the new UAPI v2 interface
