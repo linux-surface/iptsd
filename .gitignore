@@ -1,5 +1,6 @@
 iptsd
 debian
+build/*
 
 pkg/*
 !pkg/fedora/iptsd.spec
