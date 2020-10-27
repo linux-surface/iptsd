@@ -13,7 +13,7 @@
 #include "config.h"
 #include "context.h"
 #include "control.h"
-#include "syscall.h"
+#include "utils.h"
 
 struct iptsd_context iptsd;
 

@@ -8,8 +8,8 @@
 #include "devices.h"
 #include "heatmap.h"
 #include "protocol.h"
-#include "syscall.h"
 #include "touch-processing.h"
+#include "utils.h"
 
 static void iptsd_touch_emit_empty(int dev)
 {

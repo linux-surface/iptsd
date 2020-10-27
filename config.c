@@ -9,7 +9,7 @@
 
 #include "config.h"
 #include "ipts.h"
-#include "syscall.h"
+#include "utils.h"
 
 struct iptsd_config_device {
 	int vendor;

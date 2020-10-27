@@ -3,7 +3,7 @@
 #include "context.h"
 #include "payload.h"
 #include "singletouch.h"
-#include "syscall.h"
+#include "utils.h"
 
 int iptsd_hid_handle_input(struct iptsd_context *iptsd,
 		struct ipts_data *header)

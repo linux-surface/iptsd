@@ -8,7 +8,7 @@
 #include "devices.h"
 #include "protocol.h"
 #include "stylus-processing.h"
-#include "syscall.h"
+#include "utils.h"
 
 static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 		struct ipts_stylus_data data)

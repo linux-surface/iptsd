@@ -10,7 +10,7 @@
 
 #include "control.h"
 #include "ipts.h"
-#include "syscall.h"
+#include "utils.h"
 
 int iptsd_control_current_file(struct iptsd_control *control)
 {
@@ -22,8 +22,7 @@ int iptsd_control_ready(struct iptsd_control *control)
 	uint8_t ready;
 
 	int fd = iptsd_control_current_file(control);
-	int ret = iptsd_syscall_ioctl(fd,
-			IPTS_IOCTL_GET_DEVICE_READY, &ready);
+	int ret = iptsd_utils_ioctl(fd, IPTS_IOCTL_GET_DEVICE_READY, &ready);
 
 	if (ret < 0) {
 		iptsd_err(ret, "Failed get ready status");
@@ -48,7 +47,7 @@ static int __iptsd_control_send_feedback(struct iptsd_control *control,
 {
 	iptsd_control_wait_for_device(control);
 
-	int ret = iptsd_syscall_ioctl(file, IPTS_IOCTL_SEND_FEEDBACK, NULL);
+	int ret = iptsd_utils_ioctl(file, IPTS_IOCTL_SEND_FEEDBACK, NULL);
 	if (ret < 0)
 		iptsd_err(ret, "Failed to send feedback");
 
@@ -88,7 +87,7 @@ uint32_t iptsd_control_doorbell(struct iptsd_control *control)
 	uint32_t doorbell;
 
 	int fd = iptsd_control_current_file(control);
-	int ret = iptsd_syscall_ioctl(fd, IPTS_IOCTL_GET_DOORBELL, &doorbell);
+	int ret = iptsd_utils_ioctl(fd, IPTS_IOCTL_GET_DOORBELL, &doorbell);
 
 	if (ret < 0) {
 		iptsd_err(ret, "Failed to get doorbell");
@@ -117,7 +116,7 @@ int iptsd_control_device_info(struct iptsd_control *control)
 	iptsd_control_wait_for_device(control);
 
 	int fd = iptsd_control_current_file(control);
-	int ret = iptsd_syscall_ioctl(fd, IPTS_IOCTL_GET_DEVICE_INFO,
+	int ret = iptsd_utils_ioctl(fd, IPTS_IOCTL_GET_DEVICE_INFO,
 			&control->device_info);
 
 	if (ret < 0)
@@ -133,7 +132,7 @@ int iptsd_control_start(struct iptsd_control *control)
 	for (int i = 0; i < IPTS_BUFFERS; i++) {
 		snprintf(name, sizeof(name), "/dev/ipts/%d", i);
 
-		int ret = iptsd_syscall_open(name, O_RDONLY);
+		int ret = iptsd_utils_open(name, O_RDONLY);
 		if (ret >= 0) {
 			control->files[i] = ret;
 			continue;
@@ -165,7 +164,7 @@ int iptsd_control_read(struct iptsd_control *control, void *buf, size_t count)
 	iptsd_control_wait_for_device(control);
 
 	int fd = iptsd_control_current_file(control);
-	int ret = iptsd_syscall_read(fd, buf, count);
+	int ret = iptsd_utils_read(fd, buf, count);
 
 	if (ret < 0)
 		iptsd_err(ret, "Failed to read from buffer");
@@ -176,7 +175,7 @@ int iptsd_control_read(struct iptsd_control *control, void *buf, size_t count)
 int iptsd_control_stop(struct iptsd_control *control)
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++) {
-		int ret = iptsd_syscall_close(control->files[i]);
+		int ret = iptsd_utils_close(control->files[i]);
 		if (ret >= 0)
 			continue;
 

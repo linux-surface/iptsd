@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-int iptsd_syscall_open(const char *file, int flags)
+int iptsd_utils_open(const char *file, int flags)
 {
 	int fd = open(file, flags);
 	if (fd != -1)
@@ -18,7 +18,7 @@ int iptsd_syscall_open(const char *file, int flags)
 	return -errno;
 }
 
-int iptsd_syscall_close(int fd)
+int iptsd_utils_close(int fd)
 {
 	int ret = close(fd);
 	if (ret != -1)
@@ -27,7 +27,7 @@ int iptsd_syscall_close(int fd)
 	return -errno;
 }
 
-int iptsd_syscall_read(int fd, void *buf, size_t count)
+int iptsd_utils_read(int fd, void *buf, size_t count)
 {
 	int ret = read(fd, buf, count);
 	if (ret != -1)
@@ -36,7 +36,7 @@ int iptsd_syscall_read(int fd, void *buf, size_t count)
 	return -errno;
 }
 
-int iptsd_syscall_write(int fd, void *buf, size_t count)
+int iptsd_utils_write(int fd, void *buf, size_t count)
 {
 	int ret = write(fd, buf, count);
 	if (ret != -1)
@@ -45,7 +45,7 @@ int iptsd_syscall_write(int fd, void *buf, size_t count)
 	return -errno;
 }
 
-int iptsd_syscall_ioctl(int fd, unsigned long request, void *data)
+int iptsd_utils_ioctl(int fd, unsigned long request, void *data)
 {
 	int ret = ioctl(fd, request, data);
 	if (ret != -1)
@@ -54,7 +54,7 @@ int iptsd_syscall_ioctl(int fd, unsigned long request, void *data)
 	return -errno;
 }
 
-void iptsd_syscall_err(int err, const char *file,
+void iptsd_utils_err(int err, const char *file,
 		int line, const char *format, ...)
 {
 	va_list args;

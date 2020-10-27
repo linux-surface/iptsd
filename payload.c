@@ -4,7 +4,7 @@
 #include "protocol.h"
 #include "stylus.h"
 #include "touch.h"
-#include "syscall.h"
+#include "utils.h"
 
 int iptsd_payload_handle_input(struct iptsd_context *iptsd,
 		struct ipts_data *header)

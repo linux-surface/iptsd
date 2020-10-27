@@ -19,9 +19,9 @@ sources = [
 	'singletouch.c',
 	'stylus.c',
 	'stylus-processing.c',
-	'syscall.c',
 	'touch.c',
 	'touch-processing.c',
+	'utils.c',
 ]
 
 deps = [

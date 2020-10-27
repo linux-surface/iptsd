@@ -6,7 +6,7 @@
 #include "hid.h"
 #include "payload.h"
 #include "protocol.h"
-#include "syscall.h"
+#include "utils.h"
 
 int iptsd_data_handle_input(struct iptsd_context *iptsd)
 {
