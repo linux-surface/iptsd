@@ -8,6 +8,7 @@
 #include "devices.h"
 #include "heatmap.h"
 #include "protocol.h"
+#include "syscall.h"
 #include "touch-processing.h"
 
 static void iptsd_touch_emit_empty(int dev)
@@ -52,7 +53,11 @@ static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
 		iptsd_touch_emit(touch.dev, in);
 	}
 
-	return iptsd_devices_emit(touch.dev, EV_SYN, SYN_REPORT, 0);
+	int ret = iptsd_devices_emit(touch.dev, EV_SYN, SYN_REPORT, 0);
+	if (ret < 0)
+		iptsd_err(ret, "Failed to emit touch report");
+
+	return ret;
 }
 
 int iptsd_touch_handle_input(struct iptsd_context *iptsd,
@@ -88,5 +93,10 @@ int iptsd_touch_handle_input(struct iptsd_context *iptsd,
 	if (!hm)
 		return 0;
 
-	return iptsd_touch_handle_heatmap(iptsd, hm);
+	int ret = iptsd_touch_handle_heatmap(iptsd, hm);
+	if (ret < 0)
+		iptsd_err(ret, "Failed to handle touch heatmap");
+
+	return ret;
 }
+

@@ -4,6 +4,7 @@
 #include "protocol.h"
 #include "stylus.h"
 #include "touch.h"
+#include "syscall.h"
 
 int iptsd_payload_handle_input(struct iptsd_context *iptsd,
 		struct ipts_data *header)
@@ -25,8 +26,10 @@ int iptsd_payload_handle_input(struct iptsd_context *iptsd,
 			break;
 		}
 
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to handle payload frame");
 			return ret;
+		}
 
 		pos = pos + sizeof(struct ipts_payload_frame) + frame->size;
 	}

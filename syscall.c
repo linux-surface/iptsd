@@ -2,6 +2,8 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -52,8 +54,16 @@ int iptsd_syscall_ioctl(int fd, unsigned long request, void *data)
 	return -errno;
 }
 
-char *iptsd_syscall_strerr(int err)
+void iptsd_syscall_err(int err, const char *file,
+		int line, const char *format, ...)
 {
-	return strerror(-err);
+	va_list args;
+	va_start(args, format);
+
+	fprintf(stderr, "ERROR: %s:%d: ", file, line);
+	vfprintf(stderr, format, args);
+	fprintf(stderr, ": %s\n", strerror(-err));
+
+	va_end(args);
 }
 

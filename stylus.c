@@ -8,6 +8,7 @@
 #include "devices.h"
 #include "protocol.h"
 #include "stylus-processing.h"
+#include "syscall.h"
 
 static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 		struct ipts_stylus_data data)
@@ -47,7 +48,11 @@ static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 	iptsd_devices_emit(stylus->dev, EV_ABS, ABS_TILT_X, tx);
 	iptsd_devices_emit(stylus->dev, EV_ABS, ABS_TILT_Y, ty);
 
-	return iptsd_devices_emit(stylus->dev, EV_SYN, SYN_REPORT, 0);
+	int ret = iptsd_devices_emit(stylus->dev, EV_SYN, SYN_REPORT, 0);
+	if (ret < 0)
+		iptsd_err(ret, "Failed to emit stylus report");
+
+	return ret;
 }
 
 static int iptsd_stylus_change_serial(struct iptsd_context *iptsd,
@@ -72,7 +77,11 @@ static int iptsd_stylus_change_serial(struct iptsd_context *iptsd,
 		return 0;
 	}
 
-	return iptsd_devices_add_stylus(&iptsd->devices, serial);
+	int ret = iptsd_devices_add_stylus(&iptsd->devices, serial);
+	if (ret < 0)
+		iptsd_err(ret, "Failed to add new stylus");
+
+	return ret;
 }
 
 static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd,
@@ -84,8 +93,10 @@ static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd,
 
 	if (iptsd->devices.active_stylus->serial != sreport->serial) {
 		int ret = iptsd_stylus_change_serial(iptsd, sreport->serial);
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to change stylus");
 			return ret;
+		}
 	}
 
 	for (int i = 0; i < sreport->elements; i++) {
@@ -93,8 +104,10 @@ static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd,
 			(struct ipts_stylus_data *)&sreport->data[pos];
 
 		int ret = iptsd_stylus_handle_data(iptsd, *data);
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to handle stylus report");
 			return ret;
+		}
 	}
 
 	return 0;
@@ -112,8 +125,10 @@ static int iptsd_stylus_handle_tilt(struct iptsd_context *iptsd,
 			(struct ipts_stylus_data *)&sreport->data[pos];
 
 		int ret = iptsd_stylus_handle_data(iptsd, *data);
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to handle stylus report");
 			return ret;
+		}
 	}
 
 	return 0;
@@ -130,8 +145,10 @@ static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd,
 
 	if (iptsd->devices.active_stylus->serial != sreport->serial) {
 		int ret = iptsd_stylus_change_serial(iptsd, sreport->serial);
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to change stylus");
 			return ret;
+		}
 	}
 
 	for (int i = 0; i < sreport->elements; i++) {
@@ -147,8 +164,10 @@ static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd,
 		full_data.timestamp = 0;
 
 		int ret = iptsd_stylus_handle_data(iptsd, full_data);
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to handle stylus report");
 			return ret;
+		}
 	}
 
 	return 0;
@@ -176,8 +195,10 @@ int iptsd_stylus_handle_input(struct iptsd_context *iptsd,
 			break;
 		}
 
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to handle stylus input");
 			return ret;
+		}
 
 		pos += report->size + sizeof(struct ipts_report);
 	}

@@ -5,6 +5,7 @@
 #include "context.h"
 #include "devices.h"
 #include "protocol.h"
+#include "syscall.h"
 
 int iptsd_singletouch_handle_input(struct iptsd_context *iptsd,
 		struct ipts_data *header)
@@ -27,6 +28,10 @@ int iptsd_singletouch_handle_input(struct iptsd_context *iptsd,
 		iptsd_devices_emit(touch.dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
 	}
 
-	return iptsd_devices_emit(touch.dev, EV_SYN, SYN_REPORT, 0);
+	int ret = iptsd_devices_emit(touch.dev, EV_SYN, SYN_REPORT, 0);
+	if (ret < 0)
+		iptsd_err(ret, "Failed to emit singletouch report");
+
+	return ret;
 }
 

@@ -26,8 +26,10 @@ static int iptsd_devices_create_stylus(struct iptsd_stylus_device *stylus,
 	struct uinput_abs_setup abs_setup;
 
 	int file = iptsd_syscall_open("/dev/uinput", O_WRONLY | O_NONBLOCK);
-	if (file < 0)
+	if (file < 0) {
+		iptsd_err(file, "Failed to open uinput device");
 		return file;
+	}
 
 	stylus->dev = file;
 	memset(&setup, 0, sizeof(struct uinput_setup));
@@ -87,10 +89,16 @@ static int iptsd_devices_create_stylus(struct iptsd_stylus_device *stylus,
 	strcpy(setup.name, "IPTS Stylus");
 
 	int ret = iptsd_syscall_ioctl(file, UI_DEV_SETUP, &setup);
-	if (ret < 0)
+	if (ret < 0) {
+		iptsd_err(ret, "UI_DEV_SETUP failed");
 		return ret;
+	}
 
-	return iptsd_syscall_ioctl(file, UI_DEV_CREATE, NULL);
+	ret = iptsd_syscall_ioctl(file, UI_DEV_CREATE, NULL);
+	if (ret < 0)
+		iptsd_err(ret, "UI_DEV_CREATE failed");
+
+	return ret;
 }
 
 static int iptsd_devices_create_touch(struct iptsd_touch_device *touch,
@@ -100,8 +108,10 @@ static int iptsd_devices_create_touch(struct iptsd_touch_device *touch,
 	struct uinput_abs_setup abs_setup;
 
 	int file = iptsd_syscall_open("/dev/uinput", O_WRONLY | O_NONBLOCK);
-	if (file < 0)
+	if (file < 0) {
+		iptsd_err(file, "Failed to open uinput device");
 		return file;
+	}
 
 	touch->dev = file;
 	touch->processor.max_contacts = config.max_contacts;
@@ -109,8 +119,10 @@ static int iptsd_devices_create_touch(struct iptsd_touch_device *touch,
 	touch->processor.invert_y = config.invert_y;
 
 	int ret = iptsd_touch_processing_init(&touch->processor);
-	if (ret < 0)
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to init touch processing");
 		return ret;
+	}
 
 	memset(&setup, 0, sizeof(struct uinput_setup));
 	memset(&abs_setup, 0, sizeof(struct uinput_abs_setup));
@@ -149,10 +161,16 @@ static int iptsd_devices_create_touch(struct iptsd_touch_device *touch,
 	strcpy(setup.name, "IPTS Touch");
 
 	ret = iptsd_syscall_ioctl(file, UI_DEV_SETUP, &setup);
-	if (ret < 0)
+	if (ret < 0) {
+		iptsd_err(ret, "UI_DEV_SETUP failed");
 		return ret;
+	}
 
-	return iptsd_syscall_ioctl(file, UI_DEV_CREATE, NULL);
+	ret = iptsd_syscall_ioctl(file, UI_DEV_CREATE, NULL);
+	if (ret < 0)
+		iptsd_err(ret, "UI_DEV_CREATE failed");
+
+	return ret;
 }
 
 int iptsd_devices_add_stylus(struct iptsd_devices *devices, uint32_t serial)
@@ -172,10 +190,13 @@ int iptsd_devices_add_stylus(struct iptsd_devices *devices, uint32_t serial)
 	stylus->active = true;
 	stylus->serial = serial;
 	devices->active_stylus = stylus;
-
 	iptsd_stylus_processing_flush(&stylus->processor);
 
-	return iptsd_devices_create_stylus(stylus, devices->config);
+	int ret = iptsd_devices_create_stylus(stylus, devices->config);
+	if (ret < 0)
+		iptsd_err(ret, "Failed to create stylus");
+
+	return ret;
 }
 
 int iptsd_devices_emit(int fd, int type, int code, int val)
@@ -188,27 +209,29 @@ int iptsd_devices_emit(int fd, int type, int code, int val)
 	ie.code = code;
 	ie.value = val;
 
-	return iptsd_syscall_write(fd, &ie, sizeof(struct input_event));
+	int ret = iptsd_syscall_write(fd, &ie, sizeof(struct input_event));
+	if (ret < 0)
+		iptsd_err(ret, "Failed to write input event");
+
+	return ret;
 }
 
 int iptsd_devices_create(struct iptsd_devices *devices)
 {
 	if (devices->config.width == 0 || devices->config.height == 0) {
-		fprintf(stderr, "Display size is 0!\n");
+		iptsd_err(-EINVAL, "Display size is 0!\n");
 		return -EINVAL;
 	}
 
 	int ret = iptsd_devices_create_touch(&devices->touch, devices->config);
 	if (ret < 0) {
-		fprintf(stderr, "Failed to create touch device: %s\n",
-				iptsd_syscall_strerr(ret));
+		iptsd_err(ret, "Failed to create touch device");
 		return ret;
 	}
 
 	ret = iptsd_devices_add_stylus(devices, 0);
 	if (ret < 0) {
-		fprintf(stderr, "Failed to create stylus: %s\n",
-				iptsd_syscall_strerr(ret));
+		iptsd_err(ret, "Failed to create stylus");
 		return ret;
 	}
 
@@ -217,8 +240,13 @@ int iptsd_devices_create(struct iptsd_devices *devices)
 
 void iptsd_devices_destroy(struct iptsd_devices *devices)
 {
-	iptsd_syscall_ioctl(devices->touch.dev, UI_DEV_DESTROY, NULL);
-	iptsd_syscall_close(devices->touch.dev);
+	int ret = iptsd_syscall_ioctl(devices->touch.dev, UI_DEV_DESTROY, NULL);
+	if (ret < 0)
+		iptsd_err(ret, "UI_DEV_DESTROY failed");
+
+	ret = iptsd_syscall_close(devices->touch.dev);
+	if (ret < 0)
+		iptsd_err(ret, "Closing uinput device failed");
 
 	iptsd_touch_processing_free(&devices->touch.processor);
 
@@ -228,8 +256,13 @@ void iptsd_devices_destroy(struct iptsd_devices *devices)
 		if (!stylus.active)
 			continue;
 
-		iptsd_syscall_ioctl(stylus.dev, UI_DEV_DESTROY, NULL);
-		iptsd_syscall_close(stylus.dev);
+		ret = iptsd_syscall_ioctl(stylus.dev, UI_DEV_DESTROY, NULL);
+		if (ret < 0)
+			iptsd_err(ret, "UI_DEV_DESTROY failed");
+
+		ret = iptsd_syscall_close(stylus.dev);
+		if (ret < 0)
+			iptsd_err(ret, "Closing uinput device failed");
 	}
 }
 

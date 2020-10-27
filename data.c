@@ -23,10 +23,8 @@ int iptsd_data_handle_input(struct iptsd_context *iptsd)
 		break;
 	}
 
-	if (ret < 0) {
-		fprintf(stderr, "Failed to parse data: %s",
-				iptsd_syscall_strerr(ret));
-	}
+	if (ret < 0)
+		iptsd_err(ret, "Failed to parse data");
 
 	return ret;
 }

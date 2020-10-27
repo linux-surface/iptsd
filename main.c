@@ -13,6 +13,7 @@
 #include "config.h"
 #include "context.h"
 #include "control.h"
+#include "syscall.h"
 
 struct iptsd_context iptsd;
 
@@ -25,7 +26,7 @@ static int iptsd_exit(struct iptsd_context *iptsd, int error)
 
 	int ret = iptsd_control_stop(&iptsd->control);
 	if (ret < 0)
-		return ret;
+		iptsd_err(ret, "Failed to stop IPTS");
 
 	return error;
 }
@@ -49,16 +50,22 @@ static int iptsd_loop(struct iptsd_context *iptsd)
 	while (doorbell > iptsd->control.current_doorbell) {
 		int ret = iptsd_control_read(&iptsd->control,
 				iptsd->data, size);
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to read IPTS data");
 			return ret;
+		}
 
 		ret = iptsd_data_handle_input(iptsd);
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to handle data");
 			return ret;
+		}
 
 		ret = iptsd_control_send_feedback(&iptsd->control);
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to send feedback");
 			return ret;
+		}
 
 		iptsd->control.current_doorbell++;
 	}
@@ -73,8 +80,10 @@ int main(void)
 	signal(SIGTERM, iptsd_signal);
 
 	int ret = iptsd_control_start(&iptsd.control);
-	if (ret < 0)
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to start IPTS");
 		return ret;
+	}
 
 	time_t timeout = time(NULL) + 5;
 	struct ipts_device_info device_info = iptsd.control.device_info;
@@ -85,8 +94,10 @@ int main(void)
 	iptsd_config_load(&iptsd.config, device_info);
 
 	iptsd.data = calloc(device_info.buffer_size, sizeof(char));
-	if (!iptsd.data)
+	if (!iptsd.data) {
+		iptsd_err(-ENOMEM, "Failed to allocate data buffer");
 		return iptsd_exit(&iptsd, -ENOMEM);
+	}
 
 	iptsd.devices.config.width = iptsd.config.width;
 	iptsd.devices.config.height = iptsd.config.height;
@@ -99,14 +110,18 @@ int main(void)
 	iptsd.devices.config.max_contacts = device_info.max_contacts;
 
 	ret = iptsd_devices_create(&iptsd.devices);
-	if (ret < 0)
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to create uinput devices");
 		return iptsd_exit(&iptsd, ret);
+	}
 
 	while (1) {
 		ret = iptsd_loop(&iptsd);
 
-		if (ret < 0)
+		if (ret < 0) {
+			iptsd_err(ret, "IPTSD loop failed");
 			return iptsd_exit(&iptsd, ret);
+		}
 
 		if (ret > 0)
 			timeout = time(NULL) + 5;
