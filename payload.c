@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <stdint.h>
+
 #include "context.h"
 #include "payload.h"
 #include "protocol.h"
@@ -13,7 +15,7 @@ int iptsd_payload_handle_input(struct iptsd_context *iptsd,
 	int pos = 0;
 	struct ipts_payload *payload = (struct ipts_payload *)header->data;
 
-	for (int i = 0; i < payload->frames; i++) {
+	for (uint32_t i = 0; i < payload->frames; i++) {
 		int ret = 0;
 		struct ipts_payload_frame *frame =
 			(struct ipts_payload_frame *)&payload->data[pos];

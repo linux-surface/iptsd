@@ -64,7 +64,7 @@ static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
 int iptsd_touch_handle_input(struct iptsd_context *iptsd,
 		struct ipts_payload_frame *frame)
 {
-	int pos = 0;
+	uint32_t pos = 0;
 	struct heatmap *hm = NULL;
 
 	while (pos < frame->size) {

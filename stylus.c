@@ -177,7 +177,7 @@ static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd,
 int iptsd_stylus_handle_input(struct iptsd_context *iptsd,
 		struct ipts_payload_frame *frame)
 {
-	int pos = 0;
+	uint32_t pos = 0;
 
 	while (pos < frame->size) {
 		int ret = 0;
