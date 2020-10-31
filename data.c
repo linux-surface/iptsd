@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "context.h"
+#include "data.h"
 #include "hid.h"
 #include "payload.h"
 #include "protocol.h"

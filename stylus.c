@@ -7,6 +7,7 @@
 #include "context.h"
 #include "devices.h"
 #include "protocol.h"
+#include "stylus.h"
 #include "stylus-processing.h"
 #include "utils.h"
 

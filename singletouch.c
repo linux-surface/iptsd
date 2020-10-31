@@ -5,6 +5,7 @@
 #include "context.h"
 #include "devices.h"
 #include "protocol.h"
+#include "singletouch.h"
 #include "utils.h"
 
 int iptsd_singletouch_handle_input(struct iptsd_context *iptsd,

@@ -8,6 +8,7 @@
 #include "devices.h"
 #include "heatmap.h"
 #include "protocol.h"
+#include "touch.h"
 #include "touch-processing.h"
 #include "utils.h"
 

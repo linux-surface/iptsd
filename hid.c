@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "context.h"
+#include "hid.h"
 #include "payload.h"
 #include "singletouch.h"
 #include "utils.h"

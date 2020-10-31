@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "context.h"
+#include "payload.h"
 #include "protocol.h"
 #include "stylus.h"
 #include "touch.h"

@@ -9,6 +9,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "utils.h"
+
 int iptsd_utils_open(const char *file, int flags)
 {
 	int fd = open(file, flags);
