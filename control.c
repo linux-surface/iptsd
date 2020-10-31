@@ -80,7 +80,7 @@ int iptsd_control_flush(struct iptsd_control *control)
 	return 0;
 }
 
-uint32_t iptsd_control_doorbell(struct iptsd_control *control)
+int64_t iptsd_control_doorbell(struct iptsd_control *control)
 {
 	iptsd_control_wait_for_device(control);
 

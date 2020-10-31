@@ -40,7 +40,7 @@ static void iptsd_signal(int sig)
 
 static int iptsd_loop(struct iptsd_context *iptsd)
 {
-	uint32_t doorbell = iptsd_control_doorbell(&iptsd->control);
+	int64_t doorbell = iptsd_control_doorbell(&iptsd->control);
 	if (doorbell < 0)
 		return doorbell;
 

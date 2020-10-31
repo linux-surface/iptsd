@@ -10,7 +10,7 @@
 
 struct iptsd_control {
 	int files[IPTS_BUFFERS];
-	int current_doorbell;
+	uint32_t current_doorbell;
 	struct ipts_device_info device_info;
 };
 
@@ -20,7 +20,7 @@ int iptsd_control_ready(struct iptsd_control *control);
 void iptsd_control_wait_for_device(struct iptsd_control *control);
 int iptsd_control_send_feedback(struct iptsd_control *control);
 int iptsd_control_flush(struct iptsd_control *control);
-uint32_t iptsd_control_doorbell(struct iptsd_control *control);
+int64_t iptsd_control_doorbell(struct iptsd_control *control);
 int iptsd_control_device_info(struct iptsd_control *control);
 int iptsd_control_start(struct iptsd_control *control);
 int iptsd_control_read(struct iptsd_control *control, void *buf, size_t count);
