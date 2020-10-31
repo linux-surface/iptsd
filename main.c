@@ -66,8 +66,6 @@ static int iptsd_loop(struct iptsd_context *iptsd)
 			iptsd_err(ret, "Failed to send feedback");
 			return ret;
 		}
-
-		iptsd->control.current_doorbell++;
 	}
 
 	return diff;
