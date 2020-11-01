@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <math.h>
 #include <linux/uinput.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -8,13 +9,35 @@
 #include "devices.h"
 #include "protocol.h"
 #include "stylus.h"
-#include "stylus-processing.h"
 #include "utils.h"
+
+static void iptsd_stylus_tilt(int altitude, int azimuth, int *tx, int *ty)
+{
+	*tx = 0;
+	*ty = 0;
+
+	if (altitude <= 0)
+		return;
+
+	double alt = ((double)altitude) / 18000 * M_PI;
+	double azm = ((double)azimuth) / 18000 * M_PI;
+
+	double sin_alt = sin(alt);
+	double sin_azm = sin(azm);
+
+	double cos_alt = cos(alt);
+	double cos_azm = cos(azm);
+
+	double atan_x = atan2(cos_alt, sin_alt * cos_azm);
+	double atan_y = atan2(cos_alt, sin_alt * sin_azm);
+
+	*tx = 9000 - (atan_x * 4500 / M_PI_4);
+	*ty = (atan_y * 4500 / M_PI_4) - 9000;
+}
 
 static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 		struct ipts_stylus_data data)
 {
-	int sx, sy;
 	int tx, ty;
 
 	struct iptsd_stylus_device *stylus = iptsd->devices.active_stylus;
@@ -27,22 +50,15 @@ static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 	int btn_pen = prox * (1 - rubber);
 	int btn_rubber = prox * rubber;
 
-	iptsd_stylus_processing_smooth(&stylus->processor,
-			data.x, data.y, &sx, &sy);
-
-	iptsd_stylus_processing_tilt(&stylus->processor,
-			data.altitude, data.azimuth, &tx, &ty);
-
-	if (prox == 0)
-		iptsd_stylus_processing_flush(&stylus->processor);
+	iptsd_stylus_tilt(data.altitude, data.azimuth, &tx, &ty);
 
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOUCH, touch);
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOOL_PEN, btn_pen);
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOOL_RUBBER, btn_rubber);
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_STYLUS, button);
 
-	iptsd_devices_emit(stylus->dev, EV_ABS, ABS_X, sx);
-	iptsd_devices_emit(stylus->dev, EV_ABS, ABS_Y, sy);
+	iptsd_devices_emit(stylus->dev, EV_ABS, ABS_X, data.x);
+	iptsd_devices_emit(stylus->dev, EV_ABS, ABS_Y, data.y);
 	iptsd_devices_emit(stylus->dev, EV_ABS, ABS_PRESSURE, data.pressure);
 	iptsd_devices_emit(stylus->dev, EV_ABS, ABS_MISC, data.timestamp);
 

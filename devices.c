@@ -9,7 +9,6 @@
 #include <string.h>
 
 #include "devices.h"
-#include "stylus-processing.h"
 #include "utils.h"
 #include "touch-processing.h"
 
@@ -195,7 +194,6 @@ int iptsd_devices_add_stylus(struct iptsd_devices *devices, uint32_t serial)
 	stylus->active = true;
 	stylus->serial = serial;
 	devices->active_stylus = stylus;
-	iptsd_stylus_processing_flush(&stylus->processor);
 
 	int ret = iptsd_devices_create_stylus(stylus, devices->config);
 	if (ret < 0)

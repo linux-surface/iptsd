@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "stylus-processing.h"
 #include "touch-processing.h"
 
 #define IPTSD_MAX_STYLI 10
@@ -27,7 +26,6 @@ struct iptsd_stylus_device {
 	int dev;
 	bool active;
 	uint32_t serial;
-	struct iptsd_stylus_processor processor;
 };
 
 struct iptsd_touch_device {
