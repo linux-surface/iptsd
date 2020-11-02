@@ -12,21 +12,21 @@ project(
 cc = meson.get_compiler('c')
 
 sources = [
-	'config.c',
-	'contact.c',
-	'control.c',
-	'data.c',
-	'devices.c',
-	'finger.c',
-	'heatmap.c',
-	'hid.c',
-	'main.c',
-	'payload.c',
-	'singletouch.c',
-	'stylus.c',
-	'touch.c',
-	'touch-processing.c',
-	'utils.c',
+	'src/config.c',
+	'src/contact.c',
+	'src/control.c',
+	'src/data.c',
+	'src/devices.c',
+	'src/finger.c',
+	'src/heatmap.c',
+	'src/hid.c',
+	'src/main.c',
+	'src/payload.c',
+	'src/singletouch.c',
+	'src/stylus.c',
+	'src/touch.c',
+	'src/touch-processing.c',
+	'src/utils.c',
 ]
 
 deps = [
