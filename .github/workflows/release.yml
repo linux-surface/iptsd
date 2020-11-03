@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: pacman -Sy --noconfirm sudo binutils fakeroot base-devel go
+      run: pacman -Sy --noconfirm sudo binutils fakeroot base-devel meson libinih
 
     - name: Build package
       run: |
@@ -28,10 +28,6 @@ jobs:
         # Package compression settings (Matches latest Arch)
         export PKGEXT='.pkg.tar.zst'
         export COMPRESSZST=(zstd -c -T0 --ultra -20 -)
-
-        # Golang settings
-        export GOCACHE="/tmp/gocache"
-        export GOPATH="/tmp/gopath"
 
         # Build
         su nobody --pty -p -s /bin/bash -c 'makepkg -f --noconfirm'
@@ -73,7 +69,7 @@ jobs:
       run: |
         sed 's/^deb /deb-src /' /etc/apt/sources.list >> /etc/apt/sources.list
         apt-get -y update
-        apt-get -y install build-essential fakeroot debhelper dpkg-sig git golang
+        apt-get -y install build-essential fakeroot debhelper dpkg-sig git meson libinih-dev pkg-config
 
     - name: Build package
       run: |

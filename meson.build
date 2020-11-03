@@ -10,6 +10,7 @@ project(
 )
 
 cc = meson.get_compiler('c')
+dir_config = join_paths(get_option('prefix'), get_option('datadir'), 'ipts')
 
 sources = [
 	'src/config.c',
@@ -57,5 +58,6 @@ cflags = [
 cflags = cc.get_supported_arguments(cflags)
 add_project_arguments(cflags, language: 'c')
 
-executable('iptsd', sources, dependencies: deps)
+executable('iptsd', sources, dependencies: deps, install: true)
+install_subdir('config', install_dir: dir_config, strip_directory: true)
 

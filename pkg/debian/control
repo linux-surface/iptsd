@@ -2,9 +2,9 @@ Source: iptsd
 Section: misc
 Priority: optional
 Maintainer: Dorian Stoll <dorian.stoll@tmsp.io>
-Build-Depends: build-essential, debhelper (>= 10), golang-go
+Build-Depends: build-essential, debhelper (>= 10), meson, libinih-dev, pkg-config
 
 Package: iptsd
 Architecture: amd64
-Depends: systemd, udev
+Depends: systemd, udev, libinih
 Description: Userspace daemon for Intel Precise Touch & Stylus

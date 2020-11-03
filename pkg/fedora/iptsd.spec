@@ -1,43 +1,34 @@
-%global goipath github.com/linux-surface/iptsd
+%global debug_package %{nil}
 
 Name: iptsd
 Version: 0.2.1
+Release: 1%{?dist}
 Summary: Userspace daemon for Intel Precise Touch & Stylus
 License: GPLv2+
 
-%gometa
+URL: https://github.com/linux-surface/iptsd
+Source0: %{url}/archive/v%{version}.tar.gz
 
-Release: 1%{?dist}
-
-URL: %{gourl}
-Source0: %{gosource}
-
-%global common_description %{expand:
-iptsd is a userspace daemon that processes touch events from the IPTS
-kernel driver, and sends them back to the kernel using uinput devices.
-}
-
-%global golicenses LICENSE
-%global godocs README.md
-
-BuildRequires: golang(github.com/pkg/errors)
-BuildRequires: golang(gopkg.in/ini.v1)
+BuildRequires: meson
+BuildRequires: gcc
+BuildRequires: inih-devel
 BuildRequires: systemd-rpm-macros
 
-%global debug_package %{nil}
+Requires: inih
 
 %description
-%{common_description}
+iptsd is a userspace daemon that processes touch events from the IPTS
+kernel driver, and sends them back to the kernel using uinput devices.
 
 %prep
-%goprep
+%autosetup
 
 %build
-%gobuild -o %{gobuilddir}/bin/%{name} %{goipath}
+%meson
+%meson_build
 
 %install
-# Install iptsd binary
-install -Dpm 0755 %{gobuilddir}/bin/%{name} %{buildroot}%{_bindir}/%{name}
+%meson_install
 
 # Install iptsd service
 install -Dpm 0644 etc/systemd/iptsd.service \
@@ -47,12 +38,7 @@ install -Dpm 0644 etc/systemd/iptsd.service \
 install -Dpm 0644 etc/udev/50-ipts.rules \
 	%{buildroot}%{_udevrulesdir}/50-ipts.rules
 
-# Install iptsd device configs
-install -dm 0755 %{buildroot}%{_datadir}/ipts
-install -Dpm 0644 config/* %{buildroot}%{_datadir}/ipts
-
-%check
-%gocheck
+%ldconfig_scriptlets
 
 %post
 %systemd_post %{name}.service
@@ -63,9 +49,12 @@ install -Dpm 0644 config/* %{buildroot}%{_datadir}/ipts
 %postun
 %systemd_postun_with_restart %{name}.service
 
+%check
+%meson_test
+
 %files
-%license %{golicenses}
-%doc %{godocs}
+%license LICENSE
+%doc README.md
 %{_bindir}/%{name}
 %{_unitdir}/%{name}.service
 %{_udevrulesdir}/50-ipts.rules
