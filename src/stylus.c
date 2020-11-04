@@ -9,6 +9,7 @@
 #include "devices.h"
 #include "protocol.h"
 #include "stylus.h"
+#include "touch-processing.h"
 #include "utils.h"
 
 static void iptsd_stylus_tilt(int altitude, int azimuth, int *tx, int *ty)
@@ -41,6 +42,7 @@ static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 	int tx, ty;
 
 	struct iptsd_stylus_device *stylus = iptsd->devices.active_stylus;
+	struct iptsd_touch_processor *tp = &iptsd->devices.touch.processor;
 
 	int prox = (data.mode & IPTS_STYLUS_REPORT_MODE_PROX) >> 0;
 	int touch = (data.mode & IPTS_STYLUS_REPORT_MODE_TOUCH) >> 1;
@@ -51,6 +53,9 @@ static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 	int btn_rubber = prox * rubber;
 
 	iptsd_stylus_tilt(data.altitude, data.azimuth, &tx, &ty);
+
+	iptsd_touch_rejection_cone_set_tip(tp, data.x, data.y,
+		iptsd_utils_msec_timestamp());
 
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOUCH, touch);
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOOL_PEN, btn_pen);
