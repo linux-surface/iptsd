@@ -41,10 +41,7 @@ static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
 			continue;
 
 		if (in.is_palm || blocked) {
-			//iptsd_touch_emit(touch.dev, in, MT_TOOL_PALM);
-			iptsd_devices_emit(touch.dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
-			iptsd_devices_emit(touch.dev, EV_ABS, ABS_MT_POSITION_X, 0);
-			iptsd_devices_emit(touch.dev, EV_ABS, ABS_MT_POSITION_Y, 0);
+			iptsd_touch_emit(touch.dev, in, MT_TOOL_PALM);
 			continue;
 		}
 
