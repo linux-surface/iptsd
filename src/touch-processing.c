@@ -58,7 +58,7 @@ void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
 	}
 
 	int count = contacts_get(hm, tp->contacts, tp->max_contacts);
-	contacts_get_palms(tp->contacts, tp->max_contacts, tp->rejection_cone,
+	contacts_get_palms(tp->contacts, tp->max_contacts, &tp->rejection_cone,
 		iptsd_utils_msec_timestamp());
 
 	for (int i = 0; i < count; i++) {
@@ -120,10 +120,6 @@ int iptsd_touch_processing_init(struct iptsd_touch_processor *tp)
 	if (!tp->last)
 		return -ENOMEM;
 
-	tp->rejection_cone = malloc(sizeof(struct iptsd_touch_rejection_cone));
-	if (!tp->rejection_cone)
-		return -ENOMEM;
-
 	tp->free_indices = calloc(tp->max_contacts, sizeof(bool));
 	if (!tp->free_indices)
 		return -ENOMEM;
@@ -159,9 +155,6 @@ void iptsd_touch_processing_free(struct iptsd_touch_processor *tp)
 	if (tp->last)
 		free(tp->last);
 	
-	if (tp->rejection_cone)
-		free(tp->rejection_cone);
-
 	if (tp->free_indices)
 		free(tp->free_indices);
 
@@ -185,9 +178,9 @@ void iptsd_touch_rejection_cone_set_tip(struct iptsd_touch_processor *tp, int x,
 	if (tp->invert_y)
 		fy = 1 - fy;
 
-	tp->rejection_cone->x = fx * (tp->hm.width - 1);
-	tp->rejection_cone->y = fy * (tp->hm.height - 1);
-	tp->rejection_cone->position_update_timestamp =
+	tp->rejection_cone.x = fx * (tp->hm.width - 1);
+	tp->rejection_cone.y = fy * (tp->hm.height - 1);
+	tp->rejection_cone.position_update_timestamp =
 		iptsd_utils_msec_timestamp();
 }
 

@@ -38,7 +38,7 @@ struct iptsd_touch_processor {
 	struct contact *contacts;
 	struct iptsd_touch_input *inputs;
 	struct iptsd_touch_input *last;
-	struct iptsd_touch_rejection_cone *rejection_cone;
+	struct iptsd_touch_rejection_cone rejection_cone;
 	bool *free_indices;
 	double *distances;
 	int *indices;
