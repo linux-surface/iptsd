@@ -230,3 +230,41 @@ int iptsd_touch_rejection_cone_is_inside(
 	return dx * cone->dx + dy * cone->dy > CONE_COS_THRESHOLD * d;
 }
 
+
+void contacts_get_palms(
+	struct contact *contacts, int count,
+	struct iptsd_touch_rejection_cone *cone, int timestamp)
+{
+	for (int i = 0; i < count; i++) {
+		float vx = contacts[i].ev1;
+		float vy = contacts[i].ev2;
+		float max_v = contacts[i].max_v;
+
+		// Regular touch
+		if (vx < 0.6 || (vx < 1.0 && max_v > 80))
+			continue;
+
+		// Thumb
+		if ((vx < 1.25 || (vx < 3.5 && max_v > 90)) && vx/vy > 1.8)
+			continue;
+
+		contacts[i].is_palm = true;
+		iptsd_touch_rejection_cone_update_direction(cone, &contacts[i], timestamp);
+
+		for (int j = 0; j < count; j++) {
+			if (contacts[j].is_palm)
+				continue;
+
+			if (contact_near(contacts[j], contacts[i]))
+				contacts[j].is_palm = true;
+		}
+	}
+	
+	for (int i = 0; i < count; i++) {
+		if (!contacts[i].is_palm){
+			if(iptsd_touch_rejection_cone_is_inside(cone, &contacts[i], timestamp)) {
+				contacts[i].is_palm = true;
+			}
+		}
+	}
+}

@@ -66,5 +66,9 @@ int iptsd_touch_rejection_cone_is_inside(
 	struct iptsd_touch_rejection_cone *cone, struct contact *input,
 	unsigned timestamp);
 
+void contacts_get_palms(
+	struct contact *contacts, int count,
+	struct iptsd_touch_rejection_cone *cone, int timestamp);
+
 #endif /* _IPTSD_TOUCH_PROCESSING_H_ */
 
