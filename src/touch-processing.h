@@ -57,18 +57,17 @@ struct heatmap *iptsd_touch_processing_get_heatmap(
 int iptsd_touch_processing_init(struct iptsd_touch_processor *tp);
 void iptsd_touch_processing_free(struct iptsd_touch_processor *tp);
 
-void iptsd_touch_rejection_cone_set_tip(
-	struct iptsd_touch_processor *cone, int x, int y, unsigned timestamp);
+void iptsd_touch_rejection_cone_set_tip(struct iptsd_touch_processor *cone,
+		int x, int y);
 void iptsd_touch_rejection_cone_update_direction(
-	struct iptsd_touch_rejection_cone *cone, struct contact *palm,
-	unsigned timestamp);
+		struct iptsd_touch_rejection_cone *cone, struct contact *palm,
+		unsigned timestamp);
 int iptsd_touch_rejection_cone_is_inside(
-	struct iptsd_touch_rejection_cone *cone, struct contact *input,
-	unsigned timestamp);
+		struct iptsd_touch_rejection_cone *cone, struct contact *input,
+		unsigned timestamp);
 
-void contacts_get_palms(
-	struct contact *contacts, int count,
-	struct iptsd_touch_rejection_cone *cone, int timestamp);
+void contacts_get_palms(struct contact *contacts, int count,
+		struct iptsd_touch_rejection_cone *cone, int timestamp);
 
 #endif /* _IPTSD_TOUCH_PROCESSING_H_ */
 

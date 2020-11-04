@@ -54,8 +54,7 @@ static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 
 	iptsd_stylus_tilt(data.altitude, data.azimuth, &tx, &ty);
 
-	iptsd_touch_rejection_cone_set_tip(tp, data.x, data.y,
-		iptsd_utils_msec_timestamp());
+	iptsd_touch_rejection_cone_set_tip(tp, data.x, data.y);
 
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOUCH, touch);
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOOL_PEN, btn_pen);
