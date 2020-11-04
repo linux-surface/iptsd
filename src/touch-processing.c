@@ -58,8 +58,7 @@ void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
 	}
 
 	int count = contacts_get(hm, tp->contacts, tp->max_contacts);
-	contacts_get_palms(tp->contacts, tp->max_contacts, &tp->rejection_cone,
-		iptsd_utils_msec_timestamp());
+	contacts_get_palms(tp->contacts, tp->max_contacts, &tp->rejection_cone);
 
 	for (int i = 0; i < count; i++) {
 		float x = tp->contacts[i].x / (float)(hm->width - 1);
@@ -186,7 +185,7 @@ void iptsd_touch_rejection_cone_set_tip(struct iptsd_touch_processor *tp, int x,
 
 void iptsd_touch_rejection_cone_update_direction(
 	struct iptsd_touch_rejection_cone *cone,
-	struct contact *palm, unsigned timestamp)
+	struct contact *palm, uint64_t timestamp)
 {
 	if (cone->position_update_timestamp + 300 < timestamp)
 		return; // pon lifted
@@ -208,7 +207,7 @@ void iptsd_touch_rejection_cone_update_direction(
 
 int iptsd_touch_rejection_cone_is_inside(
 		struct iptsd_touch_rejection_cone *cone, struct contact *input,
-		unsigned timestamp)
+		uint64_t timestamp)
 {
 	if (cone->position_update_timestamp + 300 < timestamp)
 		return 0; // pen lifted
@@ -224,10 +223,10 @@ int iptsd_touch_rejection_cone_is_inside(
 }
 
 
-void contacts_get_palms(
-	struct contact *contacts, int count,
-	struct iptsd_touch_rejection_cone *cone, int timestamp)
+void contacts_get_palms(struct contact *contacts, int count,
+		struct iptsd_touch_rejection_cone *cone)
 {
+	uint64_t timestamp = iptsd_utils_msec_timestamp();
 	for (int i = 0; i < count; i++) {
 		float vx = contacts[i].ev1;
 		float vy = contacts[i].ev2;

@@ -25,8 +25,8 @@ struct iptsd_touch_input {
 };
 
 struct iptsd_touch_rejection_cone {
-	unsigned position_update_timestamp; // should be in msec
-	unsigned direction_update_timestamp; // should be in msec
+	uint64_t position_update_timestamp; // should be in msec
+	uint64_t direction_update_timestamp; // should be in msec
 	float x;
 	float y;
 	float dx;
@@ -61,13 +61,13 @@ void iptsd_touch_rejection_cone_set_tip(struct iptsd_touch_processor *cone,
 		int x, int y);
 void iptsd_touch_rejection_cone_update_direction(
 		struct iptsd_touch_rejection_cone *cone, struct contact *palm,
-		unsigned timestamp);
+		uint64_t timestamp);
 int iptsd_touch_rejection_cone_is_inside(
 		struct iptsd_touch_rejection_cone *cone, struct contact *input,
-		unsigned timestamp);
+		uint64_t timestamp);
 
 void contacts_get_palms(struct contact *contacts, int count,
-		struct iptsd_touch_rejection_cone *cone, int timestamp);
+		struct iptsd_touch_rejection_cone *cone);
 
 #endif /* _IPTSD_TOUCH_PROCESSING_H_ */
 

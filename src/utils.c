@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -70,9 +71,9 @@ void iptsd_utils_err(int err, const char *file,
 	va_end(args);
 }
 
-unsigned iptsd_utils_msec_timestamp(void)
+uint64_t iptsd_utils_msec_timestamp(void)
 {
 	static struct timespec t;
 	clock_gettime(CLOCK_MONOTONIC, &t);
-	return (unsigned)t.tv_sec * 1000 + t.tv_nsec / 1000000;
+	return (uint64_t)t.tv_sec * 1000 + t.tv_nsec / 1000000;
 }
