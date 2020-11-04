@@ -13,6 +13,7 @@ int iptsd_utils_write(int fd, void *buf, size_t count);
 int iptsd_utils_ioctl(int fd, unsigned long request, void *data);
 void iptsd_utils_err(int err, const char *file,
 	int line, const char *format, ...);
+unsigned iptsd_utils_msec_timestamp(void);
 
 #endif /* _IPTSD_SYSCALL_H_ */
 

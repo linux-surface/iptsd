@@ -8,6 +8,7 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "utils.h"
 
@@ -69,3 +70,9 @@ void iptsd_utils_err(int err, const char *file,
 	va_end(args);
 }
 
+unsigned iptsd_utils_msec_timestamp(void)
+{
+	static struct timespec t;
+	clock_gettime(CLOCK_MONOTONIC, &t);
+	return (unsigned)t.tv_sec * 1000 + t.tv_nsec / 1000000;
+}
