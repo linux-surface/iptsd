@@ -23,32 +23,32 @@ static void iptsd_touch_emit(int dev, struct iptsd_touch_input in, int tool)
 static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
 		struct heatmap *hm)
 {
-	struct iptsd_touch_device touch = iptsd->devices.touch;
+	struct iptsd_touch_device *touch = &iptsd->devices.touch;
 	bool blocked = false;
 
-	iptsd_touch_processing_inputs(&touch.processor, hm);
+	iptsd_touch_processing_inputs(&touch->processor, hm);
 
 	if (iptsd->config.block_on_palm) {
-		for (int i = 0; i < touch.processor.max_contacts; i++)
-			blocked = blocked || touch.processor.inputs[i].is_palm;
+		for (int i = 0; i < touch->processor.max_contacts; i++)
+			blocked = blocked || touch->processor.inputs[i].is_palm;
 	}
 
-	for (int i = 0; i < touch.processor.max_contacts; i++) {
-		struct iptsd_touch_input in = touch.processor.inputs[i];
+	for (int i = 0; i < touch->processor.max_contacts; i++) {
+		struct iptsd_touch_input in = touch->processor.inputs[i];
 
-		iptsd_devices_emit(touch.dev, EV_ABS, ABS_MT_SLOT, in.slot);
+		iptsd_devices_emit(touch->dev, EV_ABS, ABS_MT_SLOT, in.slot);
 		if (in.index != -1 && !in.is_stable)
 			continue;
 
 		if (in.is_palm || blocked) {
-			iptsd_touch_emit(touch.dev, in, MT_TOOL_PALM);
+			iptsd_touch_emit(touch->dev, in, MT_TOOL_PALM);
 			continue;
 		}
 
-		iptsd_touch_emit(touch.dev, in, MT_TOOL_FINGER);
+		iptsd_touch_emit(touch->dev, in, MT_TOOL_FINGER);
 	}
 
-	int ret = iptsd_devices_emit(touch.dev, EV_SYN, SYN_REPORT, 0);
+	int ret = iptsd_devices_emit(touch->dev, EV_SYN, SYN_REPORT, 0);
 	if (ret < 0)
 		iptsd_err(ret, "Failed to emit touch report");
 
