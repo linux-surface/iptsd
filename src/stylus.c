@@ -54,7 +54,7 @@ static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 
 	iptsd_stylus_tilt(data.altitude, data.azimuth, &tx, &ty);
 
-	iptsd_touch_rejection_cone_set_tip(tp, data.x, data.y);
+	iptsd_touch_rejection_cone_set_tip(tp, stylus->serial, data.x, data.y);
 
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOUCH, touch);
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOOL_PEN, btn_pen);
@@ -95,6 +95,7 @@ static int iptsd_stylus_change_serial(struct iptsd_context *iptsd,
 	 */
 	if (iptsd->devices.active_stylus->serial == 0) {
 		iptsd->devices.active_stylus->serial = serial;
+		iptsd->devices.touch.processor.rejection_cones[0].pen_serial = serial;
 		return 0;
 	}
 

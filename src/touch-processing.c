@@ -58,7 +58,7 @@ void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
 	}
 
 	int count = contacts_get(hm, tp->contacts, tp->max_contacts);
-	contacts_get_palms(tp->contacts, tp->max_contacts, &tp->rejection_cone);
+	iptsd_touch_processing_get_palms(tp, count);
 
 	for (int i = 0; i < count; i++) {
 		float x = tp->contacts[i].x / (float)(hm->width - 1);
@@ -165,9 +165,19 @@ void iptsd_touch_processing_free(struct iptsd_touch_processor *tp)
 
 }
 
-void iptsd_touch_rejection_cone_set_tip(struct iptsd_touch_processor *tp, int x,
-		int y)
+void iptsd_touch_rejection_cone_set_tip(struct iptsd_touch_processor *tp,
+		uint32_t serial, int x, int y)
 {
+	struct iptsd_touch_rejection_cone *cone = tp->rejection_cones;
+	while (cone < tp->rejection_cones + IPTSD_MAX_STYLI &&
+			cone->pen_serial != serial)
+		cone++;
+	
+	if (cone == tp->rejection_cones + IPTSD_MAX_STYLI) {
+		iptsd_err(-1, "No cone rejection found for stylus.");
+		return;
+	}
+
 	float fx = x / 9600.0;
 	float fy = y / 7200.0;
 
@@ -177,27 +187,44 @@ void iptsd_touch_rejection_cone_set_tip(struct iptsd_touch_processor *tp, int x,
 	if (tp->invert_y)
 		fy = 1 - fy;
 
-	tp->rejection_cone.x = fx * (tp->hm.width - 1);
-	tp->rejection_cone.y = fy * (tp->hm.height - 1);
-	tp->rejection_cone.position_update_timestamp =
-		iptsd_utils_msec_timestamp();
+	cone->x = fx * (tp->hm.width - 1);
+	cone->y = fy * (tp->hm.height - 1);
+	cone->position_update_timestamp = iptsd_utils_msec_timestamp();
 }
 
 void iptsd_touch_rejection_cone_update_direction(
-	struct iptsd_touch_rejection_cone *cone,
-	struct contact *palm, uint64_t timestamp)
+		struct iptsd_touch_processor *tp, struct contact *palm,
+		uint64_t timestamp)
 {
-	if (cone->position_update_timestamp + 300 < timestamp)
-		return; // pon lifted
+	struct iptsd_touch_rejection_cone *cone = NULL;
+	float d = INFINITY;
+
+	// find closest cone (by center)
+	for (int i = 0; i < tp->n_cones; i++) {
+		struct iptsd_touch_rejection_cone *curr_cone = &tp->rejection_cones[i];
+		if (curr_cone->position_update_timestamp + 300 < timestamp)
+			continue; // pon lifted
+		float curr_d = hypotf(curr_cone->x - palm->x, curr_cone->y - palm->y);
+		if (curr_d < d) {
+			d = curr_d;
+			cone = curr_cone;
+		}
+	}
+
+	if (cone == NULL)
+		return;
+
+	// update cone direction vector
 	float time_diff = (timestamp - cone->direction_update_timestamp) / 1000.0;
 	float weight = exp2(-time_diff);
 	
-	float dx = palm->x - cone->x;
-	float dy = palm->y - cone->y;
-	float d = (hypotf(dx, dy) + 1e-6); // prevent 0.0/0.0
+	float dx = (palm->x - cone->x) / (d + 1e-6); // prevent division by 0
+	float dy = (palm->y - cone->y) / (d + 1e-6);
 
-	cone->dx = weight * cone->dx + dx / d;
-	cone->dy = weight * cone->dy + dy / d;
+	cone->dx = weight * cone->dx + dx;
+	cone->dy = weight * cone->dy + dy;
+
+	// normalize cone direction vector
 	d = (hypotf(cone->dx, cone->dy) + 1e-6);
 	cone->dx /= d;
 	cone->dy /= d;
@@ -205,32 +232,38 @@ void iptsd_touch_rejection_cone_update_direction(
 	cone->direction_update_timestamp = timestamp;
 }
 
-int iptsd_touch_rejection_cone_is_inside(
-		struct iptsd_touch_rejection_cone *cone, struct contact *input,
+bool iptsd_touch_rejection_cone_is_inside(
+		struct iptsd_touch_processor *tp, struct contact *input,
 		uint64_t timestamp)
 {
-	if (cone->position_update_timestamp + 300 < timestamp)
-		return 0; // pen lifted
-	
-	float dx = input->x - cone->x;
-	float dy = input->y - cone->y;
-	float d = hypotf(dx, dy);
+	for (int i = 0; i < tp->n_cones; i++) {
+		struct iptsd_touch_rejection_cone *cone = tp->rejection_cones + i;
+		if (cone->position_update_timestamp + 300 < timestamp)
+			continue; // pen lifted
+		
+		float dx = input->x - cone->x;
+		float dy = input->y - cone->y;
+		float d = hypotf(dx, dy);
 
-	if (d > CONE_DISTANCE_THRESHOLD)
-		return 0; // too far from pen tip
+		if (d > CONE_DISTANCE_THRESHOLD)
+			continue; // too far from pen tip
 
-	return dx * cone->dx + dy * cone->dy > CONE_COS_THRESHOLD * d;
+		if (dx * cone->dx + dy * cone->dy > CONE_COS_THRESHOLD * d)
+			return true;
+	}
+
+	return false;
 }
 
 
-void contacts_get_palms(struct contact *contacts, int count,
-		struct iptsd_touch_rejection_cone *cone)
+void iptsd_touch_processing_get_palms(struct iptsd_touch_processor *tp,
+		int contacts_count)
 {
 	uint64_t timestamp = iptsd_utils_msec_timestamp();
-	for (int i = 0; i < count; i++) {
-		float vx = contacts[i].ev1;
-		float vy = contacts[i].ev2;
-		float max_v = contacts[i].max_v;
+	for (int i = 0; i < contacts_count; i++) {
+		float vx = tp->contacts[i].ev1;
+		float vy = tp->contacts[i].ev2;
+		float max_v = tp->contacts[i].max_v;
 
 		// Regular touch
 		if (vx < 0.6 || (vx < 1.0 && max_v > 80))
@@ -240,24 +273,24 @@ void contacts_get_palms(struct contact *contacts, int count,
 		if ((vx < 1.25 || (vx < 3.5 && max_v > 90)) && vx/vy > 1.8)
 			continue;
 
-		contacts[i].is_palm = true;
-		iptsd_touch_rejection_cone_update_direction(cone, &contacts[i],
+		tp->contacts[i].is_palm = true;
+		iptsd_touch_rejection_cone_update_direction(tp, &tp->contacts[i],
 				timestamp);
 
-		for (int j = 0; j < count; j++) {
-			if (contacts[j].is_palm)
+		for (int j = 0; j < contacts_count; j++) {
+			if (tp->contacts[j].is_palm)
 				continue;
 
-			if (contact_near(contacts[j], contacts[i]))
-				contacts[j].is_palm = true;
+			if (contact_near(tp->contacts[j], tp->contacts[i]))
+				tp->contacts[j].is_palm = true;
 		}
 	}
 	
-	for (int i = 0; i < count; i++) {
-		if (!contacts[i].is_palm) {
-			if (iptsd_touch_rejection_cone_is_inside(cone, &contacts[i],
+	for (int i = 0; i < contacts_count; i++) {
+		if (!tp->contacts[i].is_palm) {
+			if (iptsd_touch_rejection_cone_is_inside(tp, &tp->contacts[i],
 					timestamp))
-				contacts[i].is_palm = true;
+				tp->contacts[i].is_palm = true;
 		}
 	}
 }

@@ -198,6 +198,10 @@ int iptsd_devices_add_stylus(struct iptsd_devices *devices, uint32_t serial)
 	int ret = iptsd_devices_create_stylus(stylus, devices->config);
 	if (ret < 0)
 		iptsd_err(ret, "Failed to create stylus");
+	else {
+		int cone_id = devices->touch.processor.n_cones++;
+		devices->touch.processor.rejection_cones[cone_id].pen_serial = serial;
+	}
 
 	return ret;
 }
