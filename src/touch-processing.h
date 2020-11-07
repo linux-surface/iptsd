@@ -5,11 +5,9 @@
 
 #include <stdbool.h>
 
+#include "constants.h"
 #include "contact.h"
 #include "heatmap.h"
-
-#define CONE_COS_THRESHOLD 0.8660 // cos(30 degrees)
-#define CONE_DISTANCE_THRESHOLD 20
 
 struct iptsd_touch_input {
 	int x;

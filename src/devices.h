@@ -6,9 +6,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "constants.h"
 #include "touch-processing.h"
-
-#define IPTSD_MAX_STYLI 10
 
 struct iptsd_device_config {
 	int width;

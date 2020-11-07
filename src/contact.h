@@ -5,9 +5,8 @@
 
 #include <stdbool.h>
 
+#include "constants.h"
 #include "heatmap.h"
-
-#define CONTACT_TOUCH_THRESHOLD 10
 
 struct cluster {
 	long x;
