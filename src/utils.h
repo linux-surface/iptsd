@@ -3,6 +3,7 @@
 #ifndef _IPTSD_SYSCALL_H_
 #define _IPTSD_SYSCALL_H_
 
+#include <stddef.h>
 #include <stdint.h>
 
 #define iptsd_err(ERRNO, ARGS...) \

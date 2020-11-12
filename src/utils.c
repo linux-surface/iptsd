@@ -77,3 +77,4 @@ uint64_t iptsd_utils_msec_timestamp(void)
 	clock_gettime(CLOCK_MONOTONIC, &t);
 	return (uint64_t)t.tv_sec * 1000 + t.tv_nsec / 1000000;
 }
+

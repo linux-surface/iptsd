@@ -18,8 +18,8 @@ static int iptsd_devices_res(int virt, int phys)
 	return (int)roundf(res);
 }
 
-static int iptsd_devices_create_stylus(struct iptsd_stylus_device *stylus,
-		struct iptsd_device_config config)
+static int iptsd_devices_create_stylus(struct iptsd_devices *devices,
+		struct iptsd_stylus_device *stylus)
 {
 	struct uinput_setup setup;
 	struct uinput_abs_setup abs_setup;
@@ -45,16 +45,19 @@ static int iptsd_devices_create_stylus(struct iptsd_stylus_device *stylus,
 	iptsd_utils_ioctl(file, UI_SET_KEYBIT, (void *)BTN_TOOL_PEN);
 	iptsd_utils_ioctl(file, UI_SET_KEYBIT, (void *)BTN_TOOL_RUBBER);
 
+	int resX = iptsd_devices_res(9600, devices->config.width);
+	int resY = iptsd_devices_res(7200, devices->config.height);
+
 	abs_setup.code = ABS_X;
 	abs_setup.absinfo.minimum = 0;
 	abs_setup.absinfo.maximum = 9600;
-	abs_setup.absinfo.resolution = iptsd_devices_res(9600, config.width);
+	abs_setup.absinfo.resolution = resX;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	abs_setup.code = ABS_Y;
 	abs_setup.absinfo.minimum = 0;
 	abs_setup.absinfo.maximum = 7200;
-	abs_setup.absinfo.resolution = iptsd_devices_res(7200, config.height);
+	abs_setup.absinfo.resolution = resY;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	abs_setup.code = ABS_PRESSURE;
@@ -82,9 +85,9 @@ static int iptsd_devices_create_stylus(struct iptsd_stylus_device *stylus,
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	setup.id.bustype = BUS_VIRTUAL;
-	setup.id.vendor = config.vendor;
-	setup.id.product = config.product;
-	setup.id.version = config.version;
+	setup.id.vendor = devices->device_info.vendor;
+	setup.id.product = devices->device_info.product;
+	setup.id.version = devices->device_info.version;
 	strcpy(setup.name, "IPTS Stylus");
 
 	int ret = iptsd_utils_ioctl(file, UI_DEV_SETUP, &setup);
@@ -100,8 +103,8 @@ static int iptsd_devices_create_stylus(struct iptsd_stylus_device *stylus,
 	return ret;
 }
 
-static int iptsd_devices_create_touch(struct iptsd_touch_device *touch,
-		struct iptsd_device_config config)
+static int iptsd_devices_create_touch(struct iptsd_devices *devices,
+		struct iptsd_touch_device *touch)
 {
 	struct uinput_setup setup;
 	struct uinput_abs_setup abs_setup;
@@ -113,9 +116,8 @@ static int iptsd_devices_create_touch(struct iptsd_touch_device *touch,
 	}
 
 	touch->dev = file;
-	touch->processor.max_contacts = config.max_contacts;
-	touch->processor.invert_x = config.invert_x;
-	touch->processor.invert_y = config.invert_y;
+	touch->processor.config = devices->config;
+	touch->processor.device_info = devices->device_info;
 
 	int ret = iptsd_touch_processing_init(&touch->processor);
 	if (ret < 0) {
@@ -129,15 +131,18 @@ static int iptsd_devices_create_touch(struct iptsd_touch_device *touch,
 	iptsd_utils_ioctl(file, UI_SET_EVBIT, (void *)EV_ABS);
 	iptsd_utils_ioctl(file, UI_SET_PROPBIT, (void *)INPUT_PROP_DIRECT);
 
+	int resX = iptsd_devices_res(9600, devices->config.width);
+	int resY = iptsd_devices_res(7200, devices->config.height);
+
 	abs_setup.code = ABS_MT_SLOT;
 	abs_setup.absinfo.minimum = 0;
-	abs_setup.absinfo.maximum = config.max_contacts;
+	abs_setup.absinfo.maximum = devices->device_info.max_contacts;
 	abs_setup.absinfo.resolution = 0;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	abs_setup.code = ABS_MT_TRACKING_ID;
 	abs_setup.absinfo.minimum = 0;
-	abs_setup.absinfo.maximum = config.max_contacts;
+	abs_setup.absinfo.maximum = devices->device_info.max_contacts;
 	abs_setup.absinfo.resolution = 0;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
@@ -149,19 +154,19 @@ static int iptsd_devices_create_touch(struct iptsd_touch_device *touch,
 	abs_setup.code = ABS_MT_POSITION_X;
 	abs_setup.absinfo.minimum = 0;
 	abs_setup.absinfo.maximum = 9600;
-	abs_setup.absinfo.resolution = iptsd_devices_res(9600, config.width);
+	abs_setup.absinfo.resolution = resX;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	abs_setup.code = ABS_MT_POSITION_Y;
 	abs_setup.absinfo.minimum = 0;
 	abs_setup.absinfo.maximum = 7200;
-	abs_setup.absinfo.resolution = iptsd_devices_res(7200, config.height);
+	abs_setup.absinfo.resolution = resY;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	setup.id.bustype = BUS_VIRTUAL;
-	setup.id.vendor = config.vendor;
-	setup.id.product = config.product;
-	setup.id.version = config.version;
+	setup.id.vendor = devices->device_info.vendor;
+	setup.id.product = devices->device_info.product;
+	setup.id.version = devices->device_info.version;
 	strcpy(setup.name, "IPTS Touch");
 
 	ret = iptsd_utils_ioctl(file, UI_DEV_SETUP, &setup);
@@ -179,13 +184,15 @@ static int iptsd_devices_create_touch(struct iptsd_touch_device *touch,
 
 int iptsd_devices_add_stylus(struct iptsd_devices *devices, uint32_t serial)
 {
+	int i;
 	struct iptsd_stylus_device *stylus = NULL;
 
-	for (int i = 0; i < IPTSD_MAX_STYLI; i++) {
+	for (i = 0; i < IPTSD_MAX_STYLI; i++) {
 		if (devices->styli[i].active)
 			continue;
 
 		stylus = &devices->styli[i];
+		break;
 	}
 
 	if (!stylus)
@@ -193,15 +200,12 @@ int iptsd_devices_add_stylus(struct iptsd_devices *devices, uint32_t serial)
 
 	stylus->active = true;
 	stylus->serial = serial;
+	stylus->cone = &devices->touch.processor.rejection_cones[i];
 	devices->active_stylus = stylus;
 
-	int ret = iptsd_devices_create_stylus(stylus, devices->config);
+	int ret = iptsd_devices_create_stylus(devices, stylus);
 	if (ret < 0)
 		iptsd_err(ret, "Failed to create stylus");
-	else {
-		int cone_id = devices->touch.processor.n_cones++;
-		devices->touch.processor.rejection_cones[cone_id].pen_serial = serial;
-	}
 
 	return ret;
 }
@@ -230,7 +234,7 @@ int iptsd_devices_create(struct iptsd_devices *devices)
 		return -EINVAL;
 	}
 
-	int ret = iptsd_devices_create_touch(&devices->touch, devices->config);
+	int ret = iptsd_devices_create_touch(devices, &devices->touch);
 	if (ret < 0) {
 		iptsd_err(ret, "Failed to create touch device");
 		return ret;

@@ -162,3 +162,4 @@ int contacts_get(struct heatmap *hm, struct contact *contacts, int count)
 
 	return c;
 }
+

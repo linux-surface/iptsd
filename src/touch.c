@@ -23,17 +23,19 @@ static void iptsd_touch_emit(int dev, struct iptsd_touch_input in, int tool)
 static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
 		struct heatmap *hm)
 {
-	struct iptsd_touch_device *touch = &iptsd->devices.touch;
 	bool blocked = false;
+
+	struct iptsd_touch_device *touch = &iptsd->devices.touch;
+	int max_contacts = iptsd->control.device_info.max_contacts;
 
 	iptsd_touch_processing_inputs(&touch->processor, hm);
 
 	if (iptsd->config.block_on_palm) {
-		for (int i = 0; i < touch->processor.max_contacts; i++)
+		for (int i = 0; i < max_contacts; i++)
 			blocked = blocked || touch->processor.inputs[i].is_palm;
 	}
 
-	for (int i = 0; i < touch->processor.max_contacts; i++) {
+	for (int i = 0; i < max_contacts; i++) {
 		struct iptsd_touch_input in = touch->processor.inputs[i];
 
 		iptsd_devices_emit(touch->dev, EV_ABS, ABS_MT_SLOT, in.slot);

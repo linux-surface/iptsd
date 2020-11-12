@@ -5,9 +5,12 @@
 
 #include <stdbool.h>
 
+#include "cone.h"
+#include "config.h"
 #include "constants.h"
 #include "contact.h"
 #include "heatmap.h"
+#include "protocol.h"
 
 struct iptsd_touch_input {
 	int x;
@@ -22,30 +25,19 @@ struct iptsd_touch_input {
 	struct contact *contact;
 };
 
-struct iptsd_touch_rejection_cone {
-	uint32_t pen_serial;
-	uint64_t position_update_timestamp; // should be in msec
-	uint64_t direction_update_timestamp; // should be in msec
-	float x;
-	float y;
-	float dx;
-	float dy;
-};
-
 struct iptsd_touch_processor {
 	struct heatmap hm;
 	struct contact *contacts;
 	struct iptsd_touch_input *inputs;
 	struct iptsd_touch_input *last;
-	struct iptsd_touch_rejection_cone rejection_cones[IPTSD_MAX_STYLI];
-	int n_cones;
+	struct cone rejection_cones[IPTSD_MAX_STYLI];
+
 	bool *free_indices;
 	double *distances;
 	int *indices;
 
-	int max_contacts;
-	bool invert_x;
-	bool invert_y;
+	struct iptsd_config config;
+	struct ipts_device_info device_info;
 };
 
 double iptsd_touch_processing_dist(struct iptsd_touch_input input,
@@ -56,18 +48,6 @@ struct heatmap *iptsd_touch_processing_get_heatmap(
 		struct iptsd_touch_processor *tp, int width, int height);
 int iptsd_touch_processing_init(struct iptsd_touch_processor *tp);
 void iptsd_touch_processing_free(struct iptsd_touch_processor *tp);
-
-void iptsd_touch_rejection_cone_set_tip(struct iptsd_touch_processor *tp,
-		uint32_t serial, int x, int y);
-void iptsd_touch_rejection_cone_update_direction(
-		struct iptsd_touch_processor *tp, struct contact *palm,
-		uint64_t timestamp);
-bool iptsd_touch_rejection_cone_is_inside(
-		struct iptsd_touch_processor *tp, struct contact *input,
-		uint64_t timestamp);
-
-void iptsd_touch_processing_get_palms(struct iptsd_touch_processor *tp,
-		int contacts_count);
 
 #endif /* _IPTSD_TOUCH_PROCESSING_H_ */
 

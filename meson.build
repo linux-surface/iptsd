@@ -12,6 +12,7 @@ project(
 cc = meson.get_compiler('c')
 
 sources = [
+	'src/cone.c',
 	'src/config.c',
 	'src/contact.c',
 	'src/control.c',

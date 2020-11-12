@@ -25,10 +25,11 @@ static bool iptsd_finger_find_duplicates(struct iptsd_touch_processor *tp,
 		int count, int itr)
 {
 	int duplicates = 0;
+	int max_contacts = tp->device_info.max_contacts;
 
 	for (int i = 0; i < count; i++) {
 		bool duplicated = false;
-		int base = i * tp->max_contacts;
+		int base = i * max_contacts;
 
 		if (tp->inputs[i].index == -1)
 			continue;
@@ -39,7 +40,7 @@ static bool iptsd_finger_find_duplicates(struct iptsd_touch_processor *tp,
 		 * than A.
 		 */
 		for (int k = 0; k < count; k++) {
-			int base_k = k * tp->max_contacts;
+			int base_k = k * max_contacts;
 
 			if (i == k)
 				continue;
@@ -85,11 +86,11 @@ static bool iptsd_finger_find_duplicates(struct iptsd_touch_processor *tp,
 	 * next-nearest point now (incremented index). We continue to do
 	 * there are no duplicates anymore.
 	 */
-	for (int i = 0; i < tp->max_contacts; i++) {
+	for (int i = 0; i < max_contacts; i++) {
 		if (tp->inputs[i].index != -2)
 			continue;
 
-		int index = i * tp->max_contacts + itr;
+		int index = i * max_contacts + itr;
 		struct iptsd_touch_input last = tp->last[tp->indices[index]];
 
 		iptsd_finger_update_from_last(&tp->inputs[i], last);
@@ -104,15 +105,17 @@ static bool iptsd_finger_find_duplicates(struct iptsd_touch_processor *tp,
 
 void iptsd_finger_track(struct iptsd_touch_processor *tp, int count)
 {
+	int max_contacts = tp->device_info.max_contacts;
+
 	/*
 	 * For every current input, we calculate the distance to all
 	 * previous inputs. Then we use these distances to create a sorted
 	 * list of their indices, going from nearest to furthest.
 	 */
-	for (int i = 0; i < tp->max_contacts; i++) {
-		int base = i * tp->max_contacts;
+	for (int i = 0; i < max_contacts; i++) {
+		int base = i * max_contacts;
 
-		for (int j = 0; j < tp->max_contacts; j++) {
+		for (int j = 0; j < max_contacts; j++) {
 			tp->indices[base + j] = j;
 
 			struct iptsd_touch_input current = tp->inputs[i];
@@ -130,7 +133,7 @@ void iptsd_finger_track(struct iptsd_touch_processor *tp, int count)
 		/* Sort the list */
 		bool swapped = true;
 
-		for (int n = tp->max_contacts; swapped; n--) {
+		for (int n = max_contacts; swapped; n--) {
 			swapped = false;
 
 			for (int k = 1; k < n; k++) {
@@ -155,7 +158,7 @@ void iptsd_finger_track(struct iptsd_touch_processor *tp, int count)
 	 * and determine stability of the contact.
 	 */
 	for (int i = 0; i < count; i++) {
-		int index = i * tp->max_contacts;
+		int index = i * max_contacts;
 		struct iptsd_touch_input last = tp->last[tp->indices[index]];
 
 		iptsd_finger_update_from_last(&tp->inputs[i], last);
@@ -170,7 +173,7 @@ void iptsd_finger_track(struct iptsd_touch_processor *tp, int count)
 	 * fix them, until every input has an unique index (or -1 which will
 	 * get handled later)
 	 */
-	for (int j = 1; j < tp->max_contacts; j++) {
+	for (int j = 1; j < max_contacts; j++) {
 		if (!iptsd_finger_find_duplicates(tp, count, j))
 			break;
 	}
@@ -189,13 +192,13 @@ void iptsd_finger_track(struct iptsd_touch_processor *tp, int count)
 	 * finger index as the slot ID. The ID needs to stay the same, to
 	 * prevent libinput errors.
 	 */
-	for (int i = 0; i < tp->max_contacts; i++) {
+	for (int i = 0; i < max_contacts; i++) {
 		if (tp->inputs[i].index != -1) {
 			tp->inputs[i].slot = tp->inputs[i].index;
 			continue;
 		}
 
-		for (int k = 0; k < tp->max_contacts; k++) {
+		for (int k = 0; k < max_contacts; k++) {
 			if (!tp->free_indices[k])
 				continue;
 
