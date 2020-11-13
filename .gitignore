@@ -2,6 +2,8 @@ iptsd
 debian
 build/*
 
+compile_commands.json
+
 pkg/*
 !pkg/fedora/iptsd.spec
 !pkg/arch/PKGBUILD
