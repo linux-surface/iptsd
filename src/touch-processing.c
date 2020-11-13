@@ -34,7 +34,6 @@ static void iptsd_touch_processing_update_cone(struct iptsd_touch_processor *tp,
 			continue;
 
 		if (cone_is_removed(current))
-
 			continue;
 
 		float current_d = cone_hypot(current, palm->x, palm->y);
