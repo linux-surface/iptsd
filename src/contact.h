@@ -5,9 +5,8 @@
 
 #include <stdbool.h>
 
+#include "constants.h"
 #include "heatmap.h"
-
-#define CONTACT_TOUCH_THRESHOLD 10
 
 struct cluster {
 	long x;
@@ -39,7 +38,7 @@ struct contact {
 };
 
 int contacts_get(struct heatmap *hm, struct contact *contacts, int count);
-void contacts_get_palms(struct contact *contacts, int count);
+bool contact_near(struct contact c, struct contact other);
 
 #endif /* _IPTSD_CONTACT_H_ */
 

@@ -8,6 +8,7 @@
 #include "finger.h"
 #include "heatmap.h"
 #include "touch-processing.h"
+#include "utils.h"
 
 double iptsd_touch_processing_dist(struct iptsd_touch_input input,
 		struct iptsd_touch_input other)
@@ -16,6 +17,88 @@ double iptsd_touch_processing_dist(struct iptsd_touch_input input,
 	double dy = (double)input.y - (double)other.y;
 
 	return sqrt(dx * dx + dy * dy);
+}
+
+static void iptsd_touch_processing_update_cone(struct iptsd_touch_processor *tp,
+		struct contact *palm)
+{
+	struct cone *cone = NULL;
+	float d = INFINITY;
+
+	// find closest cone (by center)
+	for (int i = 0; i < IPTSD_MAX_STYLI; i++) {
+		struct cone *current = &tp->rejection_cones[i];
+
+		// This cone has never seen a position update, so its inactive
+		if (current->position_update == 0)
+			continue;
+
+		if (cone_is_removed(current))
+
+			continue;
+
+		float current_d = cone_hypot(current, palm->x, palm->y);
+
+		if (current_d < d) {
+			d = current_d;
+			cone = current;
+		}
+	}
+
+	if (!cone)
+		return;
+
+	cone_update_direction(cone, palm->x, palm->y);
+}
+
+static bool iptsd_touch_processing_check_cone(struct iptsd_touch_processor *tp,
+		struct contact *input)
+{
+	for (int i = 0; i < IPTSD_MAX_STYLI; i++) {
+		struct cone *cone = &tp->rejection_cones[i];
+
+		if (cone_is_inside(cone, input->x, input->y))
+			return true;
+	}
+
+	return false;
+}
+
+static void iptsd_touch_processing_get_palms(struct iptsd_touch_processor *tp,
+		int count)
+{
+	for (int i = 0; i < count; i++) {
+		float vx = tp->contacts[i].ev1;
+		float vy = tp->contacts[i].ev2;
+		float max_v = tp->contacts[i].max_v;
+
+		// Regular touch
+		if (vx < 0.6 || (vx < 1.0 && max_v > 80))
+			continue;
+
+		// Thumb
+		if ((vx < 1.25 || (vx < 3.5 && max_v > 90)) && vx/vy > 1.8)
+			continue;
+
+		tp->contacts[i].is_palm = true;
+		iptsd_touch_processing_update_cone(tp, &tp->contacts[i]);
+
+		for (int j = 0; j < count; j++) {
+			if (tp->contacts[j].is_palm)
+				continue;
+
+			if (contact_near(tp->contacts[j], tp->contacts[i]))
+				tp->contacts[j].is_palm = true;
+		}
+	}
+
+	for (int i = 0; i < count; i++) {
+		if (tp->contacts[i].is_palm)
+			continue;
+
+		if (iptsd_touch_processing_check_cone(tp, &tp->contacts[i]))
+			tp->contacts[i].is_palm = true;
+	}
 }
 
 static void iptsd_touch_processing_reset(struct iptsd_touch_input *input)
@@ -31,10 +114,10 @@ static void iptsd_touch_processing_reset(struct iptsd_touch_input *input)
 
 static void iptsd_touch_processing_save(struct iptsd_touch_processor *tp)
 {
-	for (int i = 0; i < tp->max_contacts; i++)
+	for (int i = 0; i < tp->device_info.max_contacts; i++)
 		tp->free_indices[i] = true;
 
-	for (int i = 0; i < tp->max_contacts; i++) {
+	for (int i = 0; i < tp->device_info.max_contacts; i++) {
 		tp->last[i] = tp->inputs[i];
 
 		if (tp->inputs[i].index == -1)
@@ -56,18 +139,28 @@ void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
 			hm->data[i] = 0;
 	}
 
-	int count = contacts_get(hm, tp->contacts, tp->max_contacts);
-	contacts_get_palms(tp->contacts, tp->max_contacts);
+	int count = contacts_get(hm, tp->contacts,
+			tp->device_info.max_contacts);
 
 	for (int i = 0; i < count; i++) {
-		float x = tp->contacts[i].x / (float)(hm->width - 1);
-		float y = tp->contacts[i].y / (float)(hm->height - 1);
+		float x = tp->contacts[i].x / (hm->width - 1);
+		float y = tp->contacts[i].y / (hm->height - 1);
 
-		if (tp->invert_x)
+		if (tp->config.invert_x)
 			x = 1 - x;
 
-		if (tp->invert_y)
+		if (tp->config.invert_y)
 			y = 1 - y;
+
+		tp->contacts[i].x = x * tp->config.width;
+		tp->contacts[i].y = y * tp->config.height;
+	}
+
+	iptsd_touch_processing_get_palms(tp, count);
+
+	for (int i = 0; i < count; i++) {
+		float x = tp->contacts[i].x / tp->config.width;
+		float y = tp->contacts[i].y / tp->config.height;
 
 		tp->inputs[i].x = (int)(x * 9600);
 		tp->inputs[i].y = (int)(y * 7200);
@@ -80,7 +173,7 @@ void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
 		tp->inputs[i].contact = &tp->contacts[i];
 	}
 
-	for (int i = count; i < tp->max_contacts; i++) {
+	for (int i = count; i < tp->device_info.max_contacts; i++) {
 		iptsd_touch_processing_reset(&tp->inputs[i]);
 		tp->inputs[i].slot = i;
 		tp->inputs[i].contact = &tp->contacts[i];
@@ -106,32 +199,33 @@ struct heatmap *iptsd_touch_processing_get_heatmap(
 
 int iptsd_touch_processing_init(struct iptsd_touch_processor *tp)
 {
-	tp->contacts = calloc(tp->max_contacts, sizeof(struct contact));
+	int max_contacts = tp->device_info.max_contacts;
+
+	tp->contacts = calloc(max_contacts, sizeof(struct contact));
 	if (!tp->contacts)
 		return -ENOMEM;
 
-	tp->inputs = calloc(tp->max_contacts, sizeof(struct iptsd_touch_input));
+	tp->inputs = calloc(max_contacts, sizeof(struct iptsd_touch_input));
 	if (!tp->inputs)
 		return -ENOMEM;
 
-	tp->last = calloc(tp->max_contacts, sizeof(struct iptsd_touch_input));
+	tp->last = calloc(max_contacts, sizeof(struct iptsd_touch_input));
 	if (!tp->last)
 		return -ENOMEM;
 
-	tp->free_indices = calloc(tp->max_contacts, sizeof(bool));
+	tp->free_indices = calloc(max_contacts, sizeof(bool));
 	if (!tp->free_indices)
 		return -ENOMEM;
 
-	tp->distances = calloc(tp->max_contacts * tp->max_contacts,
-			sizeof(double));
+	tp->distances = calloc(max_contacts * max_contacts, sizeof(double));
 	if (!tp->distances)
 		return -ENOMEM;
 
-	tp->indices = calloc(tp->max_contacts * tp->max_contacts, sizeof(int));
+	tp->indices = calloc(max_contacts * max_contacts, sizeof(int));
 	if (!tp->indices)
 		return -ENOMEM;
 
-	for (int i = 0; i < tp->max_contacts; i++) {
+	for (int i = 0; i < max_contacts; i++) {
 		iptsd_touch_processing_reset(&tp->last[i]);
 		tp->last[i].slot = i;
 		tp->last[i].contact = &tp->contacts[i];

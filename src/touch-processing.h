@@ -5,8 +5,12 @@
 
 #include <stdbool.h>
 
+#include "cone.h"
+#include "config.h"
+#include "constants.h"
 #include "contact.h"
 #include "heatmap.h"
+#include "protocol.h"
 
 struct iptsd_touch_input {
 	int x;
@@ -26,13 +30,14 @@ struct iptsd_touch_processor {
 	struct contact *contacts;
 	struct iptsd_touch_input *inputs;
 	struct iptsd_touch_input *last;
+	struct cone rejection_cones[IPTSD_MAX_STYLI];
+
 	bool *free_indices;
 	double *distances;
 	int *indices;
 
-	int max_contacts;
-	bool invert_x;
-	bool invert_y;
+	struct iptsd_config config;
+	struct ipts_device_info device_info;
 };
 
 double iptsd_touch_processing_dist(struct iptsd_touch_input input,

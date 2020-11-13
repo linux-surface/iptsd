@@ -6,26 +6,17 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "cone.h"
+#include "config.h"
+#include "constants.h"
+#include "protocol.h"
 #include "touch-processing.h"
-
-#define IPTSD_MAX_STYLI 10
-
-struct iptsd_device_config {
-	int width;
-	int height;
-	bool invert_x;
-	bool invert_y;
-
-	uint16_t vendor;
-	uint16_t product;
-	uint32_t version;
-	uint32_t max_contacts;
-};
 
 struct iptsd_stylus_device {
 	int dev;
 	bool active;
 	uint32_t serial;
+	struct cone *cone;
 };
 
 struct iptsd_touch_device {
@@ -34,7 +25,9 @@ struct iptsd_touch_device {
 };
 
 struct iptsd_devices {
-	struct iptsd_device_config config;
+	struct iptsd_config config;
+	struct ipts_device_info device_info;
+
 	struct iptsd_touch_device touch;
 	struct iptsd_stylus_device *active_stylus;
 	struct iptsd_stylus_device styli[IPTSD_MAX_STYLI];

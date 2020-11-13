@@ -13,6 +13,7 @@ cc = meson.get_compiler('c')
 dir_config = join_paths(get_option('prefix'), get_option('datadir'), 'ipts')
 
 sources = [
+	'src/cone.c',
 	'src/config.c',
 	'src/contact.c',
 	'src/control.c',

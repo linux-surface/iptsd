@@ -114,7 +114,7 @@ static void contact_pca(struct contact c,
 	*ry = c.qy1 * x + c.qy2 * y;
 }
 
-static bool contact_near(struct contact c, struct contact other)
+bool contact_near(struct contact c, struct contact other)
 {
 	float dx;
 	float dy;
@@ -161,32 +161,5 @@ int contacts_get(struct heatmap *hm, struct contact *contacts, int count)
 	}
 
 	return c;
-}
-
-void contacts_get_palms(struct contact *contacts, int count)
-{
-	for (int i = 0; i < count; i++) {
-		float vx = contacts[i].ev1;
-		float vy = contacts[i].ev2;
-		float max_v = contacts[i].max_v;
-
-		// Regular touch
-		if (vx < 0.6 || (vx < 1.0 && max_v > 80))
-			continue;
-
-		// Thumb
-		if ((vx < 1.25 || (vx < 3.5 && max_v > 90)) && vx/vy > 1.8)
-			continue;
-
-		contacts[i].is_palm = true;
-
-		for (int j = 0; j < count; j++) {
-			if (contacts[j].is_palm)
-				continue;
-
-			if (contact_near(contacts[j], contacts[i]))
-				contacts[j].is_palm = true;
-		}
-	}
 }
 

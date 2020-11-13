@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "cone.h"
 #include "context.h"
 #include "devices.h"
 #include "protocol.h"
@@ -35,10 +36,25 @@ static void iptsd_stylus_tilt(int altitude, int azimuth, int *tx, int *ty)
 	*ty = (atan_y * 4500 / M_PI_4) - 9000;
 }
 
+static void iptsd_stylus_update_cone(struct iptsd_context *iptsd,
+		struct ipts_stylus_data data)
+{
+	struct iptsd_stylus_device *stylus = iptsd->devices.active_stylus;
+
+	float x = (float)data.x / 9600;
+	float y = (float)data.y / 7200;
+
+	x = x * iptsd->config.width;
+	y = y * iptsd->config.height;
+
+	cone_set_tip(stylus->cone, x, y);
+}
+
 static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 		struct ipts_stylus_data data)
 {
-	int tx, ty;
+	int tx = 0;
+	int ty = 0;
 
 	struct iptsd_stylus_device *stylus = iptsd->devices.active_stylus;
 
@@ -50,7 +66,10 @@ static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 	int btn_pen = prox * (1 - rubber);
 	int btn_rubber = prox * rubber;
 
-	iptsd_stylus_tilt(data.altitude, data.azimuth, &tx, &ty);
+	if (prox) {
+		iptsd_stylus_update_cone(iptsd, data);
+		iptsd_stylus_tilt(data.altitude, data.azimuth, &tx, &ty);
+	}
 
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOUCH, touch);
 	iptsd_devices_emit(stylus->dev, EV_KEY, BTN_TOOL_PEN, btn_pen);

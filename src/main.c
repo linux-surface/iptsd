@@ -97,15 +97,8 @@ int main(void)
 		return iptsd_exit(&iptsd, -ENOMEM);
 	}
 
-	iptsd.devices.config.width = iptsd.config.width;
-	iptsd.devices.config.height = iptsd.config.height;
-	iptsd.devices.config.invert_x = iptsd.config.invert_x;
-	iptsd.devices.config.invert_y = iptsd.config.invert_y;
-
-	iptsd.devices.config.vendor = device_info.vendor;
-	iptsd.devices.config.product = device_info.product;
-	iptsd.devices.config.version = device_info.version;
-	iptsd.devices.config.max_contacts = device_info.max_contacts;
+	iptsd.devices.config = iptsd.config;
+	iptsd.devices.device_info = device_info;
 
 	ret = iptsd_devices_create(&iptsd.devices);
 	if (ret < 0) {

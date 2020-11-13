@@ -4,9 +4,11 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "utils.h"
@@ -67,5 +69,12 @@ void iptsd_utils_err(int err, const char *file,
 	fprintf(stderr, ": %s\n", strerror(-err));
 
 	va_end(args);
+}
+
+uint64_t iptsd_utils_msec_timestamp(void)
+{
+	static struct timespec t;
+	clock_gettime(CLOCK_MONOTONIC, &t);
+	return (uint64_t)t.tv_sec * 1000 + t.tv_nsec / 1000000;
 }
 
