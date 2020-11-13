@@ -161,8 +161,8 @@ void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
 		float x = tp->contacts[i].x / tp->config.width;
 		float y = tp->contacts[i].y / tp->config.height;
 
-		tp->inputs[i].x = (int)(x * 9600);
-		tp->inputs[i].y = (int)(y * 7200);
+		tp->inputs[i].x = (int)(x * IPTS_MAX_X);
+		tp->inputs[i].y = (int)(y * IPTS_MAX_Y);
 		tp->inputs[i].ev1 = tp->contacts[i].ev1;
 		tp->inputs[i].ev2 = tp->contacts[i].ev2;
 		tp->inputs[i].index = i;

@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "devices.h"
+#include "protocol.h"
 #include "utils.h"
 #include "touch-processing.h"
 
@@ -45,18 +46,18 @@ static int iptsd_devices_create_stylus(struct iptsd_devices *devices,
 	iptsd_utils_ioctl(file, UI_SET_KEYBIT, (void *)BTN_TOOL_PEN);
 	iptsd_utils_ioctl(file, UI_SET_KEYBIT, (void *)BTN_TOOL_RUBBER);
 
-	int resX = iptsd_devices_res(9600, devices->config.width);
-	int resY = iptsd_devices_res(7200, devices->config.height);
+	int resX = iptsd_devices_res(IPTS_MAX_X, devices->config.width);
+	int resY = iptsd_devices_res(IPTS_MAX_Y, devices->config.height);
 
 	abs_setup.code = ABS_X;
 	abs_setup.absinfo.minimum = 0;
-	abs_setup.absinfo.maximum = 9600;
+	abs_setup.absinfo.maximum = IPTS_MAX_X;
 	abs_setup.absinfo.resolution = resX;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	abs_setup.code = ABS_Y;
 	abs_setup.absinfo.minimum = 0;
-	abs_setup.absinfo.maximum = 7200;
+	abs_setup.absinfo.maximum = IPTS_MAX_Y;
 	abs_setup.absinfo.resolution = resY;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
@@ -131,8 +132,8 @@ static int iptsd_devices_create_touch(struct iptsd_devices *devices,
 	iptsd_utils_ioctl(file, UI_SET_EVBIT, (void *)EV_ABS);
 	iptsd_utils_ioctl(file, UI_SET_PROPBIT, (void *)INPUT_PROP_DIRECT);
 
-	int resX = iptsd_devices_res(9600, devices->config.width);
-	int resY = iptsd_devices_res(7200, devices->config.height);
+	int resX = iptsd_devices_res(IPTS_MAX_X, devices->config.width);
+	int resY = iptsd_devices_res(IPTS_MAX_Y, devices->config.height);
 
 	abs_setup.code = ABS_MT_SLOT;
 	abs_setup.absinfo.minimum = 0;
@@ -153,13 +154,13 @@ static int iptsd_devices_create_touch(struct iptsd_devices *devices,
 
 	abs_setup.code = ABS_MT_POSITION_X;
 	abs_setup.absinfo.minimum = 0;
-	abs_setup.absinfo.maximum = 9600;
+	abs_setup.absinfo.maximum = IPTS_MAX_X;
 	abs_setup.absinfo.resolution = resX;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	abs_setup.code = ABS_MT_POSITION_Y;
 	abs_setup.absinfo.minimum = 0;
-	abs_setup.absinfo.maximum = 7200;
+	abs_setup.absinfo.maximum = IPTS_MAX_Y;
 	abs_setup.absinfo.resolution = resY;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 

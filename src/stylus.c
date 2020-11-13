@@ -41,8 +41,8 @@ static void iptsd_stylus_update_cone(struct iptsd_context *iptsd,
 {
 	struct iptsd_stylus_device *stylus = iptsd->devices.active_stylus;
 
-	float x = (float)data.x / 9600;
-	float y = (float)data.y / 7200;
+	float x = (float)data.x / IPTS_MAX_X;
+	float y = (float)data.y / IPTS_MAX_Y;
 
 	x = x * iptsd->config.width;
 	y = y * iptsd->config.height;

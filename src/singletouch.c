@@ -16,8 +16,8 @@ int iptsd_singletouch_handle_input(struct iptsd_context *iptsd,
 	struct ipts_singletouch_data *data =
 		(struct ipts_singletouch_data *)&header->data[1];
 
-	int x = (int)((double)data->x / 32767 * 9600);
-	int y = (int)((double)data->y / 32767 * 7200);
+	int x = (int)((double)data->x / 32767 * IPTS_MAX_X);
+	int y = (int)((double)data->y / 32767 * IPTS_MAX_Y);
 
 	iptsd_devices_emit(touch.dev, EV_ABS, ABS_MT_SLOT, 0);
 
