@@ -147,11 +147,6 @@ static int iptsd_devices_create_touch(struct iptsd_devices *devices,
 	abs_setup.absinfo.resolution = 0;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
-	abs_setup.code = ABS_MT_TOOL_TYPE;
-	abs_setup.absinfo.minimum = 0;
-	abs_setup.absinfo.maximum = MT_TOOL_MAX;
-	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
-
 	abs_setup.code = ABS_MT_POSITION_X;
 	abs_setup.absinfo.minimum = 0;
 	abs_setup.absinfo.maximum = IPTS_MAX_X;

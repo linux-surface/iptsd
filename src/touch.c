@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <linux/input-event-codes.h>
 #include <linux/uinput.h>
 #include <stdint.h>
 #include <string.h>
@@ -12,9 +13,15 @@
 #include "touch-processing.h"
 #include "utils.h"
 
-static void iptsd_touch_emit(int dev, struct iptsd_touch_input in, int tool)
+static void iptsd_touch_emit(int dev, struct iptsd_touch_input in, bool palm)
 {
-	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_TYPE, tool);
+	if (palm) {
+		iptsd_devices_emit(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
+		iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_X, 0);
+		iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_Y, 0);
+		return;
+	}
+
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TRACKING_ID, in.index);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_X, in.x);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_Y, in.y);
@@ -42,12 +49,7 @@ static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
 		if (in.index != -1 && !in.is_stable)
 			continue;
 
-		if (in.is_palm || blocked) {
-			iptsd_touch_emit(touch->dev, in, MT_TOOL_PALM);
-			continue;
-		}
-
-		iptsd_touch_emit(touch->dev, in, MT_TOOL_FINGER);
+		iptsd_touch_emit(touch->dev, in, in.is_palm || blocked);
 	}
 
 	int ret = iptsd_devices_emit(touch->dev, EV_SYN, SYN_REPORT, 0);
