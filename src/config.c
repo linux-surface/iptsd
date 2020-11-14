@@ -10,6 +10,7 @@
 
 #include "config.h"
 #include "ipts.h"
+#include "constants.h"
 #include "utils.h"
 
 struct iptsd_config_device {
@@ -71,6 +72,12 @@ static int iptsd_config_handler_conf(void *user, const char *section,
 	if (!strcmp(name, "BlockOnPalm"))
 		config->block_on_palm = iptsd_config_bool(value);
 
+	if (!strcmp(name, "TouchThreshold"))
+		config->touch_threshold = strtol(value, NULL, 10);
+
+	if (!strcmp(name, "StabilityThreshold"))
+		config->stability_threshold = strtof(value, NULL);
+
 	return 1;
 }
 
@@ -103,6 +110,11 @@ static void iptsd_config_load_dir(struct iptsd_config *config,
 void iptsd_config_load(struct iptsd_config *config,
 		struct ipts_device_info info)
 {
+	memset(config, 0, sizeof(struct iptsd_config));
+
+	config->touch_threshold = CONTACT_TOUCH_THRESHOLD;
+	config->stability_threshold = CONTACT_STABILITY_THRESHOLD;
+
 	iptsd_config_load_dir(config, info, "/usr/share/ipts");
 	iptsd_config_load_dir(config, info, "/usr/local/share/ipts");
 	iptsd_config_load_dir(config, info, "./config");

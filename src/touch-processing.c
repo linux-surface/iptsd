@@ -191,6 +191,7 @@ struct heatmap *iptsd_touch_processing_get_heatmap(
 	heatmap_free(&tp->hm);
 	tp->hm.width = width;
 	tp->hm.height = height;
+	tp->hm.touch_threshold = tp->config.touch_threshold;
 	heatmap_init(&tp->hm);
 
 	return &tp->hm;

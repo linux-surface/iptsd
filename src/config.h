@@ -15,6 +15,8 @@ struct iptsd_config {
 	int height;
 
 	bool block_on_palm;
+	int touch_threshold;
+	float stability_threshold;
 };
 
 void iptsd_config_load(struct iptsd_config *config,

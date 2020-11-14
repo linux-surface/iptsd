@@ -48,7 +48,7 @@ static void __cluster_get(struct heatmap *hm,
 {
 	int v = heatmap_value(hm, x, y);
 
-	if (v < CONTACT_TOUCH_THRESHOLD)
+	if (!heatmap_is_touch(hm, x, y))
 		return;
 
 	if (heatmap_get_visited(hm, x, y))
@@ -142,7 +142,7 @@ int contacts_get(struct heatmap *hm, struct contact *contacts, int count)
 
 	for (int x = 0; x < hm->width; x++) {
 		for (int y = 0; y < hm->height; y++) {
-			if (heatmap_value(hm, x, y) < CONTACT_TOUCH_THRESHOLD)
+			if (!heatmap_is_touch(hm, x, y))
 				continue;
 
 			if (heatmap_get_visited(hm, x, y))

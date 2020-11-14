@@ -28,6 +28,11 @@ uint8_t heatmap_value(struct heatmap *hm, int x, int y)
 	return hm->data[y * hm->width + x];
 }
 
+bool heatmap_is_touch(struct heatmap *hm, int x, int y)
+{
+	return heatmap_value(hm, x, y) >= hm->touch_threshold;
+}
+
 bool heatmap_compare(struct heatmap *hm, int x1, int y1, int x2, int y2)
 {
 	int v1 = heatmap_value(hm, x1, y1);
