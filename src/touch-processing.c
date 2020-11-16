@@ -255,5 +255,7 @@ void iptsd_touch_processing_free(struct iptsd_touch_processor *tp)
 
 	if (tp->indices)
 		free(tp->indices);
+
+	heatmap_free(&tp->hm);
 }
 
