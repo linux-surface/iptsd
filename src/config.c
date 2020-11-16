@@ -105,6 +105,8 @@ static void iptsd_config_load_dir(struct iptsd_config *config,
 
 		ini_parse(path, iptsd_config_handler_conf, config);
 	}
+
+	closedir(dir);
 }
 
 void iptsd_config_load(struct iptsd_config *config,
