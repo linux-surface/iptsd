@@ -2,6 +2,7 @@ iptsd
 debian
 build/*
 
+.cache
 compile_commands.json
 
 pkg/*
