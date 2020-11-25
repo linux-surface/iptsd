@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <sys/stat.h>
 
 #include "config.h"
@@ -18,18 +19,12 @@ struct iptsd_config_device {
 	int product;
 };
 
-static bool iptsd_config_bool(const char *value)
+static bool iptsd_config_to_bool(const char *value)
 {
-	if (!strcmp(value, "true"))
-		return true;
-
-	if (!strcmp(value, "True"))
-		return true;
-
-	if (!strcmp(value, "1"))
-		return true;
-
-	return false;
+	return strcasecmp(value, "true") == 0 ||
+		strcasecmp(value, "yes") == 0 ||
+		strcasecmp(value, "on") == 0 ||
+		strcasecmp(value, "1") == 0;
 }
 
 static int iptsd_config_handler_device(void *user, const char *section,
@@ -37,13 +32,13 @@ static int iptsd_config_handler_device(void *user, const char *section,
 {
 	struct iptsd_config_device *dev = (struct iptsd_config_device *)user;
 
-	if (strcmp(section, "Device"))
+	if (strcmp(section, "Device") != 0)
 		return 1;
 
-	if (!strcmp(name, "Vendor"))
+	if (strcmp(name, "Vendor") == 0)
 		dev->vendor = strtol(value, NULL, 16);
 
-	if (!strcmp(name, "Product"))
+	if (strcmp(name, "Product") == 0)
 		dev->product = strtol(value, NULL, 16);
 
 	return 1;
@@ -54,28 +49,28 @@ static int iptsd_config_handler_conf(void *user, const char *section,
 {
 	struct iptsd_config *config = (struct iptsd_config *)user;
 
-	if (strcmp(section, "Config"))
+	if (strcmp(section, "Config") != 0)
 		return 1;
 
-	if (!strcmp(name, "InvertX"))
-		config->invert_x = iptsd_config_bool(value);
+	if (strcmp(name, "InvertX") == 0)
+		config->invert_x = iptsd_config_to_bool(value);
 
-	if (!strcmp(name, "InvertY"))
-		config->invert_y = iptsd_config_bool(value);
+	if (strcmp(name, "InvertY") == 0)
+		config->invert_y = iptsd_config_to_bool(value);
 
-	if (!strcmp(name, "Width"))
+	if (strcmp(name, "Width") == 0)
 		config->width = strtol(value, NULL, 10);
 
-	if (!strcmp(name, "Height"))
+	if (strcmp(name, "Height") == 0)
 		config->height = strtol(value, NULL, 10);
 
-	if (!strcmp(name, "BlockOnPalm"))
-		config->block_on_palm = iptsd_config_bool(value);
+	if (strcmp(name, "BlockOnPalm") == 0)
+		config->block_on_palm = iptsd_config_to_bool(value);
 
-	if (!strcmp(name, "TouchThreshold"))
+	if (strcmp(name, "TouchThreshold") == 0)
 		config->touch_threshold = strtol(value, NULL, 10);
 
-	if (!strcmp(name, "StabilityThreshold"))
+	if (strcmp(name, "StabilityThreshold") == 0)
 		config->stability_threshold = strtof(value, NULL);
 
 	return 1;
