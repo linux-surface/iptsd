@@ -116,14 +116,8 @@ static void iptsd_touch_processing_save(struct iptsd_touch_processor *tp)
 	for (int i = 0; i < tp->device_info.max_contacts; i++)
 		tp->free_indices[i] = true;
 
-	for (int i = 0; i < tp->device_info.max_contacts; i++) {
+	for (int i = 0; i < tp->device_info.max_contacts; i++)
 		tp->last[i] = tp->inputs[i];
-
-		if (tp->inputs[i].index == -1)
-			continue;
-
-		tp->free_indices[tp->inputs[i].index] = false;
-	}
 }
 
 void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,

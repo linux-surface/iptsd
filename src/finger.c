@@ -193,10 +193,16 @@ void iptsd_finger_track(struct iptsd_touch_processor *tp, int count)
 	 * prevent libinput errors.
 	 */
 	for (int i = 0; i < max_contacts; i++) {
-		if (tp->inputs[i].index != -1) {
-			tp->inputs[i].slot = tp->inputs[i].index;
+		if (tp->inputs[i].index == -1)
 			continue;
-		}
+
+		tp->inputs[i].slot = tp->inputs[i].index;
+		tp->free_indices[tp->inputs[i].index] = false;
+	}
+
+	for (int i = 0; i < max_contacts; i++) {
+		if (tp->inputs[i].index != -1)
+			continue;
 
 		for (int k = 0; k < max_contacts; k++) {
 			if (!tp->free_indices[k])
