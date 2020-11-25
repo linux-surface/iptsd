@@ -6,7 +6,7 @@ With IPTS the Intel Management Engine acts as an interface for a touch
 controller, returning raw capacitive touch data. This data is processed
 outside of the ME and then relayed into the HID / input subsystem of the OS.
 
-This daemon relies on a kernel driver that can be found here: 
+This daemon relies on a kernel driver that can be found here:
 https://github.com/linux-surface/intel-precise-touch
 
 The driver will establish and manage the connection to the IPTS hardware. It
@@ -50,22 +50,42 @@ Tested Devices:
  * Surface Pro 6
 
 ### Building
-You need to have a recent Go toolchain installed. It is developed with Go
-1.14 but there should be no reason why older releases wouldn't work as well.
+You need to install git, a c compiler, meson, ninja through your
+distributions package manager.
 
-Reports and / or patches are welcome!
+We also rely on libinih for config loading, and on your distribution to
+package it. All the major distros should have it in their repos already.
 
-You also need to have the UAPI version of the IPTS kernel driver installed:
-https://github.com/linux-surface/intel-precise-touch
+``` bash
+$ sudo apt install libinih1 libinih-dev
+$ sudo pacman -S libinih
+$ sudo dnf install inih inih-devel
+$ sudo zypper install libinih0 libinih-devel
+```
 
-```bash
+Use meson and ninja to build iptsd, and then run it with sudo.
+
+``` bash
 $ git clone https://github.com/linux-surface/iptsd
 $ cd iptsd
-$ go build
-$ sudo ./iptsd
+$ meson build
+$ ninja -C build
+$ sudo ./build/iptsd
+```
+
+You need to have the latest UAPI version of the IPTS kernel driver installed.
+All recent linux-surface kernels already include this. To check if you have the
+correct driver installed and loaded, check if a file called `/dev/ipts/0` exists.
+
+``` bash
+$ ls -l /dev/ipts/
 ```
 
 ### Installing
+***Note:** iptsd is included as a package in the linux-surface repository.
+Unless you are doing development, or need the latest version from master, it is
+recommended to use the version from the repository.*
+
 If you want to permanently install the daemon, we provide a systemd service
 configuration that you can use. If your distro does not use systemd, you will
 have to write your own definition, but it shouldn't be too hard.
@@ -75,13 +95,10 @@ Patches with support for other service managers are welcome!
 You need to run the steps from "Building" first.
 
 ```bash
-$ sudo cp iptsd /usr/bin/
-$ sudo cp etc/systemd/iptsd.service /etc/systemd/system/
-$ sudo cp etc/udev/50-ipts.rules /etc/udev/rules.d/
-$ sudo cp -r config/ /usr/share/ipts
+$ sudo cp ./build/iptsd /usr/bin/
+$ sudo cp ./etc/systemd/iptsd.service /etc/systemd/system/
+$ sudo cp ./etc/udev/50-ipts.rules /etc/udev/rules.d/
+$ sudo cp -r ./config/ /usr/share/ipts
+$ sudo systemctl daemon-reload
 $ sudo systemctl enable --now iptsd
 ```
-
-This assumes that you have the UAPI version of the kernel driver installed
-permanently, either by building your own kernel with it included, or by using
-DKMS.
