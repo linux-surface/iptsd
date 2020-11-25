@@ -13,18 +13,71 @@
 #include "touch-processing.h"
 #include "utils.h"
 
-static void iptsd_touch_emit(int dev, struct iptsd_touch_input in, bool palm)
+static void iptsd_touch_lift_mt(int dev)
 {
-	if (palm) {
-		iptsd_devices_emit(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
-		iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_X, 0);
-		iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_Y, 0);
-		return;
-	}
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_X, 0);
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_Y, 0);
+}
 
+static void iptsd_touch_emit_mt(int dev, struct iptsd_touch_input in)
+{
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TRACKING_ID, in.index);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_X, in.x);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_Y, in.y);
+}
+
+static void iptsd_touch_lift_st(int dev)
+{
+	iptsd_devices_emit(dev, EV_KEY, BTN_TOUCH, 0);
+	iptsd_devices_emit(dev, EV_ABS, ABS_X, 0);
+	iptsd_devices_emit(dev, EV_ABS, ABS_Y, 0);
+}
+
+static void iptsd_touch_emit_st(int dev, struct iptsd_touch_input in)
+{
+	iptsd_devices_emit(dev, EV_KEY, BTN_TOUCH, 1);
+	iptsd_devices_emit(dev, EV_ABS, ABS_X, in.x);
+	iptsd_devices_emit(dev, EV_ABS, ABS_Y, in.y);
+}
+
+static void iptsd_touch_handle_single(struct iptsd_touch_device *touch,
+		int max_contacts, bool blocked)
+{
+	for (int i = 0; i < max_contacts; i++) {
+		struct iptsd_touch_input in = touch->processor.inputs[i];
+
+		if (in.index != -1 && !in.is_stable)
+			return;
+
+		if (in.index == -1 || in.is_palm || blocked)
+			continue;
+
+		iptsd_touch_emit_st(touch->dev, in);
+		return;
+	}
+
+	iptsd_touch_lift_st(touch->dev);
+}
+
+static void iptsd_touch_handle_multi(struct iptsd_touch_device *touch,
+		int max_contacts, bool blocked)
+{
+	for (int i = 0; i < max_contacts; i++) {
+		struct iptsd_touch_input in = touch->processor.inputs[i];
+
+		iptsd_devices_emit(touch->dev, EV_ABS, ABS_MT_SLOT, in.slot);
+
+		if (in.index != -1 && !in.is_stable)
+			continue;
+
+		if (in.index == -1 || in.is_palm || blocked) {
+			iptsd_touch_lift_mt(touch->dev);
+			continue;
+		}
+
+		iptsd_touch_emit_mt(touch->dev, in);
+	}
 }
 
 static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
@@ -42,15 +95,8 @@ static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
 			blocked = blocked || touch->processor.inputs[i].is_palm;
 	}
 
-	for (int i = 0; i < max_contacts; i++) {
-		struct iptsd_touch_input in = touch->processor.inputs[i];
-
-		iptsd_devices_emit(touch->dev, EV_ABS, ABS_MT_SLOT, in.slot);
-		if (in.index != -1 && !in.is_stable)
-			continue;
-
-		iptsd_touch_emit(touch->dev, in, in.is_palm || blocked);
-	}
+	iptsd_touch_handle_multi(touch, max_contacts, blocked);
+	iptsd_touch_handle_single(touch, max_contacts, blocked);
 
 	int ret = iptsd_devices_emit(touch->dev, EV_SYN, SYN_REPORT, 0);
 	if (ret < 0)
