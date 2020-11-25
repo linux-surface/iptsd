@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <linux/input-event-codes.h>
+#include <linux/input.h>
 #include <linux/uinput.h>
 #include <stdint.h>
 #include <string.h>
@@ -18,6 +19,10 @@ static void iptsd_touch_lift_mt(int dev)
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_X, 0);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_Y, 0);
+
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_TYPE, MT_TOOL_FINGER);
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_X, 0);
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_Y, 0);
 }
 
 static void iptsd_touch_emit_mt(int dev, struct iptsd_touch_input in)
@@ -25,6 +30,10 @@ static void iptsd_touch_emit_mt(int dev, struct iptsd_touch_input in)
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TRACKING_ID, in.index);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_X, in.x);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_Y, in.y);
+
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_TYPE, MT_TOOL_FINGER);
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_X, in.x);
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_Y, in.y);
 }
 
 static void iptsd_touch_lift_st(int dev)
