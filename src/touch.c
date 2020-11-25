@@ -17,12 +17,6 @@
 static void iptsd_touch_lift_mt(int dev)
 {
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
-	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_X, 0);
-	iptsd_devices_emit(dev, EV_ABS, ABS_MT_POSITION_Y, 0);
-
-	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_TYPE, MT_TOOL_FINGER);
-	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_X, 0);
-	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_Y, 0);
 }
 
 static void iptsd_touch_emit_mt(int dev, struct iptsd_touch_input in)
@@ -39,8 +33,6 @@ static void iptsd_touch_emit_mt(int dev, struct iptsd_touch_input in)
 static void iptsd_touch_lift_st(int dev)
 {
 	iptsd_devices_emit(dev, EV_KEY, BTN_TOUCH, 0);
-	iptsd_devices_emit(dev, EV_ABS, ABS_X, 0);
-	iptsd_devices_emit(dev, EV_ABS, ABS_Y, 0);
 }
 
 static void iptsd_touch_emit_st(int dev, struct iptsd_touch_input in)
