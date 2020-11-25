@@ -182,7 +182,7 @@ void iptsd_finger_track(struct iptsd_touch_processor *tp, int count)
 	 * If by now one of the inputs still has the index -1, it is a new
 	 * one, so we need to find a free index for it to use.
 	 *
-	 * We iterate over all inputs to find the the one with index -1 first.
+	 * We iterate over all inputs to find the one with index -1 first.
 	 * Then we go through every possible index to check if it is already
 	 * used by other inputs. If we cannot find an input using the index
 	 * we assign it and continue to the next one.
