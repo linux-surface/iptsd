@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define iptsd_err(ERRNO, ARGS...) \
-	iptsd_utils_err(ERRNO, __FILE__, __LINE__, ##ARGS)
+#define iptsd_err(ERRNO, ...) \
+	iptsd_utils_err(ERRNO, __FILE__, __LINE__, __VA_ARGS__)
 
 int iptsd_utils_open(const char *file, int flags);
 int iptsd_utils_close(int fd);
