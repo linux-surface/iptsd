@@ -1,6 +1,8 @@
 iptsd
 debian
 build/*
+subprojects/
+!subprojects/*.wrap
 
 .cache
 compile_commands.json

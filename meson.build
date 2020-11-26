@@ -33,7 +33,7 @@ sources = [
 
 deps = [
 	cc.find_library('m'),
-	dependency('inih'),
+	dependency('inih', fallback: ['inih', 'inih_dep']),
 ]
 
 cflags = [
