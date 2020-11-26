@@ -53,8 +53,9 @@ Tested Devices:
 You need to install git, a c compiler, meson, ninja through your
 distributions package manager.
 
-We also rely on libinih for config loading, and on your distribution to
-package it. All the major distros should have it in their repos already.
+We are using libinih to parse configuration files. You should install it
+if your distribution already packages it. All the major distros have it in
+their repos already.
 
 ``` bash
 $ sudo apt install libinih1 libinih-dev
@@ -62,6 +63,9 @@ $ sudo pacman -S libinih
 $ sudo dnf install inih inih-devel
 $ sudo zypper install libinih0 libinih-devel
 ```
+
+If libinih is not found on your system, a copy will be downloaded and included
+automatically.
 
 Use meson and ninja to build iptsd, and then run it with sudo.
 
