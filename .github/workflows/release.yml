@@ -15,7 +15,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: pacman -Sy --noconfirm sudo binutils fakeroot base-devel meson libinih
+      run: |
+        pacman -Syu --noconfirm
+        pacman -Sy --noconfirm sudo binutils fakeroot base-devel meson libinih
 
     - name: Build package
       run: |
