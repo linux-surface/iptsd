@@ -89,7 +89,7 @@ static struct contact contact_from_cluster(struct cluster cluster)
 	c.ev2 = (vx + vy - sqrtd) / 2;
 
 	c.qx1 = vx + cv - c.ev2;
-	c.qx1 = vy + cv - c.ev2;
+	c.qy1 = vy + cv - c.ev2;
 	c.qx2 = vx + cv - c.ev1;
 	c.qy2 = vy + cv - c.ev1;
 
