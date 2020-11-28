@@ -129,6 +129,9 @@ int iptsd_touch_handle_input(struct iptsd_context *iptsd,
 					width, height);
 			break;
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP:
+			if (!hm)
+				break;
+
 			memcpy(hm->data, report->data, hm->size);
 			break;
 		}
