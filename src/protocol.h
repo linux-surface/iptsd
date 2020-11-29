@@ -28,8 +28,9 @@
 #define IPTS_SINGLETOUCH_REPORT_ID 0x40
 #define IPTS_SINGLETOUCH_MAX_VALUE (1 << 15)
 
-#define IPTS_MAX_X 9600
-#define IPTS_MAX_Y 7200
+#define IPTS_MAX_X    9600
+#define IPTS_MAX_Y    7200
+#define IPTS_DIAGONAL 12000
 
 struct ipts_data {
 	uint32_t type;

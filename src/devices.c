@@ -140,6 +140,10 @@ static int iptsd_devices_create_touch(struct iptsd_devices *devices,
 	int resX = iptsd_devices_res(IPTS_MAX_X, devices->config.width);
 	int resY = iptsd_devices_res(IPTS_MAX_Y, devices->config.height);
 
+	float diag = sqrtf(devices->config.width * devices->config.width +
+			devices->config.height * devices->config.height);
+	int resDiag = iptsd_devices_res(IPTS_DIAGONAL, diag);
+
 	abs_setup.code = ABS_MT_SLOT;
 	abs_setup.absinfo.minimum = 0;
 	abs_setup.absinfo.maximum = devices->device_info.max_contacts;
@@ -180,6 +184,24 @@ static int iptsd_devices_create_touch(struct iptsd_devices *devices,
 	abs_setup.absinfo.minimum = 0;
 	abs_setup.absinfo.maximum = IPTS_MAX_Y;
 	abs_setup.absinfo.resolution = resY;
+	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
+
+	abs_setup.code = ABS_MT_ORIENTATION;
+	abs_setup.absinfo.minimum = 0;
+	abs_setup.absinfo.maximum = 180;
+	abs_setup.absinfo.resolution = 0;
+	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
+
+	abs_setup.code = ABS_MT_TOUCH_MAJOR;
+	abs_setup.absinfo.minimum = 0;
+	abs_setup.absinfo.maximum = IPTS_DIAGONAL;
+	abs_setup.absinfo.resolution = resDiag;
+	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
+
+	abs_setup.code = ABS_MT_TOUCH_MINOR;
+	abs_setup.absinfo.minimum = 0;
+	abs_setup.absinfo.maximum = IPTS_DIAGONAL;
+	abs_setup.absinfo.resolution = resDiag;
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	abs_setup.code = ABS_X;

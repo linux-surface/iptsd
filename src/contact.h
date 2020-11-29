@@ -33,6 +33,8 @@ struct contact {
 	float qx2;
 	float qy2;
 
+	float angle;
+
 	int max_v;
 	bool is_palm;
 };

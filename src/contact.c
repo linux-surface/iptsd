@@ -104,6 +104,12 @@ static struct contact contact_from_cluster(struct cluster cluster)
 	c.max_v = cluster.max_v;
 	c.is_palm = false;
 
+	c.angle = M_PI_2 - atan2f(c.qy1, c.qx1);
+	if (c.angle < 0)
+		c.angle += M_PI;
+	if (c.angle > M_PI)
+		c.angle -= M_PI;
+
 	return c;
 }
 

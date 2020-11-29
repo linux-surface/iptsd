@@ -15,6 +15,9 @@
 struct iptsd_touch_input {
 	int x;
 	int y;
+	int major;
+	int minor;
+	int orientation;
 	float ev1;
 	float ev2;
 	int index;

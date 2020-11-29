@@ -28,6 +28,10 @@ static void iptsd_touch_emit_mt(int dev, struct iptsd_touch_input in)
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_TYPE, MT_TOOL_FINGER);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_X, in.x);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOOL_Y, in.y);
+
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_ORIENTATION, in.orientation);
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOUCH_MAJOR, in.major);
+	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TOUCH_MINOR, in.minor);
 }
 
 static void iptsd_touch_lift_st(int dev)

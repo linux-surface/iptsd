@@ -7,6 +7,7 @@
 #include "contact.h"
 #include "finger.h"
 #include "heatmap.h"
+#include "protocol.h"
 #include "touch-processing.h"
 #include "utils.h"
 
@@ -104,6 +105,9 @@ static void iptsd_touch_processing_reset(struct iptsd_touch_input *input)
 {
 	input->x = 0;
 	input->y = 0;
+	input->major = 0;
+	input->minor = 0;
+	input->orientation = 0;
 	input->ev1 = 0;
 	input->ev2 = 0;
 	input->index = -1;
@@ -155,8 +159,18 @@ void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
 		float x = tp->contacts[i].x / tp->config.width;
 		float y = tp->contacts[i].y / tp->config.height;
 
+		float orientation = tp->contacts[i].angle / M_PI * 180;
+		float maj = fmaxf(tp->contacts[i].ev1, tp->contacts[i].ev2);
+		float min = fmaxf(tp->contacts[i].ev1, tp->contacts[i].ev2);
+
+		maj = 4 * sqrtf(maj) / hm->diagonal;
+		min = 4 * sqrtf(min) / hm->diagonal;
+
 		tp->inputs[i].x = (int)(x * IPTS_MAX_X);
 		tp->inputs[i].y = (int)(y * IPTS_MAX_Y);
+		tp->inputs[i].major = (int)(maj * IPTS_DIAGONAL);
+		tp->inputs[i].minor = (int)(min * IPTS_DIAGONAL);
+		tp->inputs[i].orientation = (int)orientation;
 		tp->inputs[i].ev1 = tp->contacts[i].ev1;
 		tp->inputs[i].ev2 = tp->contacts[i].ev2;
 		tp->inputs[i].index = i;

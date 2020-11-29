@@ -11,6 +11,7 @@ struct heatmap {
 	int height;
 	int size;
 	int touch_threshold;
+	float diagonal;
 
 	uint8_t *data;
 	bool *visited;
@@ -24,7 +25,6 @@ bool heatmap_get_visited(struct heatmap *hm, int x, int y);
 void heatmap_set_visited(struct heatmap *hm, int x, int y, bool value);
 int heatmap_init(struct heatmap *hm);
 void heatmap_free(struct heatmap *hm);
-
 
 #endif /* _IPTSD_HEATMAP_H_ */
 

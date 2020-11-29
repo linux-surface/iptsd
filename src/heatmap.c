@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <errno.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -93,6 +94,7 @@ void heatmap_free(struct heatmap *hm)
 int heatmap_init(struct heatmap *hm)
 {
 	hm->size = hm->width * hm->height;
+	hm->diagonal = sqrtf(hm->width * hm->width + hm->height * hm->height);
 
 	hm->data = calloc(hm->size, sizeof(uint8_t));
 	hm->visited = calloc(hm->size, sizeof(bool));
