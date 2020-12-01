@@ -159,12 +159,10 @@ void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
 		float x = tp->contacts[i].x / tp->config.width;
 		float y = tp->contacts[i].y / tp->config.height;
 
+		// ev1 is always the larger eigenvalue.
 		float orientation = tp->contacts[i].angle / M_PI * 180;
-		float maj = fmaxf(tp->contacts[i].ev1, tp->contacts[i].ev2);
-		float min = fmaxf(tp->contacts[i].ev1, tp->contacts[i].ev2);
-
-		maj = 4 * sqrtf(maj) / hm->diagonal;
-		min = 4 * sqrtf(min) / hm->diagonal;
+		float maj = 4 * sqrtf(tp->contacts[i].ev1) / hm->diagonal;
+		float min = 4 * sqrtf(tp->contacts[i].ev2) / hm->diagonal;
 
 		tp->inputs[i].x = (int)(x * IPTS_MAX_X);
 		tp->inputs[i].y = (int)(y * IPTS_MAX_Y);
