@@ -9,6 +9,7 @@
 #include "context.h"
 #include "devices.h"
 #include "protocol.h"
+#include "reader.h"
 #include "stylus.h"
 #include "utils.h"
 
@@ -120,26 +121,36 @@ static int iptsd_stylus_change_serial(struct iptsd_context *iptsd,
 	return ret;
 }
 
-static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd,
-		struct ipts_report *report)
+static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd)
 {
-	int pos = 0;
-	struct ipts_stylus_report_serial *sreport =
-		(struct ipts_stylus_report_serial *)report->data;
+	struct ipts_stylus_report_serial sreport;
 
-	if (iptsd->devices.active_stylus->serial != sreport->serial) {
-		int ret = iptsd_stylus_change_serial(iptsd, sreport->serial);
+	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
+			sizeof(struct ipts_stylus_report_serial));
+	if (ret < 0) {
+		iptsd_err(ret, "Received invalid data");
+		return 0;
+	}
+
+	if (iptsd->devices.active_stylus->serial != sreport.serial) {
+		int ret = iptsd_stylus_change_serial(iptsd, sreport.serial);
 		if (ret < 0) {
 			iptsd_err(ret, "Failed to change stylus");
 			return ret;
 		}
 	}
 
-	for (int i = 0; i < sreport->elements; i++) {
-		struct ipts_stylus_data *data =
-			(struct ipts_stylus_data *)&sreport->data[pos];
+	for (int i = 0; i < sreport.elements; i++) {
+		struct ipts_stylus_data data;
 
-		int ret = iptsd_stylus_handle_data(iptsd, *data);
+		ret = iptsd_reader_read(&iptsd->reader, &data,
+				sizeof(struct ipts_stylus_data));
+		if (ret < 0) {
+			iptsd_err(ret, "Received invalid data");
+			return 0;
+		}
+
+		ret = iptsd_stylus_handle_data(iptsd, data);
 		if (ret < 0) {
 			iptsd_err(ret, "Failed to handle stylus report");
 			return ret;
@@ -149,18 +160,28 @@ static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd,
 	return 0;
 }
 
-static int iptsd_stylus_handle_tilt(struct iptsd_context *iptsd,
-		struct ipts_report *report)
+static int iptsd_stylus_handle_tilt(struct iptsd_context *iptsd)
 {
-	int pos = 0;
-	struct ipts_stylus_report *sreport =
-		(struct ipts_stylus_report *)report->data;
+	struct ipts_stylus_report sreport;
 
-	for (int i = 0; i < sreport->elements; i++) {
-		struct ipts_stylus_data *data =
-			(struct ipts_stylus_data *)&sreport->data[pos];
+	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
+			sizeof(struct ipts_stylus_report));
+	if (ret < 0) {
+		iptsd_err(ret, "Received invalid data");
+		return 0;
+	}
 
-		int ret = iptsd_stylus_handle_data(iptsd, *data);
+	for (int i = 0; i < sreport.elements; i++) {
+		struct ipts_stylus_data data;
+
+		ret = iptsd_reader_read(&iptsd->reader, &data,
+				sizeof(struct ipts_stylus_data));
+		if (ret < 0) {
+			iptsd_err(ret, "Received invalid data");
+			return 0;
+		}
+
+		ret = iptsd_stylus_handle_data(iptsd, data);
 		if (ret < 0) {
 			iptsd_err(ret, "Failed to handle stylus report");
 			return ret;
@@ -170,36 +191,45 @@ static int iptsd_stylus_handle_tilt(struct iptsd_context *iptsd,
 	return 0;
 }
 
-static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd,
-		struct ipts_report *report)
+static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd)
 {
-	int pos = 0;
 	struct ipts_stylus_data full_data;
+	struct ipts_stylus_report_serial sreport;
 
-	struct ipts_stylus_report_serial *sreport =
-		(struct ipts_stylus_report_serial *)report->data;
+	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
+			sizeof(struct ipts_stylus_report_serial));
+	if (ret < 0) {
+		iptsd_err(ret, "Received invalid data");
+		return 0;
+	}
 
-	if (iptsd->devices.active_stylus->serial != sreport->serial) {
-		int ret = iptsd_stylus_change_serial(iptsd, sreport->serial);
+	if (iptsd->devices.active_stylus->serial != sreport.serial) {
+		int ret = iptsd_stylus_change_serial(iptsd, sreport.serial);
 		if (ret < 0) {
 			iptsd_err(ret, "Failed to change stylus");
 			return ret;
 		}
 	}
 
-	for (int i = 0; i < sreport->elements; i++) {
-		struct ipts_stylus_data_no_tilt *data =
-			(struct ipts_stylus_data_no_tilt *)&sreport->data[pos];
+	for (int i = 0; i < sreport.elements; i++) {
+		struct ipts_stylus_data_no_tilt data;
 
-		full_data.mode = data->mode;
-		full_data.x = data->x;
-		full_data.y = data->y;
-		full_data.pressure = data->pressure * 4;
+		ret = iptsd_reader_read(&iptsd->reader, &data,
+				sizeof(struct ipts_stylus_data_no_tilt));
+		if (ret < 0) {
+			iptsd_err(ret, "Received invalid data");
+			return 0;
+		}
+
+		full_data.mode = data.mode;
+		full_data.x = data.x;
+		full_data.y = data.y;
+		full_data.pressure = data.pressure * 4;
 		full_data.altitude = 0;
 		full_data.azimuth = 0;
 		full_data.timestamp = 0;
 
-		int ret = iptsd_stylus_handle_data(iptsd, full_data);
+		ret = iptsd_stylus_handle_data(iptsd, full_data);
 		if (ret < 0) {
 			iptsd_err(ret, "Failed to handle stylus report");
 			return ret;
@@ -210,24 +240,32 @@ static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd,
 }
 
 int iptsd_stylus_handle_input(struct iptsd_context *iptsd,
-		struct ipts_payload_frame *frame)
+		struct ipts_payload_frame frame)
 {
-	uint32_t pos = 0;
+	uint32_t size = 0;
 
-	while (pos < frame->size) {
-		int ret = 0;
-		struct ipts_report *report =
-			(struct ipts_report *)&frame->data[pos];
+	while (size < frame.size) {
+		struct ipts_report report;
 
-		switch (report->type) {
+		int ret = iptsd_reader_read(&iptsd->reader, &report,
+				sizeof(struct ipts_report));
+		if (ret < 0) {
+			iptsd_err(ret, "Received invalid data");
+			return 0;
+		}
+
+		switch (report.type) {
 		case IPTS_REPORT_TYPE_STYLUS_NO_TILT:
-			ret = iptsd_stylus_handle_no_tilt(iptsd, report);
+			ret = iptsd_stylus_handle_no_tilt(iptsd);
 			break;
 		case IPTS_REPORT_TYPE_STYLUS_TILT:
-			ret = iptsd_stylus_handle_tilt(iptsd, report);
+			ret = iptsd_stylus_handle_tilt(iptsd);
 			break;
 		case IPTS_REPORT_TYPE_STYLUS_TILT_SERIAL:
-			ret = iptsd_stylus_handle_tilt_serial(iptsd, report);
+			ret = iptsd_stylus_handle_tilt_serial(iptsd);
+			break;
+		default:
+			iptsd_reader_skip(&iptsd->reader, report.size);
 			break;
 		}
 
@@ -236,7 +274,7 @@ int iptsd_stylus_handle_input(struct iptsd_context *iptsd,
 			return ret;
 		}
 
-		pos += report->size + sizeof(struct ipts_report);
+		size += report.size + sizeof(struct ipts_report);
 	}
 
 	return 0;

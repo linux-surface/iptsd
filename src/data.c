@@ -7,20 +7,29 @@
 #include "hid.h"
 #include "payload.h"
 #include "protocol.h"
+#include "reader.h"
 #include "utils.h"
 
 int iptsd_data_handle_input(struct iptsd_context *iptsd)
 {
-	struct ipts_data *header = (struct ipts_data *)iptsd->data;
+	struct ipts_data header;
 
-	int ret = 0;
+	int ret = iptsd_reader_read(&iptsd->reader, &header,
+			sizeof(struct ipts_data));
+	if (ret < 0) {
+		iptsd_err(ret, "Received invalid data");
+		return 0;
+	}
 
-	switch (header->type) {
+	switch (header.type) {
 	case IPTS_DATA_TYPE_PAYLOAD:
-		ret = iptsd_payload_handle_input(iptsd, header);
+		ret = iptsd_payload_handle_input(iptsd);
 		break;
 	case IPTS_DATA_TYPE_HID_REPORT:
-		ret = iptsd_hid_handle_input(iptsd, header);
+		ret = iptsd_hid_handle_input(iptsd);
+		break;
+	default:
+		iptsd_reader_skip(&iptsd->reader, header.size);
 		break;
 	}
 
@@ -29,4 +38,3 @@ int iptsd_data_handle_input(struct iptsd_context *iptsd)
 
 	return ret;
 }
-

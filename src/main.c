@@ -13,15 +13,14 @@
 #include "config.h"
 #include "context.h"
 #include "control.h"
+#include "reader.h"
 #include "utils.h"
 
 struct iptsd_context iptsd;
 
 static int iptsd_exit(struct iptsd_context *iptsd, int error)
 {
-	if (iptsd->data)
-		free(iptsd->data);
-
+	iptsd_reader_free(&iptsd->reader);
 	iptsd_devices_destroy(&iptsd->devices);
 
 	int ret = iptsd_control_stop(&iptsd->control);
@@ -49,7 +48,7 @@ static int iptsd_loop(struct iptsd_context *iptsd)
 
 	while (doorbell > iptsd->control.current_doorbell) {
 		int ret = iptsd_control_read(&iptsd->control,
-				iptsd->data, size);
+				iptsd->reader.data, size);
 		if (ret < 0) {
 			iptsd_err(ret, "Failed to read IPTS data");
 			return ret;
@@ -66,6 +65,8 @@ static int iptsd_loop(struct iptsd_context *iptsd)
 			iptsd_err(ret, "Failed to send feedback");
 			return ret;
 		}
+
+		iptsd_reader_reset(&iptsd->reader);
 	}
 
 	return diff;
@@ -91,10 +92,10 @@ int main(void)
 
 	iptsd_config_load(&iptsd.config, device_info);
 
-	iptsd.data = calloc(device_info.buffer_size, sizeof(char));
-	if (!iptsd.data) {
-		iptsd_err(-ENOMEM, "Failed to allocate data buffer");
-		return iptsd_exit(&iptsd, -ENOMEM);
+	ret = iptsd_reader_init(&iptsd.reader, device_info.buffer_size);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to allocate data reader");
+		return iptsd_exit(&iptsd, ret);
 	}
 
 	iptsd.devices.config = iptsd.config;
@@ -125,4 +126,3 @@ int main(void)
 
 	return iptsd_exit(&iptsd, 0);
 }
-

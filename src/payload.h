@@ -6,8 +6,6 @@
 #include "context.h"
 #include "protocol.h"
 
-int iptsd_payload_handle_input(struct iptsd_context *iptsd,
-		struct ipts_data *header);
+int iptsd_payload_handle_input(struct iptsd_context *iptsd);
 
 #endif /* _IPTSD_PAYLOAD_H_ */
-

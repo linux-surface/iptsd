@@ -23,6 +23,7 @@ sources = [
 	'src/heatmap.c',
 	'src/hid.c',
 	'src/main.c',
+	'src/reader.c',
 	'src/payload.c',
 	'src/singletouch.c',
 	'src/stylus.c',

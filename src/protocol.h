@@ -37,14 +37,12 @@ struct ipts_data {
 	uint32_t size;
 	uint32_t buffer;
 	uint8_t reserved[52];
-	uint8_t data[];
 } __attribute__((__packed__));
 
 struct ipts_payload {
 	uint32_t counter;
 	uint32_t frames;
 	uint8_t reserved[4];
-	uint8_t data[];
 } __attribute__((__packed__));
 
 struct ipts_payload_frame {
@@ -52,26 +50,22 @@ struct ipts_payload_frame {
 	uint16_t type;
 	uint32_t size;
 	uint8_t reserved[8];
-	uint8_t data[];
 } __attribute__((__packed__));
 
 struct ipts_report {
 	uint16_t type;
 	uint16_t size;
-	uint8_t data[];
 } __attribute__((__packed__));
 
 struct ipts_stylus_report {
 	uint8_t elements;
 	uint8_t reserved[3];
-	uint8_t data[];
 } __attribute__((__packed__));
 
 struct ipts_stylus_report_serial {
 	uint8_t elements;
 	uint8_t reserved[3];
 	uint32_t serial;
-	uint8_t data[];
 } __attribute__((__packed__));
 
 struct ipts_stylus_data {
@@ -100,5 +94,10 @@ struct ipts_singletouch_data {
 	uint16_t y;
 } __attribute__((__packed__));
 
-#endif /* _IPTSD_PROTOCOL_H_ */
+struct ipts_heatmap_dim {
+	uint8_t height;
+	uint8_t width;
+	uint8_t reserved[6];
+} __attribute__((__packed__));
 
+#endif /* _IPTSD_PROTOCOL_H_ */

@@ -4,10 +4,7 @@
 #define _IPTSD_HID_H_
 
 #include "context.h"
-#include "protocol.h"
 
-int iptsd_hid_handle_input(struct iptsd_context *iptsd,
-		struct ipts_data *header);
+int iptsd_hid_handle_input(struct iptsd_context *iptsd);
 
 #endif /* _IPTSD_HID_H_ */
-

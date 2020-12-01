@@ -10,6 +10,7 @@
 #include "devices.h"
 #include "heatmap.h"
 #include "protocol.h"
+#include "reader.h"
 #include "touch.h"
 #include "touch-processing.h"
 #include "utils.h"
@@ -111,36 +112,54 @@ static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
 }
 
 int iptsd_touch_handle_input(struct iptsd_context *iptsd,
-		struct ipts_payload_frame *frame)
+		struct ipts_payload_frame frame)
 {
-	uint32_t pos = 0;
+	uint32_t size = 0;
 	struct heatmap *hm = NULL;
 
-	while (pos < frame->size) {
-		struct ipts_report *report =
-			(struct ipts_report *)&frame->data[pos];
+	while (size < frame.size) {
+		struct ipts_report report;
+		struct ipts_heatmap_dim dim;
 
-		uint8_t width = 0;
-		uint8_t height = 0;
+		int ret = iptsd_reader_read(&iptsd->reader, &report,
+				sizeof(struct ipts_report));
+		if (ret < 0) {
+			iptsd_err(ret, "Received invalid data");
+			return 0;
+		}
 
-		switch (report->type) {
+		switch (report.type) {
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP_DIM:
-			height = report->data[0];
-			width = report->data[1];
+			ret = iptsd_reader_read(&iptsd->reader, &dim,
+					sizeof(struct ipts_heatmap_dim));
+			if (ret < 0) {
+				iptsd_err(ret, "Received invalid data");
+				return 0;
+			}
 
 			hm = iptsd_touch_processing_get_heatmap(
 					&iptsd->devices.touch.processor,
-					width, height);
+					dim.width, dim.height);
+
 			break;
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP:
 			if (!hm)
 				break;
 
-			memcpy(hm->data, report->data, hm->size);
+			ret = iptsd_reader_read(&iptsd->reader, hm->data,
+					hm->size);
+			if (ret < 0) {
+				iptsd_err(ret, "Received invalid data");
+				return 0;
+			}
+
+			break;
+		default:
+			iptsd_reader_skip(&iptsd->reader, report.size);
 			break;
 		}
 
-		pos += report->size + sizeof(struct ipts_report);
+		size += report.size + sizeof(struct ipts_report);
 	}
 
 	if (!hm)
@@ -152,4 +171,3 @@ int iptsd_touch_handle_input(struct iptsd_context *iptsd,
 
 	return ret;
 }
-
