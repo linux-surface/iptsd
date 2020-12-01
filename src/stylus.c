@@ -123,6 +123,7 @@ static int iptsd_stylus_change_serial(struct iptsd_context *iptsd,
 
 static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd)
 {
+	struct ipts_stylus_data data;
 	struct ipts_stylus_report_serial sreport;
 
 	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
@@ -140,21 +141,27 @@ static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd)
 		}
 	}
 
-	for (int i = 0; i < sreport.elements; i++) {
-		struct ipts_stylus_data data;
+	if (sreport.elements == 0)
+		return 0;
 
-		ret = iptsd_reader_read(&iptsd->reader, &data,
-				sizeof(struct ipts_stylus_data));
-		if (ret < 0) {
-			iptsd_err(ret, "Received invalid data");
-			return 0;
-		}
+	/*
+	 * There can be more than one element, but if we send all of them
+	 * the lines drawn by the stylus become very jagged. Our current
+	 * theory is that the different elements together form an average
+	 * value, that is then sent. For now, sending just the first
+	 * one works well enough and doesnt produce jagged lines.
+	 */
+	ret = iptsd_reader_read(&iptsd->reader, &data,
+			sizeof(struct ipts_stylus_data));
+	if (ret < 0) {
+		iptsd_err(ret, "Received invalid data");
+		return 0;
+	}
 
-		ret = iptsd_stylus_handle_data(iptsd, data);
-		if (ret < 0) {
-			iptsd_err(ret, "Failed to handle stylus report");
-			return ret;
-		}
+	ret = iptsd_stylus_handle_data(iptsd, data);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to handle stylus report");
+		return ret;
 	}
 
 	return 0;
@@ -162,6 +169,7 @@ static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd)
 
 static int iptsd_stylus_handle_tilt(struct iptsd_context *iptsd)
 {
+	struct ipts_stylus_data data;
 	struct ipts_stylus_report sreport;
 
 	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
@@ -171,21 +179,27 @@ static int iptsd_stylus_handle_tilt(struct iptsd_context *iptsd)
 		return 0;
 	}
 
-	for (int i = 0; i < sreport.elements; i++) {
-		struct ipts_stylus_data data;
+	if (sreport.elements == 0)
+		return 0;
 
-		ret = iptsd_reader_read(&iptsd->reader, &data,
-				sizeof(struct ipts_stylus_data));
-		if (ret < 0) {
-			iptsd_err(ret, "Received invalid data");
-			return 0;
-		}
+	/*
+	 * There can be more than one element, but if we send all of them
+	 * the lines drawn by the stylus become very jagged. Our current
+	 * theory is that the different elements together form an average
+	 * value, that is then sent. For now, sending just the first
+	 * one works well enough and doesnt produce jagged lines.
+	 */
+	ret = iptsd_reader_read(&iptsd->reader, &data,
+			sizeof(struct ipts_stylus_data));
+	if (ret < 0) {
+		iptsd_err(ret, "Received invalid data");
+		return 0;
+	}
 
-		ret = iptsd_stylus_handle_data(iptsd, data);
-		if (ret < 0) {
-			iptsd_err(ret, "Failed to handle stylus report");
-			return ret;
-		}
+	ret = iptsd_stylus_handle_data(iptsd, data);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to handle stylus report");
+		return ret;
 	}
 
 	return 0;
@@ -194,6 +208,7 @@ static int iptsd_stylus_handle_tilt(struct iptsd_context *iptsd)
 static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd)
 {
 	struct ipts_stylus_data full_data;
+	struct ipts_stylus_data_no_tilt data;
 	struct ipts_stylus_report_serial sreport;
 
 	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
@@ -211,29 +226,35 @@ static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd)
 		}
 	}
 
-	for (int i = 0; i < sreport.elements; i++) {
-		struct ipts_stylus_data_no_tilt data;
+	if (sreport.elements == 0)
+		return 0;
 
-		ret = iptsd_reader_read(&iptsd->reader, &data,
-				sizeof(struct ipts_stylus_data_no_tilt));
-		if (ret < 0) {
-			iptsd_err(ret, "Received invalid data");
-			return 0;
-		}
+	/*
+	 * There can be more than one element, but if we send all of them
+	 * the lines drawn by the stylus become very jagged. Our current
+	 * theory is that the different elements together form an average
+	 * value, that is then sent. For now, sending just the first
+	 * one works well enough and doesnt produce jagged lines.
+	 */
+	ret = iptsd_reader_read(&iptsd->reader, &data,
+			sizeof(struct ipts_stylus_data_no_tilt));
+	if (ret < 0) {
+		iptsd_err(ret, "Received invalid data");
+		return 0;
+	}
 
-		full_data.mode = data.mode;
-		full_data.x = data.x;
-		full_data.y = data.y;
-		full_data.pressure = data.pressure * 4;
-		full_data.altitude = 0;
-		full_data.azimuth = 0;
-		full_data.timestamp = 0;
+	full_data.mode = data.mode;
+	full_data.x = data.x;
+	full_data.y = data.y;
+	full_data.pressure = data.pressure * 4;
+	full_data.altitude = 0;
+	full_data.azimuth = 0;
+	full_data.timestamp = 0;
 
-		ret = iptsd_stylus_handle_data(iptsd, full_data);
-		if (ret < 0) {
-			iptsd_err(ret, "Failed to handle stylus report");
-			return ret;
-		}
+	ret = iptsd_stylus_handle_data(iptsd, full_data);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to handle stylus report");
+		return ret;
 	}
 
 	return 0;
