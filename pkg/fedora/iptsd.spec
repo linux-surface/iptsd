@@ -59,6 +59,7 @@ install -Dpm 0644 etc/ipts.conf \
 %doc README.md
 %config(noreplace) %{_sysconfdir}/ipts.conf
 %{_bindir}/%{name}
+%{_bindir}/ipts-dbg
 %{_unitdir}/%{name}.service
 %{_udevrulesdir}/50-ipts.rules
 %{_datadir}/ipts/*

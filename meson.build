@@ -33,6 +33,12 @@ sources = [
 	'src/utils.c',
 ]
 
+sources_dbg = [
+	'debug/debug.c',
+	'src/control.c',
+	'src/utils.c',
+]
+
 deps = [
 	cc.find_library('m'),
 	dependency('inih', fallback: ['inih', 'inih_dep']),
@@ -61,6 +67,6 @@ cflags = [
 cflags = cc.get_supported_arguments(cflags)
 add_project_arguments(cflags, language: 'c')
 
+executable('ipts-dbg', sources_dbg, install: true)
 executable('iptsd', sources, dependencies: deps, install: true)
 install_subdir('config', install_dir: dir_config, strip_directory: true)
-
