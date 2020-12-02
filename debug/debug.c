@@ -24,9 +24,9 @@ static void __exit(int error)
 	exit(error);
 }
 
-static void print_buffer(char *buffer, size_t size, size_t offset)
+static void print_buffer(char *buffer, size_t size)
 {
-	for (size_t i = offset; i < size; i += 32) {
+	for (size_t i = 0; i < size; i += 32) {
 		for (size_t j = 0; j < 32; j++) {
 			if (i + j >= size)
 				continue;
@@ -88,7 +88,7 @@ int main(void)
 		printf("====== Buffer: %d == Type: %d == Size: %d ======\n",
 				header->buffer, header->type, header->size);
 
-		print_buffer(data, header->size, sizeof(struct ipts_data));
+		print_buffer(&data[sizeof(struct ipts_data)], header->size);
 
 		ret = iptsd_control_send_feedback(&ctrl);
 		if (ret < 0) {
