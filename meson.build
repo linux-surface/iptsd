@@ -27,6 +27,7 @@ sources = [
 	'src/payload.c',
 	'src/singletouch.c',
 	'src/stylus.c',
+	'src/stylus-processing.c',
 	'src/touch.c',
 	'src/touch-processing.c',
 	'src/utils.c',

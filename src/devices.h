@@ -10,6 +10,7 @@
 #include "config.h"
 #include "constants.h"
 #include "protocol.h"
+#include "stylus-processing.h"
 #include "touch-processing.h"
 
 struct iptsd_stylus_device {
@@ -17,6 +18,7 @@ struct iptsd_stylus_device {
 	bool active;
 	uint32_t serial;
 	struct cone *cone;
+	struct iptsd_stylus_processor processor;
 };
 
 struct iptsd_touch_device {
