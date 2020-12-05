@@ -92,9 +92,12 @@ static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 	return ret;
 }
 
-static int iptsd_stylus_change_serial(struct iptsd_context *iptsd,
+static int iptsd_stylus_handle_serial_change(struct iptsd_context *iptsd,
 		uint32_t serial)
 {
+	if (iptsd->devices.active_stylus->serial == serial)
+		return 0;
+
 	for (int i = 0; i < IPTSD_MAX_STYLI; i++) {
 		if (iptsd->devices.styli[i].serial != serial)
 			continue;
@@ -121,28 +124,9 @@ static int iptsd_stylus_change_serial(struct iptsd_context *iptsd,
 	return ret;
 }
 
-static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd)
+static int iptsd_stylus_read_tilt(struct iptsd_context *iptsd)
 {
 	struct ipts_stylus_data data;
-	struct ipts_stylus_report_serial sreport;
-
-	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
-			sizeof(struct ipts_stylus_report_serial));
-	if (ret < 0) {
-		iptsd_err(ret, "Received invalid data");
-		return 0;
-	}
-
-	if (iptsd->devices.active_stylus->serial != sreport.serial) {
-		int ret = iptsd_stylus_change_serial(iptsd, sreport.serial);
-		if (ret < 0) {
-			iptsd_err(ret, "Failed to change stylus");
-			return ret;
-		}
-	}
-
-	if (sreport.elements == 0)
-		return 0;
 
 	/*
 	 * There can be more than one element, but if we send all of them
@@ -151,83 +135,20 @@ static int iptsd_stylus_handle_tilt_serial(struct iptsd_context *iptsd)
 	 * value, that is then sent. For now, sending just the first
 	 * one works well enough and doesnt produce jagged lines.
 	 */
-	ret = iptsd_reader_read(&iptsd->reader, &data,
+	int ret = iptsd_reader_read(&iptsd->reader, &data,
 			sizeof(struct ipts_stylus_data));
 	if (ret < 0) {
 		iptsd_err(ret, "Received invalid data");
 		return 0;
 	}
 
-	ret = iptsd_stylus_handle_data(iptsd, data);
-	if (ret < 0) {
-		iptsd_err(ret, "Failed to handle stylus report");
-		return ret;
-	}
-
-	return 0;
+	return iptsd_stylus_handle_data(iptsd, data);
 }
 
-static int iptsd_stylus_handle_tilt(struct iptsd_context *iptsd)
-{
-	struct ipts_stylus_data data;
-	struct ipts_stylus_report sreport;
-
-	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
-			sizeof(struct ipts_stylus_report));
-	if (ret < 0) {
-		iptsd_err(ret, "Received invalid data");
-		return 0;
-	}
-
-	if (sreport.elements == 0)
-		return 0;
-
-	/*
-	 * There can be more than one element, but if we send all of them
-	 * the lines drawn by the stylus become very jagged. Our current
-	 * theory is that the different elements together form an average
-	 * value, that is then sent. For now, sending just the first
-	 * one works well enough and doesnt produce jagged lines.
-	 */
-	ret = iptsd_reader_read(&iptsd->reader, &data,
-			sizeof(struct ipts_stylus_data));
-	if (ret < 0) {
-		iptsd_err(ret, "Received invalid data");
-		return 0;
-	}
-
-	ret = iptsd_stylus_handle_data(iptsd, data);
-	if (ret < 0) {
-		iptsd_err(ret, "Failed to handle stylus report");
-		return ret;
-	}
-
-	return 0;
-}
-
-static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd)
+static int iptsd_stylus_read_no_tilt(struct iptsd_context *iptsd)
 {
 	struct ipts_stylus_data full_data;
 	struct ipts_stylus_data_no_tilt data;
-	struct ipts_stylus_report_serial sreport;
-
-	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
-			sizeof(struct ipts_stylus_report_serial));
-	if (ret < 0) {
-		iptsd_err(ret, "Received invalid data");
-		return 0;
-	}
-
-	if (iptsd->devices.active_stylus->serial != sreport.serial) {
-		int ret = iptsd_stylus_change_serial(iptsd, sreport.serial);
-		if (ret < 0) {
-			iptsd_err(ret, "Failed to change stylus");
-			return ret;
-		}
-	}
-
-	if (sreport.elements == 0)
-		return 0;
 
 	/*
 	 * There can be more than one element, but if we send all of them
@@ -236,7 +157,7 @@ static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd)
 	 * value, that is then sent. For now, sending just the first
 	 * one works well enough and doesnt produce jagged lines.
 	 */
-	ret = iptsd_reader_read(&iptsd->reader, &data,
+	int ret = iptsd_reader_read(&iptsd->reader, &data,
 			sizeof(struct ipts_stylus_data_no_tilt));
 	if (ret < 0) {
 		iptsd_err(ret, "Received invalid data");
@@ -251,13 +172,53 @@ static int iptsd_stylus_handle_no_tilt(struct iptsd_context *iptsd)
 	full_data.azimuth = 0;
 	full_data.timestamp = 0;
 
-	ret = iptsd_stylus_handle_data(iptsd, full_data);
+	return iptsd_stylus_handle_data(iptsd, full_data);
+}
+
+static int iptsd_stylus_handle(struct iptsd_context *iptsd)
+{
+	struct ipts_stylus_report sreport;
+
+	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
+			sizeof(struct ipts_stylus_report));
 	if (ret < 0) {
+		iptsd_err(ret, "Received invalid data");
+		return 0;
+	}
+
+	ret = iptsd_stylus_read_tilt(iptsd);
+	if (ret < 0)
 		iptsd_err(ret, "Failed to handle stylus report");
+
+	return ret;
+}
+
+static int iptsd_stylus_handle_serial(struct iptsd_context *iptsd, bool tilt)
+{
+	struct ipts_stylus_report_serial sreport;
+
+	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
+			sizeof(struct ipts_stylus_report_serial));
+	if (ret < 0) {
+		iptsd_err(ret, "Received invalid data");
+		return 0;
+	}
+
+	ret = iptsd_stylus_handle_serial_change(iptsd, sreport.serial);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to change stylus");
 		return ret;
 	}
 
-	return 0;
+	if (tilt)
+		ret = iptsd_stylus_read_tilt(iptsd);
+	else
+		ret = iptsd_stylus_read_no_tilt(iptsd);
+
+	if (ret < 0)
+		iptsd_err(ret, "Failed to handle stylus report");
+
+	return ret;
 }
 
 int iptsd_stylus_handle_input(struct iptsd_context *iptsd,
@@ -277,13 +238,13 @@ int iptsd_stylus_handle_input(struct iptsd_context *iptsd,
 
 		switch (report.type) {
 		case IPTS_REPORT_TYPE_STYLUS_NO_TILT:
-			ret = iptsd_stylus_handle_no_tilt(iptsd);
+			ret = iptsd_stylus_handle_serial(iptsd, false);
 			break;
 		case IPTS_REPORT_TYPE_STYLUS_TILT:
-			ret = iptsd_stylus_handle_tilt(iptsd);
+			ret = iptsd_stylus_handle(iptsd);
 			break;
 		case IPTS_REPORT_TYPE_STYLUS_TILT_SERIAL:
-			ret = iptsd_stylus_handle_tilt_serial(iptsd);
+			ret = iptsd_stylus_handle_serial(iptsd, true);
 			break;
 		default:
 			iptsd_reader_skip(&iptsd->reader, report.size);
