@@ -25,12 +25,12 @@ package() {
 	cd "$pkgname-$pkgver"
 
 	# Install iptsd service
-	install -Dpm 0644 etc/systemd/iptsd.service \
-		"$pkgdir/usr/lib/systemd/system/$pkgname.service"
+	#install -Dpm 0644 etc/systemd/iptsd.service \
+	#	"$pkgdir/usr/lib/systemd/system/$pkgname.service"
 
 	# Install udev configuration
-	install -Dpm 0644 etc/udev/50-ipts.rules \
-		"$pkgdir/usr/lib/udev/rules.d/50-ipts.rules"
+	#iinstall -Dpm 0644 etc/udev/50-ipts.rules \
+	#	"$pkgdir/usr/lib/udev/rules.d/50-ipts.rules"
 
 	# Install sample config
 	install -Dpm 0644 etc/ipts.conf "$pkgdir/etc/ipts.conf"

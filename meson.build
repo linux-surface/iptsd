@@ -10,7 +10,6 @@ project(
 )
 
 cc = meson.get_compiler('c')
-dir_config = join_paths(get_option('prefix'), get_option('datadir'), 'ipts')
 
 sources = [
 	'src/cone.c',
@@ -68,4 +67,10 @@ add_project_arguments(cflags, language: 'c')
 
 executable('ipts-dbg', sources_dbg, install: true)
 executable('iptsd', sources, dependencies: deps, install: true)
+
+dir_config = join_paths(get_option('prefix'), get_option('datadir'), 'ipts')
 install_subdir('config', install_dir: dir_config, strip_directory: true)
+
+dir_lib = join_paths(get_option('prefix'), get_option('libdir'))
+install_subdir('lib', install_dir: dir_lib, strip_directory: true)
+
