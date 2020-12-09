@@ -6,7 +6,7 @@ Wants=dev-ipts-0.device
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/iptsd
+ExecStart=@bindir@/iptsd
 
 [Install]
 WantedBy=multi-user.target

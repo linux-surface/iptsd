@@ -30,18 +30,6 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %install
 %meson_install
 
-# Install iptsd service
-install -Dpm 0644 etc/systemd/iptsd.service \
-	%{buildroot}%{_unitdir}/%{name}.service
-
-# Install udev configuration
-install -Dpm 0644 etc/udev/50-ipts.rules \
-	%{buildroot}%{_udevrulesdir}/50-ipts.rules
-
-# Install sample config
-install -Dpm 0644 etc/ipts.conf \
-	%{buildroot}%{_sysconfdir}/ipts.conf
-
 %post
 %systemd_post %{name}.service
 

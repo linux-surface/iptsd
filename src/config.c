@@ -9,6 +9,8 @@
 #include <strings.h>
 #include <sys/stat.h>
 
+#include <configure.h>
+
 #include "config.h"
 #include "ipts.h"
 #include "constants.h"
@@ -112,10 +114,9 @@ void iptsd_config_load(struct iptsd_config *config,
 	config->touch_threshold = CONTACT_TOUCH_THRESHOLD;
 	config->stability_threshold = CONTACT_STABILITY_THRESHOLD;
 
-	iptsd_config_load_dir(config, info, "/usr/share/ipts");
-	iptsd_config_load_dir(config, info, "/usr/local/share/ipts");
+	iptsd_config_load_dir(config, info, IPTSD_CONFIG_DIR);
 	iptsd_config_load_dir(config, info, "./config");
 
-	ini_parse("/etc/ipts.conf", iptsd_config_handler_conf, config);
+	ini_parse(IPTSD_CONFIG_FILE, iptsd_config_handler_conf, config);
 }
 

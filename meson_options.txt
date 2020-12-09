@@ -1,0 +1,3 @@
+option('systemd', type: 'boolean', value: true)
+option('sample_config', type: 'boolean', value: true)
+option('debug_tool', type: 'boolean', value: true)

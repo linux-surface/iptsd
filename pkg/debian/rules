@@ -2,23 +2,6 @@
 
 export DH_VERBOSE=1
 
-pkgname = iptsd
-pkgdir = debian/$(pkgname)
-
-override_dh_install:
-	dh_install
-
-	# Install iptsd service
-	install -Dpm 0644 etc/systemd/iptsd.service \
-		"$(pkgdir)/usr/lib/systemd/system/$(pkgname).service"
-
-	# Install udev configuration
-	install -Dpm 0644 etc/udev/50-ipts.rules \
-		"$(pkgdir)/usr/lib/udev/rules.d/50-ipts.rules"
-
-	# Install sample config
-	install -Dpm 0644 etc/ipts.conf "$(pkgdir)/etc/ipts.conf"
-
 override_dh_strip:
 	dh_strip --no-automatic-dbgsym
 

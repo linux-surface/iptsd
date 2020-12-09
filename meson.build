@@ -6,11 +6,30 @@ project(
 		'c_std=gnu99',
 		'warning_level=2',
 		'werror=true',
+		'sysconfdir=/etc',
 	],
 )
 
 cc = meson.get_compiler('c')
-dir_config = join_paths(get_option('prefix'), get_option('datadir'), 'ipts')
+
+prefix = get_option('prefix')
+bindir = join_paths(prefix, get_option('bindir'))
+datadir = join_paths(prefix, get_option('datadir'))
+sysconfdir = get_option('sysconfdir')
+
+configdir = join_paths(datadir, 'ipts')
+configfile = join_paths(sysconfdir, 'ipts.conf')
+
+conf = configuration_data()
+conf.set('bindir', bindir)
+conf.set('datadir', datadir)
+conf.set('sysconfdir', sysconfdir)
+
+conf.set('configdir', configdir)
+conf.set('configfile', configfile)
+
+configure_file(input: 'configure.h.in',
+	output: 'configure.h', configuration: conf)
 
 sources = [
 	'src/cone.c',
@@ -66,6 +85,32 @@ cflags = [
 cflags = cc.get_supported_arguments(cflags)
 add_project_arguments(cflags, language: 'c')
 
-executable('ipts-dbg', sources_dbg, install: true)
 executable('iptsd', sources, dependencies: deps, install: true)
-install_subdir('config', install_dir: dir_config, strip_directory: true)
+install_subdir('config', install_dir: configdir, strip_directory: true)
+
+if get_option('systemd')
+	systemd = dependency('systemd')
+	unitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
+
+	udev = dependency('udev')
+	udevdir = udev.get_pkgconfig_variable('udevdir')
+	rulesdir = join_paths(udevdir, 'rules.d')
+
+	configure_file(
+		input: 'etc/systemd/iptsd.service.in',
+		output: 'iptsd.service',
+		configuration: conf,
+		install: true,
+		install_dir: unitdir,
+	)
+
+	install_data('etc/udev/50-ipts.rules', install_dir: rulesdir)
+endif
+
+if get_option('sample_config')
+	install_data('etc/ipts.conf', install_dir: sysconfdir)
+endif
+
+if get_option('debug_tool')
+	executable('ipts-dbg', sources_dbg, install: true)
+endif
