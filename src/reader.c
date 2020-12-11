@@ -47,6 +47,7 @@ void iptsd_reader_reset(struct iptsd_reader *reader)
 		return;
 
 	reader->current = 0;
+	memset(reader->data, 0, reader->size);
 }
 
 void iptsd_reader_free(struct iptsd_reader *reader)

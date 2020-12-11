@@ -124,7 +124,7 @@ static int iptsd_stylus_handle_serial_change(struct iptsd_context *iptsd,
 	return ret;
 }
 
-static int iptsd_stylus_read_tilt(struct iptsd_context *iptsd)
+static int iptsd_stylus_read_tilt(struct iptsd_context *iptsd, uint8_t count)
 {
 	struct ipts_stylus_data data;
 
@@ -142,10 +142,13 @@ static int iptsd_stylus_read_tilt(struct iptsd_context *iptsd)
 		return 0;
 	}
 
+	iptsd_reader_skip(&iptsd->reader, (count - 1) *
+			sizeof(struct ipts_stylus_data));
+
 	return iptsd_stylus_handle_data(iptsd, data);
 }
 
-static int iptsd_stylus_read_no_tilt(struct iptsd_context *iptsd)
+static int iptsd_stylus_read_no_tilt(struct iptsd_context *iptsd, uint8_t count)
 {
 	struct ipts_stylus_data full_data;
 	struct ipts_stylus_data_no_tilt data;
@@ -163,6 +166,9 @@ static int iptsd_stylus_read_no_tilt(struct iptsd_context *iptsd)
 		iptsd_err(ret, "Received invalid data");
 		return 0;
 	}
+
+	iptsd_reader_skip(&iptsd->reader, (count - 1) *
+			sizeof(struct ipts_stylus_data_no_tilt));
 
 	full_data.mode = data.mode;
 	full_data.x = data.x;
@@ -186,7 +192,7 @@ static int iptsd_stylus_handle(struct iptsd_context *iptsd)
 		return 0;
 	}
 
-	ret = iptsd_stylus_read_tilt(iptsd);
+	ret = iptsd_stylus_read_tilt(iptsd, sreport.elements);
 	if (ret < 0)
 		iptsd_err(ret, "Failed to handle stylus report");
 
@@ -211,9 +217,9 @@ static int iptsd_stylus_handle_serial(struct iptsd_context *iptsd, bool tilt)
 	}
 
 	if (tilt)
-		ret = iptsd_stylus_read_tilt(iptsd);
+		ret = iptsd_stylus_read_tilt(iptsd, sreport.elements);
 	else
-		ret = iptsd_stylus_read_no_tilt(iptsd);
+		ret = iptsd_stylus_read_no_tilt(iptsd, sreport.elements);
 
 	if (ret < 0)
 		iptsd_err(ret, "Failed to handle stylus report");
