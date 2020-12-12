@@ -1,9 +1,0 @@
-src/
-debian/debhelper-*
-*.tar
-*.tar.*
-*.buildinfo
-*.changes
-*.deb
-*.dsc
-
