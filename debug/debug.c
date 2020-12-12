@@ -13,7 +13,7 @@
 #include "src/protocol.h"
 #include "src/utils.h"
 
-struct iptsd_control ctrl;
+static struct iptsd_control ctrl;
 
 static void __exit(int error)
 {
