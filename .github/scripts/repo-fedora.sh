@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-FEDORA="$1"
+NAME="$1"
+FEDORA="$2"
 
 # Install dependencies
 dnf install -y git findutils
@@ -19,7 +20,7 @@ GIT_TAG=$(echo $GIT_REF | sed 's|^refs/tags/||g')
 
 # convert packages into references
 for pkg in $(find . -name '*.rpm'); do
-	echo "iptsd:$GIT_TAG/$(basename $pkg)" > $pkg.blob
+	echo "$NAME:$GIT_TAG/$(basename $pkg)" > $pkg.blob
 	rm $pkg
 done
 
@@ -32,5 +33,5 @@ rnd="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
 update_branch="${BRANCH_STAGING}-${rnd}"
 git checkout -b "${update_branch}"
 git add .
-git commit -m "Update Fedora $FEDORA IPTS daemon"
+git commit -m "Update Fedora $FEDORA $NAME package"
 git push --set-upstream origin "${update_branch}"

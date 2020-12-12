@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+NAME="$1"
+
 # Install dependencies
 apt-get -y update
 apt-get -y install git
@@ -18,7 +20,7 @@ GIT_TAG=$(echo $GIT_REF | sed 's|^refs/tags/||g')
 
 # convert packages into references
 for pkg in $(find . -name '*.deb'); do
-	echo "iptsd:$GIT_TAG/$(basename $pkg)" > $pkg.blob
+	echo "$NAME:$GIT_TAG/$(basename $pkg)" > $pkg.blob
 	rm $pkg
 done
 
@@ -31,5 +33,5 @@ rnd="$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)"
 update_branch="${BRANCH_STAGING}-${rnd}"
 git switch -c "${update_branch}"
 git add .
-git commit -m "Update Debian IPTS daemon"
+git commit -m "Update Debian $NAME package"
 git push --set-upstream origin "${update_branch}"

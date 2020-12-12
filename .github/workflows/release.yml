@@ -6,7 +6,9 @@ on:
       - '**'
 
 env:
+  NAME: iptsd
   SCRIPTS: ./.github/scripts
+  BRANCH_STAGING: u/staging
 
 jobs:
   build-arch:
@@ -173,9 +175,8 @@ jobs:
     - name: Update repository
       env:
         SURFACEBOT_TOKEN: ${{ secrets.SURFACE_BOT_TOKEN }}
-        BRANCH_STAGING: u/staging
         GIT_REF: ${{ github.ref }}
-      run: $SCRIPTS/repo-arch.sh
+      run: $SCRIPTS/repo-arch.sh $NAME
 
   repo-deb:
     name: Update Debian package repository
@@ -191,9 +192,8 @@ jobs:
     - name: Update repository
       env:
         SURFACEBOT_TOKEN: ${{ secrets.SURFACE_BOT_TOKEN }}
-        BRANCH_STAGING: u/staging
         GIT_REF: ${{ github.ref }}
-      run: $SCRIPTS/repo-debian.sh
+      run: $SCRIPTS/repo-debian.sh $NAME
 
   repo-f33:
     name: Update Fedora 33 package repository
@@ -209,9 +209,8 @@ jobs:
     - name: Update repository
       env:
         SURFACEBOT_TOKEN: ${{ secrets.SURFACE_BOT_TOKEN }}
-        BRANCH_STAGING: u/staging
         GIT_REF: ${{ github.ref }}
-      run: $SCRIPTS/repo-fedora.sh 33
+      run: $SCRIPTS/repo-fedora.sh $NAME 33
 
   repo-f32:
     name: Update Fedora 32 package repository
@@ -227,6 +226,5 @@ jobs:
     - name: Update repository
       env:
         SURFACEBOT_TOKEN: ${{ secrets.SURFACE_BOT_TOKEN }}
-        BRANCH_STAGING: u/staging
         GIT_REF: ${{ github.ref }}
-      run: $SCRIPTS/repo-fedora.sh 32
+      run: $SCRIPTS/repo-fedora.sh $NAME 32
