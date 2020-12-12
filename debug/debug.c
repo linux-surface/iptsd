@@ -14,12 +14,16 @@
 #include "src/utils.h"
 
 static struct iptsd_control ctrl;
+static FILE *file = NULL;
 
 static void __exit(int error)
 {
 	int ret = iptsd_control_stop(&ctrl);
 	if (ret < 0)
 		iptsd_err(ret, "Failed to stop IPTS");
+
+	if (file)
+		fclose(file);
 
 	exit(error);
 }
@@ -40,13 +44,83 @@ static void print_buffer(char *buffer, size_t size)
 	printf("\n");
 }
 
-int main(void)
+static int file_open(const char *path, const char *mode, FILE **out)
 {
+	FILE *f;
+
+	f = fopen(path, mode);
+	if (!f)
+		return -errno;
+
+	*out = f;
+	return 0;
+}
+
+static int file_write(FILE *file, char *data, size_t len)
+{
+	size_t n = fwrite(data, sizeof(char), len, file);
+	return n == len ? 0 : -EIO;
+}
+
+static void print_usage(const char *pname)
+{
+	printf("Usage:\n");
+	printf("  %s\n", pname);
+	printf("  %s --binary <file>\n", pname);
+	printf("  %s --help\n", pname);
+}
+
+static void print_help(const char *pname)
+{
+	printf("%s - Read raw IPTS data\n", pname);
+	printf("\n");
+	printf("Usage:\n");
+	printf("  %s\n", pname);
+	printf("  %s --binary <file>\n", pname);
+	printf("  %s --help\n", pname);
+	printf("\n");
+	printf("Options:\n");
+	printf("  -h | --help                   Show this help text\n");
+	printf("  -b <file> | --binary <file>   Write data to binary file instead of stdout\n");
+}
+
+int main(int argc, char **argv)
+{
+	const char *binfile = NULL;
+	int ret = 0;
+
+	for (int i = 1; i < argc; i++) {
+		if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
+			print_help(argv[0]);
+			return 0;
+		} else if (!strcmp(argv[i], "-b") || !strcmp(argv[i], "--binary")) {
+			if (i + 1 >= argc) {
+				printf("Error: Missing command line argument to '%s'\n\n", argv[i]);
+				print_usage(argv[0]);
+				return 1;
+			}
+
+			binfile = argv[++i];
+		} else {
+			printf("Error: Unknown command line argument '%s'\n\n", argv[i]);
+			print_usage(argv[0]);
+			return 1;
+		}
+	}
+
 	signal(SIGINT, __exit);
 	signal(SIGTERM, __exit);
 	memset(&ctrl, 0, sizeof(struct iptsd_control));
 
-	int ret = iptsd_control_start(&ctrl);
+	if (binfile) {
+		ret = file_open(binfile, "wb", &file);
+		if (ret < 0) {
+			iptsd_err(ret, "Failed to open file '%s'", binfile);
+			return ret;
+		}
+	}
+
+	ret = iptsd_control_start(&ctrl);
 	if (ret < 0) {
 		iptsd_err(ret, "Failed to start IPTS");
 		return ret;
@@ -85,10 +159,17 @@ int main(void)
 
 		struct ipts_data *header = (struct ipts_data *)data;
 
-		printf("====== Buffer: %d == Type: %d == Size: %d ======\n",
-				header->buffer, header->type, header->size);
-
-		print_buffer(&data[sizeof(struct ipts_data)], header->size);
+		if (file) {
+			ret = file_write(file, data, sizeof(struct ipts_data) + header->size);
+			if (ret < 0) {
+				iptsd_err(ret, "Failed to write data to file");
+				__exit(ret);
+			}
+		} else {
+			printf("====== Buffer: %d == Type: %d == Size: %d ======\n",
+					header->buffer, header->type, header->size);
+			print_buffer(&data[sizeof(struct ipts_data)], header->size);
+		}
 
 		ret = iptsd_control_send_feedback(&ctrl);
 		if (ret < 0) {
