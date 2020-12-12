@@ -19,6 +19,11 @@ build)
 	rpkg local --outdir $PWD/rpm
 	;;
 sign)
+	if [ -z "$GPG_KEY" ] || [ -z "$GPG_KEY_ID" ]; then
+		echo "WARNING: No GPG key configured, skipping signing."
+		exit
+	fi
+
 	# import GPG key
 	echo "$GPG_KEY" | base64 -d | gpg --import --no-tty --batch --yes
 	export GPG_TTY=$(tty)
