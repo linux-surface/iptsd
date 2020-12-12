@@ -57,6 +57,12 @@ sources_dbg = [
 	'src/utils.c',
 ]
 
+sources_capture = [
+	'debug/capture.c',
+	'src/control.c',
+	'src/utils.c',
+]
+
 deps = [
 	cc.find_library('m'),
 	dependency('inih', fallback: ['inih', 'inih_dep']),
@@ -113,4 +119,8 @@ endif
 
 if get_option('debug_tool')
 	executable('ipts-dbg', sources_dbg, install: true)
+endif
+
+if get_option('capture_tool')
+	executable('ipts-capture', sources_capture, install: true)
 endif
