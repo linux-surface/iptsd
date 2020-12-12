@@ -7,7 +7,8 @@ Summary: Userspace daemon for Intel Precise Touch & Stylus
 License: GPLv2+
 
 URL: https://github.com/linux-surface/iptsd
-Source0: %{url}/archive/v%{version}.tar.gz
+VCS: {{{ git_dir_vcs }}}
+Source: {{{ git_dir_pack }}}
 
 BuildRequires: meson
 BuildRequires: gcc
@@ -21,7 +22,7 @@ iptsd is a userspace daemon that processes touch events from the IPTS
 kernel driver, and sends them back to the kernel using uinput devices.
 
 %prep
-%autosetup
+{{{ git_dir_setup_macro }}}
 
 %build
 %meson
@@ -51,20 +52,3 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %{_unitdir}/%{name}.service
 %{_udevrulesdir}/50-ipts.rules
 %{_datadir}/ipts/*
-
-%changelog
-* Fri Oct 23 10:09:21 CEST 2020 Dorian Stoll <dorian.stoll@tmsp.io> - 0.2-2
-- Fix systemd service dependencies
-
-* Thu Oct 22 20:57:01 CEST 2020 Dorian Stoll <dorian.stoll@tmsp.io> - 0.2-1
-- Implement the new UAPI v2 interface
-
-* Tue Sep 29 2020 Dorian Stoll <dorian.stoll@tmsp.io> - 0.1.1-1
-- Bump release to build for Fedora 33
-
-* Thu Aug 06 2020 Dorian Stoll <dorian.stoll@tmsp.io> - 0.1-1
-- iptsd v0.1
-
-* Wed Jun 03 2020 Dorian Stoll <dorian.stoll@tmsp.io> - 0-1
-- Initial creation
-

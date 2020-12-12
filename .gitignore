@@ -1,16 +1,26 @@
-iptsd
-debian
-build/*
+build/
 subprojects/
+
 !subprojects/*.wrap
 
 .cache
 compile_commands.json
 
-pkg/*
-!pkg/fedora/iptsd.spec
-!pkg/arch/PKGBUILD
-!pkg/debian/changelog
-!pkg/debian/compat
-!pkg/debian/control
-!pkg/debian/rules
+rpm/
+pkg/
+debian/.debhelper/
+debian/debhelper-*
+debian/files
+debian/iptsd.*
+debian/iptsd/
+debian/src/
+obj-x86_64-linux-gnu/
+x86_64-redhat-linux-gnu/
+
+*.tar
+*.tar.*
+*.buildinfo
+*.changes
+*.deb
+*.dsc
+*.rpm

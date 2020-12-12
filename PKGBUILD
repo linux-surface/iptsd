@@ -7,18 +7,22 @@ url='https://github.com/linux-surface/iptsd'
 license=('GPL')
 depends=('libinih')
 makedepends=('meson')
-source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
-sha256sums=('SKIP')
 
 build() {
-	arch-meson ${pkgname}-${pkgver} build
+	cd $startdir
+
+	arch-meson . build
 	meson compile -C build
 }
 
 check() {
+	cd $startdir
+
 	meson test -C build
 }
 
 package() {
+	cd $startdir
+
 	DESTDIR="$pkgdir" meson install -C build
 }

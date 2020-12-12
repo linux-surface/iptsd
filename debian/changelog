@@ -1,24 +1,24 @@
 iptsd (0.2.1-1) unstable; urgency=medium
 
-  * Fix systemd service dependencies
+  * iptsd 0.2.1
 
  -- Dorian Stoll <dorian.stoll@tmsp.io>  Fri, 23 Oct 2020 10:08:09 +0200
 
 iptsd (0.2-1) unstable; urgency=medium
 
-  * Implement the new UAPI v2 interface
+  * iptsd 0.2
 
  -- Dorian Stoll <dorian.stoll@tmsp.io>  Thu, 22 Oct 2020 20:55:09 +0200
 
 iptsd (0.1.1-1) unstable; urgency=medium
 
-  * Bump release to build for Fedora 33
+  * iptsd 0.1.1
 
  -- Dorian Stoll <dorian.stoll@tmsp.io>  Tue, 29 Sep 2020 18:08:36 +0200
 
 iptsd (0.1-1) unstable; urgency=medium
 
-  * iptsd v0.1
+  * iptsd 0.1
 
  -- Dorian Stoll <dorian.stoll@tmsp.io>  Thu, 06 Aug 2020 11:09:27 +0200
 
