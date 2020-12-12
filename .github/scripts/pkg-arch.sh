@@ -10,8 +10,13 @@ fi
 
 case "$1" in
 install)
+	# Setup build environment
 	pacman -Syu --noconfirm
-	pacman -S --noconfirm sudo binutils fakeroot base-devel meson libinih
+	pacman -S --noconfirm sudo binutils fakeroot base-devel
+
+	# Install package dependencies
+	source PKGBUILD
+	pacman -S --noconfirm $depends $makedepends
 	;;
 build)
 	# Fix permissions (can't makepkg as
@@ -40,7 +45,7 @@ sign)
 		--no-tty -u $GPG_KEY_ID
 	;;
 release)
-	mkdir release
+	mkdir -p release
 	mv *.pkg.tar.zst{,.sig} release
 	;;
 esac

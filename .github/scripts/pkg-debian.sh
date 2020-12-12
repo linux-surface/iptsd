@@ -10,10 +10,14 @@ fi
 
 case "$1" in
 install)
+	# Setup build environment
 	sed 's/^deb /deb-src /' /etc/apt/sources.list >> /etc/apt/sources.list
 	apt-get -y update
-	apt-get -y install build-essential fakeroot debhelper dpkg-sig \
-		git meson libinih-dev pkg-config systemd udev
+	apt-get -y install build-essential fakeroot debhelper \
+		dpkg-sig git devscripts
+
+	# Install package dependencies
+	mk-build-deps -ir -t 'apt-get -y'
 	;;
 build)
 	dpkg-buildpackage -b -us -uc
@@ -32,7 +36,7 @@ sign)
 	dpkg-sig -g "--batch --no-tty" --sign builder -k $GPG_KEY_ID ../*.deb
 	;;
 release)
-	mkdir release
+	mkdir -p release
 	mv ../*.deb release
 	;;
 esac

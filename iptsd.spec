@@ -7,7 +7,6 @@ Summary: Userspace daemon for Intel Precise Touch & Stylus
 License: GPLv2+
 
 URL: https://github.com/linux-surface/iptsd
-VCS: {{{ git_dir_vcs }}}
 Source: {{{ git_dir_pack }}}
 
 BuildRequires: meson

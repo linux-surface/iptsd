@@ -2,7 +2,14 @@ Source: iptsd
 Section: misc
 Priority: optional
 Maintainer: Dorian Stoll <dorian.stoll@tmsp.io>
-Build-Depends: build-essential, debhelper (>= 10), meson, libinih-dev, pkg-config
+Build-Depends:
+ build-essential,
+ debhelper (>= 10),
+ libinih-dev,
+ meson,
+ pkg-config,
+ systemd,
+ udev
 
 Package: iptsd
 Architecture: amd64

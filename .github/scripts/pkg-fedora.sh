@@ -10,9 +10,12 @@ fi
 
 case "$1" in
 install)
+	# Setup build environment
 	dnf distro-sync -y
-	dnf install -y rpmdevtools rpm-sign meson gcc inih-devel \
-		systemd-rpm-macros rpkg
+	dnf install -y rpmdevtools rpm-sign rpkg 'dnf-command(builddep)'
+
+	# Install package dependencies
+	dnf builddep -y *.spec
 	;;
 build)
 	mkdir rpm
@@ -29,10 +32,10 @@ sign)
 	export GPG_TTY=$(tty)
 
 	# sign package
-        rpm --resign rpm/x86_64/*.rpm --define "_gpg_name $GPG_KEY_ID"
+        rpm --resign rpm/**/*.rpm --define "_gpg_name $GPG_KEY_ID"
 	;;
 release)
-	mkdir release
-	mv rpm/x86_64/*.rpm release
+	mkdir -p release
+	mv rpm/**/*.rpm release
 	;;
 esac
