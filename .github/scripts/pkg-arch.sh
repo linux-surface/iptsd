@@ -13,10 +13,6 @@ install)
 	# Setup build environment
 	pacman -Syu --noconfirm
 	pacman -S --noconfirm sudo binutils fakeroot base-devel
-
-	# Install package dependencies
-	source PKGBUILD
-	pacman -S --noconfirm $depends $makedepends
 	;;
 build)
 	# Fix permissions (can't makepkg as
@@ -28,7 +24,7 @@ build)
 	export COMPRESSZST=(zstd -c -T0 --ultra -20 -)
 
 	# Build
-	su nobody --pty -p -s /bin/bash -c 'makepkg -f --noconfirm'
+	su nobody --pty -p -s /bin/bash -c 'makepkg -sf --noconfirm'
 	;;
 sign)
 	if [ -z "$GPG_KEY" ] || [ -z "$GPG_KEY_ID" ]; then
