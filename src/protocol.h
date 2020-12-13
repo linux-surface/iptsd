@@ -14,11 +14,10 @@
 #define IPTS_PAYLOAD_FRAME_TYPE_STYLUS 0x6
 #define IPTS_PAYLOAD_FRAME_TYPE_TOUCH  0x8
 
-#define IPTS_REPORT_TYPE_TOUCH_HEATMAP_DIM  0x403
-#define IPTS_REPORT_TYPE_TOUCH_HEATMAP      0x425
-#define IPTS_REPORT_TYPE_STYLUS_NO_TILT     0x410
-#define IPTS_REPORT_TYPE_STYLUS_TILT        0x461
-#define IPTS_REPORT_TYPE_STYLUS_TILT_SERIAL 0x460
+#define IPTS_REPORT_TYPE_TOUCH_HEATMAP_DIM 0x403
+#define IPTS_REPORT_TYPE_TOUCH_HEATMAP     0x425
+#define IPTS_REPORT_TYPE_STYLUS_V1         0x410
+#define IPTS_REPORT_TYPE_STYLUS_V2         0x460
 
 #define IPTS_STYLUS_REPORT_MODE_PROX   (1 << 0)
 #define IPTS_STYLUS_REPORT_MODE_TOUCH  (1 << 1)
@@ -60,15 +59,10 @@ struct ipts_report {
 struct ipts_stylus_report {
 	uint8_t elements;
 	uint8_t reserved[3];
-} __attribute__((__packed__));
-
-struct ipts_stylus_report_serial {
-	uint8_t elements;
-	uint8_t reserved[3];
 	uint32_t serial;
 } __attribute__((__packed__));
 
-struct ipts_stylus_data {
+struct ipts_stylus_data_v2 {
 	uint16_t timestamp;
 	uint16_t mode;
 	uint16_t x;
@@ -79,7 +73,7 @@ struct ipts_stylus_data {
 	uint8_t reserved[2];
 } __attribute__((__packed__));
 
-struct ipts_stylus_data_no_tilt {
+struct ipts_stylus_data_v1 {
 	uint8_t reserved[4];
 	uint8_t mode;
 	uint16_t x;
