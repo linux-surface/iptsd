@@ -4,7 +4,7 @@ project(
 	license: 'GPL-2.0-or-later',
 	default_options: [
 		'c_std=gnu99',
-		'warning_level=2',
+		'warning_level=3',
 		'werror=true',
 		'sysconfdir=/etc',
 	],
