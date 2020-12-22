@@ -19,6 +19,12 @@ install)
 	;;
 build)
 	mkdir rpm
+
+	# Make sure that we have a git repository
+	if [ ! -d ".git" ]; then
+		git init
+	fi
+
 	rpkg local --outdir $PWD/rpm
 	;;
 sign)
