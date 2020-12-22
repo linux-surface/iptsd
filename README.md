@@ -22,15 +22,13 @@ which are not allowed in the kernel.
  * MS Surface Gen 4-6:
    * Stylus Input
    * Multitouch Finger Input
+   * Contact area calculation
  * MS Surface Gen 7:
    * Singletouch Finger Input
  * HP Spectre 13 x2 (only non-surface device to use IPTS)
    * Entirely untested
 
 ### What doesn't work?
- * MS Surface Gen 4-6:
-   * Multitouch pressure / contact area calculation
-   * Finger tracking can glitch when pressing hard on the display
  * MS Surface Gen 7:
    * Multitouch Input
    * Stylus Input
@@ -99,10 +97,7 @@ Patches with support for other service managers are welcome!
 You need to run the steps from "Building" first.
 
 ```bash
-$ sudo cp ./build/iptsd /usr/bin/
-$ sudo cp ./etc/systemd/iptsd.service /etc/systemd/system/
-$ sudo cp ./etc/udev/50-ipts.rules /etc/udev/rules.d/
-$ sudo cp -r ./config/ /usr/share/ipts
+$ sudo ninja -C build install
 $ sudo systemctl daemon-reload
 $ sudo systemctl enable --now iptsd
 ```

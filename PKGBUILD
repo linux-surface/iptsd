@@ -1,5 +1,5 @@
 pkgname=iptsd
-pkgver=0.2.1
+pkgver=0.3
 pkgrel=1
 pkgdesc='Userspace daemon for Intel Precise Touch & Stylus'
 arch=('x86_64')
