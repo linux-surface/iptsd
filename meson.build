@@ -1,6 +1,6 @@
 project(
 	'iptsd', 'c',
-	version: '0.3',
+	version: '0.3.1',
 	license: 'GPL-2.0-or-later',
 	default_options: [
 		'c_std=gnu99',
