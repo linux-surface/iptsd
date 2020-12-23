@@ -13,5 +13,5 @@ Build-Depends:
 
 Package: iptsd
 Architecture: amd64
-Depends: systemd, udev, libinih
+Depends: systemd, udev, libinih1
 Description: Userspace daemon for Intel Precise Touch & Stylus
