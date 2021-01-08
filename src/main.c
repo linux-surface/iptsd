@@ -17,6 +17,7 @@
 #include "utils.h"
 
 bool should_exit;
+bool should_reset;
 
 static int iptsd_exit(struct iptsd_context *iptsd, int error)
 {
@@ -33,6 +34,11 @@ static int iptsd_exit(struct iptsd_context *iptsd, int error)
 static void iptsd_signal_exit(int sig)
 {
 	should_exit = true;
+}
+
+static void iptsd_signal_reset(int sig)
+{
+	should_reset = true;
 }
 
 static int iptsd_loop(struct iptsd_context *iptsd)
@@ -89,6 +95,12 @@ int main(void)
 		return ret;
 	}
 
+	ret = iptsd_utils_signal(SIGUSR1, iptsd_signal_reset);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to register signal handler");
+		return ret;
+	}
+
 	ret = iptsd_control_start(&iptsd.control);
 	if (ret < 0) {
 		iptsd_err(ret, "Failed to start IPTS");
@@ -135,6 +147,14 @@ int main(void)
 
 		if (should_exit)
 			return iptsd_exit(&iptsd, EXIT_FAILURE);
+
+		if (should_reset) {
+			ret = iptsd_control_reset(&iptsd.control);
+			if (ret < 0)
+				return iptsd_exit(&iptsd, ret);
+
+			should_reset = false;
+		}
 	}
 
 	return iptsd_exit(&iptsd, 0);

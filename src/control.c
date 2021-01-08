@@ -185,3 +185,12 @@ int iptsd_control_stop(struct iptsd_control *control)
 	return 0;
 }
 
+int iptsd_control_reset(struct iptsd_control *control)
+{
+	int fd = iptsd_control_current_file(control);
+	int ret = iptsd_utils_ioctl(fd, IPTS_IOCTL_SEND_RESET, NULL);
+	if (ret < 0)
+		iptsd_err(ret, "Failed to reset IPTS");
+
+	return ret;
+}

@@ -25,6 +25,7 @@ int iptsd_control_device_info(struct iptsd_control *control);
 int iptsd_control_start(struct iptsd_control *control);
 int iptsd_control_read(struct iptsd_control *control, void *buf, size_t count);
 int iptsd_control_stop(struct iptsd_control *control);
+int iptsd_control_reset(struct iptsd_control *control);
 
 #endif /* _IPTSD_CONTROL_H_ */
 

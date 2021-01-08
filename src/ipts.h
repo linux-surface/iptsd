@@ -29,6 +29,7 @@ struct ipts_device_info {
 #define IPTS_IOCTL_GET_DEVICE_INFO  _IOR(0x86, 0x02, struct ipts_device_info)
 #define IPTS_IOCTL_GET_DOORBELL     _IOR(0x86, 0x03, __u32)
 #define IPTS_IOCTL_SEND_FEEDBACK    _IO(0x86, 0x04)
+#define IPTS_IOCTL_SEND_RESET       _IO(0x86, 0x05)
 
 #endif /* _UAPI_LINUX_IPTS_H */
 
