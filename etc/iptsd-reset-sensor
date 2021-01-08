@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Send the SIGUSR1 signal to iptsd, which will then handle the sensor reset.
+exec pkill -USR1 iptsd

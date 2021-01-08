@@ -86,6 +86,7 @@ cflags = cc.get_supported_arguments(cflags)
 add_project_arguments(cflags, language: 'c')
 
 executable('iptsd', sources, dependencies: deps, install: true)
+install_data('etc/iptsd-reset-sensor', install_dir: bindir)
 install_subdir('config', install_dir: configdir, strip_directory: true)
 
 if get_option('systemd')
