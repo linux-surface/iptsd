@@ -11,12 +11,21 @@ void cone_set_tip(struct cone *c, float x, float y)
 {
 	c->x = x;
 	c->y = y;
-	c->position_update = iptsd_utils_msec_timestamp();
+
+	int ret = iptsd_utils_msec_timestamp(&c->position_update);
+	if (ret < 0)
+		iptsd_err(ret, "Failed to get timestamp");
 }
 
 bool cone_is_removed(struct cone *c)
 {
-	uint64_t timestamp = iptsd_utils_msec_timestamp();
+	uint64_t timestamp;
+
+	int ret = iptsd_utils_msec_timestamp(&timestamp);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to get timestamp");
+		return false;
+	}
 
 	if (c->position_update + 300 > timestamp)
 		return false;
@@ -31,7 +40,13 @@ float cone_hypot(struct cone *c, float x, float y)
 
 void cone_update_direction(struct cone *c, float x, float y)
 {
-	uint64_t timestamp = iptsd_utils_msec_timestamp();
+	uint64_t timestamp;
+
+	int ret = iptsd_utils_msec_timestamp(&timestamp);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to get timestamp");
+		return;
+	}
 
 	float time_diff = (timestamp - c->direction_update) / 1000.0;
 	float weight = exp2f(-time_diff);
