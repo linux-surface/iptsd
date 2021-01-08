@@ -75,10 +75,20 @@ static int iptsd_loop(struct iptsd_context *iptsd)
 int main(void)
 {
 	memset(&iptsd, 0, sizeof(struct iptsd_context));
-	signal(SIGINT, iptsd_signal);
-	signal(SIGTERM, iptsd_signal);
 
-	int ret = iptsd_control_start(&iptsd.control);
+	int ret = iptsd_utils_signal(SIGINT, iptsd_signal);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to register signal handler");
+		return ret;
+	}
+
+	ret = iptsd_utils_signal(SIGTERM, iptsd_signal);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to register signal handler");
+		return ret;
+	}
+
+	ret = iptsd_control_start(&iptsd.control);
 	if (ret < 0) {
 		iptsd_err(ret, "Failed to start IPTS");
 		return ret;

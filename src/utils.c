@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -52,6 +53,20 @@ int iptsd_utils_write(int fd, void *buf, size_t count)
 int iptsd_utils_ioctl(int fd, unsigned long request, void *data)
 {
 	int ret = ioctl(fd, request, data);
+	if (ret != -1)
+		return ret;
+
+	return -errno;
+}
+
+int iptsd_utils_signal(int signum, void (*handler)(int))
+{
+	struct sigaction sig;
+
+	memset(&sig, 0, sizeof(struct sigaction));
+	sig.sa_handler = handler;
+
+	int ret = sigaction(signum, &sig, NULL);
 	if (ret != -1)
 		return ret;
 

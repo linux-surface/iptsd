@@ -108,8 +108,18 @@ int main(int argc, char **argv)
 		}
 	}
 
-	signal(SIGINT, __exit);
-	signal(SIGTERM, __exit);
+	ret = iptsd_utils_signal(SIGINT, __exit);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to register signal handler");
+		return ret;
+	}
+
+	ret = iptsd_utils_signal(SIGTERM, __exit);
+	if (ret < 0) {
+		iptsd_err(ret, "Failed to register signal handler");
+		return ret;
+	}
+
 	memset(&ctrl, 0, sizeof(struct iptsd_control));
 
 	if (binfile) {
