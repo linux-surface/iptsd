@@ -82,6 +82,7 @@ int main(void)
 
 	memset(&iptsd, 0, sizeof(struct iptsd_context));
 	should_exit = false;
+	should_reset = false;
 
 	int ret = iptsd_utils_signal(SIGINT, iptsd_signal_exit);
 	if (ret < 0) {
