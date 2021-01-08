@@ -16,7 +16,7 @@
 #include "reader.h"
 #include "utils.h"
 
-struct iptsd_context iptsd;
+bool should_exit;
 
 static int iptsd_exit(struct iptsd_context *iptsd, int error)
 {
@@ -30,11 +30,9 @@ static int iptsd_exit(struct iptsd_context *iptsd, int error)
 	return error;
 }
 
-static void iptsd_signal(int sig)
+static void iptsd_signal_exit(int sig)
 {
-	iptsd_exit(&iptsd, sig);
-
-	exit(EXIT_FAILURE);
+	should_exit = true;
 }
 
 static int iptsd_loop(struct iptsd_context *iptsd)
@@ -74,15 +72,18 @@ static int iptsd_loop(struct iptsd_context *iptsd)
 
 int main(void)
 {
-	memset(&iptsd, 0, sizeof(struct iptsd_context));
+	struct iptsd_context iptsd;
 
-	int ret = iptsd_utils_signal(SIGINT, iptsd_signal);
+	memset(&iptsd, 0, sizeof(struct iptsd_context));
+	should_exit = false;
+
+	int ret = iptsd_utils_signal(SIGINT, iptsd_signal_exit);
 	if (ret < 0) {
 		iptsd_err(ret, "Failed to register signal handler");
 		return ret;
 	}
 
-	ret = iptsd_utils_signal(SIGTERM, iptsd_signal);
+	ret = iptsd_utils_signal(SIGTERM, iptsd_signal_exit);
 	if (ret < 0) {
 		iptsd_err(ret, "Failed to register signal handler");
 		return ret;
@@ -119,7 +120,6 @@ int main(void)
 
 	while (1) {
 		ret = iptsd_loop(&iptsd);
-
 		if (ret < 0) {
 			iptsd_err(ret, "IPTSD loop failed");
 			return iptsd_exit(&iptsd, ret);
@@ -132,6 +132,9 @@ int main(void)
 			usleep(10 * 1000);
 		else
 			usleep(200 * 1000);
+
+		if (should_exit)
+			return iptsd_exit(&iptsd, EXIT_FAILURE);
 	}
 
 	return iptsd_exit(&iptsd, 0);
