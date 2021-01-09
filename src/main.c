@@ -142,9 +142,9 @@ int main(void)
 			timeout = time(NULL) + 5;
 
 		if (timeout > time(NULL))
-			usleep(10 * 1000);
+			iptsd_utils_msleep(10);
 		else
-			usleep(200 * 1000);
+			iptsd_utils_msleep(200);
 
 		if (should_exit)
 			return iptsd_exit(&iptsd, EXIT_FAILURE);

@@ -18,6 +18,7 @@ int iptsd_utils_signal(int signum, void (*handler)(int));
 void iptsd_utils_err(int err, const char *file,
 	int line, const char *format, ...);
 int iptsd_utils_msec_timestamp(uint64_t *ts);
+int iptsd_utils_msleep(uint64_t msecs);
 
 #endif /* _IPTSD_SYSCALL_H_ */
 
