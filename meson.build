@@ -89,7 +89,20 @@ executable('iptsd', sources, dependencies: deps, install: true)
 install_data('etc/iptsd-reset-sensor', install_dir: bindir)
 install_subdir('config', install_dir: configdir, strip_directory: true)
 
-if get_option('systemd')
+configure_file(
+	input: 'etc/systemd/iptsd.service.in',
+	output: 'iptsd.service',
+	configuration: conf
+)
+
+configure_file(
+	input: 'etc/openrc/iptsd.initd.in',
+	output: 'iptsd.initd',
+	configuration: conf
+)
+
+service_manager = get_option('service_manager')
+if service_manager.contains('systemd')
 	systemd = dependency('systemd')
 	unitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
 
@@ -97,15 +110,23 @@ if get_option('systemd')
 	udevdir = udev.get_pkgconfig_variable('udevdir')
 	rulesdir = join_paths(udevdir, 'rules.d')
 
-	configure_file(
-		input: 'etc/systemd/iptsd.service.in',
-		output: 'iptsd.service',
-		configuration: conf,
-		install: true,
-		install_dir: unitdir,
+	install_data(
+		join_paths(meson.current_build_dir(), 'iptsd.service'),
+		install_dir: unitdir
 	)
 
 	install_data('etc/udev/50-ipts.rules', install_dir: rulesdir)
+endif
+
+if service_manager.contains('openrc')
+	dependency('openrc')
+	openrcdir = join_paths(sysconfdir, 'init.d')
+
+	install_data(
+		join_paths(meson.current_build_dir(), 'iptsd.initd'),
+		install_dir: openrcdir,
+		rename: 'iptsd'
+	)
 endif
 
 if get_option('sample_config')

@@ -1,0 +1,15 @@
+#!/sbin/openrc-run
+
+description="Intel Precise Touch & Stylus daemon"
+command=@bindir@/iptsd
+
+# Add any arguments to pass to iptsd here
+command_args=""
+
+# Set the pid file location here
+# ${RC_SVCNAME} is set to the service name ("iptsd") when the script is run
+pidfile="/run/${RC_SVCNAME}.pid"
+
+# Set command_background to true if the daemon does not create a pidfile and
+# does not background itself. Start-stop-daemon will take care of these jobs.
+command_background="true"
