@@ -11,8 +11,8 @@
 #include "heatmap.h"
 #include "protocol.h"
 #include "reader.h"
-#include "touch.h"
 #include "touch-processing.h"
+#include "touch.h"
 #include "utils.h"
 
 static void iptsd_touch_lift_mt(int dev)
@@ -47,10 +47,9 @@ static void iptsd_touch_emit_st(int dev, struct iptsd_touch_input in)
 	iptsd_devices_emit(dev, EV_ABS, ABS_Y, in.y);
 }
 
-static void iptsd_touch_handle_single(struct iptsd_touch_device *touch,
-		int max_contacts, bool blocked)
+static void iptsd_touch_handle_single(struct iptsd_touch_device *touch, int max, bool blocked)
 {
-	for (int i = 0; i < max_contacts; i++) {
+	for (int i = 0; i < max; i++) {
 		struct iptsd_touch_input in = touch->processor.inputs[i];
 
 		if (in.index != -1 && !in.is_stable)
@@ -66,10 +65,9 @@ static void iptsd_touch_handle_single(struct iptsd_touch_device *touch,
 	iptsd_touch_lift_st(touch->dev);
 }
 
-static void iptsd_touch_handle_multi(struct iptsd_touch_device *touch,
-		int max_contacts, bool blocked)
+static void iptsd_touch_handle_multi(struct iptsd_touch_device *touch, int max, bool blocked)
 {
-	for (int i = 0; i < max_contacts; i++) {
+	for (int i = 0; i < max; i++) {
 		struct iptsd_touch_input in = touch->processor.inputs[i];
 
 		iptsd_devices_emit(touch->dev, EV_ABS, ABS_MT_SLOT, in.slot);
@@ -86,8 +84,7 @@ static void iptsd_touch_handle_multi(struct iptsd_touch_device *touch,
 	}
 }
 
-static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
-		struct heatmap *hm)
+static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd, struct heatmap *hm)
 {
 	bool blocked = false;
 
@@ -111,8 +108,7 @@ static int iptsd_touch_handle_heatmap(struct iptsd_context *iptsd,
 	return ret;
 }
 
-int iptsd_touch_handle_input(struct iptsd_context *iptsd,
-		struct ipts_payload_frame frame)
+int iptsd_touch_handle_input(struct iptsd_context *iptsd, struct ipts_payload_frame frame)
 {
 	uint32_t size = 0;
 	struct heatmap *hm = NULL;
@@ -121,8 +117,7 @@ int iptsd_touch_handle_input(struct iptsd_context *iptsd,
 		struct ipts_report report;
 		struct ipts_heatmap_dim dim;
 
-		int ret = iptsd_reader_read(&iptsd->reader, &report,
-				sizeof(struct ipts_report));
+		int ret = iptsd_reader_read(&iptsd->reader, &report, sizeof(struct ipts_report));
 		if (ret < 0) {
 			iptsd_err(ret, "Received invalid data");
 			return 0;
@@ -131,23 +126,21 @@ int iptsd_touch_handle_input(struct iptsd_context *iptsd,
 		switch (report.type) {
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP_DIM:
 			ret = iptsd_reader_read(&iptsd->reader, &dim,
-					sizeof(struct ipts_heatmap_dim));
+						sizeof(struct ipts_heatmap_dim));
 			if (ret < 0) {
 				iptsd_err(ret, "Received invalid data");
 				return 0;
 			}
 
-			hm = iptsd_touch_processing_get_heatmap(
-					&iptsd->devices.touch.processor,
-					dim.width, dim.height);
+			hm = iptsd_touch_processing_get_heatmap(&iptsd->devices.touch.processor,
+								dim.width, dim.height);
 
 			break;
 		case IPTS_REPORT_TYPE_TOUCH_HEATMAP:
 			if (!hm)
 				break;
 
-			ret = iptsd_reader_read(&iptsd->reader, hm->data,
-					hm->size);
+			ret = iptsd_reader_read(&iptsd->reader, hm->data, hm->size);
 			if (ret < 0) {
 				iptsd_err(ret, "Received invalid data");
 				return 0;

@@ -11,8 +11,7 @@
 #include "touch-processing.h"
 #include "utils.h"
 
-double iptsd_touch_processing_dist(struct iptsd_touch_input input,
-		struct iptsd_touch_input other)
+double iptsd_touch_processing_dist(struct iptsd_touch_input input, struct iptsd_touch_input other)
 {
 	double dx = (double)input.x - (double)other.x;
 	double dy = (double)input.y - (double)other.y;
@@ -21,7 +20,7 @@ double iptsd_touch_processing_dist(struct iptsd_touch_input input,
 }
 
 static void iptsd_touch_processing_update_cone(struct iptsd_touch_processor *tp,
-		struct contact *palm)
+					       struct contact *palm)
 {
 	struct cone *cone = NULL;
 	float d = INFINITY;
@@ -52,7 +51,7 @@ static void iptsd_touch_processing_update_cone(struct iptsd_touch_processor *tp,
 }
 
 static bool iptsd_touch_processing_check_cone(struct iptsd_touch_processor *tp,
-		struct contact *input)
+					      struct contact *input)
 {
 	for (int i = 0; i < IPTSD_MAX_STYLI; i++) {
 		struct cone *cone = &tp->rejection_cones[i];
@@ -64,8 +63,7 @@ static bool iptsd_touch_processing_check_cone(struct iptsd_touch_processor *tp,
 	return false;
 }
 
-static void iptsd_touch_processing_get_palms(struct iptsd_touch_processor *tp,
-		int count)
+static void iptsd_touch_processing_get_palms(struct iptsd_touch_processor *tp, int count)
 {
 	for (int i = 0; i < count; i++) {
 		float vx = tp->contacts[i].ev1;
@@ -77,7 +75,7 @@ static void iptsd_touch_processing_get_palms(struct iptsd_touch_processor *tp,
 			continue;
 
 		// Thumb
-		if ((vx < 1.25 || (vx < 3.5 && max_v > 90)) && vx/vy > 1.8)
+		if ((vx < 1.25 || (vx < 3.5 && max_v > 90)) && vx / vy > 1.8)
 			continue;
 
 		tp->contacts[i].is_palm = true;
@@ -124,8 +122,7 @@ static void iptsd_touch_processing_save(struct iptsd_touch_processor *tp)
 		tp->last[i] = tp->inputs[i];
 }
 
-void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
-		struct heatmap *hm)
+void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp, struct heatmap *hm)
 {
 	float average = heatmap_average(hm);
 
@@ -136,8 +133,7 @@ void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
 			hm->data[i] = 0;
 	}
 
-	int count = contacts_get(hm, tp->contacts,
-			tp->device_info.max_contacts);
+	int count = contacts_get(hm, tp->contacts, tp->device_info.max_contacts);
 
 	for (int i = 0; i < count; i++) {
 		float x = tp->contacts[i].x / (hm->width - 1);
@@ -188,15 +184,14 @@ void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
 	iptsd_touch_processing_save(tp);
 }
 
-struct heatmap *iptsd_touch_processing_get_heatmap(
-		struct iptsd_touch_processor *tp, int width, int height)
+struct heatmap *iptsd_touch_processing_get_heatmap(struct iptsd_touch_processor *tp, int w, int h)
 {
-	if (tp->hm.width == width && tp->hm.height == height)
+	if (tp->hm.width == w && tp->hm.height == h)
 		return &tp->hm;
 
 	heatmap_free(&tp->hm);
-	tp->hm.width = width;
-	tp->hm.height = height;
+	tp->hm.width = w;
+	tp->hm.height = h;
 	tp->hm.touch_threshold = tp->config.touch_threshold;
 	heatmap_init(&tp->hm);
 
@@ -264,4 +259,3 @@ void iptsd_touch_processing_free(struct iptsd_touch_processor *tp)
 
 	heatmap_free(&tp->hm);
 }
-

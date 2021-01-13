@@ -84,4 +84,3 @@ bool cone_is_inside(struct cone *c, float x, float y)
 
 	return false;
 }
-

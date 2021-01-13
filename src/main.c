@@ -9,10 +9,10 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "data.h"
 #include "config.h"
 #include "context.h"
 #include "control.h"
+#include "data.h"
 #include "reader.h"
 #include "utils.h"
 
@@ -51,8 +51,7 @@ static int iptsd_loop(struct iptsd_context *iptsd)
 	int size = iptsd->control.device_info.buffer_size;
 
 	while (doorbell > iptsd->control.current_doorbell) {
-		int ret = iptsd_control_read(&iptsd->control,
-				iptsd->reader.data, size);
+		int ret = iptsd_control_read(&iptsd->control, iptsd->reader.data, size);
 		if (ret < 0) {
 			iptsd_err(ret, "Failed to read IPTS data");
 			return ret;
@@ -111,8 +110,7 @@ int main(void)
 	time_t timeout = time(NULL) + 5;
 	struct ipts_device_info device_info = iptsd.control.device_info;
 
-	printf("Connected to device %04X:%04X\n",
-			device_info.vendor, device_info.product);
+	printf("Connected to device %04X:%04X\n", device_info.vendor, device_info.product);
 
 	iptsd_config_load(&iptsd.config, device_info);
 

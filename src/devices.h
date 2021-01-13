@@ -39,4 +39,3 @@ int iptsd_devices_create(struct iptsd_devices *devices);
 void iptsd_devices_destroy(struct iptsd_devices *devices);
 
 #endif /* _IPTSD_DEVICES_H_ */
-

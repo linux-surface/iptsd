@@ -4,8 +4,8 @@
 #include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "src/control.h"
@@ -176,8 +176,8 @@ int main(int argc, char **argv)
 				__exit(ret);
 			}
 		} else {
-			printf("====== Buffer: %d == Type: %d == Size: %d ======\n",
-					header->buffer, header->type, header->size);
+			printf("====== Buffer: %d == Type: %d == Size: %d ======\n", header->buffer,
+			       header->type, header->size);
 			print_buffer(&data[sizeof(struct ipts_data)], header->size);
 		}
 

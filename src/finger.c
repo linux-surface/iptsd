@@ -6,23 +6,23 @@
 #include "touch-processing.h"
 
 static void iptsd_finger_update_from_last(struct iptsd_touch_processor *tp,
-		struct iptsd_touch_input *input, struct iptsd_touch_input last)
+					  struct iptsd_touch_input *input,
+					  struct iptsd_touch_input last)
 {
 	struct contact *contact = input->contact;
 
 	float dev1 = input->ev1 - last.ev1;
 	float dev2 = input->ev2 - last.ev2;
 
-	bool is_stable = dev1 < tp->config.stability_threshold &&
-		dev2 < tp->config.stability_threshold;
+	bool is_stable =
+		dev1 < tp->config.stability_threshold && dev2 < tp->config.stability_threshold;
 
 	input->index = last.index;
 	input->is_palm = contact->is_palm || last.is_palm;
 	input->is_stable = is_stable;
 }
 
-static bool iptsd_finger_find_duplicates(struct iptsd_touch_processor *tp,
-		int count, int itr)
+static bool iptsd_finger_find_duplicates(struct iptsd_touch_processor *tp, int count, int itr)
 {
 	int duplicates = 0;
 	int max_contacts = tp->device_info.max_contacts;
@@ -126,8 +126,7 @@ void iptsd_finger_track(struct iptsd_touch_processor *tp, int count)
 				continue;
 			}
 
-			tp->distances[base + j] = iptsd_touch_processing_dist(
-					current, last);
+			tp->distances[base + j] = iptsd_touch_processing_dist(current, last);
 		}
 
 		/* Sort the list */
@@ -217,4 +216,3 @@ void iptsd_finger_track(struct iptsd_touch_processor *tp, int count)
 		}
 	}
 }
-

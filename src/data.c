@@ -14,8 +14,7 @@ int iptsd_data_handle_input(struct iptsd_context *iptsd)
 {
 	struct ipts_data header;
 
-	int ret = iptsd_reader_read(&iptsd->reader, &header,
-			sizeof(struct ipts_data));
+	int ret = iptsd_reader_read(&iptsd->reader, &header, sizeof(struct ipts_data));
 	if (ret < 0) {
 		iptsd_err(ret, "Received invalid data");
 		return 0;

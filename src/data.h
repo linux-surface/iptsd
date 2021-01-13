@@ -8,4 +8,3 @@
 int iptsd_data_handle_input(struct iptsd_context *iptsd);
 
 #endif /* _IPTSD_DATA_H_ */
-

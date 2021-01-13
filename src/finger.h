@@ -9,4 +9,3 @@
 void iptsd_finger_track(struct iptsd_touch_processor *tp, int count);
 
 #endif /* _IPTSD_FINGER_H_ */
-

@@ -43,14 +43,10 @@ struct iptsd_touch_processor {
 	struct ipts_device_info device_info;
 };
 
-double iptsd_touch_processing_dist(struct iptsd_touch_input input,
-		struct iptsd_touch_input other);
-void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp,
-		struct heatmap *hm);
-struct heatmap *iptsd_touch_processing_get_heatmap(
-		struct iptsd_touch_processor *tp, int width, int height);
+double iptsd_touch_processing_dist(struct iptsd_touch_input input, struct iptsd_touch_input other);
+void iptsd_touch_processing_inputs(struct iptsd_touch_processor *tp, struct heatmap *hm);
+struct heatmap *iptsd_touch_processing_get_heatmap(struct iptsd_touch_processor *tp, int w, int h);
 int iptsd_touch_processing_init(struct iptsd_touch_processor *tp);
 void iptsd_touch_processing_free(struct iptsd_touch_processor *tp);
 
 #endif /* _IPTSD_TOUCH_PROCESSING_H_ */
-

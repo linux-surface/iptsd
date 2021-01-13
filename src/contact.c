@@ -43,8 +43,7 @@ static void cluster_cov(struct cluster c, float *r1, float *r2, float *r3)
 	*r3 = (fxy - (fx * fy / fw)) / fw;
 }
 
-static void __cluster_get(struct heatmap *hm,
-		int x, int y, struct cluster *c)
+static void __cluster_get(struct heatmap *hm, int x, int y, struct cluster *c)
 {
 	int v = heatmap_value(hm, x, y);
 
@@ -113,8 +112,7 @@ static struct contact contact_from_cluster(struct cluster cluster)
 	return c;
 }
 
-static void contact_pca(struct contact c,
-		float x, float y, float *rx, float *ry)
+static void contact_pca(struct contact c, float x, float y, float *rx, float *ry)
 {
 	*rx = c.qx1 * x + c.qx2 * y;
 	*ry = c.qy1 * x + c.qy2 * y;
@@ -168,4 +166,3 @@ int contacts_get(struct heatmap *hm, struct contact *contacts, int count)
 
 	return c;
 }
-

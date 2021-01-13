@@ -106,4 +106,3 @@ int heatmap_init(struct heatmap *hm)
 
 	return 0;
 }
-

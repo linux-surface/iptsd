@@ -14,8 +14,7 @@ int iptsd_payload_handle_input(struct iptsd_context *iptsd)
 {
 	struct ipts_payload payload;
 
-	int ret = iptsd_reader_read(&iptsd->reader, &payload,
-			sizeof(struct ipts_payload));
+	int ret = iptsd_reader_read(&iptsd->reader, &payload, sizeof(struct ipts_payload));
 	if (ret < 0) {
 		iptsd_err(ret, "Received invalid data");
 		return 0;
@@ -24,8 +23,7 @@ int iptsd_payload_handle_input(struct iptsd_context *iptsd)
 	for (uint32_t i = 0; i < payload.frames; i++) {
 		struct ipts_payload_frame frame;
 
-		ret = iptsd_reader_read(&iptsd->reader, &frame,
-				sizeof(struct ipts_payload_frame));
+		ret = iptsd_reader_read(&iptsd->reader, &frame, sizeof(struct ipts_payload_frame));
 		if (ret < 0) {
 			iptsd_err(ret, "Received invalid data");
 			return 0;

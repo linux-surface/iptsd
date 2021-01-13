@@ -12,8 +12,8 @@
 #include <configure.h>
 
 #include "config.h"
-#include "ipts.h"
 #include "constants.h"
+#include "ipts.h"
 #include "utils.h"
 
 struct iptsd_config_device {
@@ -23,14 +23,12 @@ struct iptsd_config_device {
 
 static bool iptsd_config_to_bool(const char *value)
 {
-	return strcasecmp(value, "true") == 0 ||
-		strcasecmp(value, "yes") == 0 ||
-		strcasecmp(value, "on") == 0 ||
-		strcasecmp(value, "1") == 0;
+	return strcasecmp(value, "true") == 0 || strcasecmp(value, "yes") == 0 ||
+	       strcasecmp(value, "on") == 0 || strcasecmp(value, "1") == 0;
 }
 
-static int iptsd_config_handler_device(void *user, const char *section,
-		const char *name, const char *value)
+static int iptsd_config_handler_device(void *user, const char *section, const char *name,
+				       const char *value)
 {
 	struct iptsd_config_device *dev = (struct iptsd_config_device *)user;
 
@@ -46,8 +44,8 @@ static int iptsd_config_handler_device(void *user, const char *section,
 	return 1;
 }
 
-static int iptsd_config_handler_conf(void *user, const char *section,
-		const char *name, const char *value)
+static int iptsd_config_handler_conf(void *user, const char *section, const char *name,
+				     const char *value)
 {
 	struct iptsd_config *config = (struct iptsd_config *)user;
 
@@ -78,8 +76,8 @@ static int iptsd_config_handler_conf(void *user, const char *section,
 	return 1;
 }
 
-static void iptsd_config_load_dir(struct iptsd_config *config,
-		struct ipts_device_info info, const char *name)
+static void iptsd_config_load_dir(struct iptsd_config *config, struct ipts_device_info info,
+				  const char *name)
 {
 	char path[PATH_MAX];
 	struct dirent *entry;
@@ -106,8 +104,7 @@ static void iptsd_config_load_dir(struct iptsd_config *config,
 	closedir(dir);
 }
 
-void iptsd_config_load(struct iptsd_config *config,
-		struct ipts_device_info info)
+void iptsd_config_load(struct iptsd_config *config, struct ipts_device_info info)
 {
 	memset(config, 0, sizeof(struct iptsd_config));
 
@@ -119,4 +116,3 @@ void iptsd_config_load(struct iptsd_config *config,
 
 	ini_parse(IPTSD_CONFIG_FILE, iptsd_config_handler_conf, config);
 }
-

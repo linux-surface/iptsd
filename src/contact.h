@@ -43,4 +43,3 @@ int contacts_get(struct heatmap *hm, struct contact *contacts, int count);
 bool contact_near(struct contact c, struct contact other);
 
 #endif /* _IPTSD_CONTACT_H_ */
-

@@ -4,8 +4,8 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <stdarg.h>
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -73,8 +73,7 @@ int iptsd_utils_signal(int signum, void (*handler)(int))
 	return -errno;
 }
 
-void iptsd_utils_err(int err, const char *file,
-		int line, const char *format, ...)
+void iptsd_utils_err(int err, const char *file, int line, const char *format, ...)
 {
 	va_list args;
 	va_start(args, format);

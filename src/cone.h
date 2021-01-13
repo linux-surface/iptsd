@@ -24,4 +24,3 @@ void cone_update_direction(struct cone *c, float x, float y);
 bool cone_is_inside(struct cone *c, float x, float y);
 
 #endif /* _IPTSD_CONE_H_ */
-

@@ -42,8 +42,7 @@ void iptsd_control_wait_for_device(struct iptsd_control *control)
 	}
 }
 
-static int __iptsd_control_send_feedback(struct iptsd_control *control,
-		int file)
+static int __iptsd_control_send_feedback(struct iptsd_control *control, int file)
 {
 	iptsd_control_wait_for_device(control);
 
@@ -116,8 +115,7 @@ int iptsd_control_device_info(struct iptsd_control *control)
 	iptsd_control_wait_for_device(control);
 
 	int fd = iptsd_control_current_file(control);
-	int ret = iptsd_utils_ioctl(fd, IPTS_IOCTL_GET_DEVICE_INFO,
-			&control->device_info);
+	int ret = iptsd_utils_ioctl(fd, IPTS_IOCTL_GET_DEVICE_INFO, &control->device_info);
 
 	if (ret < 0)
 		iptsd_err(ret, "Failed to get device info");
@@ -189,6 +187,7 @@ int iptsd_control_reset(struct iptsd_control *control)
 {
 	int fd = iptsd_control_current_file(control);
 	int ret = iptsd_utils_ioctl(fd, IPTS_IOCTL_SEND_RESET, NULL);
+
 	if (ret < 0)
 		iptsd_err(ret, "Failed to reset IPTS");
 

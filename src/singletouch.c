@@ -14,7 +14,6 @@ static void iptsd_singletouch_lift(int dev)
 {
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_SLOT, 0);
 	iptsd_devices_emit(dev, EV_ABS, ABS_MT_TRACKING_ID, -1);
-
 	iptsd_devices_emit(dev, EV_KEY, BTN_TOUCH, 0);
 }
 
@@ -46,8 +45,7 @@ int iptsd_singletouch_handle_input(struct iptsd_context *iptsd)
 	struct ipts_singletouch_data data;
 	struct iptsd_touch_device touch = iptsd->devices.touch;
 
-	int ret = iptsd_reader_read(&iptsd->reader, &data,
-			sizeof(struct ipts_singletouch_data));
+	int ret = iptsd_reader_read(&iptsd->reader, &data, sizeof(struct ipts_singletouch_data));
 	if (ret < 0) {
 		iptsd_err(ret, "Received invalid data");
 		return 0;

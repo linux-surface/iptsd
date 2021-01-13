@@ -19,8 +19,6 @@ struct iptsd_config {
 	float stability_threshold;
 };
 
-void iptsd_config_load(struct iptsd_config *config,
-		struct ipts_device_info info);
+void iptsd_config_load(struct iptsd_config *config, struct ipts_device_info info);
 
 #endif /* _IPTSD_CONFIG_H_ */
-

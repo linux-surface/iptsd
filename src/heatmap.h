@@ -27,4 +27,3 @@ int heatmap_init(struct heatmap *hm);
 void heatmap_free(struct heatmap *hm);
 
 #endif /* _IPTSD_HEATMAP_H_ */
-

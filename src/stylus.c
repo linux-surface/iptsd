@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include <math.h>
 #include <linux/uinput.h>
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -37,8 +37,7 @@ static void iptsd_stylus_tilt(int altitude, int azimuth, int *tx, int *ty)
 	*ty = (atan_y * 4500 / M_PI_4) - 9000;
 }
 
-static void iptsd_stylus_update_cone(struct iptsd_context *iptsd,
-		struct ipts_stylus_data_v2 data)
+static void iptsd_stylus_update_cone(struct iptsd_context *iptsd, struct ipts_stylus_data_v2 data)
 {
 	struct iptsd_stylus_device *stylus = iptsd->devices.active_stylus;
 
@@ -51,8 +50,7 @@ static void iptsd_stylus_update_cone(struct iptsd_context *iptsd,
 	cone_set_tip(stylus->cone, x, y);
 }
 
-static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
-		struct ipts_stylus_data_v2 data)
+static int iptsd_stylus_handle_data(struct iptsd_context *iptsd, struct ipts_stylus_data_v2 data)
 {
 	int tx = 0;
 	int ty = 0;
@@ -92,8 +90,7 @@ static int iptsd_stylus_handle_data(struct iptsd_context *iptsd,
 	return ret;
 }
 
-static int iptsd_stylus_handle_serial_change(struct iptsd_context *iptsd,
-		uint32_t serial)
+static int iptsd_stylus_handle_serial_change(struct iptsd_context *iptsd, uint32_t serial)
 {
 	if (iptsd->devices.active_stylus->serial == serial)
 		return 0;
@@ -130,7 +127,7 @@ static int iptsd_stylus_read_v2(struct iptsd_context *iptsd, uint8_t count)
 
 	for (uint8_t i = 0; i < count; i++) {
 		int ret = iptsd_reader_read(&iptsd->reader, &data,
-				sizeof(struct ipts_stylus_data_v2));
+					    sizeof(struct ipts_stylus_data_v2));
 		if (ret < 0) {
 			iptsd_err(ret, "Received invalid data");
 			return 0;
@@ -149,20 +146,20 @@ static int iptsd_stylus_read_v2(struct iptsd_context *iptsd, uint8_t count)
 static int iptsd_stylus_read_v1(struct iptsd_context *iptsd, uint8_t count)
 {
 	struct ipts_stylus_data_v2 v2;
-	struct ipts_stylus_data_v1 v1;
+	struct ipts_stylus_data_v1 data;
 
 	for (uint8_t i = 0; i < count; i++) {
-		int ret = iptsd_reader_read(&iptsd->reader, &v1,
-				sizeof(struct ipts_stylus_data_v1));
+		int ret = iptsd_reader_read(&iptsd->reader, &data,
+					    sizeof(struct ipts_stylus_data_v1));
 		if (ret < 0) {
 			iptsd_err(ret, "Received invalid data");
 			return 0;
 		}
 
-		v2.mode = v1.mode;
-		v2.x = v1.x;
-		v2.y = v1.y;
-		v2.pressure = v1.pressure * 4;
+		v2.mode = data.mode;
+		v2.x = data.x;
+		v2.y = data.y;
+		v2.pressure = data.pressure * 4;
 		v2.altitude = 0;
 		v2.azimuth = 0;
 		v2.timestamp = 0;
@@ -177,13 +174,11 @@ static int iptsd_stylus_read_v1(struct iptsd_context *iptsd, uint8_t count)
 	return 0;
 }
 
-static int iptsd_stylus_read_report(struct iptsd_context *iptsd,
-		struct ipts_report report)
+static int iptsd_stylus_read_report(struct iptsd_context *iptsd, struct ipts_report report)
 {
 	struct ipts_stylus_report sreport;
 
-	int ret = iptsd_reader_read(&iptsd->reader, &sreport,
-			sizeof(struct ipts_stylus_report));
+	int ret = iptsd_reader_read(&iptsd->reader, &sreport, sizeof(struct ipts_stylus_report));
 	if (ret < 0) {
 		iptsd_err(ret, "Received invalid data");
 		return 0;
@@ -210,16 +205,14 @@ static int iptsd_stylus_read_report(struct iptsd_context *iptsd,
 	return ret;
 }
 
-int iptsd_stylus_handle_input(struct iptsd_context *iptsd,
-		struct ipts_payload_frame frame)
+int iptsd_stylus_handle_input(struct iptsd_context *iptsd, struct ipts_payload_frame frame)
 {
 	uint32_t size = 0;
 
 	while (size < frame.size) {
 		struct ipts_report report;
 
-		int ret = iptsd_reader_read(&iptsd->reader, &report,
-				sizeof(struct ipts_report));
+		int ret = iptsd_reader_read(&iptsd->reader, &report, sizeof(struct ipts_report));
 		if (ret < 0) {
 			iptsd_err(ret, "Received invalid data");
 			return 0;

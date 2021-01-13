@@ -28,4 +28,3 @@ int iptsd_control_stop(struct iptsd_control *control);
 int iptsd_control_reset(struct iptsd_control *control);
 
 #endif /* _IPTSD_CONTROL_H_ */
-
