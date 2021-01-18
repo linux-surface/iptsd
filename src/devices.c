@@ -72,13 +72,13 @@ static int iptsd_devices_create_stylus(struct iptsd_devices *devices,
 	abs_setup.code = ABS_TILT_X;
 	abs_setup.absinfo.minimum = -9000;
 	abs_setup.absinfo.maximum = 9000;
-	abs_setup.absinfo.resolution = 5730;
+	abs_setup.absinfo.resolution = (int32_t)(18000 / M_PI);
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	abs_setup.code = ABS_TILT_Y;
 	abs_setup.absinfo.minimum = -9000;
 	abs_setup.absinfo.maximum = 9000;
-	abs_setup.absinfo.resolution = 5730;
+	abs_setup.absinfo.resolution = (int32_t)(18000 / M_PI);
 	iptsd_utils_ioctl(file, UI_ABS_SETUP, &abs_setup);
 
 	abs_setup.code = ABS_MISC;
