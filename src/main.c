@@ -129,7 +129,7 @@ int main(void)
 		return iptsd_exit(&iptsd, ret);
 	}
 
-	while (1) {
+	while (true) {
 		ret = iptsd_loop(&iptsd);
 		if (ret < 0) {
 			iptsd_err(ret, "IPTSD loop failed");
