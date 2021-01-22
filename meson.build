@@ -1,16 +1,14 @@
-project(
-	'iptsd', 'c',
+project('iptsd', 'cpp',
 	version: '0.3.1',
 	license: 'GPL-2.0-or-later',
 	default_options: [
-		'c_std=gnu99',
+		'cpp_std=c++17',
 		'warning_level=3',
 		'werror=true',
 		'sysconfdir=/etc',
-	],
-)
+	])
 
-cc = meson.get_compiler('c')
+cpp = meson.get_compiler('cpp')
 
 prefix = get_option('prefix')
 bindir = join_paths(prefix, get_option('bindir'))
@@ -29,77 +27,79 @@ conf.set('configdir', configdir)
 conf.set('configfile', configfile)
 
 configure_file(input: 'configure.h.in',
-	output: 'configure.h', configuration: conf)
+	       output: 'configure.h',
+	       configuration: conf)
 
 sources = [
-	'src/cone.c',
-	'src/config.c',
-	'src/contact.c',
-	'src/control.c',
-	'src/data.c',
-	'src/devices.c',
-	'src/finger.c',
-	'src/heatmap.c',
-	'src/hid.c',
-	'src/main.c',
-	'src/reader.c',
-	'src/payload.c',
-	'src/singletouch.c',
-	'src/stylus.c',
-	'src/touch.c',
-	'src/touch-processing.c',
-	'src/utils.c',
+	'src/cone.cpp',
+	'src/config.cpp',
+	'src/contact.cpp',
+	'src/control.cpp',
+	'src/data.cpp',
+	'src/devices.cpp',
+	'src/finger.cpp',
+	'src/heatmap.cpp',
+	'src/hid.cpp',
+	'src/main.cpp',
+	'src/reader.cpp',
+	'src/payload.cpp',
+	'src/singletouch.cpp',
+	'src/stylus.cpp',
+	'src/touch.cpp',
+	'src/touch-processing.cpp',
+	'src/uinput-device.cpp',
+	'src/utils.cpp',
 ]
 
 sources_dbg = [
-	'debug/debug.c',
-	'src/control.c',
-	'src/utils.c',
+	'debug/debug.cpp',
+	'src/control.cpp',
+	'src/utils.cpp',
+]
+
+includes = [
+	 include_directories('src'),
 ]
 
 deps = [
-	cc.find_library('m'),
 	dependency('inih', fallback: ['inih', 'inih_dep']),
 ]
 
-cflags = [
+cxxflags = [
 	'-Wundef',
 	'-Wuninitialized',
 	'-Wno-unused-result',
 	'-Wlogical-op',
 	'-Wmissing-include-dirs',
-	'-Wold-style-definition',
 	'-Wpointer-arith',
 	'-Winit-self',
-	'-Wstrict-prototypes',
 	'-Wimplicit-fallthrough=2',
 	'-Wendif-labels',
 	'-Wstrict-aliasing=2',
 	'-Woverflow',
-	'-Wmissing-prototypes',
 	'-Wno-missing-braces',
 	'-Wno-missing-field-initializers',
 	'-Wno-unused-parameter',
 ]
 
-cflags = cc.get_supported_arguments(cflags)
-add_project_arguments(cflags, language: 'c')
+cxxflags = cpp.get_supported_arguments(cxxflags)
+add_project_arguments(cxxflags, language: 'cpp')
 
-executable('iptsd', sources, dependencies: deps, install: true)
+executable('iptsd', sources,
+	   dependencies: deps,
+	   install: true,
+	   include_directories: includes)
+
 install_data('etc/iptsd-reset-sensor', install_dir: bindir)
 install_subdir('config', install_dir: configdir, strip_directory: true)
 
-configure_file(
-	input: 'etc/systemd/iptsd.service.in',
-	output: 'iptsd.service',
-	configuration: conf
-)
+configure_file(input: 'etc/systemd/iptsd.service.in',
+	       output: 'iptsd.service',
+	       configuration: conf)
 
-configure_file(
-	input: 'etc/openrc/iptsd.initd.in',
-	output: 'iptsd.initd',
-	configuration: conf
-)
+configure_file(input: 'etc/openrc/iptsd.initd.in',
+	       output: 'iptsd.initd',
+	       configuration: conf)
 
 service_manager = get_option('service_manager')
 if service_manager.contains('systemd')
@@ -110,10 +110,8 @@ if service_manager.contains('systemd')
 	udevdir = udev.get_pkgconfig_variable('udevdir')
 	rulesdir = join_paths(udevdir, 'rules.d')
 
-	install_data(
-		join_paths(meson.current_build_dir(), 'iptsd.service'),
-		install_dir: unitdir
-	)
+	install_data(join_paths(meson.current_build_dir(), 'iptsd.service'),
+		     install_dir: unitdir)
 
 	install_data('etc/udev/50-ipts.rules', install_dir: rulesdir)
 endif
@@ -122,11 +120,9 @@ if service_manager.contains('openrc')
 	dependency('openrc')
 	openrcdir = join_paths(sysconfdir, 'init.d')
 
-	install_data(
-		join_paths(meson.current_build_dir(), 'iptsd.initd'),
-		install_dir: openrcdir,
-		rename: 'iptsd'
-	)
+	install_data(join_paths(meson.current_build_dir(), 'iptsd.initd'),
+		     install_dir: openrcdir,
+		     rename: 'iptsd')
 endif
 
 if get_option('sample_config')
@@ -134,5 +130,7 @@ if get_option('sample_config')
 endif
 
 if get_option('debug_tool')
-	executable('ipts-dbg', sources_dbg, install: true)
+	executable('ipts-dbg', sources_dbg,
+		   install: true,
+		   include_directories: includes)
 endif

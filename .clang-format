@@ -28,5 +28,6 @@ AllowShortFunctionsOnASingleLine: None
 # Misc
 AlignConsecutiveMacros: true
 Cpp11BracedListStyle: false
+IncludeBlocks: Regroup
 KeepEmptyLinesAtTheStartOfBlocks: false
 SpacesInContainerLiterals: false

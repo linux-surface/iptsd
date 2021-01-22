@@ -14,7 +14,7 @@ URL: https://github.com/linux-surface/iptsd
 Source: {{{ git_dir_pack }}}
 
 BuildRequires: meson
-BuildRequires: gcc
+BuildRequires: gcc-g++
 BuildRequires: pkgconfig(inih)
 BuildRequires: pkgconfig(systemd)
 BuildRequires: systemd-rpm-macros

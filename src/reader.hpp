@@ -1,0 +1,36 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+#ifndef _IPTSD_READER_HPP_
+#define _IPTSD_READER_HPP_
+
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
+
+class IptsdReaderException : public std::runtime_error {
+public:
+	IptsdReaderException(const char *msg) : std::runtime_error(msg){};
+};
+
+class IptsdReader {
+public:
+	uint8_t *data;
+	size_t size;
+	size_t current;
+
+	IptsdReader(size_t size);
+	~IptsdReader(void);
+
+	void read(void *dest, size_t size);
+	void skip(size_t size);
+	void reset(void);
+
+	template <typename T> T read(void)
+	{
+		T value;
+		this->read(&value, sizeof(value));
+		return value;
+	}
+};
+
+#endif /* _IPTSD_READER_HPP_ */

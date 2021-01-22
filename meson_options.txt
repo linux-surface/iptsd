@@ -1,8 +1,7 @@
-option(
-	'service_manager',
-	type: 'array',
-	choices: ['systemd', 'openrc'],
-	value: ['systemd']
-)
+option('service_manager',
+       type: 'array',
+       choices: ['systemd', 'openrc'],
+       value: ['systemd'])
+
 option('sample_config', type: 'boolean', value: true)
 option('debug_tool', type: 'boolean', value: true)
