@@ -5,3 +5,7 @@ option('service_manager',
 
 option('sample_config', type: 'boolean', value: true)
 option('debug_tool', type: 'boolean', value: true)
+
+option('fast_math', type: 'feature', value: 'auto')
+option('cpu_type', type: 'string', value: 'core-avx2')
+option('simd_type', type: 'string', value: 'avx2')

@@ -82,8 +82,31 @@ cxxflags = [
 	'-Wno-unused-parameter',
 ]
 
+optflags = []
+
+debug = get_option('debug')
+optimize = not debug and get_option('optimization') in ['2', '3']
+
+fast_math = get_option('fast_math')
+if fast_math.enabled() or (fast_math.auto() and optimize)
+	optflags += ['-ffast-math']
+endif
+
+cpu_type = get_option('cpu_type')
+if cpu_type != ''
+	optflags += ['-march=' + cpu_type]
+endif
+
+simd_type = get_option('simd_type')
+if simd_type != ''
+	optflags += ['-m' + simd_type]
+endif
+
 cxxflags = cpp.get_supported_arguments(cxxflags)
+optflags = cpp.get_supported_arguments(optflags)
+
 add_project_arguments(cxxflags, language: 'cpp')
+add_project_arguments(optflags, language: 'cpp')
 
 executable('iptsd', sources,
 	   dependencies: deps,
