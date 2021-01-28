@@ -6,7 +6,7 @@ arch=('x86_64')
 url='https://github.com/linux-surface/iptsd'
 license=('GPL')
 depends=('libinih')
-makedepends=('meson')
+makedepends=('meson ninja gcc systemd udev')
 
 build() {
 	cd $startdir
