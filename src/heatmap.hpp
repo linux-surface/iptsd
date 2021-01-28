@@ -5,6 +5,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <vector>
 
 class Heatmap {
 public:
@@ -14,13 +15,11 @@ public:
 	int32_t touch_threshold;
 	float diagonal;
 
-	uint8_t *data;
-	bool *visited;
+	std::vector<uint8_t> data;
+	std::vector<bool> visited;
 
-	Heatmap(int32_t threshold);
-	~Heatmap(void);
+	Heatmap(int32_t w, int32_t h, int32_t threshold);
 
-	void resize(int32_t w, int32_t h);
 	float average(void);
 	uint8_t value(int32_t x, int32_t y);
 	bool is_touch(int32_t x, int32_t y);

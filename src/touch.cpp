@@ -130,7 +130,7 @@ void iptsd_touch_handle_input(IptsdContext *iptsd, struct ipts_payload_frame fra
 			if (!hm)
 				break;
 
-			iptsd->reader->read(hm->data, hm->size);
+			iptsd->reader->read(hm->data.data(), std::size(hm->data));
 			break;
 		default:
 			iptsd->reader->skip(report.size);

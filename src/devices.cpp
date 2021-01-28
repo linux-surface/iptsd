@@ -57,9 +57,10 @@ StylusDevice::StylusDevice(struct ipts_device_info info, IptsdConfig *conf) : Ui
 }
 
 TouchDevice::TouchDevice(struct ipts_device_info info, IptsdConfig *conf)
-	: UinputDevice(), hm(conf->touch_threshold), processor(info, conf)
+	: UinputDevice(), processor(info, conf)
 {
 	this->conf = conf;
+	this->hm = nullptr;
 
 	this->name = "IPTS Touch";
 	this->vendor = info.vendor;
@@ -95,10 +96,13 @@ TouchDevice::TouchDevice(struct ipts_device_info info, IptsdConfig *conf)
 
 Heatmap *TouchDevice::get_heatmap(int32_t w, int32_t h)
 {
-	if (this->hm.width != w || this->hm.height != h)
-		this->hm.resize(w, h);
+	if (this->hm && (this->hm->width != w || this->hm->height != h))
+		delete this->hm;
 
-	return &this->hm;
+	if (!this->hm)
+		this->hm = new Heatmap(w, h, this->conf->touch_threshold);
+
+	return this->hm;
 }
 
 DeviceManager::DeviceManager(struct ipts_device_info info, IptsdConfig *conf) : touch(info, conf)

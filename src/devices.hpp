@@ -24,7 +24,7 @@ public:
 
 class TouchDevice : public UinputDevice {
 public:
-	Heatmap hm;
+	Heatmap *hm;
 	TouchProcessor processor;
 	IptsdConfig *conf;
 

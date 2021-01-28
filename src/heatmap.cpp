@@ -6,43 +6,15 @@
 #include <cstddef>
 #include <cstdint>
 
-Heatmap::Heatmap(int32_t threshold)
+Heatmap::Heatmap(int32_t w, int32_t h, int32_t threshold) : data(w * h), visited(w * h)
 {
-	this->data = nullptr;
-	this->visited = nullptr;
-	this->width = 0;
-	this->height = 0;
-	this->size = 0;
-	this->diagonal = 0;
-
-	this->touch_threshold = threshold;
-}
-
-Heatmap::~Heatmap(void)
-{
-	if (this->data)
-		delete[] this->data;
-
-	if (this->visited)
-		delete[] this->visited;
-}
-
-void Heatmap::resize(int32_t w, int32_t h)
-{
-	if (this->data)
-		delete[] this->data;
-
-	if (this->visited)
-		delete[] this->visited;
-
 	this->width = w;
 	this->height = h;
 
 	this->size = w * h;
 	this->diagonal = std::sqrt(w * w + h * h);
 
-	this->data = new uint8_t[this->size];
-	this->visited = new bool[this->size];
+	this->touch_threshold = threshold;
 }
 
 float Heatmap::average(void)
