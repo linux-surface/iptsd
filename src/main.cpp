@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <iostream>
+#include <thread>
 
 using namespace std::chrono;
 
@@ -56,7 +57,7 @@ int main(void)
 	iptsd.control = new IptsdControl();
 	struct ipts_device_info info = iptsd.control->info;
 
-	system_clock::time_point timeout = system_clock::now() + seconds(5);
+	system_clock::time_point timeout = system_clock::now() + 5s;
 	std::printf("Connected to device %04X:%04X\n", info.vendor, info.product);
 
 	iptsd.config = new IptsdConfig(info);
@@ -65,12 +66,9 @@ int main(void)
 
 	while (true) {
 		if (iptsd_loop(&iptsd))
-			timeout = system_clock::now() + seconds(5);
+			timeout = system_clock::now() + 5s;
 
-		if (timeout > system_clock::now())
-			Utils::msleep(10);
-		else
-			Utils::msleep(200);
+		std::this_thread::sleep_for(timeout > system_clock::now() ? 10ms : 200ms);
 
 		if (should_reset) {
 			iptsd.control->reset();

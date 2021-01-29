@@ -26,13 +26,3 @@ std::system_error Utils::cerror(std::string msg)
 	std::error_code code(errno, std::system_category());
 	return std::system_error(code, msg);
 }
-
-void Utils::msleep(uint64_t msecs)
-{
-	struct timespec t;
-
-	t.tv_sec = msecs / 1000;
-	t.tv_nsec = (msecs - (t.tv_sec * 1000)) * 1000000;
-
-	nanosleep(&t, nullptr);
-}

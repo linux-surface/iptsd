@@ -29,7 +29,7 @@ void Cone::set_tip(float x, float y)
 
 bool Cone::is_removed(void)
 {
-	return this->position_update + milliseconds(300) <= system_clock::now();
+	return this->position_update + 300ms <= system_clock::now();
 }
 
 float Cone::hypot(float x, float y)

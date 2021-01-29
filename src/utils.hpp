@@ -9,7 +9,6 @@
 
 class Utils {
 public:
-	static void msleep(uint64_t msecs);
 	static std::system_error cerror(std::string msg);
 	static void signal(int signum, void (*handler)(int));
 };
