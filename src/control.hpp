@@ -4,20 +4,20 @@
 #define _IPTSD_CONTROL_HPP_
 
 #include "ipts.h"
+#include "types.hpp"
 
 #include <cstddef>
-#include <cstdint>
 
 class IptsdControl {
 public:
 	struct ipts_device_info info;
-	uint32_t current_doorbell;
+	u32 current_doorbell;
 
 	IptsdControl(void);
 	~IptsdControl(void);
 
 	void send_feedback(void);
-	uint32_t doorbell(void);
+	u32 doorbell(void);
 	int read(void *buf, size_t size);
 	void reset(void);
 

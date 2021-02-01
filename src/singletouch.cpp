@@ -6,8 +6,8 @@
 #include "devices.hpp"
 #include "protocol.h"
 #include "reader.hpp"
+#include "types.hpp"
 
-#include <cstdint>
 #include <linux/input-event-codes.h>
 #include <linux/input.h>
 
@@ -20,11 +20,11 @@ static void lift(TouchDevice dev)
 
 static void emit(TouchDevice dev, struct ipts_singletouch_data data)
 {
-	double rX = (double)data.x / IPTS_SINGLETOUCH_MAX_VALUE;
-	double rY = (double)data.y / IPTS_SINGLETOUCH_MAX_VALUE;
+	f64 rX = (f64)data.x / IPTS_SINGLETOUCH_MAX_VALUE;
+	f64 rY = (f64)data.y / IPTS_SINGLETOUCH_MAX_VALUE;
 
-	int32_t x = (int32_t)(rX * IPTS_MAX_X);
-	int32_t y = (int32_t)(rY * IPTS_MAX_Y);
+	i32 x = (i32)(rX * IPTS_MAX_X);
+	i32 y = (i32)(rY * IPTS_MAX_Y);
 
 	dev.emit(EV_ABS, ABS_MT_SLOT, 0);
 

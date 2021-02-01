@@ -3,6 +3,8 @@
 #ifndef _IPTSD_CONE_HPP_
 #define _IPTSD_CONE_HPP_
 
+#include "types.hpp"
+
 #include <chrono>
 
 using namespace std::chrono;
@@ -11,19 +13,19 @@ class Cone {
 public:
 	system_clock::time_point position_update;
 	system_clock::time_point direction_update;
-	float x;
-	float y;
-	float dx;
-	float dy;
+	f32 x;
+	f32 y;
+	f32 dx;
+	f32 dy;
 
 	Cone(void);
 
 	bool was_active(void);
-	void set_tip(float x, float y);
+	void set_tip(f32 x, f32 y);
 	bool is_removed(void);
-	float hypot(float x, float y);
-	void update_direction(float x, float y);
-	bool is_inside(float x, float y);
+	f32 hypot(f32 x, f32 y);
+	void update_direction(f32 x, f32 y);
+	bool is_inside(f32 x, f32 y);
 };
 
 #endif /* _IPTSD_CONE_HPP_ */

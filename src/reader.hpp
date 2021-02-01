@@ -3,8 +3,9 @@
 #ifndef _IPTSD_READER_HPP_
 #define _IPTSD_READER_HPP_
 
+#include "types.hpp"
+
 #include <cstddef>
-#include <cstdint>
 #include <stdexcept>
 
 class IptsdReaderException : public std::runtime_error {
@@ -14,7 +15,7 @@ public:
 
 class IptsdReader {
 public:
-	uint8_t *data;
+	u8 *data;
 	size_t size;
 	size_t current;
 

@@ -3,15 +3,15 @@
 #include "contact.hpp"
 
 #include "heatmap.hpp"
+#include "types.hpp"
 
 #include <cmath>
 #include <cstddef>
-#include <cstdint>
 #include <iterator>
 #include <memory>
 #include <tuple>
 
-void Cluster::add(int32_t x, int32_t y, int32_t w)
+void Cluster::add(i32 x, i32 y, i32 w)
 {
 	this->x += w * x;
 	this->y += w * y;
@@ -24,34 +24,34 @@ void Cluster::add(int32_t x, int32_t y, int32_t w)
 		this->max_v = w;
 }
 
-std::tuple<float, float> Cluster::mean(void)
+std::tuple<f32, f32> Cluster::mean(void)
 {
-	float fx = (float)this->x;
-	float fy = (float)this->y;
-	float fw = (float)this->w;
+	f32 fx = (f32)this->x;
+	f32 fy = (f32)this->y;
+	f32 fw = (f32)this->w;
 
-	return std::tuple<float, float>(fx / fw, fy / fw);
+	return std::tuple<f32, f32>(fx / fw, fy / fw);
 }
 
-std::tuple<float, float, float> Cluster::cov(void)
+std::tuple<f32, f32, f32> Cluster::cov(void)
 {
-	float fx = (float)this->x;
-	float fy = (float)this->y;
-	float fxx = (float)this->xx;
-	float fyy = (float)this->yy;
-	float fxy = (float)this->xy;
-	float fw = (float)this->w;
+	f32 fx = (f32)this->x;
+	f32 fy = (f32)this->y;
+	f32 fxx = (f32)this->xx;
+	f32 fyy = (f32)this->yy;
+	f32 fxy = (f32)this->xy;
+	f32 fw = (f32)this->w;
 
-	float r1 = (fxx - (fx * fx / fw)) / fw;
-	float r2 = (fyy - (fy * fy / fw)) / fw;
-	float r3 = (fxy - (fx * fy / fw)) / fw;
+	f32 r1 = (fxx - (fx * fx / fw)) / fw;
+	f32 r2 = (fyy - (fy * fy / fw)) / fw;
+	f32 r3 = (fxy - (fx * fy / fw)) / fw;
 
-	return std::tuple<float, float, float>(r1, r2, r3);
+	return std::tuple<f32, f32, f32>(r1, r2, r3);
 }
 
-void Cluster::get(Heatmap *hm, int32_t x, int32_t y)
+void Cluster::get(Heatmap *hm, i32 x, i32 y)
 {
-	uint8_t v = hm->value(x, y);
+	u8 v = hm->value(x, y);
 
 	if (!hm->is_touch(x, y))
 		return;
@@ -68,7 +68,7 @@ void Cluster::get(Heatmap *hm, int32_t x, int32_t y)
 	this->get(hm, x, y - 1);
 }
 
-Cluster::Cluster(Heatmap *hm, int32_t x, int32_t y)
+Cluster::Cluster(Heatmap *hm, i32 x, i32 y)
 {
 	this->x = 0;
 	this->y = 0;
@@ -83,16 +83,16 @@ Cluster::Cluster(Heatmap *hm, int32_t x, int32_t y)
 
 void Contact::from_cluster(Cluster cluster)
 {
-	std::tuple<float, float> mean = cluster.mean();
+	std::tuple<f32, f32> mean = cluster.mean();
 	this->x = std::get<0>(mean);
 	this->y = std::get<1>(mean);
 
-	std::tuple<float, float, float> cov = cluster.cov();
-	float vx = std::get<0>(cov);
-	float vy = std::get<1>(cov);
-	float cv = std::get<2>(cov);
+	std::tuple<f32, f32, f32> cov = cluster.cov();
+	f32 vx = std::get<0>(cov);
+	f32 vy = std::get<1>(cov);
+	f32 cv = std::get<2>(cov);
 
-	float sqrtd = std::sqrt((vx - vy) * (vx - vy) + 4 * cv * cv);
+	f32 sqrtd = std::sqrt((vx - vy) * (vx - vy) + 4 * cv * cv);
 
 	this->ev1 = (vx + vy + sqrtd) / 2;
 	this->ev2 = (vx + vy - sqrtd) / 2;
@@ -102,8 +102,8 @@ void Contact::from_cluster(Cluster cluster)
 	this->qx2 = vx + cv - this->ev1;
 	this->qy2 = vy + cv - this->ev1;
 
-	float d1 = std::hypot(this->qx1, this->qy1);
-	float d2 = std::hypot(this->qx2, this->qy2);
+	f32 d1 = std::hypot(this->qx1, this->qy1);
+	f32 d2 = std::hypot(this->qx2, this->qy2);
 
 	this->qx1 /= d1;
 	this->qy1 /= d1;
@@ -120,19 +120,19 @@ void Contact::from_cluster(Cluster cluster)
 		this->angle -= M_PI;
 }
 
-std::tuple<float, float> Contact::pca(float x, float y)
+std::tuple<f32, f32> Contact::pca(f32 x, f32 y)
 {
-	float rx = this->qx1 * x + this->qx2 * y;
-	float ry = this->qy1 * x + this->qy2 * y;
+	f32 rx = this->qx1 * x + this->qx2 * y;
+	f32 ry = this->qy1 * x + this->qy2 * y;
 
-	return std::tuple<float, float>(rx, ry);
+	return std::tuple<f32, f32>(rx, ry);
 }
 
 bool Contact::near(Contact o)
 {
-	std::tuple<float, float> pca = o.pca(this->x - o.x, this->y - o.y);
-	float dx = std::get<0>(pca);
-	float dy = std::get<1>(pca);
+	std::tuple<f32, f32> pca = o.pca(this->x - o.x, this->y - o.y);
+	f32 dx = std::get<0>(pca);
+	f32 dy = std::get<1>(pca);
 
 	dx = std::abs(dx);
 	dy = std::abs(dy);
@@ -153,8 +153,8 @@ size_t Contact::find_contacts(Heatmap *hm, std::vector<Contact> &contacts)
 	for (size_t i = 0; i < hm->size; i++)
 		hm->visited[i] = false;
 
-	for (int32_t x = 0; x < hm->width; x++) {
-		for (int32_t y = 0; y < hm->height; y++) {
+	for (i32 x = 0; x < hm->width; x++) {
+		for (i32 y = 0; y < hm->height; y++) {
 			if (!hm->is_touch(x, y))
 				continue;
 

@@ -12,14 +12,13 @@
 
 #include <cmath>
 #include <cstddef>
-#include <cstdint>
 #include <iterator>
 #include <memory>
 
-double TouchInput::dist(TouchInput o)
+f64 TouchInput::dist(TouchInput o)
 {
-	double dx = (double)this->x - (double)o.x;
-	double dy = (double)this->y - (double)o.y;
+	f64 dx = (f64)this->x - (f64)o.x;
+	f64 dy = (f64)this->y - (f64)o.y;
 
 	return std::sqrt(dx * dx + dy * dy);
 }
@@ -47,7 +46,7 @@ TouchProcessor::TouchProcessor(struct ipts_device_info info, IptsdConfig *conf)
 	this->inputs = std::vector<TouchInput>(info.max_contacts);
 	this->last = std::vector<TouchInput>(info.max_contacts);
 	this->free_indices = std::vector<bool>(info.max_contacts);
-	this->distances = std::vector<double>(info.max_contacts * info.max_contacts);
+	this->distances = std::vector<f64>(info.max_contacts * info.max_contacts);
 	this->indices = std::vector<size_t>(info.max_contacts * info.max_contacts);
 
 	for (size_t i = 0; i < std::size(this->last); i++) {
@@ -60,7 +59,7 @@ TouchProcessor::TouchProcessor(struct ipts_device_info info, IptsdConfig *conf)
 
 void TouchProcessor::process(Heatmap *hm)
 {
-	float average = hm->average();
+	f32 average = hm->average();
 
 	for (size_t i = 0; i < hm->size; i++) {
 		if (hm->data[i] < average)
@@ -72,8 +71,8 @@ void TouchProcessor::process(Heatmap *hm)
 	size_t count = Contact::find_contacts(hm, this->contacts);
 
 	for (size_t i = 0; i < count; i++) {
-		float x = this->contacts[i].x / (hm->width - 1);
-		float y = this->contacts[i].y / (hm->height - 1);
+		f32 x = this->contacts[i].x / (hm->width - 1);
+		f32 y = this->contacts[i].y / (hm->height - 1);
 
 		if (this->config->invert_x)
 			x = 1 - x;
@@ -88,19 +87,19 @@ void TouchProcessor::process(Heatmap *hm)
 	this->find_palms(count);
 
 	for (size_t i = 0; i < count; i++) {
-		float x = this->contacts[i].x / this->config->width;
-		float y = this->contacts[i].y / this->config->height;
+		f32 x = this->contacts[i].x / this->config->width;
+		f32 y = this->contacts[i].y / this->config->height;
 
 		// ev1 is always the larger eigenvalue.
-		float orientation = this->contacts[i].angle / M_PI * 180;
-		float maj = 4 * std::sqrt(this->contacts[i].ev1) / hm->diagonal;
-		float min = 4 * std::sqrt(this->contacts[i].ev2) / hm->diagonal;
+		f32 orientation = this->contacts[i].angle / M_PI * 180;
+		f32 maj = 4 * std::sqrt(this->contacts[i].ev1) / hm->diagonal;
+		f32 min = 4 * std::sqrt(this->contacts[i].ev2) / hm->diagonal;
 
-		this->inputs[i].x = (int32_t)(x * IPTS_MAX_X);
-		this->inputs[i].y = (int32_t)(y * IPTS_MAX_Y);
-		this->inputs[i].major = (int32_t)(maj * IPTS_DIAGONAL);
-		this->inputs[i].minor = (int32_t)(min * IPTS_DIAGONAL);
-		this->inputs[i].orientation = (int32_t)orientation;
+		this->inputs[i].x = (i32)(x * IPTS_MAX_X);
+		this->inputs[i].y = (i32)(y * IPTS_MAX_Y);
+		this->inputs[i].major = (i32)(maj * IPTS_DIAGONAL);
+		this->inputs[i].minor = (i32)(min * IPTS_DIAGONAL);
+		this->inputs[i].orientation = (i32)orientation;
 		this->inputs[i].ev1 = this->contacts[i].ev1;
 		this->inputs[i].ev2 = this->contacts[i].ev2;
 		this->inputs[i].index = i;
@@ -132,7 +131,7 @@ void TouchProcessor::save(void)
 void TouchProcessor::update_cone(Contact *palm)
 {
 	Cone *cone = nullptr;
-	float d = INFINITY;
+	f32 d = INFINITY;
 
 	// find closest cone (by center)
 	for (Cone *current : this->rejection_cones) {
@@ -143,7 +142,7 @@ void TouchProcessor::update_cone(Contact *palm)
 		if (current->is_removed())
 			continue;
 
-		float current_d = current->hypot(palm->x, palm->y);
+		f32 current_d = current->hypot(palm->x, palm->y);
 
 		if (current_d < d) {
 			d = current_d;
@@ -170,9 +169,9 @@ bool TouchProcessor::check_cone(Contact *input)
 void TouchProcessor::find_palms(size_t count)
 {
 	for (size_t i = 0; i < count; i++) {
-		float vx = this->contacts[i].ev1;
-		float vy = this->contacts[i].ev2;
-		float max_v = this->contacts[i].max_v;
+		f32 vx = this->contacts[i].ev1;
+		f32 vy = this->contacts[i].ev2;
+		f32 max_v = this->contacts[i].max_v;
 
 		// Regular touch
 		if (vx < 0.6 || (vx < 1.0 && max_v > 80))

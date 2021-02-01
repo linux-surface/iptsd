@@ -4,18 +4,18 @@
 
 #include "constants.hpp"
 #include "ipts.h"
+#include "types.hpp"
 
 #include <algorithm>
 #include <cctype>
 #include <configure.h>
-#include <cstdint>
 #include <filesystem>
 #include <ini.h>
 #include <string>
 
 struct iptsd_config_device {
-	uint16_t vendor;
-	uint16_t product;
+	u16 vendor;
+	u16 product;
 };
 
 static bool to_bool(std::string value)

@@ -8,21 +8,21 @@
 #include "ipts.h"
 #include "protocol.h"
 #include "touch-processing.hpp"
+#include "types.hpp"
 #include "uinput-device.hpp"
 
 #include <climits>
 #include <cmath>
-#include <cstdint>
 #include <iterator>
 #include <linux/input-event-codes.h>
 #include <linux/input.h>
 #include <stdexcept>
 #include <string>
 
-static int32_t res(int32_t virt, int32_t phys)
+static i32 res(i32 virt, i32 phys)
 {
-	double res = (double)(virt * 10) / (double)phys;
-	return (int32_t)std::round(res);
+	f64 res = (f64)(virt * 10) / (f64)phys;
+	return (i32)std::round(res);
 }
 
 StylusDevice::StylusDevice(struct ipts_device_info info, IptsdConfig *conf) : UinputDevice()
@@ -43,8 +43,8 @@ StylusDevice::StylusDevice(struct ipts_device_info info, IptsdConfig *conf) : Ui
 	this->set_keybit(BTN_TOOL_PEN);
 	this->set_keybit(BTN_TOOL_RUBBER);
 
-	int32_t res_x = res(IPTS_MAX_X, conf->width);
-	int32_t res_y = res(IPTS_MAX_Y, conf->height);
+	i32 res_x = res(IPTS_MAX_X, conf->width);
+	i32 res_y = res(IPTS_MAX_Y, conf->height);
 
 	this->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
@@ -73,10 +73,10 @@ TouchDevice::TouchDevice(struct ipts_device_info info, IptsdConfig *conf)
 	this->set_propbit(INPUT_PROP_DIRECT);
 	this->set_keybit(BTN_TOUCH);
 
-	float diag = std::sqrt(conf->width * conf->width + conf->height * conf->height);
-	int32_t res_x = res(IPTS_MAX_X, conf->width);
-	int32_t res_y = res(IPTS_MAX_Y, conf->height);
-	int32_t res_d = res(IPTS_DIAGONAL, diag);
+	f32 diag = std::sqrt(conf->width * conf->width + conf->height * conf->height);
+	i32 res_x = res(IPTS_MAX_X, conf->width);
+	i32 res_y = res(IPTS_MAX_Y, conf->height);
+	i32 res_d = res(IPTS_DIAGONAL, diag);
 
 	this->set_absinfo(ABS_MT_SLOT, 0, info.max_contacts, 0);
 	this->set_absinfo(ABS_MT_TRACKING_ID, 0, info.max_contacts, 0);
@@ -94,7 +94,7 @@ TouchDevice::TouchDevice(struct ipts_device_info info, IptsdConfig *conf)
 	this->create();
 }
 
-Heatmap *TouchDevice::get_heatmap(int32_t w, int32_t h)
+Heatmap *TouchDevice::get_heatmap(i32 w, i32 h)
 {
 	if (this->hm && (this->hm->width != w || this->hm->height != h))
 		delete this->hm;
@@ -128,7 +128,7 @@ StylusDevice *DeviceManager::active_stylus(void)
 	return this->styli[this->active_index];
 }
 
-void DeviceManager::switch_stylus(uint32_t serial)
+void DeviceManager::switch_stylus(u32 serial)
 {
 	for (size_t i = 0; i < std::size(this->styli); i++) {
 		if (this->styli[i]->serial != serial)

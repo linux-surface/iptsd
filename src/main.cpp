@@ -7,11 +7,11 @@
 #include "devices.hpp"
 #include "ipts.h"
 #include "reader.hpp"
+#include "types.hpp"
 #include "utils.hpp"
 
 #include <chrono>
 #include <csignal>
-#include <cstdint>
 #include <cstdio>
 #include <iostream>
 #include <thread>
@@ -27,9 +27,9 @@ static void signal_reset(int sig)
 
 static bool iptsd_loop(IptsdContext *iptsd)
 {
-	uint32_t doorbell = iptsd->control->doorbell();
-	uint32_t diff = doorbell - iptsd->control->current_doorbell;
-	uint32_t size = iptsd->control->info.buffer_size;
+	u32 doorbell = iptsd->control->doorbell();
+	u32 diff = doorbell - iptsd->control->current_doorbell;
+	u32 size = iptsd->control->info.buffer_size;
 
 	while (doorbell > iptsd->control->current_doorbell) {
 		iptsd->control->read(iptsd->reader->data, size);

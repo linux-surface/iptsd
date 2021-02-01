@@ -3,10 +3,10 @@
 #include "control.hpp"
 
 #include "ipts.h"
+#include "types.hpp"
 #include "utils.hpp"
 
 #include <cstddef>
-#include <cstdint>
 #include <fcntl.h>
 #include <string>
 #include <sys/ioctl.h>
@@ -44,7 +44,7 @@ int IptsdControl::current(void)
 
 bool IptsdControl::ready(void)
 {
-	uint8_t ready = 0;
+	u8 ready = 0;
 
 	int ret = ioctl(this->current(), IPTS_IOCTL_GET_DEVICE_READY, &ready);
 	if (ret == -1)
@@ -95,11 +95,11 @@ void IptsdControl::flush(void)
 		this->send_feedback(this->files[i]);
 }
 
-uint32_t IptsdControl::doorbell(void)
+u32 IptsdControl::doorbell(void)
 {
 	this->wait_for_device();
 
-	uint32_t doorbell = 0;
+	u32 doorbell = 0;
 
 	int ret = ioctl(this->current(), IPTS_IOCTL_GET_DOORBELL, &doorbell);
 	if (ret == -1)

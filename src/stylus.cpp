@@ -8,41 +8,41 @@
 #include "devices.hpp"
 #include "protocol.h"
 #include "reader.hpp"
+#include "types.hpp"
 
 #include <cmath>
-#include <cstdint>
 #include <linux/input-event-codes.h>
 #include <tuple>
 
-static std::tuple<int32_t, int32_t> get_tilt(uint32_t altitude, uint32_t azimuth)
+static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 {
 	if (altitude <= 0)
-		return std::tuple<int32_t, int32_t>(0, 0);
+		return std::tuple<i32, i32>(0, 0);
 
-	float alt = ((float)altitude) / 18000 * M_PI;
-	float azm = ((float)azimuth) / 18000 * M_PI;
+	f32 alt = ((f32)altitude) / 18000 * M_PI;
+	f32 azm = ((f32)azimuth) / 18000 * M_PI;
 
-	float sin_alt = std::sin(alt);
-	float sin_azm = std::sin(azm);
+	f32 sin_alt = std::sin(alt);
+	f32 sin_azm = std::sin(azm);
 
-	float cos_alt = std::cos(alt);
-	float cos_azm = std::cos(azm);
+	f32 cos_alt = std::cos(alt);
+	f32 cos_azm = std::cos(azm);
 
-	float atan_x = std::atan2(cos_alt, sin_alt * cos_azm);
-	float atan_y = std::atan2(cos_alt, sin_alt * sin_azm);
+	f32 atan_x = std::atan2(cos_alt, sin_alt * cos_azm);
+	f32 atan_y = std::atan2(cos_alt, sin_alt * sin_azm);
 
-	int32_t tx = 9000 - (atan_x * 4500 / M_PI_4);
-	int32_t ty = (atan_y * 4500 / M_PI_4) - 9000;
+	i32 tx = 9000 - (atan_x * 4500 / M_PI_4);
+	i32 ty = (atan_y * 4500 / M_PI_4) - 9000;
 
-	return std::tuple<int32_t, int32_t>(tx, ty);
+	return std::tuple<i32, i32>(tx, ty);
 }
 
 static void update_cone(IptsdContext *iptsd, struct ipts_stylus_data_v2 data)
 {
 	StylusDevice *stylus = iptsd->devices->active_stylus();
 
-	float x = (float)data.x / IPTS_MAX_X;
-	float y = (float)data.y / IPTS_MAX_Y;
+	f32 x = (f32)data.x / IPTS_MAX_X;
+	f32 y = (f32)data.y / IPTS_MAX_Y;
 
 	x = x * iptsd->config->width;
 	y = y * iptsd->config->height;
@@ -65,7 +65,7 @@ static void handle_data(IptsdContext *iptsd, struct ipts_stylus_data_v2 data)
 	if (prox)
 		update_cone(iptsd, data);
 
-	std::tuple<int32_t, int32_t> tilt = get_tilt(data.altitude, data.azimuth);
+	std::tuple<i32, i32> tilt = get_tilt(data.altitude, data.azimuth);
 
 	stylus->emit(EV_KEY, BTN_TOUCH, touch);
 	stylus->emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
@@ -83,20 +83,20 @@ static void handle_data(IptsdContext *iptsd, struct ipts_stylus_data_v2 data)
 	stylus->emit(EV_SYN, SYN_REPORT, 0);
 }
 
-static void read_v2(IptsdContext *iptsd, uint8_t count)
+static void read_v2(IptsdContext *iptsd, u8 count)
 {
-	for (uint8_t i = 0; i < count; i++) {
+	for (u8 i = 0; i < count; i++) {
 		auto data = iptsd->reader->read<struct ipts_stylus_data_v2>();
 
 		handle_data(iptsd, data);
 	}
 }
 
-static void read_v1(IptsdContext *iptsd, uint8_t count)
+static void read_v1(IptsdContext *iptsd, u8 count)
 {
 	struct ipts_stylus_data_v2 v2;
 
-	for (uint8_t i = 0; i < count; i++) {
+	for (u8 i = 0; i < count; i++) {
 		auto data = iptsd->reader->read<struct ipts_stylus_data_v1>();
 
 		v2.mode = data.mode;
@@ -128,7 +128,7 @@ static void read_report(IptsdContext *iptsd, struct ipts_report report)
 
 void iptsd_stylus_handle_input(IptsdContext *iptsd, struct ipts_payload_frame frame)
 {
-	uint32_t size = 0;
+	u32 size = 0;
 
 	while (size < frame.size) {
 		auto report = iptsd->reader->read<struct ipts_report>();

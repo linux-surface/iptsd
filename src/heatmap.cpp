@@ -2,11 +2,11 @@
 
 #include "heatmap.hpp"
 
-#include <cmath>
-#include <cstddef>
-#include <cstdint>
+#include "types.hpp"
 
-Heatmap::Heatmap(int32_t w, int32_t h, int32_t threshold) : data(w * h), visited(w * h)
+#include <cstddef>
+
+Heatmap::Heatmap(i32 w, i32 h, i32 threshold) : data(w * h), visited(w * h)
 {
 	this->width = w;
 	this->height = h;
@@ -17,9 +17,9 @@ Heatmap::Heatmap(int32_t w, int32_t h, int32_t threshold) : data(w * h), visited
 	this->touch_threshold = threshold;
 }
 
-float Heatmap::average(void)
+f32 Heatmap::average(void)
 {
-	float value = 0;
+	f32 value = 0;
 
 	for (size_t i = 0; i < this->size; i++)
 		value += this->data[i];
@@ -27,7 +27,7 @@ float Heatmap::average(void)
 	return value / this->size;
 }
 
-uint8_t Heatmap::value(int32_t x, int32_t y)
+u8 Heatmap::value(i32 x, i32 y)
 {
 	if (x < 0 || x >= this->width)
 		return 0;
@@ -38,15 +38,15 @@ uint8_t Heatmap::value(int32_t x, int32_t y)
 	return this->data[y * this->width + x];
 }
 
-bool Heatmap::is_touch(int32_t x, int32_t y)
+bool Heatmap::is_touch(i32 x, i32 y)
 {
 	return this->value(x, y) >= this->touch_threshold;
 }
 
-bool Heatmap::compare(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+bool Heatmap::compare(i32 x1, i32 y1, i32 x2, i32 y2)
 {
-	uint8_t v1 = this->value(x1, y1);
-	uint8_t v2 = this->value(x2, y2);
+	u8 v1 = this->value(x1, y1);
+	u8 v2 = this->value(x2, y2);
 
 	if (v2 > v1)
 		return false;
@@ -69,7 +69,7 @@ bool Heatmap::compare(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
 	return y2 == y1;
 }
 
-bool Heatmap::get_visited(int32_t x, int32_t y)
+bool Heatmap::get_visited(i32 x, i32 y)
 {
 	if (x < 0 || x >= this->width)
 		return false;
@@ -80,7 +80,7 @@ bool Heatmap::get_visited(int32_t x, int32_t y)
 	return this->visited[y * this->width + x];
 }
 
-void Heatmap::set_visited(int32_t x, int32_t y, bool value)
+void Heatmap::set_visited(i32 x, i32 y, bool value)
 {
 	if (x < 0 || x >= this->width)
 		return;

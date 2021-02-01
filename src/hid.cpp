@@ -6,12 +6,11 @@
 #include "protocol.h"
 #include "reader.hpp"
 #include "singletouch.hpp"
-
-#include <cstdint>
+#include "types.hpp"
 
 void iptsd_hid_handle_input(IptsdContext *iptsd)
 {
-	auto report = iptsd->reader->read<uint8_t>();
+	auto report = iptsd->reader->read<u8>();
 
 	/*
 	 * Make sure that we only handle singletouch inputs.

@@ -7,14 +7,13 @@
 #include "reader.hpp"
 #include "stylus.hpp"
 #include "touch.hpp"
-
-#include <cstdint>
+#include "types.hpp"
 
 void iptsd_payload_handle_input(IptsdContext *iptsd)
 {
 	auto payload = iptsd->reader->read<struct ipts_payload>();
 
-	for (uint32_t i = 0; i < payload.frames; i++) {
+	for (u32 i = 0; i < payload.frames; i++) {
 		auto frame = iptsd->reader->read<struct ipts_payload_frame>();
 
 		switch (frame.type) {

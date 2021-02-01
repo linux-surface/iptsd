@@ -5,9 +5,9 @@
 #include "config.hpp"
 #include "contact.hpp"
 #include "touch-processing.hpp"
+#include "types.hpp"
 
 #include <cstddef>
-#include <cstdint>
 #include <iterator>
 #include <memory>
 #include <vector>
@@ -16,8 +16,8 @@ static void update_from_last(TouchProcessor *tp, TouchInput *input, TouchInput l
 {
 	Contact *contact = input->contact;
 
-	float dev1 = input->ev1 - last.ev1;
-	float dev2 = input->ev2 - last.ev2;
+	f32 dev1 = input->ev1 - last.ev1;
+	f32 dev2 = input->ev2 - last.ev2;
 
 	bool is_stable =
 		dev1 < tp->config->stability_threshold && dev2 < tp->config->stability_threshold;
@@ -29,7 +29,7 @@ static void update_from_last(TouchProcessor *tp, TouchInput *input, TouchInput l
 
 static bool find_duplicates(TouchProcessor *tp, size_t count, size_t itr)
 {
-	uint8_t duplicates = 0;
+	u8 duplicates = 0;
 	size_t size = std::size(tp->inputs);
 
 	for (size_t i = 0; i < count; i++) {
@@ -53,8 +53,8 @@ static bool find_duplicates(TouchProcessor *tp, size_t count, size_t itr)
 			if (tp->inputs[i].index != tp->inputs[k].index)
 				continue;
 
-			double dist_i = tp->distances[base + itr - 1];
-			double dist_k = tp->distances[base_k + itr - 1];
+			f64 dist_i = tp->distances[base + itr - 1];
+			f64 dist_k = tp->distances[base_k + itr - 1];
 
 			if (dist_i < dist_k)
 				continue;
@@ -127,7 +127,7 @@ void iptsd_finger_track(TouchProcessor *tp, size_t count)
 			TouchInput last = tp->last[j];
 
 			if (current.index == -1 || last.index == -1) {
-				tp->distances[base + j] = (double)(1 << 30) + j;
+				tp->distances[base + j] = (f64)(1 << 30) + j;
 				continue;
 			}
 
@@ -144,8 +144,8 @@ void iptsd_finger_track(TouchProcessor *tp, size_t count)
 				size_t index_a = tp->indices[base + k];
 				size_t index_b = tp->indices[base + k - 1];
 
-				double dist_a = tp->distances[base + index_a];
-				double dist_b = tp->distances[base + index_b];
+				f64 dist_a = tp->distances[base + index_a];
+				f64 dist_b = tp->distances[base + index_b];
 
 				if (dist_a >= dist_b)
 					continue;

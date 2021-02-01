@@ -3,7 +3,6 @@
 #ifndef _IPTSD_UTILS_HPP_
 #define _IPTSD_UTILS_HPP_
 
-#include <cstdint>
 #include <string>
 #include <system_error>
 

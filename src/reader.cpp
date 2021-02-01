@@ -2,14 +2,15 @@
 
 #include "reader.hpp"
 
+#include "types.hpp"
+
 #include <cstddef>
-#include <cstdint>
 #include <cstring>
 #include <stdexcept>
 
 IptsdReader::IptsdReader(size_t size)
 {
-	this->data = new uint8_t[size];
+	this->data = new u8[size];
 	this->size = size;
 	this->current = 0;
 }

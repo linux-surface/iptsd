@@ -8,28 +8,28 @@
 #include "contact.hpp"
 #include "heatmap.hpp"
 #include "ipts.h"
+#include "types.hpp"
 
 #include <cstddef>
-#include <cstdint>
 #include <vector>
 
 class TouchInput {
 public:
-	int32_t x;
-	int32_t y;
-	int32_t major;
-	int32_t minor;
-	int32_t orientation;
-	float ev1;
-	float ev2;
-	int32_t index;
-	int32_t slot;
+	i32 x;
+	i32 y;
+	i32 major;
+	i32 minor;
+	i32 orientation;
+	f32 ev1;
+	f32 ev2;
+	i32 index;
+	i32 slot;
 	bool is_stable;
 	bool is_palm;
 
 	Contact *contact;
 
-	double dist(TouchInput o);
+	f64 dist(TouchInput o);
 	void reset(void);
 };
 
@@ -41,7 +41,7 @@ public:
 	std::vector<TouchInput> last;
 	std::vector<Cone *> rejection_cones;
 	std::vector<bool> free_indices;
-	std::vector<double> distances;
+	std::vector<f64> distances;
 	std::vector<size_t> indices;
 
 	IptsdConfig *config;

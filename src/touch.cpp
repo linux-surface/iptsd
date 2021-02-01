@@ -11,9 +11,10 @@
 #include "protocol.h"
 #include "reader.hpp"
 #include "touch-processing.hpp"
+#include "types.hpp"
 
 #include <cstddef>
-#include <cstdint>
+#include <iterator>
 #include <linux/input-event-codes.h>
 #include <linux/input.h>
 #include <memory>
@@ -93,12 +94,12 @@ static void handle_heatmap(IptsdContext *iptsd, Heatmap *hm)
 	bool blocked = false;
 
 	TouchDevice *touch = &iptsd->devices->touch;
-	uint8_t max_contacts = iptsd->control->info.max_contacts;
+	u8 max_contacts = iptsd->control->info.max_contacts;
 
 	touch->processor.process(hm);
 
 	if (iptsd->config->block_on_palm) {
-		for (uint8_t i = 0; i < max_contacts; i++)
+		for (u8 i = 0; i < max_contacts; i++)
 			blocked = blocked || touch->processor.inputs[i].is_palm;
 	}
 
@@ -116,7 +117,7 @@ Heatmap *get_heatmap(IptsdContext *iptsd)
 
 void iptsd_touch_handle_input(IptsdContext *iptsd, struct ipts_payload_frame frame)
 {
-	uint32_t size = 0;
+	u32 size = 0;
 	Heatmap *hm = nullptr;
 
 	while (size < frame.size) {

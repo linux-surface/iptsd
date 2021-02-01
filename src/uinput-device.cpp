@@ -2,9 +2,9 @@
 
 #include "uinput-device.hpp"
 
+#include "types.hpp"
 #include "utils.hpp"
 
-#include <cstdint>
 #include <cstring>
 #include <fcntl.h>
 #include <linux/input.h>
@@ -27,28 +27,28 @@ UinputDevice::~UinputDevice(void)
 	close(this->fd);
 }
 
-void UinputDevice::set_evbit(int32_t ev)
+void UinputDevice::set_evbit(i32 ev)
 {
 	int ret = ioctl(this->fd, UI_SET_EVBIT, (int)ev);
 	if (ret == -1)
 		throw Utils::cerror("UI_SET_EVBIT failed");
 }
 
-void UinputDevice::set_keybit(int32_t key)
+void UinputDevice::set_keybit(i32 key)
 {
 	int ret = ioctl(this->fd, UI_SET_KEYBIT, (int)key);
 	if (ret == -1)
 		throw Utils::cerror("UI_SET_KEYBIT failed");
 }
 
-void UinputDevice::set_propbit(int32_t prop)
+void UinputDevice::set_propbit(i32 prop)
 {
 	int ret = ioctl(this->fd, UI_SET_PROPBIT, (int)prop);
 	if (ret == -1)
 		throw Utils::cerror("UI_SET_PROPBIT failed");
 }
 
-void UinputDevice::set_absinfo(uint16_t code, int32_t min, int32_t max, int32_t res)
+void UinputDevice::set_absinfo(u16 code, i32 min, i32 max, i32 res)
 {
 	struct uinput_abs_setup abs;
 
@@ -85,7 +85,7 @@ void UinputDevice::create(void)
 		throw Utils::cerror("UI_DEV_CREATE failed");
 }
 
-void UinputDevice::emit(uint16_t type, uint16_t key, int32_t value)
+void UinputDevice::emit(u16 type, u16 key, i32 value)
 {
 	struct input_event ie;
 

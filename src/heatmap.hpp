@@ -3,29 +3,30 @@
 #ifndef _IPTSD_HEATMAP_HPP_
 #define _IPTSD_HEATMAP_HPP_
 
+#include "types.hpp"
+
 #include <cstddef>
-#include <cstdint>
 #include <vector>
 
 class Heatmap {
 public:
-	int32_t width;
-	int32_t height;
+	i32 width;
+	i32 height;
 	size_t size;
-	int32_t touch_threshold;
-	float diagonal;
+	i32 touch_threshold;
+	f32 diagonal;
 
-	std::vector<uint8_t> data;
+	std::vector<u8> data;
 	std::vector<bool> visited;
 
-	Heatmap(int32_t w, int32_t h, int32_t threshold);
+	Heatmap(i32 w, i32 h, i32 threshold);
 
-	float average(void);
-	uint8_t value(int32_t x, int32_t y);
-	bool is_touch(int32_t x, int32_t y);
-	bool compare(int32_t x1, int32_t y1, int32_t x2, int32_t y2);
-	bool get_visited(int32_t x, int32_t y);
-	void set_visited(int32_t x, int32_t y, bool value);
+	f32 average(void);
+	u8 value(i32 x, i32 y);
+	bool is_touch(i32 x, i32 y);
+	bool compare(i32 x1, i32 y1, i32 x2, i32 y2);
+	bool get_visited(i32 x, i32 y);
+	void set_visited(i32 x, i32 y, bool value);
 };
 
 #endif /* _IPTSD_HEATMAP_HPP_ */

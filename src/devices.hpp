@@ -8,16 +8,16 @@
 #include "heatmap.hpp"
 #include "ipts.h"
 #include "touch-processing.hpp"
+#include "types.hpp"
 #include "uinput-device.hpp"
 
 #include <cstddef>
-#include <cstdint>
 #include <vector>
 
 class StylusDevice : public UinputDevice {
 public:
 	Cone cone;
-	uint32_t serial;
+	u32 serial;
 
 	StylusDevice(struct ipts_device_info info, IptsdConfig *conf);
 };
@@ -30,7 +30,7 @@ public:
 
 	TouchDevice(struct ipts_device_info, IptsdConfig *conf);
 
-	Heatmap *get_heatmap(int32_t w, int32_t h);
+	Heatmap *get_heatmap(i32 w, i32 h);
 };
 
 class DeviceManager {
@@ -45,7 +45,7 @@ public:
 	~DeviceManager(void);
 
 	StylusDevice *active_stylus(void);
-	void switch_stylus(uint32_t serial);
+	void switch_stylus(u32 serial);
 };
 
 #endif /* _IPTSD_DEVICES_HPP_ */

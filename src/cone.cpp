@@ -3,6 +3,7 @@
 #include "cone.hpp"
 
 #include "constants.hpp"
+#include "types.hpp"
 
 #include <chrono>
 #include <cmath>
@@ -20,7 +21,7 @@ bool Cone::was_active(void)
 	return this->position_update > system_clock::from_time_t(0);
 }
 
-void Cone::set_tip(float x, float y)
+void Cone::set_tip(f32 x, f32 y)
 {
 	this->x = x;
 	this->y = y;
@@ -32,23 +33,23 @@ bool Cone::is_removed(void)
 	return this->position_update + 300ms <= system_clock::now();
 }
 
-float Cone::hypot(float x, float y)
+f32 Cone::hypot(f32 x, f32 y)
 {
 	return std::hypot(this->x - x, this->y - y);
 }
 
-void Cone::update_direction(float x, float y)
+void Cone::update_direction(f32 x, f32 y)
 {
 	system_clock::time_point timestamp = system_clock::now();
 
 	auto time_diff = timestamp - this->direction_update;
 	auto ms_diff = duration_cast<milliseconds>(time_diff);
 
-	float weight = std::exp2f(-ms_diff.count() / 1000.0);
-	float d = this->hypot(x, y);
+	f32 weight = std::exp2f(-ms_diff.count() / 1000.0);
+	f32 d = this->hypot(x, y);
 
-	float dx = (x - this->x) / (d + 1E-6);
-	float dy = (y - this->y) / (d + 1E-6);
+	f32 dx = (x - this->x) / (d + 1E-6);
+	f32 dy = (y - this->y) / (d + 1E-6);
 
 	this->dx = weight * this->dx + dx;
 	this->dy = weight * this->dy + dy;
@@ -61,14 +62,14 @@ void Cone::update_direction(float x, float y)
 	this->direction_update = timestamp;
 }
 
-bool Cone::is_inside(float x, float y)
+bool Cone::is_inside(f32 x, f32 y)
 {
 	if (this->is_removed())
 		return false;
 
-	float dx = x - this->x;
-	float dy = y - this->y;
-	float d = std::hypot(dx, dy);
+	f32 dx = x - this->x;
+	f32 dy = y - this->y;
+	f32 d = std::hypot(dx, dy);
 
 	if (d > CONE_DISTANCE_THRESHOLD)
 		return false;

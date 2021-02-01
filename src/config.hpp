@@ -4,8 +4,8 @@
 #define _IPTSD_CONFIG_HPP_
 
 #include "ipts.h"
+#include "types.hpp"
 
-#include <cstdint>
 #include <string>
 
 class IptsdConfig {
@@ -13,12 +13,12 @@ public:
 	bool invert_x;
 	bool invert_y;
 
-	int32_t width;
-	int32_t height;
+	i32 width;
+	i32 height;
 
 	bool block_on_palm;
-	int32_t touch_threshold;
-	float stability_threshold;
+	i32 touch_threshold;
+	f32 stability_threshold;
 
 	IptsdConfig(struct ipts_device_info info);
 
