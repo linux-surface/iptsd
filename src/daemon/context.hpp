@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_CONTEXT_HPP_
-#define _IPTSD_CONTEXT_HPP_
+#ifndef _IPTSD_DAEMON_CONTEXT_HPP_
+#define _IPTSD_DAEMON_CONTEXT_HPP_
 
 #include "config.hpp"
 #include "devices.hpp"
@@ -25,4 +25,4 @@ public:
 	};
 };
 
-#endif /* _IPTSD_CONTEXT_HPP_ */
+#endif /* _IPTSD_DAEMON_CONTEXT_HPP_ */

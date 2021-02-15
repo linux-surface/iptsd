@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_CONE_HPP_
-#define _IPTSD_CONE_HPP_
+#ifndef _IPTSD_DAEMON_CONE_HPP_
+#define _IPTSD_DAEMON_CONE_HPP_
 
 #include <common/types.hpp>
 
@@ -28,4 +28,4 @@ public:
 	bool is_inside(f32 x, f32 y);
 };
 
-#endif /* _IPTSD_CONE_HPP_ */
+#endif /* _IPTSD_DAEMON_CONE_HPP_ */

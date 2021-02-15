@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_UINPUT_DEVICE_HPP_
-#define _IPTSD_UINPUT_DEVICE_HPP_
+#ifndef _IPTSD_DAEMON_UINPUT_DEVICE_HPP_
+#define _IPTSD_DAEMON_UINPUT_DEVICE_HPP_
 
 #include <common/types.hpp>
 
@@ -27,4 +27,4 @@ public:
 	void emit(u16 type, u16 key, i32 value);
 };
 
-#endif /* _IPTSD_UINPUT_DEVICE_HPP_ */
+#endif /* _IPTSD_DAEMON_UINPUT_DEVICE_HPP_ */

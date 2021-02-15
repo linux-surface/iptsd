@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_HEATMAP_HPP_
-#define _IPTSD_HEATMAP_HPP_
+#ifndef _IPTSD_DAEMON_HEATMAP_HPP_
+#define _IPTSD_DAEMON_HEATMAP_HPP_
 
 #include <common/types.hpp>
 
@@ -29,4 +29,4 @@ public:
 	void set_visited(i32 x, i32 y, bool value);
 };
 
-#endif /* _IPTSD_HEATMAP_HPP_ */
+#endif /* _IPTSD_DAEMON_HEATMAP_HPP_ */

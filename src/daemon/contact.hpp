@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_CONTACT_HPP_
-#define _IPTSD_CONTACT_HPP_
+#ifndef _IPTSD_DAEMON_CONTACT_HPP_
+#define _IPTSD_DAEMON_CONTACT_HPP_
 
 #include "heatmap.hpp"
 
@@ -52,4 +52,4 @@ public:
 	static size_t find_contacts(Heatmap *hm, std::vector<Contact> &contacts);
 };
 
-#endif /* _IPTSD_CONTACT_HPP_ */
+#endif /* _IPTSD_DAEMON_CONTACT_HPP_ */

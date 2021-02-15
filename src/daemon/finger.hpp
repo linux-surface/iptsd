@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_FINGER_HPP_
-#define _IPTSD_FINGER_HPP_
+#ifndef _IPTSD_DAEMON_FINGER_HPP_
+#define _IPTSD_DAEMON_FINGER_HPP_
 
 #include "touch-processing.hpp"
 
@@ -9,4 +9,4 @@
 
 void iptsd_finger_track(TouchProcessor *tp, size_t count);
 
-#endif /* _IPTSD_FINGER_HPP_ */
+#endif /* _IPTSD_DAEMON_FINGER_HPP_ */

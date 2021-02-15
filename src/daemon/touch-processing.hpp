@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_TOUCH_PROCESSING_HPP_
-#define _IPTSD_TOUCH_PROCESSING_HPP_
+#ifndef _IPTSD_DAEMON_TOUCH_PROCESSING_HPP_
+#define _IPTSD_DAEMON_TOUCH_PROCESSING_HPP_
 
 #include "cone.hpp"
 #include "config.hpp"
@@ -59,4 +59,4 @@ private:
 	void find_palms(size_t count);
 };
 
-#endif /* _IPTSD_TOUCH_PROCESSING_HPP_ */
+#endif /* _IPTSD_DAEMON_TOUCH_PROCESSING_HPP_ */

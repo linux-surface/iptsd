@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_READER_HPP_
-#define _IPTSD_READER_HPP_
+#ifndef _IPTSD_DAEMON_READER_HPP_
+#define _IPTSD_DAEMON_READER_HPP_
 
 #include <common/types.hpp>
 
@@ -34,4 +34,4 @@ public:
 	}
 };
 
-#endif /* _IPTSD_READER_HPP_ */
+#endif /* _IPTSD_DAEMON_READER_HPP_ */

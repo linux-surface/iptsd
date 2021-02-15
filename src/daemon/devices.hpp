@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_DEVICES_HPP_
-#define _IPTSD_DEVICES_HPP_
+#ifndef _IPTSD_DAEMON_DEVICES_HPP_
+#define _IPTSD_DAEMON_DEVICES_HPP_
 
 #include "cone.hpp"
 #include "config.hpp"
@@ -49,4 +49,4 @@ public:
 	void switch_stylus(u32 serial);
 };
 
-#endif /* _IPTSD_DEVICES_HPP_ */
+#endif /* _IPTSD_DAEMON_DEVICES_HPP_ */
