@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include "control.hpp"
-#include "ipts.h"
-#include "protocol.h"
-
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <daemon/control.hpp>
+#include <daemon/ipts.h>
+#include <daemon/protocol.h>
 #include <fstream>
 #include <iostream>
 #include <iterator>
