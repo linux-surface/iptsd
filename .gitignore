@@ -1,5 +1,6 @@
 build/
 subprojects/
+out/
 
 !subprojects/*.wrap
 

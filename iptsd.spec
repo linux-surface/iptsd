@@ -1,5 +1,9 @@
 %global debug_package %{nil}
 
+# Need to put these macros somewhere to make git_dir_pack work.
+# {{{ git_dir_name }}}
+# {{{ git_dir_version }}}
+
 Name: iptsd
 Version: 0.3.1
 Release: 1%{?dist}
@@ -11,10 +15,9 @@ Source: {{{ git_dir_pack }}}
 
 BuildRequires: meson
 BuildRequires: gcc
-BuildRequires: inih-devel
+BuildRequires: pkgconfig(inih)
+BuildRequires: pkgconfig(systemd)
 BuildRequires: systemd-rpm-macros
-
-Requires: inih
 
 %description
 iptsd is a userspace daemon that processes touch events from the IPTS
@@ -48,6 +51,7 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %config(noreplace) %{_sysconfdir}/ipts.conf
 %{_bindir}/%{name}
 %{_bindir}/ipts-dbg
+%{_bindir}/iptsd-reset-sensor
 %{_unitdir}/%{name}.service
 %{_udevrulesdir}/50-ipts.rules
 %{_datadir}/ipts/*
