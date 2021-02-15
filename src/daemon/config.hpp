@@ -3,8 +3,8 @@
 #ifndef _IPTSD_CONFIG_HPP_
 #define _IPTSD_CONFIG_HPP_
 
-#include "ipts.h"
-#include "types.hpp"
+#include <common/types.hpp>
+#include <ipts/ipts.h>
 
 #include <string>
 

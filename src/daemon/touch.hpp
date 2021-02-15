@@ -4,7 +4,8 @@
 #define _IPTSD_TOUCH_HPP_
 
 #include "context.hpp"
-#include "protocol.h"
+
+#include <ipts/protocol.h>
 
 void iptsd_touch_handle_input(IptsdContext *iptsd, struct ipts_payload_frame frame);
 

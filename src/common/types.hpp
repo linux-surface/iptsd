@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_TYPES_HPP_
-#define _IPTSD_TYPES_HPP_
+#ifndef _IPTSD_COMMON_TYPES_HPP_
+#define _IPTSD_COMMON_TYPES_HPP_
 
 #include <cmath>
 #include <cstdint>
@@ -19,4 +19,4 @@ using u64 = std::uint64_t;
 using f32 = std::float_t;
 using f64 = std::double_t;
 
-#endif /* _IPTSD_TYPES_HPP_ */
+#endif /* _IPTSD_COMMON_TYPES_HPP_ */

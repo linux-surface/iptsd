@@ -3,8 +3,9 @@
 #include "control.hpp"
 
 #include "ipts.h"
-#include "types.hpp"
-#include "utils.hpp"
+
+#include <common/types.hpp>
+#include <common/utils.hpp>
 
 #include <cstddef>
 #include <fcntl.h>

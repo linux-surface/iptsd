@@ -4,7 +4,8 @@
 #define _IPTSD_STYLUS_HPP_
 
 #include "context.hpp"
-#include "protocol.h"
+
+#include <ipts/protocol.h>
 
 void iptsd_stylus_handle_input(IptsdContext *iptsd, struct ipts_payload_frame frame);
 

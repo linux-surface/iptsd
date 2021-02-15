@@ -5,8 +5,9 @@
 #include "context.hpp"
 #include "hid.hpp"
 #include "payload.hpp"
-#include "protocol.h"
 #include "reader.hpp"
+
+#include <ipts/protocol.h>
 
 void iptsd_data_handle_input(IptsdContext *iptsd)
 {

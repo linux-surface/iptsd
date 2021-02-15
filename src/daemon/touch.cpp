@@ -4,14 +4,15 @@
 
 #include "config.hpp"
 #include "context.hpp"
-#include "control.hpp"
 #include "devices.hpp"
 #include "heatmap.hpp"
-#include "ipts.h"
-#include "protocol.h"
 #include "reader.hpp"
 #include "touch-processing.hpp"
-#include "types.hpp"
+
+#include <common/types.hpp>
+#include <ipts/control.hpp>
+#include <ipts/ipts.h>
+#include <ipts/protocol.h>
 
 #include <cstddef>
 #include <iterator>

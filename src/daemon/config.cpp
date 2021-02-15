@@ -3,8 +3,9 @@
 #include "config.hpp"
 
 #include "constants.hpp"
-#include "ipts.h"
-#include "types.hpp"
+
+#include <common/types.hpp>
+#include <ipts/ipts.h>
 
 #include <algorithm>
 #include <cctype>

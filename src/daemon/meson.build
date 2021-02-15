@@ -2,7 +2,6 @@ sources = [
 	'cone.cpp',
 	'config.cpp',
 	'contact.cpp',
-	'control.cpp',
 	'data.cpp',
 	'devices.cpp',
 	'finger.cpp',
@@ -16,12 +15,13 @@ sources = [
 	'touch.cpp',
 	'touch-processing.cpp',
 	'uinput-device.cpp',
-	'utils.cpp',
 ]
 
 deps = [
+	libcommon,
+	libipts,
 	dependency('inih', fallback: ['inih', 'inih_dep']),
 ]
 
 executable('iptsd', sources, dependencies: deps,
-	   install: true, include_directories: includes)
+	   include_directories: includes, install: true)

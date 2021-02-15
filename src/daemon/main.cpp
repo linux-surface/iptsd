@@ -2,13 +2,14 @@
 
 #include "config.hpp"
 #include "context.hpp"
-#include "control.hpp"
 #include "data.hpp"
 #include "devices.hpp"
-#include "ipts.h"
 #include "reader.hpp"
-#include "types.hpp"
-#include "utils.hpp"
+
+#include <common/types.hpp>
+#include <common/utils.hpp>
+#include <ipts/control.hpp>
+#include <ipts/ipts.h>
 
 #include <chrono>
 #include <csignal>

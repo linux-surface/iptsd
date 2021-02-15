@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_UTILS_HPP_
-#define _IPTSD_UTILS_HPP_
+#ifndef _IPTSD_COMMON_UTILS_HPP_
+#define _IPTSD_COMMON_UTILS_HPP_
 
 #include <string>
 #include <system_error>
@@ -12,4 +12,4 @@ public:
 	static void signal(int signum, void (*handler)(int));
 };
 
-#endif /* _IPTSD_UTILS_HPP_ */
+#endif /* _IPTSD_COMMON_UTILS_HPP_ */

@@ -3,7 +3,8 @@
 #include "cone.hpp"
 
 #include "constants.hpp"
-#include "types.hpp"
+
+#include <common/types.hpp>
 
 #include <chrono>
 #include <cmath>

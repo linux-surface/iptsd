@@ -6,10 +6,11 @@
 #include "cone.hpp"
 #include "config.hpp"
 #include "heatmap.hpp"
-#include "ipts.h"
 #include "touch-processing.hpp"
-#include "types.hpp"
 #include "uinput-device.hpp"
+
+#include <common/types.hpp>
+#include <ipts/ipts.h>
 
 #include <cstddef>
 #include <vector>

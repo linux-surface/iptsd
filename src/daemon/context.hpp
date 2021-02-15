@@ -4,9 +4,10 @@
 #define _IPTSD_CONTEXT_HPP_
 
 #include "config.hpp"
-#include "control.hpp"
 #include "devices.hpp"
 #include "reader.hpp"
+
+#include <ipts/control.hpp>
 
 class IptsdContext {
 public:

@@ -3,7 +3,7 @@
 #ifndef _IPTSD_UINPUT_DEVICE_HPP_
 #define _IPTSD_UINPUT_DEVICE_HPP_
 
-#include "types.hpp"
+#include <common/types.hpp>
 
 #include <string>
 

@@ -4,9 +4,10 @@
 
 #include "context.hpp"
 #include "devices.hpp"
-#include "protocol.h"
 #include "reader.hpp"
-#include "types.hpp"
+
+#include <common/types.hpp>
+#include <ipts/protocol.h>
 
 #include <linux/input-event-codes.h>
 #include <linux/input.h>

@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_PROTOCOL_H_
-#define _IPTSD_PROTOCOL_H_
+#ifndef _IPTSD_IPTS_PROTOCOL_H_
+#define _IPTSD_IPTS_PROTOCOL_H_
 
 #include <stdint.h>
 
@@ -94,4 +94,4 @@ struct ipts_heatmap_dim {
 	uint8_t reserved[6];
 } __attribute__((__packed__));
 
-#endif /* _IPTSD_PROTOCOL_H_ */
+#endif /* _IPTSD_IPTS_PROTOCOL_H_ */

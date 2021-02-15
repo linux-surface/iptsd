@@ -1,10 +1,11 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_CONTROL_HPP_
-#define _IPTSD_CONTROL_HPP_
+#ifndef _IPTSD_IPTS_CONTROL_HPP_
+#define _IPTSD_IPTS_CONTROL_HPP_
 
 #include "ipts.h"
-#include "types.hpp"
+
+#include <common/types.hpp>
 
 #include <cstddef>
 
@@ -32,4 +33,4 @@ private:
 	void flush(void);
 };
 
-#endif /* _IPTSD_CONTROL_HPP_ */
+#endif /* _IPTSD_IPTS_CONTROL_HPP_ */

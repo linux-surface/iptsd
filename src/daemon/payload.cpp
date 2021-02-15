@@ -3,11 +3,12 @@
 #include "payload.hpp"
 
 #include "context.hpp"
-#include "protocol.h"
 #include "reader.hpp"
 #include "stylus.hpp"
 #include "touch.hpp"
-#include "types.hpp"
+
+#include <common/types.hpp>
+#include <ipts/protocol.h>
 
 void iptsd_payload_handle_input(IptsdContext *iptsd)
 {

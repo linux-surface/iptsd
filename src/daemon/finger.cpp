@@ -5,7 +5,8 @@
 #include "config.hpp"
 #include "contact.hpp"
 #include "touch-processing.hpp"
-#include "types.hpp"
+
+#include <common/types.hpp>
 
 #include <cstddef>
 #include <iterator>

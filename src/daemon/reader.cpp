@@ -2,7 +2,7 @@
 
 #include "reader.hpp"
 
-#include "types.hpp"
+#include <common/types.hpp>
 
 #include <cstddef>
 #include <cstring>

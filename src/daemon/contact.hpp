@@ -4,7 +4,8 @@
 #define _IPTSD_CONTACT_HPP_
 
 #include "heatmap.hpp"
-#include "types.hpp"
+
+#include <common/types.hpp>
 
 #include <cstddef>
 #include <tuple>

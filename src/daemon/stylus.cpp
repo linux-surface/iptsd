@@ -6,9 +6,10 @@
 #include "config.hpp"
 #include "context.hpp"
 #include "devices.hpp"
-#include "protocol.h"
 #include "reader.hpp"
-#include "types.hpp"
+
+#include <common/types.hpp>
+#include <ipts/protocol.h>
 
 #include <cmath>
 #include <linux/input-event-codes.h>

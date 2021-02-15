@@ -3,7 +3,8 @@
 #include "contact.hpp"
 
 #include "heatmap.hpp"
-#include "types.hpp"
+
+#include <common/types.hpp>
 
 #include <cmath>
 #include <cstddef>

@@ -7,8 +7,9 @@
 #include "contact.hpp"
 #include "finger.hpp"
 #include "heatmap.hpp"
-#include "ipts.h"
-#include "protocol.h"
+
+#include <ipts/ipts.h>
+#include <ipts/protocol.h>
 
 #include <cmath>
 #include <cstddef>

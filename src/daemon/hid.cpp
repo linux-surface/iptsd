@@ -3,10 +3,11 @@
 #include "hid.hpp"
 
 #include "context.hpp"
-#include "protocol.h"
 #include "reader.hpp"
 #include "singletouch.hpp"
-#include "types.hpp"
+
+#include <common/types.hpp>
+#include <ipts/protocol.h>
 
 void iptsd_hid_handle_input(IptsdContext *iptsd)
 {

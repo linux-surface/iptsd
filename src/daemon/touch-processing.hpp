@@ -7,8 +7,9 @@
 #include "config.hpp"
 #include "contact.hpp"
 #include "heatmap.hpp"
-#include "ipts.h"
-#include "types.hpp"
+
+#include <common/types.hpp>
+#include <ipts/ipts.h>
 
 #include <cstddef>
 #include <vector>

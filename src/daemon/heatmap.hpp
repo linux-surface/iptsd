@@ -3,7 +3,7 @@
 #ifndef _IPTSD_HEATMAP_HPP_
 #define _IPTSD_HEATMAP_HPP_
 
-#include "types.hpp"
+#include <common/types.hpp>
 
 #include <cstddef>
 #include <vector>
