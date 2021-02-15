@@ -114,7 +114,7 @@ executable('iptsd', sources,
 	   include_directories: includes)
 
 install_data('etc/iptsd-reset-sensor', install_dir: bindir)
-install_subdir('config', install_dir: configdir, strip_directory: true)
+install_subdir('etc/config', install_dir: configdir, strip_directory: true)
 
 configure_file(input: 'etc/systemd/iptsd.service.in',
 	       output: 'iptsd.service',
