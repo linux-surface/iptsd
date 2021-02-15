@@ -97,8 +97,10 @@ TouchDevice::TouchDevice(struct ipts_device_info info, IptsdConfig *conf)
 
 Heatmap *TouchDevice::get_heatmap(i32 w, i32 h)
 {
-	if (this->hm && (this->hm->width != w || this->hm->height != h))
+	if (this->hm && (this->hm->width != w || this->hm->height != h)) {
 		delete this->hm;
+		this->hm = nullptr;
+	}
 
 	if (!this->hm)
 		this->hm = new Heatmap(w, h, this->conf->touch_threshold);
