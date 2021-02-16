@@ -2,25 +2,11 @@
 
 #include "touch.hpp"
 
-#include "config.hpp"
 #include "context.hpp"
-#include "devices.hpp"
-#include "heatmap.hpp"
-#include "reader.hpp"
-#include "touch-processing.hpp"
 
-#include <common/types.hpp>
-#include <ipts/control.hpp>
-#include <ipts/ipts.h>
-#include <ipts/protocol.h>
+#include <ipts/parser.hpp>
 
-#include <cstddef>
-#include <iterator>
-#include <linux/input-event-codes.h>
-#include <linux/input.h>
-#include <memory>
-#include <vector>
-
+/*
 static void lift_mt(TouchDevice *dev)
 {
 	dev->emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
@@ -109,41 +95,8 @@ static void handle_heatmap(IptsdContext *iptsd, Heatmap *hm)
 
 	touch->emit(EV_SYN, SYN_REPORT, 0);
 }
+*/
 
-Heatmap *get_heatmap(IptsdContext *iptsd)
+void iptsd_touch_input(IptsdContext *iptsd, IptsHeatmap data)
 {
-	auto dim = iptsd->reader->read<struct ipts_heatmap_dim>();
-	return iptsd->devices->touch.get_heatmap(dim.width, dim.height);
-}
-
-void iptsd_touch_handle_input(IptsdContext *iptsd, struct ipts_payload_frame frame)
-{
-	u32 size = 0;
-	Heatmap *hm = nullptr;
-
-	while (size < frame.size) {
-		auto report = iptsd->reader->read<struct ipts_report>();
-
-		switch (report.type) {
-		case IPTS_REPORT_TYPE_TOUCH_HEATMAP_DIM:
-			hm = get_heatmap(iptsd);
-			break;
-		case IPTS_REPORT_TYPE_TOUCH_HEATMAP:
-			if (!hm)
-				break;
-
-			iptsd->reader->read(hm->data.data(), std::size(hm->data));
-			break;
-		default:
-			iptsd->reader->skip(report.size);
-			break;
-		}
-
-		size += report.size + sizeof(struct ipts_report);
-	}
-
-	if (!hm)
-		return;
-
-	handle_heatmap(iptsd, hm);
 }

@@ -4,9 +4,9 @@
 
 #include "context.hpp"
 #include "devices.hpp"
-#include "reader.hpp"
 
 #include <common/types.hpp>
+#include <ipts/parser.hpp>
 #include <ipts/protocol.h>
 
 #include <linux/input-event-codes.h>
@@ -19,7 +19,7 @@ static void lift(TouchDevice dev)
 	dev.emit(EV_KEY, BTN_TOUCH, 0);
 }
 
-static void emit(TouchDevice dev, struct ipts_singletouch_data data)
+static void emit(TouchDevice dev, IptsSingletouchData data)
 {
 	f64 rX = (f64)data.x / IPTS_SINGLETOUCH_MAX_VALUE;
 	f64 rY = (f64)data.y / IPTS_SINGLETOUCH_MAX_VALUE;
@@ -42,10 +42,8 @@ static void emit(TouchDevice dev, struct ipts_singletouch_data data)
 	dev.emit(EV_ABS, ABS_Y, y);
 }
 
-void iptsd_singletouch_handle_input(IptsdContext *iptsd)
+void iptsd_singletouch_input(IptsdContext *iptsd, IptsSingletouchData data)
 {
-	auto data = iptsd->reader->read<struct ipts_singletouch_data>();
-
 	if (data.touch)
 		emit(iptsd->devices->touch, data);
 	else

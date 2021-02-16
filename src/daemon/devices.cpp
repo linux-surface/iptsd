@@ -4,8 +4,6 @@
 
 #include "cone.hpp"
 #include "config.hpp"
-#include "heatmap.hpp"
-#include "touch-processing.hpp"
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
@@ -58,10 +56,9 @@ StylusDevice::StylusDevice(struct ipts_device_info info, IptsdConfig *conf) : Ui
 }
 
 TouchDevice::TouchDevice(struct ipts_device_info info, IptsdConfig *conf)
-	: UinputDevice(), processor(info, conf)
+	: UinputDevice() //, processor(info, conf)
 {
 	this->conf = conf;
-	this->hm = nullptr;
 
 	this->name = "IPTS Touch";
 	this->vendor = info.vendor;
@@ -93,19 +90,6 @@ TouchDevice::TouchDevice(struct ipts_device_info info, IptsdConfig *conf)
 	this->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
 
 	this->create();
-}
-
-Heatmap *TouchDevice::get_heatmap(i32 w, i32 h)
-{
-	if (this->hm && (this->hm->width != w || this->hm->height != h)) {
-		delete this->hm;
-		this->hm = nullptr;
-	}
-
-	if (!this->hm)
-		this->hm = new Heatmap(w, h, this->conf->touch_threshold);
-
-	return this->hm;
 }
 
 DeviceManager::DeviceManager(struct ipts_device_info info, IptsdConfig *conf) : touch(info, conf)
@@ -151,6 +135,6 @@ void DeviceManager::switch_stylus(u32 serial)
 	this->styli.insert(this->styli.end(), stylus);
 	this->active_index = std::size(this->styli) - 1;
 
-	TouchProcessor *tp = &this->touch.processor;
-	tp->rejection_cones.insert(tp->rejection_cones.end(), &stylus->cone);
+	// TouchProcessor *tp = &this->touch.processor;
+	// tp->rejection_cones.insert(tp->rejection_cones.end(), &stylus->cone);
 }

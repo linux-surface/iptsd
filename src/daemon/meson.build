@@ -1,19 +1,11 @@
 sources = [
 	'cone.cpp',
 	'config.cpp',
-	'contact.cpp',
-	'data.cpp',
 	'devices.cpp',
-	'finger.cpp',
-	'heatmap.cpp',
-	'hid.cpp',
 	'main.cpp',
-	'reader.cpp',
-	'payload.cpp',
 	'singletouch.cpp',
 	'stylus.cpp',
 	'touch.cpp',
-	'touch-processing.cpp',
 	'uinput-device.cpp',
 ]
 

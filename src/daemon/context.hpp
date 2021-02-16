@@ -5,22 +5,21 @@
 
 #include "config.hpp"
 #include "devices.hpp"
-#include "reader.hpp"
 
 #include <ipts/control.hpp>
+#include <ipts/parser.hpp>
 
 class IptsdContext {
 public:
 	IptsdConfig *config;
 	IptsdControl *control;
-	IptsdReader *reader;
+	IptsParser *parser;
 	DeviceManager *devices;
 
 	~IptsdContext(void)
 	{
 		delete this->config;
 		delete this->control;
-		delete this->reader;
 		delete this->devices;
 	};
 };

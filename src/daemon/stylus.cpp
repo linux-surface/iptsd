@@ -6,9 +6,9 @@
 #include "config.hpp"
 #include "context.hpp"
 #include "devices.hpp"
-#include "reader.hpp"
 
 #include <common/types.hpp>
+#include <ipts/parser.hpp>
 #include <ipts/protocol.h>
 
 #include <cmath>
@@ -38,7 +38,7 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 	return std::tuple<i32, i32>(tx, ty);
 }
 
-static void update_cone(IptsdContext *iptsd, struct ipts_stylus_data_v2 data)
+static void update_cone(IptsdContext *iptsd, IptsStylusData data)
 {
 	StylusDevice *stylus = iptsd->devices->active_stylus();
 
@@ -51,7 +51,7 @@ static void update_cone(IptsdContext *iptsd, struct ipts_stylus_data_v2 data)
 	stylus->cone.set_tip(x, y);
 }
 
-static void handle_data(IptsdContext *iptsd, struct ipts_stylus_data_v2 data)
+void iptsd_stylus_input(IptsdContext *iptsd, IptsStylusData data)
 {
 	StylusDevice *stylus = iptsd->devices->active_stylus();
 
@@ -82,68 +82,4 @@ static void handle_data(IptsdContext *iptsd, struct ipts_stylus_data_v2 data)
 	stylus->emit(EV_ABS, ABS_TILT_Y, std::get<1>(tilt));
 
 	stylus->emit(EV_SYN, SYN_REPORT, 0);
-}
-
-static void read_v2(IptsdContext *iptsd, u8 count)
-{
-	for (u8 i = 0; i < count; i++) {
-		auto data = iptsd->reader->read<struct ipts_stylus_data_v2>();
-
-		handle_data(iptsd, data);
-	}
-}
-
-static void read_v1(IptsdContext *iptsd, u8 count)
-{
-	struct ipts_stylus_data_v2 v2;
-
-	for (u8 i = 0; i < count; i++) {
-		auto data = iptsd->reader->read<struct ipts_stylus_data_v1>();
-
-		v2.mode = data.mode;
-		v2.x = data.x;
-		v2.y = data.y;
-		v2.pressure = data.pressure * 4;
-		v2.altitude = 0;
-		v2.azimuth = 0;
-		v2.timestamp = 0;
-
-		handle_data(iptsd, v2);
-	}
-}
-
-static void read_report(IptsdContext *iptsd, struct ipts_report report)
-{
-	auto sreport = iptsd->reader->read<struct ipts_stylus_report>();
-	iptsd->devices->switch_stylus(sreport.serial);
-
-	switch (report.type) {
-	case IPTS_REPORT_TYPE_STYLUS_V1:
-		read_v1(iptsd, sreport.elements);
-		break;
-	case IPTS_REPORT_TYPE_STYLUS_V2:
-		read_v2(iptsd, sreport.elements);
-		break;
-	}
-}
-
-void iptsd_stylus_handle_input(IptsdContext *iptsd, struct ipts_payload_frame frame)
-{
-	u32 size = 0;
-
-	while (size < frame.size) {
-		auto report = iptsd->reader->read<struct ipts_report>();
-
-		switch (report.type) {
-		case IPTS_REPORT_TYPE_STYLUS_V1:
-		case IPTS_REPORT_TYPE_STYLUS_V2:
-			read_report(iptsd, report);
-			break;
-		default:
-			iptsd->reader->skip(report.size);
-			break;
-		}
-
-		size += report.size + sizeof(report);
-	}
 }

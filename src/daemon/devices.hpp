@@ -5,8 +5,6 @@
 
 #include "cone.hpp"
 #include "config.hpp"
-#include "heatmap.hpp"
-#include "touch-processing.hpp"
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
@@ -25,13 +23,9 @@ public:
 
 class TouchDevice : public UinputDevice {
 public:
-	Heatmap *hm;
-	TouchProcessor processor;
 	IptsdConfig *conf;
 
 	TouchDevice(struct ipts_device_info, IptsdConfig *conf);
-
-	Heatmap *get_heatmap(i32 w, i32 h);
 };
 
 class DeviceManager {

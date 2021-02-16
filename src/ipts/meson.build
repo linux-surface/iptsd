@@ -1,5 +1,6 @@
 sources = [
 	'control.cpp',
+	'parser.cpp',
 ]
 
 deps = [

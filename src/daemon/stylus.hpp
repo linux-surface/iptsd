@@ -5,8 +5,8 @@
 
 #include "context.hpp"
 
-#include <ipts/protocol.h>
+#include <ipts/parser.hpp>
 
-void iptsd_stylus_handle_input(IptsdContext *iptsd, struct ipts_payload_frame frame);
+void iptsd_stylus_input(IptsdContext *iptsd, IptsStylusData data);
 
 #endif /* _IPTSD_DAEMON_STYLUS_HPP_ */

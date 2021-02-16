@@ -2,19 +2,23 @@
 
 #include "config.hpp"
 #include "context.hpp"
-#include "data.hpp"
 #include "devices.hpp"
-#include "reader.hpp"
+#include "singletouch.hpp"
+#include "stylus.hpp"
+#include "touch.hpp"
 
 #include <common/types.hpp>
 #include <common/utils.hpp>
 #include <ipts/control.hpp>
 #include <ipts/ipts.h>
+#include <ipts/parser.hpp>
 
 #include <chrono>
 #include <csignal>
 #include <cstdio>
+#include <functional>
 #include <iostream>
+#include <stdexcept>
 #include <thread>
 
 using namespace std::chrono;
@@ -33,16 +37,15 @@ static bool iptsd_loop(IptsdContext *iptsd)
 	u32 size = iptsd->control->info.buffer_size;
 
 	while (doorbell > iptsd->control->current_doorbell) {
-		iptsd->control->read(iptsd->reader->data, size);
+		iptsd->control->read(iptsd->parser->buffer(), size);
 
 		try {
-			iptsd_data_handle_input(iptsd);
-		} catch (IptsdReaderException &e) {
+			iptsd->parser->parse();
+		} catch (std::out_of_range &e) {
 			std::cerr << e.what() << std::endl;
 		}
 
 		iptsd->control->send_feedback();
-		iptsd->reader->reset();
 	}
 
 	return diff > 0;
@@ -62,8 +65,12 @@ int main(void)
 	std::printf("Connected to device %04X:%04X\n", info.vendor, info.product);
 
 	iptsd.config = new IptsdConfig(info);
-	iptsd.reader = new IptsdReader(info.buffer_size);
 	iptsd.devices = new DeviceManager(info, iptsd.config);
+	iptsd.parser = new IptsParser(info.buffer_size);
+
+	iptsd.parser->on_singletouch = [&](auto data) { iptsd_singletouch_input(&iptsd, data); };
+	iptsd.parser->on_stylus = [&](auto data) { iptsd_stylus_input(&iptsd, data); };
+	iptsd.parser->on_heatmap = [&](auto data) { iptsd_touch_input(&iptsd, data); };
 
 	while (true) {
 		if (iptsd_loop(&iptsd))

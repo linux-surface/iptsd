@@ -5,8 +5,8 @@
 
 #include "context.hpp"
 
-#include <ipts/protocol.h>
+#include <ipts/parser.hpp>
 
-void iptsd_touch_handle_input(IptsdContext *iptsd, struct ipts_payload_frame frame);
+void iptsd_touch_input(IptsdContext *iptsd, IptsHeatmap data);
 
 #endif /* _IPTSD_DAEMON_TOUCH_HPP_ */
