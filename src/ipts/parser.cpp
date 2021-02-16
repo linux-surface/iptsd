@@ -179,8 +179,8 @@ void IptsParser::parse_stylus_report(struct ipts_report report)
 void IptsParser::parse_heatmap(struct ipts_payload_frame frame)
 {
 	u32 size = 0;
-	bool has_dim;
-	bool has_hm;
+	bool has_dim = false;
+	bool has_hm = false;
 
 	while (size < frame.size) {
 		auto report = this->read<struct ipts_report>();
