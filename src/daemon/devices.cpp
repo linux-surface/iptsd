@@ -110,30 +110,26 @@ DeviceManager::~DeviceManager(void)
 		delete stylus;
 }
 
-StylusDevice *DeviceManager::active_stylus(void)
-{
-	return this->styli[this->active_index];
-}
-
 void DeviceManager::switch_stylus(u32 serial)
 {
 	for (size_t i = 0; i < std::size(this->styli); i++) {
 		if (this->styli[i]->serial != serial)
 			continue;
 
-		this->active_index = i;
+		this->active_stylus = this->styli[i];
 		return;
 	}
 
-	if (std::size(this->styli) > 0 && this->active_stylus()->serial == 0) {
-		this->active_stylus()->serial = serial;
+	if (std::size(this->styli) > 0 && this->active_stylus->serial == 0) {
+		this->active_stylus->serial = serial;
 		return;
 	}
 
 	StylusDevice *stylus = new StylusDevice(this->info, this->conf);
 	stylus->serial = serial;
+
 	this->styli.insert(this->styli.end(), stylus);
-	this->active_index = std::size(this->styli) - 1;
+	this->active_stylus = stylus;
 
 	// TouchProcessor *tp = &this->touch.processor;
 	// tp->rejection_cones.insert(tp->rejection_cones.end(), &stylus->cone);

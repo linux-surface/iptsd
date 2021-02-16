@@ -32,14 +32,14 @@ class DeviceManager {
 public:
 	IptsdConfig *conf;
 	TouchDevice touch;
-	size_t active_index;
 	struct ipts_device_info info;
+
+	StylusDevice *active_stylus;
 	std::vector<StylusDevice *> styli;
 
 	DeviceManager(struct ipts_device_info info, IptsdConfig *conf);
 	~DeviceManager(void);
 
-	StylusDevice *active_stylus(void);
 	void switch_stylus(u32 serial);
 };
 
