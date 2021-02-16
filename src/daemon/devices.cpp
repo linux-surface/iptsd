@@ -17,6 +17,7 @@
 #include <linux/input.h>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 static i32 res(i32 virt, i32 phys)
 {
@@ -106,8 +107,8 @@ DeviceManager::DeviceManager(struct ipts_device_info info, IptsdConfig *conf) : 
 
 DeviceManager::~DeviceManager(void)
 {
-	for (StylusDevice *stylus : this->styli)
-		delete stylus;
+	for (size_t i = 0; i < std::size(this->styli); i++)
+		delete std::exchange(this->styli[i], nullptr);
 }
 
 void DeviceManager::switch_stylus(u32 serial)

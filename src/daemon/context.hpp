@@ -9,6 +9,8 @@
 #include <ipts/control.hpp>
 #include <ipts/parser.hpp>
 
+#include <utility>
+
 class IptsdContext {
 public:
 	IptsdConfig *config;
@@ -18,9 +20,9 @@ public:
 
 	~IptsdContext(void)
 	{
-		delete this->config;
-		delete this->control;
-		delete this->devices;
+		delete std::exchange(this->config, nullptr);
+		delete std::exchange(this->control, nullptr);
+		delete std::exchange(this->devices, nullptr);
 	};
 };
 
