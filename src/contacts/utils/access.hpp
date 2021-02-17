@@ -63,7 +63,7 @@ inline void ensure(index_t size, index_t i)
         return;
     }
 
-    if (0 <= i && i < size) [[gnu::likely]] {
+    if (0 <= i && i < size) {
         return;
     }
 
@@ -77,7 +77,7 @@ inline void ensure(index2_t shape, index2_t i)
         return;
     }
 
-    if (0 <= i.x && i.x < shape.x && 0 <= i.y && i.y < shape.y) [[gnu::likely]] {
+    if (0 <= i.x && i.x < shape.x && 0 <= i.y && i.y < shape.y) {
         return;
     }
 
