@@ -11,6 +11,7 @@ sources = [
 
 deps = [
 	libcommon,
+	libcontacts,
 	libipts,
 	dependency('inih', fallback: ['inih', 'inih_dep']),
 ]

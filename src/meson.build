@@ -52,6 +52,7 @@ add_project_arguments(cxxflags, language: 'cpp')
 add_project_arguments(optflags, language: 'cpp')
 
 subdir('common')
+subdir('contacts')
 subdir('ipts')
 
 subdir('daemon')
