@@ -30,6 +30,7 @@ IptsParser::IptsParser(size_t size)
 
 IptsParser::~IptsParser(void)
 {
+	delete std::exchange(this->heatmap, nullptr);
 	delete[] std::exchange(this->data, nullptr);
 }
 
