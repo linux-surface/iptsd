@@ -180,24 +180,35 @@ void IptsParser::parse_stylus_report(struct ipts_report report)
 void IptsParser::parse_heatmap(struct ipts_payload_frame frame)
 {
 	u32 size = 0;
-	bool has_dim = false;
 	bool has_hm = false;
+	bool has_dim = false;
+	bool has_timestamp = false;
+
+	struct ipts_heatmap_dim dim;
+	struct ipts_heatmap_timestamp time;
 
 	while (size < frame.size) {
 		auto report = this->read<struct ipts_report>();
 
 		switch (report.type) {
-		case IPTS_REPORT_TYPE_TOUCH_HEATMAP_DIM:
-			this->parse_heatmap_dim();
+		case IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP: {
+			time = this->read<struct ipts_heatmap_timestamp>();
+			has_timestamp = true;
+			break;
+		}
+		case IPTS_REPORT_TYPE_HEATMAP_DIM: {
+			dim = this->read<struct ipts_heatmap_dim>();
 			has_dim = true;
 			break;
-		case IPTS_REPORT_TYPE_TOUCH_HEATMAP:
-			if (!has_dim)
+		}
+		case IPTS_REPORT_TYPE_HEATMAP: {
+			if (!has_dim || !has_timestamp)
 				break;
 
-			this->read(this->heatmap->data.data(), this->heatmap->size);
+			this->parse_heatmap_data(dim, time);
 			has_hm = true;
 			break;
+		}
 		default:
 			this->skip(report.size);
 			break;
@@ -213,10 +224,8 @@ void IptsParser::parse_heatmap(struct ipts_payload_frame frame)
 		this->on_heatmap(*this->heatmap);
 }
 
-void IptsParser::parse_heatmap_dim(void)
+void IptsParser::parse_heatmap_data(struct ipts_heatmap_dim dim, struct ipts_heatmap_timestamp time)
 {
-	auto dim = this->read<struct ipts_heatmap_dim>();
-
 	if (this->heatmap) {
 		if (this->heatmap->width != dim.width || this->heatmap->height != dim.height)
 			delete std::exchange(this->heatmap, nullptr);
@@ -225,10 +234,15 @@ void IptsParser::parse_heatmap_dim(void)
 	if (!this->heatmap)
 		this->heatmap = new IptsHeatmap(dim.width, dim.height);
 
+	this->read(this->heatmap->data.data(), this->heatmap->size);
+
 	this->heatmap->y_min = dim.y_min;
 	this->heatmap->y_max = dim.y_max;
 	this->heatmap->x_min = dim.x_min;
 	this->heatmap->x_max = dim.x_max;
 	this->heatmap->z_min = dim.z_min;
 	this->heatmap->z_max = dim.z_max;
+
+	this->heatmap->count = time.count;
+	this->heatmap->timestamp = time.timestamp;
 }

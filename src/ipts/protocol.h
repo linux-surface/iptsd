@@ -3,7 +3,6 @@
 #ifndef _IPTSD_IPTS_PROTOCOL_H_
 #define _IPTSD_IPTS_PROTOCOL_H_
 
-#include <bits/stdint-uintn.h>
 #include <stdint.h>
 
 #define IPTS_DATA_TYPE_PAYLOAD	    0x0
@@ -15,8 +14,9 @@
 #define IPTS_PAYLOAD_FRAME_TYPE_STYLUS	0x6
 #define IPTS_PAYLOAD_FRAME_TYPE_HEATMAP 0x8
 
-#define IPTS_REPORT_TYPE_TOUCH_HEATMAP_DIM 0x403
-#define IPTS_REPORT_TYPE_TOUCH_HEATMAP	   0x425
+#define IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP 0x400
+#define IPTS_REPORT_TYPE_HEATMAP_DIM	   0x403
+#define IPTS_REPORT_TYPE_HEATMAP	   0x425
 #define IPTS_REPORT_TYPE_STYLUS_V1	   0x410
 #define IPTS_REPORT_TYPE_STYLUS_V2	   0x460
 
@@ -98,6 +98,12 @@ struct ipts_heatmap_dim {
 	uint8_t x_max;
 	uint8_t z_min;
 	uint8_t z_max;
+} __attribute__((__packed__));
+
+struct ipts_heatmap_timestamp {
+	uint8_t reserved[2];
+	uint16_t count;
+	uint32_t timestamp;
 } __attribute__((__packed__));
 
 #endif /* _IPTSD_IPTS_PROTOCOL_H_ */

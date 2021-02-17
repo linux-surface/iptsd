@@ -41,6 +41,8 @@ public:
 	u8 z_min;
 	u8 z_max;
 	u16 size;
+	u16 count;
+	u32 timestamp;
 
 	std::vector<u8> data;
 
@@ -74,7 +76,7 @@ private:
 	void parse_stylus_report(struct ipts_report report);
 
 	void parse_heatmap(struct ipts_payload_frame frame);
-	void parse_heatmap_dim(void);
+	void parse_heatmap_data(struct ipts_heatmap_dim dim, struct ipts_heatmap_timestamp time);
 
 public:
 	std::function<void(IptsSingletouchData)> on_singletouch;
