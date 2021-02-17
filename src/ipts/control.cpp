@@ -13,7 +13,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-IptsdControl::IptsdControl(void)
+IptsControl::IptsControl(void)
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++) {
 		std::string name("/dev/ipts/" + std::to_string(i));
@@ -32,18 +32,18 @@ IptsdControl::IptsdControl(void)
 	this->current_doorbell = this->doorbell();
 }
 
-IptsdControl::~IptsdControl(void)
+IptsControl::~IptsControl(void)
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++)
 		close(this->files[i]);
 }
 
-int IptsdControl::current(void)
+int IptsControl::current(void)
 {
 	return this->files[this->current_doorbell % IPTS_BUFFERS];
 }
 
-bool IptsdControl::ready(void)
+bool IptsControl::ready(void)
 {
 	u8 ready = 0;
 
@@ -54,7 +54,7 @@ bool IptsdControl::ready(void)
 	return ready > 0;
 }
 
-void IptsdControl::wait_for_device(void)
+void IptsControl::wait_for_device(void)
 {
 	for (int i = 0; i < 5; i++) {
 		if (this->ready())
@@ -64,7 +64,7 @@ void IptsdControl::wait_for_device(void)
 	}
 }
 
-void IptsdControl::get_device_info(void)
+void IptsControl::get_device_info(void)
 {
 	this->wait_for_device();
 
@@ -73,7 +73,7 @@ void IptsdControl::get_device_info(void)
 		throw Utils::cerror("Failed to get device info");
 }
 
-void IptsdControl::send_feedback(int file)
+void IptsControl::send_feedback(int file)
 {
 	this->wait_for_device();
 
@@ -82,7 +82,7 @@ void IptsdControl::send_feedback(int file)
 		throw Utils::cerror("Failed to send feedback");
 }
 
-void IptsdControl::send_feedback(void)
+void IptsControl::send_feedback(void)
 {
 	int file = this->current();
 	this->send_feedback(file);
@@ -90,13 +90,13 @@ void IptsdControl::send_feedback(void)
 	this->current_doorbell++;
 }
 
-void IptsdControl::flush(void)
+void IptsControl::flush(void)
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++)
 		this->send_feedback(this->files[i]);
 }
 
-u32 IptsdControl::doorbell(void)
+u32 IptsControl::doorbell(void)
 {
 	this->wait_for_device();
 
@@ -120,7 +120,7 @@ u32 IptsdControl::doorbell(void)
 	return doorbell;
 }
 
-int IptsdControl::read(void *buf, size_t count)
+int IptsControl::read(void *buf, size_t count)
 {
 	this->wait_for_device();
 
@@ -131,7 +131,7 @@ int IptsdControl::read(void *buf, size_t count)
 	return ret;
 }
 
-void IptsdControl::reset(void)
+void IptsControl::reset(void)
 {
 	this->wait_for_device();
 

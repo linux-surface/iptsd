@@ -58,7 +58,7 @@ int main(void)
 	should_reset = false;
 	Utils::signal(SIGUSR1, signal_reset);
 
-	iptsd.control = new IptsdControl();
+	iptsd.control = new IptsControl();
 	struct ipts_device_info info = iptsd.control->info;
 
 	system_clock::time_point timeout = system_clock::now() + 5s;

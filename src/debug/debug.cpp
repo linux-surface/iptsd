@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	IptsdControl ctrl;
+	IptsControl ctrl;
 
 	std::printf("Vendor:       %04X\n", ctrl.info.vendor);
 	std::printf("Product:      %04X\n", ctrl.info.product);

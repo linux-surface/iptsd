@@ -14,7 +14,7 @@
 class IptsdContext {
 public:
 	IptsdConfig *config;
-	IptsdControl *control;
+	IptsControl *control;
 	IptsParser *parser;
 	DeviceManager *devices;
 

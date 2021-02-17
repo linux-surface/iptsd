@@ -9,13 +9,13 @@
 
 #include <cstddef>
 
-class IptsdControl {
+class IptsControl {
 public:
 	struct ipts_device_info info;
 	u32 current_doorbell;
 
-	IptsdControl(void);
-	~IptsdControl(void);
+	IptsControl(void);
+	~IptsControl(void);
 
 	void send_feedback(void);
 	u32 doorbell(void);
