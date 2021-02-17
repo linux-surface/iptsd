@@ -16,6 +16,7 @@
 #include <chrono>
 #include <csignal>
 #include <cstdio>
+#include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <stdexcept>
@@ -24,10 +25,16 @@
 using namespace std::chrono;
 
 bool should_reset;
+bool should_exit;
 
 static void signal_reset(int sig)
 {
 	should_reset = true;
+}
+
+static void signal_exit(int sig)
+{
+	should_exit = true;
 }
 
 static bool iptsd_loop(IptsdContext *iptsd)
@@ -58,6 +65,10 @@ int main(void)
 	should_reset = false;
 	Utils::signal(SIGUSR1, signal_reset);
 
+	should_exit = false;
+	Utils::signal(SIGTERM, signal_exit);
+	Utils::signal(SIGINT, signal_exit);
+
 	iptsd.control = new IptsControl();
 	struct ipts_device_info info = iptsd.control->info;
 
@@ -82,6 +93,9 @@ int main(void)
 			iptsd.control->reset();
 			should_reset = false;
 		}
+
+		if (should_exit)
+			return EXIT_FAILURE;
 	}
 
 	return 0;
