@@ -3,6 +3,7 @@
 #ifndef _IPTSD_IPTS_PROTOCOL_H_
 #define _IPTSD_IPTS_PROTOCOL_H_
 
+#include <bits/stdint-uintn.h>
 #include <stdint.h>
 
 #define IPTS_DATA_TYPE_PAYLOAD	    0x0
@@ -91,7 +92,12 @@ struct ipts_singletouch_data {
 struct ipts_heatmap_dim {
 	uint8_t height;
 	uint8_t width;
-	uint8_t reserved[6];
+	uint8_t y_min;
+	uint8_t y_max;
+	uint8_t x_min;
+	uint8_t x_max;
+	uint8_t z_min;
+	uint8_t z_max;
 } __attribute__((__packed__));
 
 #endif /* _IPTSD_IPTS_PROTOCOL_H_ */

@@ -224,4 +224,11 @@ void IptsParser::parse_heatmap_dim(void)
 
 	if (!this->heatmap)
 		this->heatmap = new IptsHeatmap(dim.width, dim.height);
+
+	this->heatmap->y_min = dim.y_min;
+	this->heatmap->y_max = dim.y_max;
+	this->heatmap->x_min = dim.x_min;
+	this->heatmap->x_max = dim.x_max;
+	this->heatmap->z_min = dim.z_min;
+	this->heatmap->z_max = dim.z_max;
 }

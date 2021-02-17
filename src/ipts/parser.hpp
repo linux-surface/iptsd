@@ -34,6 +34,12 @@ class IptsHeatmap {
 public:
 	u8 width;
 	u8 height;
+	u8 y_min;
+	u8 y_max;
+	u8 x_min;
+	u8 x_max;
+	u8 z_min;
+	u8 z_max;
 	u16 size;
 
 	std::vector<u8> data;
