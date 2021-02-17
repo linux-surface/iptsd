@@ -19,6 +19,7 @@ IptsHeatmap::IptsHeatmap(u8 width, u8 height) : data(width * height)
 
 IptsParser::IptsParser(size_t size)
 {
+	this->current = 0;
 	this->size = size;
 	this->heatmap = nullptr;
 	this->data = new u8[size];
