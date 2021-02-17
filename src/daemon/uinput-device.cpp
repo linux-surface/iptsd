@@ -52,7 +52,7 @@ void UinputDevice::set_absinfo(u16 code, i32 min, i32 max, i32 res)
 {
 	struct uinput_abs_setup abs;
 
-	memset(&abs, 0, sizeof(abs));
+	std::memset(&abs, 0, sizeof(abs));
 
 	abs.code = code;
 	abs.absinfo.minimum = min;
@@ -68,13 +68,13 @@ void UinputDevice::create(void)
 {
 	struct uinput_setup setup;
 
-	memset(&setup, 0, sizeof(setup));
+	std::memset(&setup, 0, sizeof(setup));
 
 	setup.id.bustype = BUS_VIRTUAL;
 	setup.id.vendor = this->vendor;
 	setup.id.product = this->product;
 	setup.id.version = this->version;
-	strncpy(setup.name, this->name.c_str(), this->name.length());
+	std::strncpy(setup.name, this->name.c_str(), this->name.length());
 
 	int ret = ioctl(this->fd, UI_DEV_SETUP, &setup);
 	if (ret == -1)
@@ -89,7 +89,7 @@ void UinputDevice::emit(u16 type, u16 key, i32 value)
 {
 	struct input_event ie;
 
-	memset(&ie, 0, sizeof(ie));
+	std::memset(&ie, 0, sizeof(ie));
 
 	ie.type = type;
 	ie.code = key;

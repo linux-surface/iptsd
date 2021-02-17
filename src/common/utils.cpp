@@ -11,7 +11,7 @@ void Utils::signal(int signum, void (*handler)(int))
 {
 	struct sigaction sig;
 
-	memset(&sig, 0, sizeof(sig));
+	std::memset(&sig, 0, sizeof(sig));
 	sig.sa_handler = handler;
 
 	int ret = sigaction(signum, &sig, nullptr);

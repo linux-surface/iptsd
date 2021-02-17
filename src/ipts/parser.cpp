@@ -63,7 +63,7 @@ void IptsParser::skip(size_t size)
 void IptsParser::reset(void)
 {
 	this->current = 0;
-	memset(this->data, 0, this->size);
+	std::memset(this->data, 0, this->size);
 }
 
 void IptsParser::parse(void)
