@@ -91,7 +91,7 @@ void IptsdConfig::load_dir(std::string name, struct ipts_device_info info)
 IptsdConfig::IptsdConfig(struct ipts_device_info info)
 {
 	this->load_dir(IPTSD_CONFIG_DIR, info);
-	this->load_dir("./config", info);
+	this->load_dir("./etc/config", info);
 
 	if (std::filesystem::exists(IPTSD_CONFIG_FILE))
 		ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
