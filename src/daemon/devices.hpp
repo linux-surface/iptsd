@@ -9,9 +9,7 @@
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
-#include <ipts/ipts.h>
 
-#include <cstddef>
 #include <vector>
 
 class StylusDevice : public UinputDevice {

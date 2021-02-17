@@ -12,6 +12,7 @@
 
 #include <climits>
 #include <cmath>
+#include <cstddef>
 #include <iterator>
 #include <linux/input-event-codes.h>
 #include <linux/input.h>

@@ -15,6 +15,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <iterator>
 #include <utility>
 #include <vector>
 

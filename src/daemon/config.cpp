@@ -2,8 +2,6 @@
 
 #include "config.hpp"
 
-#include "constants.hpp"
-
 #include <common/types.hpp>
 #include <ipts/ipts.h>
 
