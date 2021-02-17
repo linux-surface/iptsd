@@ -3,10 +3,15 @@
 #include "touch.hpp"
 
 #include "context.hpp"
+#include "devices.hpp"
+#include "touch-manager.hpp"
 
 #include <ipts/parser.hpp>
 
-/*
+#include <linux/input-event-codes.h>
+#include <linux/input.h>
+#include <vector>
+
 static void lift_mt(TouchDevice *dev)
 {
 	dev->emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
@@ -39,15 +44,10 @@ static void emit_st(TouchDevice *dev, TouchInput in)
 	dev->emit(EV_ABS, ABS_Y, in.y);
 }
 
-static void handle_single(TouchDevice *touch, size_t max, bool blocked)
+static void handle_single(TouchDevice *touch, std::vector<TouchInput> &inputs)
 {
-	for (size_t i = 0; i < max; i++) {
-		TouchInput in = touch->processor.inputs[i];
-
-		if (in.index != -1 && !in.is_stable)
-			return;
-
-		if (in.index == -1 || in.is_palm || blocked)
+	for (TouchInput &in : inputs) {
+		if (in.index == -1)
 			continue;
 
 		emit_st(touch, in);
@@ -57,17 +57,12 @@ static void handle_single(TouchDevice *touch, size_t max, bool blocked)
 	lift_st(touch);
 }
 
-static void handle_multi(TouchDevice *touch, size_t max, bool blocked)
+static void handle_multi(TouchDevice *touch, std::vector<TouchInput> &inputs)
 {
-	for (size_t i = 0; i < max; i++) {
-		TouchInput in = touch->processor.inputs[i];
-
+	for (TouchInput &in : inputs) {
 		touch->emit(EV_ABS, ABS_MT_SLOT, in.slot);
 
-		if (in.index != -1 && !in.is_stable)
-			continue;
-
-		if (in.index == -1 || in.is_palm || blocked) {
+		if (in.index == -1) {
 			lift_mt(touch);
 			continue;
 		}
@@ -76,27 +71,14 @@ static void handle_multi(TouchDevice *touch, size_t max, bool blocked)
 	}
 }
 
-static void handle_heatmap(IptsdContext *iptsd, Heatmap *hm)
-{
-	bool blocked = false;
-
-	TouchDevice *touch = &iptsd->devices->touch;
-	u8 max_contacts = iptsd->control->info.max_contacts;
-
-	touch->processor.process(hm);
-
-	if (iptsd->config->block_on_palm) {
-		for (u8 i = 0; i < max_contacts; i++)
-			blocked = blocked || touch->processor.inputs[i].is_palm;
-	}
-
-	handle_multi(touch, max_contacts, blocked);
-	handle_single(touch, max_contacts, blocked);
-
-	touch->emit(EV_SYN, SYN_REPORT, 0);
-}
-*/
-
 void iptsd_touch_input(IptsdContext *iptsd, IptsHeatmap data)
 {
+	TouchDevice *touch = &iptsd->devices->touch;
+
+	std::vector<TouchInput> inputs = touch->manager.process(data);
+
+	handle_multi(touch, inputs);
+	handle_single(touch, inputs);
+
+	touch->emit(EV_SYN, SYN_REPORT, 0);
 }

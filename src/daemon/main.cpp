@@ -65,7 +65,7 @@ int main(void)
 	std::printf("Connected to device %04X:%04X\n", info.vendor, info.product);
 
 	iptsd.config = new IptsdConfig(info);
-	iptsd.devices = new DeviceManager(info, iptsd.config);
+	iptsd.devices = new DeviceManager(iptsd.config);
 	iptsd.parser = new IptsParser(info.buffer_size);
 
 	iptsd.parser->on_singletouch = [&](auto data) { iptsd_singletouch_input(&iptsd, data); };

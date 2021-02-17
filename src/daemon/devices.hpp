@@ -5,6 +5,7 @@
 
 #include "cone.hpp"
 #include "config.hpp"
+#include "touch-manager.hpp"
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
@@ -18,26 +19,25 @@ public:
 	Cone cone;
 	u32 serial;
 
-	StylusDevice(struct ipts_device_info info, IptsdConfig *conf);
+	StylusDevice(IptsdConfig *conf);
 };
 
 class TouchDevice : public UinputDevice {
 public:
-	IptsdConfig *conf;
+	TouchManager manager;
 
-	TouchDevice(struct ipts_device_info, IptsdConfig *conf);
+	TouchDevice(IptsdConfig *conf);
 };
 
 class DeviceManager {
 public:
 	IptsdConfig *conf;
-	TouchDevice touch;
-	struct ipts_device_info info;
 
+	TouchDevice touch;
 	StylusDevice *active_stylus;
 	std::vector<StylusDevice *> styli;
 
-	DeviceManager(struct ipts_device_info info, IptsdConfig *conf);
+	DeviceManager(IptsdConfig *conf);
 	~DeviceManager(void);
 
 	void switch_stylus(u32 serial);

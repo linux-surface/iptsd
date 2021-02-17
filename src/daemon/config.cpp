@@ -68,15 +68,6 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	if (name == "Height")
 		config->height = std::stoi(value);
 
-	if (name == "BlockOnPalm")
-		config->block_on_palm = to_bool(value);
-
-	if (name == "TouchThreshold")
-		config->touch_threshold = std::stoi(value);
-
-	if (name == "StabilityThreshold")
-		config->stability_threshold = std::stof(value);
-
 	return 1;
 }
 
@@ -101,12 +92,11 @@ void IptsdConfig::load_dir(std::string name, struct ipts_device_info info)
 
 IptsdConfig::IptsdConfig(struct ipts_device_info info)
 {
-	this->touch_threshold = CONTACT_TOUCH_THRESHOLD;
-	this->stability_threshold = CONTACT_STABILITY_THRESHOLD;
-
 	this->load_dir(IPTSD_CONFIG_DIR, info);
 	this->load_dir("./config", info);
 
 	if (std::filesystem::exists(IPTSD_CONFIG_FILE))
 		ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
+
+	this->info = info;
 }

@@ -30,7 +30,7 @@ AlignConsecutiveMacros: true
 Cpp11BracedListStyle: false
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex: '^<(common|ipts)/'
+  - Regex: '^<(common|contacts|ipts)/'
     Priority: 2
 KeepEmptyLinesAtTheStartOfBlocks: false
 SpacesInContainerLiterals: false

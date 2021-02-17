@@ -16,9 +16,7 @@ public:
 	i32 width;
 	i32 height;
 
-	bool block_on_palm;
-	i32 touch_threshold;
-	f32 stability_threshold;
+	struct ipts_device_info info;
 
 	IptsdConfig(struct ipts_device_info info);
 
