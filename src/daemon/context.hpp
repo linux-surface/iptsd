@@ -22,6 +22,7 @@ public:
 	{
 		delete std::exchange(this->config, nullptr);
 		delete std::exchange(this->control, nullptr);
+		delete std::exchange(this->parser, nullptr);
 		delete std::exchange(this->devices, nullptr);
 	};
 };
