@@ -51,6 +51,7 @@ void TouchManager::resize(u8 width, u8 height)
 
 		this->hm = new container::image<f32>(size);
 		this->processor = new touch_processor(size);
+		this->diagonal = std::sqrt(width * width + height * height);
 	}
 }
 
@@ -64,8 +65,8 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 
 	std::vector<touch_point> contacts = this->processor->process(*this->hm);
 
-	size_t count = std::min(std::size(contacts), (size_t)this->conf->info.max_contacts);
-	i32 diag = std::sqrt(data.width * data.width + data.height + data.height);
+	size_t max_contacts = (size_t)this->conf->info.max_contacts;
+	size_t count = std::min(std::size(contacts), max_contacts);
 
 	for (size_t i = 0; i < count; i++) {
 		f64 x = (contacts[i].mean.x + 0.5) / data.width;
@@ -84,8 +85,8 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 		f64 s1 = std::sqrt(eigen.w[0]);
 		f64 s2 = std::sqrt(eigen.w[1]);
 
-		f32 d1 = 4 * s1 / diag;
-		f32 d2 = 4 * s2 / diag;
+		f32 d1 = 4 * s1 / this->diagonal;
+		f32 d2 = 4 * s2 / this->diagonal;
 
 		f32 major = std::max(d1, d2);
 		f32 minor = std::min(d1, d2);
@@ -105,17 +106,12 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 		this->inputs[i].orientation = (i32)(angle / M_PI * 180);
 
 		this->inputs[i].index = i;
-		this->inputs[i].slot = i;
+		this->inputs[i].active = true;
 	}
 
-	for (size_t i = count; i < std::size(this->inputs); i++) {
-		this->inputs[i].x = 0;
-		this->inputs[i].y = 0;
-		this->inputs[i].orientation = 0;
-		this->inputs[i].major = 0;
-		this->inputs[i].minor = 0;
-		this->inputs[i].slot = i;
-		this->inputs[i].index = -1;
+	for (size_t i = count; i < max_contacts; i++) {
+		this->inputs[i].index = i;
+		this->inputs[i].active = false;
 	}
 
 	// TODO: Finger Tracking

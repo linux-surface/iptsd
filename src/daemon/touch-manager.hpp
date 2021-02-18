@@ -20,13 +20,15 @@ public:
 	i32 minor;
 	i32 orientation;
 	i32 index;
-	i32 slot;
+	bool active;
 };
 
 class TouchManager {
 public:
+	i32 diagonal;
 	container::image<f32> *hm;
 	touch_processor *processor;
+
 	std::vector<TouchInput> inputs;
 
 	IptsdConfig *conf;

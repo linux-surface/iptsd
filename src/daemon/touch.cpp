@@ -47,7 +47,7 @@ static void emit_st(TouchDevice *dev, TouchInput in)
 static void handle_single(TouchDevice *touch, std::vector<TouchInput> &inputs)
 {
 	for (TouchInput &in : inputs) {
-		if (in.index == -1)
+		if (!in.active)
 			continue;
 
 		emit_st(touch, in);
@@ -60,9 +60,9 @@ static void handle_single(TouchDevice *touch, std::vector<TouchInput> &inputs)
 static void handle_multi(TouchDevice *touch, std::vector<TouchInput> &inputs)
 {
 	for (TouchInput &in : inputs) {
-		touch->emit(EV_ABS, ABS_MT_SLOT, in.slot);
+		touch->emit(EV_ABS, ABS_MT_SLOT, in.index);
 
-		if (in.index == -1) {
+		if (!in.active) {
 			lift_mt(touch);
 			continue;
 		}
