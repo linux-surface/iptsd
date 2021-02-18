@@ -3,7 +3,6 @@
 #ifndef _IPTSD_DAEMON_DEVICES_HPP_
 #define _IPTSD_DAEMON_DEVICES_HPP_
 
-#include "cone.hpp"
 #include "config.hpp"
 #include "touch-manager.hpp"
 #include "uinput-device.hpp"
@@ -14,7 +13,6 @@
 
 class StylusDevice : public UinputDevice {
 public:
-	Cone cone;
 	u32 serial;
 
 	StylusDevice(IptsdConfig *conf);

@@ -1,5 +1,4 @@
 sources = [
-	'cone.cpp',
 	'config.cpp',
 	'devices.cpp',
 	'main.cpp',

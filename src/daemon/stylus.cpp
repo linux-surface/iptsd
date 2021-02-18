@@ -2,7 +2,6 @@
 
 #include "stylus.hpp"
 
-#include "cone.hpp"
 #include "config.hpp"
 #include "context.hpp"
 #include "devices.hpp"
@@ -38,19 +37,6 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 	return std::tuple<i32, i32>(tx, ty);
 }
 
-static void update_cone(IptsdContext *iptsd, IptsStylusData data)
-{
-	StylusDevice *stylus = iptsd->devices->active_stylus;
-
-	f32 x = (f32)data.x / IPTS_MAX_X;
-	f32 y = (f32)data.y / IPTS_MAX_Y;
-
-	x = x * iptsd->config->width;
-	y = y * iptsd->config->height;
-
-	stylus->cone.set_tip(x, y);
-}
-
 void iptsd_stylus_input(IptsdContext *iptsd, IptsStylusData data)
 {
 	StylusDevice *stylus = iptsd->devices->active_stylus;
@@ -62,9 +48,6 @@ void iptsd_stylus_input(IptsdContext *iptsd, IptsStylusData data)
 
 	bool btn_pen = prox && !rubber;
 	bool btn_rubber = prox && rubber;
-
-	if (prox)
-		update_cone(iptsd, data);
 
 	std::tuple<i32, i32> tilt = get_tilt(data.altitude, data.azimuth);
 

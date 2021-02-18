@@ -2,7 +2,6 @@
 
 #include "devices.hpp"
 
-#include "cone.hpp"
 #include "config.hpp"
 #include "uinput-device.hpp"
 
@@ -126,7 +125,4 @@ void DeviceManager::switch_stylus(u32 serial)
 
 	this->styli.insert(this->styli.end(), stylus);
 	this->active_stylus = stylus;
-
-	// TouchProcessor *tp = &this->touch.processor;
-	// tp->rejection_cones.insert(tp->rejection_cones.end(), &stylus->cone);
 }
