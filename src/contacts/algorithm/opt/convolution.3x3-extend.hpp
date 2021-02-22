@@ -5,11 +5,10 @@
 #include "algorithm/convolution.hpp"
 
 
-namespace alg::conv::impl {
+namespace iptsd::alg::conv::impl {
 
 template<typename T, typename S>
-void conv_3x3_extend(container::image<T>& out, container::image<T> const& data,
-                     container::kernel<S, 3, 3> const& kern)
+void conv_3x3_extend(Image<T>& out, Image<T> const& data, Kernel<S, 3, 3> const& kern)
 {
     // strides
     auto const stride_d = data.stride();
@@ -211,4 +210,4 @@ void conv_3x3_extend(container::image<T>& out, container::image<T> const& data,
     }
 }
 
-} /* namespace alg::conv::impl */
+} /* namespace iptsd::alg::conv::impl */

@@ -5,10 +5,10 @@
 #include "algorithm/hessian.hpp"
 
 
-namespace alg::hess::impl {
+namespace iptsd::alg::hess::impl {
 
 template<typename T>
-void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> const& in)
+void hessian_zero(Image<Mat2s<T>>& out, Image<T> const& in)
 {
     // kernels
     auto const& kxx = conv::kernels::sobel3_xx<T>;
@@ -33,7 +33,7 @@ void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> c
 
     // x = 0, y = 0
     {
-        auto h = math::num<math::mat2s_t<T>>::zero;
+        auto h = math::num<Mat2s<T>>::zero;
 
         h.xx += d(i,  0,  0) * k(kxx,  0,  0);
         h.xy += d(i,  0,  0) * k(kxy,  0,  0);
@@ -57,7 +57,7 @@ void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> c
 
     // 0 < x < n - 1, y = 0
     for (; i < in.size().x - 1; ++i) {
-        auto h = math::num<math::mat2s_t<T>>::zero;
+        auto h = math::num<Mat2s<T>>::zero;
 
         h.xx += d(i, -1,  0) * k(kxx, -1,  0);
         h.xy += d(i, -1,  0) * k(kxy, -1,  0);
@@ -88,7 +88,7 @@ void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> c
 
     // x = n - 1, y = 0
     {
-        auto h = math::num<math::mat2s_t<T>>::zero;
+        auto h = math::num<Mat2s<T>>::zero;
 
         h.xx += d(i, -1,  0) * k(kxx, -1,  0);
         h.xy += d(i, -1,  0) * k(kxy, -1,  0);
@@ -114,7 +114,7 @@ void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> c
     while (i < in.size().x * (in.size().y - 1)) {
         // x = 0
         {
-            auto h = math::num<math::mat2s_t<T>>::zero;
+            auto h = math::num<Mat2s<T>>::zero;
 
             h.xx += d(i,  0, -1) * k(kxx,  0, -1);
             h.xy += d(i,  0, -1) * k(kxy,  0, -1);
@@ -147,7 +147,7 @@ void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> c
         // 0 < x < n - 1
         auto const limit = i + in.size().x - 2;
         for (; i < limit; ++i) {
-            auto h = math::num<math::mat2s_t<T>>::zero;
+            auto h = math::num<Mat2s<T>>::zero;
 
             h.xx += d(i, -1, -1) * k(kxx, -1, -1);
             h.xy += d(i, -1, -1) * k(kxy, -1, -1);
@@ -190,7 +190,7 @@ void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> c
 
         // x = n - 1
         {
-            auto h = math::num<math::mat2s_t<T>>::zero;
+            auto h = math::num<Mat2s<T>>::zero;
 
             h.xx += d(i, -1, -1) * k(kxx, -1, -1);
             h.xy += d(i, -1, -1) * k(kxy, -1, -1);
@@ -223,7 +223,7 @@ void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> c
 
     // x = 0, y = n - 1
     {
-        auto h = math::num<math::mat2s_t<T>>::zero;
+        auto h = math::num<Mat2s<T>>::zero;
 
         h.xx += d(i,  0, -1) * k(kxx,  0, -1);
         h.xy += d(i,  0, -1) * k(kxy,  0, -1);
@@ -246,8 +246,8 @@ void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> c
     ++i;
 
     // 0 < x < n - 1, y = n - 1
-    for (; i < in.size().product() - 1; ++i) {
-        auto h = math::num<math::mat2s_t<T>>::zero;
+    for (; i < in.size().span() - 1; ++i) {
+        auto h = math::num<Mat2s<T>>::zero;
 
         h.xx += d(i, -1, -1) * k(kxx, -1, -1);
         h.xy += d(i, -1, -1) * k(kxy, -1, -1);
@@ -278,7 +278,7 @@ void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> c
 
     // x = n - 1, y = n - 1
     {
-        auto h = math::num<math::mat2s_t<T>>::zero;
+        auto h = math::num<Mat2s<T>>::zero;
 
         h.xx += d(i, -1, -1) * k(kxx, -1, -1);
         h.xy += d(i, -1, -1) * k(kxy, -1, -1);
@@ -300,4 +300,4 @@ void hessian_zero(container::image<math::mat2s_t<T>>& out, container::image<T> c
     }
 }
 
-} /* namespace alg::hess::impl */
+} /* namespace iptsd::alg::hess::impl */

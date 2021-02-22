@@ -4,10 +4,10 @@
 #include "container/image.hpp"
 
 
-namespace alg {
+namespace iptsd::alg {
 
 template<int C=8, typename T, typename O>
-void find_local_maximas(container::image<T> const& data, T threshold, O output_iter)
+void find_local_maximas(Image<T> const& data, T threshold, O output_iter)
 {
     static_assert(C == 4 || C == 8);
 
@@ -194,7 +194,7 @@ void find_local_maximas(container::image<T> const& data, T threshold, O output_i
     ++i;
 
     // 0 < x < n - 1, y = n - 1
-    for (; i < data.size().product() - 1; ++i) {
+    for (; i < data.size().span() - 1; ++i) {
         if (data[i] <= threshold)
             continue;
 
@@ -236,4 +236,4 @@ void find_local_maximas(container::image<T> const& data, T threshold, O output_i
     }
 }
 
-} /* namespace alg */
+} /* namespace iptsd::alg */

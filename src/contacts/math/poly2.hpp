@@ -6,7 +6,7 @@
 #include <cmath>
 
 
-namespace math {
+namespace iptsd::math {
 
 template<class T>
 auto solve_quadratic(T a, T b, T c, T eps=num<T>::eps) -> std::array<T, 2>
@@ -28,4 +28,4 @@ auto solve_quadratic(T a, T b, T c, T eps=num<T>::eps) -> std::array<T, 2>
     return { r1, r2 };
 }
 
-} /* namespace math */
+} /* namespace iptsd::math */

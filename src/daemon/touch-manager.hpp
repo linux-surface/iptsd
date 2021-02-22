@@ -26,8 +26,8 @@ public:
 class TouchManager {
 public:
 	i32 diagonal;
-	container::image<f32> *hm;
-	touch_processor *processor;
+	iptsd::container::Image<f32> *hm;
+	iptsd::TouchProcessor *processor;
 
 	std::vector<TouchInput> inputs;
 

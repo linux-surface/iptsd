@@ -4,10 +4,10 @@
 #include "utils/access.hpp"
 
 
-namespace math {
+namespace iptsd::math {
 
 template<class T>
-struct mat6_t {
+struct Mat6 {
 public:
     std::array<T, 6 * 6> data;
 
@@ -15,7 +15,7 @@ public:
     using value_type = T;
 
 public:
-    constexpr static auto identity() -> mat6_t<T>;
+    constexpr static auto identity() -> Mat6<T>;
 
     constexpr auto operator[] (index2_t i) -> T&;
     constexpr auto operator[] (index2_t i) const -> T const&;
@@ -23,7 +23,7 @@ public:
 
 
 template<class T>
-inline constexpr auto mat6_t<T>::identity() -> mat6_t<T>
+inline constexpr auto Mat6<T>::identity() -> Mat6<T>
 {
     auto const _0 = num<T>::zero;
     auto const _1 = num<T>::one;
@@ -39,7 +39,7 @@ inline constexpr auto mat6_t<T>::identity() -> mat6_t<T>
 }
 
 template<class T>
-inline constexpr auto mat6_t<T>::operator[] (index2_t i) -> T&
+inline constexpr auto Mat6<T>::operator[] (index2_t i) -> T&
 {
     auto const ravel = [](index2_t shape, index2_t i) {
         return i.x * shape.y + i.y;
@@ -49,7 +49,7 @@ inline constexpr auto mat6_t<T>::operator[] (index2_t i) -> T&
 }
 
 template<class T>
-inline constexpr auto mat6_t<T>::operator[] (index2_t i) const -> T const&
+inline constexpr auto Mat6<T>::operator[] (index2_t i) const -> T const&
 {
     auto const ravel = [](index2_t shape, index2_t i) {
         return i.x * shape.y + i.y;
@@ -58,4 +58,12 @@ inline constexpr auto mat6_t<T>::operator[] (index2_t i) const -> T const&
     return utils::access::access<T>(data, ravel, { 6, 6 }, i);
 }
 
-} /* namespace math */
+} /* namespace iptsd::math */
+
+
+/* imports */
+namespace iptsd {
+
+using math::Mat6;
+
+} /* namespace iptsd */

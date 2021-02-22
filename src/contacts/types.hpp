@@ -5,6 +5,8 @@
 
 #include <common/types.hpp>
 
+namespace iptsd {
+
 using index_t = int;
 
 struct index2_t {
@@ -17,7 +19,7 @@ public:
     constexpr auto operator+= (index2_t const& v) -> index2_t&;
     constexpr auto operator-= (index2_t const& v) -> index2_t&;
 
-    constexpr auto product() const -> index_t;
+    constexpr auto span() const -> index_t;
 };
 
 
@@ -36,7 +38,7 @@ inline constexpr auto index2_t::operator-= (index2_t const& v) -> index2_t&
 }
 
 
-inline constexpr auto index2_t::product() const -> index_t
+inline constexpr auto index2_t::span() const -> index_t
 {
     return this->x * this->y;
 }
@@ -66,3 +68,5 @@ inline constexpr auto operator- (index2_t const& a, index2_t const& b) -> index2
 {
     return { a.x - b.x, a.y - b.y };
 }
+
+} /* namespace iptsd */

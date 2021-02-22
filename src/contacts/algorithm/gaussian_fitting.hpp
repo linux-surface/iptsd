@@ -12,28 +12,30 @@
 #include "math/mat6.hpp"
 #include "math/sle6.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <array>
 
 
-namespace alg::gfit {
+namespace iptsd::alg::gfit {
 
 template<class T>
-inline constexpr auto const range = math::vec2_t<T> { static_cast<T>(1), static_cast<T>(1) };
+inline constexpr auto const range = Vec2<T> { static_cast<T>(1), static_cast<T>(1) };
 
 
-struct bbox {
+struct BBox {
     index_t xmin, xmax;
     index_t ymin, ymax;
 };
 
 template<class T>
-struct parameters {
-    bool                valid;      // flag to invalidate parameters
-    T                   scale;      // alpha
-    math::vec2_t<T>     mean;       // mu
-    math::mat2s_t<T>    prec;       // precision matrix, aka. inverse covariance matrix, aka. sigma^-1
-    bbox                bounds;     // local bounds for sampling
-    container::image<T> weights;    // local weights for sampling
+struct Parameters {
+    bool     valid;     // flag to invalidate parameters
+    T        scale;     // alpha
+    Vec2<T>  mean;      // mu
+    Mat2s<T> prec;      // precision matrix, aka. inverse covariance matrix, aka. sigma^-1
+    BBox     bounds;    // local bounds for sampling
+    Image<T> weights;   // local weights for sampling
 };
 
 
@@ -46,19 +48,19 @@ namespace impl {
  * @prec: Precision matrix, i.e. the invariance of the covariance matrix.
  */
 template<class T>
-auto gaussian_like(math::vec2_t<T> x, math::vec2_t<T> mean, math::mat2s_t<T> prec) -> T
+auto gaussian_like(Vec2<T> x, Vec2<T> mean, Mat2s<T> prec) -> T
 {
     return std::exp(-prec.vtmv(x - mean) / static_cast<T>(2));
 }
 
 
 template<class T, class S>
-inline void assemble_system(math::mat6_t<S>& m, math::vec6_t<S>& rhs, bbox const& b,
-                           container::image<T> const& data, container::image<S> const& w)
+inline void assemble_system(Mat6<S>& m, Vec6<S>& rhs, BBox const& b, Image<T> const& data,
+                            Image<S> const& w)
 {
     auto const eps = std::numeric_limits<S>::epsilon();
 
-    auto const scale = math::vec2_t<S> {
+    auto const scale = Vec2<S> {
         static_cast<S>(2) * range<S>.x / static_cast<S>(data.size().x),
         static_cast<S>(2) * range<S>.y / static_cast<S>(data.size().y),
     };
@@ -134,10 +136,10 @@ inline void assemble_system(math::mat6_t<S>& m, math::vec6_t<S>& rhs, bbox const
 }
 
 template<class T>
-bool extract_params(math::vec6_t<T> const& chi, T& scale, math::vec2_t<T>& mean,
-                    math::mat2s_t<T>& prec, T eps=math::num<T>::eps)
+bool extract_params(Vec6<T> const& chi, T& scale, Vec2<T>& mean, Mat2s<T>& prec,
+                    T eps=math::num<T>::eps)
 {
-    prec = -static_cast<T>(2) * math::mat2s_t<T> { chi[0], chi[1], chi[2] };
+    prec = -static_cast<T>(2) * Mat2s<T> { chi[0], chi[1], chi[2] };
 
     // mu = sigma * b = prec^-1 * B
     auto const d = prec.det();
@@ -155,9 +157,9 @@ bool extract_params(math::vec6_t<T> const& chi, T& scale, math::vec2_t<T>& mean,
 
 
 template<class T>
-inline void update_weight_maps(std::vector<parameters<T>>& params, container::image<T>& total)
+inline void update_weight_maps(std::vector<Parameters<T>>& params, Image<T>& total)
 {
-    auto const scale = math::vec2_t<T> {
+    auto const scale = Vec2<T> {
         static_cast<T>(2) * range<T>.x / static_cast<T>(total.size().x),
         static_cast<T>(2) * range<T>.y / static_cast<T>(total.size().y),
     };
@@ -217,16 +219,16 @@ inline void update_weight_maps(std::vector<parameters<T>>& params, container::im
 // TODO: vector as parameter container is not good... drops image memory when resized
 
 template<class T>
-void reserve(std::vector<parameters<T>>& params, std::size_t n, index2_t size)
+void reserve(std::vector<Parameters<T>>& params, std::size_t n, index2_t size)
 {
     if (n > params.size()) {
-        params.resize(n, parameters<T> {
+        params.resize(n, Parameters<T> {
             false,
             static_cast<T>(1),
             { static_cast<T>(0), static_cast<T>(0) },
             { static_cast<T>(1), static_cast<T>(0), static_cast<T>(1) },
             { 0, -1, 0, -1 },
-            container::image<T> { size },
+            Image<T> { size },
         });
     }
 
@@ -236,10 +238,10 @@ void reserve(std::vector<parameters<T>>& params, std::size_t n, index2_t size)
 }
 
 template<class T, class S>
-void fit(std::vector<parameters<S>>& params, container::image<T> const& data,
-         container::image<S>& tmp, unsigned int n_iter, S eps=math::num<S>::eps)
+void fit(std::vector<Parameters<S>>& params, Image<T> const& data,
+         Image<S>& tmp, unsigned int n_iter, S eps=math::num<S>::eps)
 {
-    auto const scale = math::vec2_t<S> {
+    auto const scale = Vec2<S> {
         static_cast<S>(2) * range<S>.x / static_cast<S>(data.size().x),
         static_cast<S>(2) * range<S>.y / static_cast<S>(data.size().y),
     };
@@ -267,9 +269,9 @@ void fit(std::vector<parameters<S>>& params, container::image<T> const& data,
 
         // fit individual parameters
         for (auto& p : params) {
-            auto sys = math::mat6_t<S>{};
-            auto rhs = math::vec6_t<S>{};
-            auto chi = math::vec6_t<S>{};
+            auto sys = Mat6<S>{};
+            auto rhs = Vec6<S>{};
+            auto chi = Vec6<S>{};
 
             if (!p.valid) {
                 continue;
@@ -281,14 +283,14 @@ void fit(std::vector<parameters<S>>& params, container::image<T> const& data,
             // solve systems
             p.valid = math::ge_solve(sys, rhs, chi, eps);
             if (!p.valid) {
-                std::cout << "warning: invalid equation system\n";
+                spdlog::warn("invalid equation system");
                 continue;
             }
 
             // get parameters
             p.valid = impl::extract_params(chi, p.scale, p.mean, p.prec, eps);
             if (!p.valid) {
-                std::cout << "warning: parameter extraction failed\n";
+                spdlog::warn("parameter extraction failed");
             }
         }
     }
@@ -310,4 +312,4 @@ void fit(std::vector<parameters<S>>& params, container::image<T> const& data,
     }
 }
 
-} /* namespace alg::gfit */
+} /* namespace iptsd::alg::gfit */

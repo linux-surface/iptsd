@@ -21,15 +21,15 @@
 #include <numeric>
 
 
-namespace alg {
+namespace iptsd::alg {
 namespace impl {
 
-inline auto is_root(container::image<u16> const& forest, u16 idx) -> bool
+inline auto is_root(Image<u16> const& forest, u16 idx) -> bool
 {
     return idx == forest[idx];
 }
 
-inline auto find_root(container::image<u16> const& forest, u16 idx) -> u16
+inline auto find_root(Image<u16> const& forest, u16 idx) -> u16
 {
     while (!is_root(forest, idx)) {
         idx = forest[idx];
@@ -38,7 +38,7 @@ inline auto find_root(container::image<u16> const& forest, u16 idx) -> u16
     return idx;
 }
 
-inline void set_root(container::image<u16>& forest, u16 idx, u16 new_root)
+inline void set_root(Image<u16>& forest, u16 idx, u16 new_root)
 {
     while (!is_root(forest, idx)) {
         idx = std::exchange(forest[idx], new_root);
@@ -47,7 +47,7 @@ inline void set_root(container::image<u16>& forest, u16 idx, u16 new_root)
     forest[idx] = new_root;
 }
 
-inline auto merge(container::image<u16>& forest, u16 t1_index, u16 t1_root, u16 t2_index, u16 bg)
+inline auto merge(Image<u16>& forest, u16 t1_index, u16 t1_root, u16 t2_index, u16 bg)
         -> std::pair<u16, u16>
 {
     if (forest[t2_index] == bg) {
@@ -67,10 +67,10 @@ inline auto merge(container::image<u16>& forest, u16 t1_index, u16 t1_root, u16 
     return { t1_index, t1_root };
 }
 
-inline auto resolve(container::image<u16>& forest, u16 background) -> u16
+inline auto resolve(Image<u16>& forest, u16 background) -> u16
 {
     u16 n_labels = 0;
-    for (index_t i = 0; i < forest.size().product(); ++i) {
+    for (index_t i = 0; i < forest.size().span(); ++i) {
         if (i != background) {
             if (!is_root(forest, i)) {
                 forest[i] = forest[forest[i]];
@@ -86,9 +86,9 @@ inline auto resolve(container::image<u16>& forest, u16 background) -> u16
 }
 
 template<typename T>
-inline auto find_background(container::image<T> const& data, T threshold) -> u16
+inline auto find_background(Image<T> const& data, T threshold) -> u16
 {
-    for (index_t i = 0; i < data.size().product(); ++i) {
+    for (index_t i = 0; i < data.size().span(); ++i) {
         if (data[i] <= threshold) {
             return i;
         }
@@ -100,7 +100,7 @@ inline auto find_background(container::image<T> const& data, T threshold) -> u16
 } /* namespace impl */
 
 template<int C=4, typename T>
-auto label(container::image<u16>& out, container::image<T> const& data, T threshold) -> u16
+auto label(Image<u16>& out, Image<T> const& data, T threshold) -> u16
 {
     static_assert(C == 4 || C == 8);
 
@@ -134,7 +134,7 @@ auto label(container::image<u16>& out, container::image<T> const& data, T thresh
     }
 
     // 0 < y < n
-    while (i < data.size().product()) {
+    while (i < data.size().span()) {
 
         // x = 0
         if (data[i] <= threshold) {
@@ -205,4 +205,4 @@ auto label(container::image<u16>& out, container::image<T> const& data, T thresh
     return impl::resolve(out, background);
 }
 
-} /* namespace alg */
+} /* namespace iptsd::alg */

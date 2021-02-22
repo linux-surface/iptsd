@@ -5,7 +5,7 @@
 #include "math/mat6.hpp"
 
 
-namespace math {
+namespace iptsd::math {
 
 /**
  * lu_decom() - Perform an LU-decomposition with partial pivoting.
@@ -20,7 +20,7 @@ namespace math {
  * PA.
  */
 template<class T>
-auto lu_decomp(mat6_t<T> const& a, mat6_t<T>& lu, vec6_t<index_t>& p, T eps=num<T>::eps) -> bool
+auto lu_decomp(Mat6<T> const& a, Mat6<T>& lu, Vec6<index_t>& p, T eps=num<T>::eps) -> bool
 {
     // initialization
     lu = a;
@@ -93,13 +93,13 @@ auto lu_decomp(mat6_t<T> const& a, mat6_t<T>& lu, vec6_t<index_t>& p, T eps=num<
  * solving Ly = Pb for a temporary vector y and then Ux = y for the desired x.
  */
 template<class T>
-void lu_solve(mat6_t<T> const& lu, vec6_t<index_t> const& p, vec6_t<T> const& b, vec6_t<T>& x)
+void lu_solve(Mat6<T> const& lu, Vec6<index_t> const& p, Vec6<T> const& b, Vec6<T>& x)
 {
     // step 0: compute Pb
-    auto pb = vec6_t<T> { b[p[0]], b[p[1]], b[p[2]], b[p[3]], b[p[4]], b[p[5]] };
+    auto pb = Vec6<T> { b[p[0]], b[p[1]], b[p[2]], b[p[3]], b[p[4]], b[p[5]] };
 
     // step 1: solve Ly = Pb for y (forward substitution)
-    auto y = vec6_t<T>{};
+    auto y = Vec6<T>{};
 
     y[0] = pb[0];
     y[1] = pb[1] - lu[{1, 0}] * y[0];
@@ -138,7 +138,7 @@ void lu_solve(mat6_t<T> const& lu, vec6_t<index_t> const& p, vec6_t<T> const& b,
  * with partial pivoting.
  */
 template<class T>
-auto ge_solve(mat6_t<T> a, vec6_t<T> b, vec6_t<T>& x, T eps=num<T>::eps) -> bool
+auto ge_solve(Mat6<T> a, Vec6<T> b, Vec6<T>& x, T eps=num<T>::eps) -> bool
 {
     // TODO: optimize/unroll?
 
@@ -215,4 +215,4 @@ auto ge_solve(mat6_t<T> a, vec6_t<T> b, vec6_t<T>& x, T eps=num<T>::eps) -> bool
     return true;
 }
 
-} /* namespace math */
+} /* namespace iptsd::math */

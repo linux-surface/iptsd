@@ -7,47 +7,47 @@
 #include <numeric>
 
 
-namespace alg {
+namespace iptsd::alg {
 namespace wdt {
 
 template<typename T>
-struct q_item {
+struct QItem {
     index_t idx;
     T cost;
 };
 
 template<typename T>
-auto operator== (struct q_item<T> const& a, struct q_item<T> const& b) noexcept -> bool
+auto operator== (struct QItem<T> const& a, struct QItem<T> const& b) noexcept -> bool
 {
     return a.cost == b.cost;
 }
 
 template<typename T>
-auto operator!= (struct q_item<T> const& a, struct q_item<T> const& b) noexcept -> bool
+auto operator!= (struct QItem<T> const& a, struct QItem<T> const& b) noexcept -> bool
 {
     return a.cost != b.cost;
 }
 
 template<typename T>
-auto operator<= (struct q_item<T> const& a, struct q_item<T> const& b) noexcept -> bool
+auto operator<= (struct QItem<T> const& a, struct QItem<T> const& b) noexcept -> bool
 {
     return a.cost <= b.cost;
 }
 
 template<typename T>
-auto operator>= (struct q_item<T> const& a, struct q_item<T> const& b) noexcept -> bool
+auto operator>= (struct QItem<T> const& a, struct QItem<T> const& b) noexcept -> bool
 {
     return a.cost >= b.cost;
 }
 
 template<typename T>
-auto operator< (struct q_item<T> const& a, struct q_item<T> const& b) noexcept -> bool
+auto operator< (struct QItem<T> const& a, struct QItem<T> const& b) noexcept -> bool
 {
     return a.cost < b.cost;
 }
 
 template<typename T>
-auto operator> (struct q_item<T> const& a, struct q_item<T> const& b) noexcept -> bool
+auto operator> (struct QItem<T> const& a, struct QItem<T> const& b) noexcept -> bool
 {
     return a.cost > b.cost;
 }
@@ -80,7 +80,7 @@ auto get_cost(T& cost, index_t i, index2_t d) -> V
 }
 
 template<typename T, typename Q, typename B, typename M, typename C>
-inline void evaluate(container::image<T>& out, Q& queue, B& bin, M& mask, C& cost, index_t i,
+inline void evaluate(Image<T>& out, Q& queue, B& bin, M& mask, C& cost, index_t i,
                      index_t stride, index2_t dir, T limit)
 {
     if (!is_compute(bin, mask, i + stride))
@@ -98,7 +98,7 @@ inline void evaluate(container::image<T>& out, Q& queue, B& bin, M& mask, C& cos
 
 
 template<int N=8, typename T, typename F, typename M, typename C, typename Q>
-void weighted_distance_transform(container::image<T>& out, F& bin, M& mask, C& cost, Q& q,
+void weighted_distance_transform(Image<T>& out, F& bin, M& mask, C& cost, Q& q,
                                  T limit=std::numeric_limits<T>::max())
 {
     using wdt::impl::evaluate;
@@ -377,7 +377,7 @@ void weighted_distance_transform(container::image<T>& out, F& bin, M& mask, C& c
     ++i;
 
     // 0 < x < n - 1, y = n - 1
-    for (; i < out.size().product() - 1; ++i) {
+    for (; i < out.size().span() - 1; ++i) {
         if (is_foreground(bin, i)) {
             out[i] = static_cast<T>(0);
             continue;
@@ -445,7 +445,7 @@ void weighted_distance_transform(container::image<T>& out, F& bin, M& mask, C& c
     // step 2: while queue is not empty, get next pixel, write down cost, and add neighbors
     while (!q.empty()) {
         // get next pixel and remove it from queue
-        wdt::q_item<T> pixel = q.top();
+        wdt::QItem<T> pixel = q.top();
         q.pop();
 
         // check if someone has been here before; if so, skip this one
@@ -456,7 +456,7 @@ void weighted_distance_transform(container::image<T>& out, F& bin, M& mask, C& c
         out[pixel.idx] = pixel.cost;
 
         // evaluate neighbors
-        auto const [x, y] = container::image<T>::unravel(out.size(), pixel.idx);
+        auto const [x, y] = Image<T>::unravel(out.size(), pixel.idx);
 
         if (x > 0) {
             evaluate(out, q, bin, mask, cost, pixel.idx, s_left, { -1, 0 }, limit);
@@ -492,4 +492,4 @@ void weighted_distance_transform(container::image<T>& out, F& bin, M& mask, C& c
     }
 }
 
-} /* namespace alg */
+} /* namespace iptsd::alg */

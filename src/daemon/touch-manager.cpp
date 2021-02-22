@@ -36,7 +36,7 @@ TouchManager::~TouchManager(void)
 void TouchManager::resize(u8 width, u8 height)
 {
 	if (this->hm) {
-		index2_t size = this->hm->size();
+		iptsd::index2_t size = this->hm->size();
 
 		if (size.x != width || size.y != height) {
 			delete std::exchange(this->hm, nullptr);
@@ -45,12 +45,12 @@ void TouchManager::resize(u8 width, u8 height)
 	}
 
 	if (!this->hm) {
-		index2_t size;
+		iptsd::index2_t size;
 		size.x = width;
 		size.y = height;
 
-		this->hm = new container::image<f32>(size);
-		this->processor = new touch_processor(size);
+		this->hm = new iptsd::container::Image<f32>(size);
+		this->processor = new iptsd::TouchProcessor(size);
 		this->diagonal = std::sqrt(width * width + height * height);
 	}
 }
@@ -63,7 +63,7 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 		return 1.0f - (f32)(v - data.z_min) / (f32)(data.z_max - data.z_min);
 	});
 
-	std::vector<touch_point> contacts = this->processor->process(*this->hm);
+	std::vector<iptsd::TouchPoint> contacts = this->processor->process(*this->hm);
 
 	size_t max_contacts = (size_t)this->conf->info.max_contacts;
 	size_t count = std::min(std::size(contacts), max_contacts);
@@ -81,7 +81,7 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 		this->inputs[i].x = (i32)(x * IPTS_MAX_X);
 		this->inputs[i].y = (i32)(y * IPTS_MAX_Y);
 
-		math::eigen2_t<f32> eigen = contacts[i].cov.eigen();
+		iptsd::math::Eigen2<f32> eigen = contacts[i].cov.eigen();
 		f64 s1 = std::sqrt(eigen.w[0]);
 		f64 s2 = std::sqrt(eigen.w[1]);
 
@@ -94,7 +94,7 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 		this->inputs[i].major = (i32)(major * IPTS_DIAGONAL);
 		this->inputs[i].minor = (i32)(minor * IPTS_DIAGONAL);
 
-		math::vec2_t<f64> v1 = eigen.v[0].cast<f64>() * s1;
+		iptsd::math::Vec2<f64> v1 = eigen.v[0].cast<f64>() * s1;
 		f64 angle = M_PI_2 - std::atan2(v1.x, v1.y);
 
 		// Make sure that the angle is always a positive number

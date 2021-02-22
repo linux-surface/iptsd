@@ -7,7 +7,7 @@
 #include <stdexcept>
 
 
-namespace utils::access {
+namespace iptsd::utils::access {
 
 enum class access_mode {
     checked,
@@ -121,4 +121,4 @@ inline constexpr auto access(T& data, F ravel, index2_t shape, index2_t i) -> V&
     return data[ravel(shape, i)];
 }
 
-} /* namespace utils::access */
+} /* namespace iptsd::utils::access */

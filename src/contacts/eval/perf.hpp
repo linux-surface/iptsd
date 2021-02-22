@@ -6,31 +6,31 @@
 #include <cmath>
 
 
-namespace eval::perf {
+namespace iptsd::eval::perf {
 
 using clock = std::chrono::high_resolution_clock;
 
 
-class token {
+class Token {
 private:
-    friend class registry;
+    friend class Registry;
 
 public:
-    inline constexpr token(token const& other) = default;
+    inline constexpr Token(Token const& other) = default;
 
-    inline constexpr auto operator= (token const& rhs) -> token& = default;
+    inline constexpr auto operator= (Token const& rhs) -> Token& = default;
 
 private:
-    inline constexpr token(std::size_t index_t);
+    inline constexpr Token(std::size_t index_t);
 
 private:
     std::size_t m_index;
 };
 
 
-class entry {
+class Entry {
 public:
-    entry(std::string name);
+    Entry(std::string name);
 
     template<class D>
     auto total() const -> D;
@@ -69,36 +69,36 @@ public:
     void stop();
 
 private:
-    friend class registry;
+    friend class Registry;
 
-    measurement(entry& e, clock::time_point start);
+    measurement(Entry& e, clock::time_point start);
 
 private:
-    entry& m_entry;
+    Entry& m_entry;
     clock::time_point m_start;
 };
 
 
-class registry {
+class Registry {
 public:
-    auto create_entry(std::string name) -> token;
+    auto create_entry(std::string name) -> Token;
 
-    auto record(token const& t) -> measurement;
-    auto get_entry(token const& t) const -> entry const&;
+    auto record(Token const& t) -> measurement;
+    auto get_entry(Token const& t) const -> Entry const&;
 
-    auto entries() const -> std::vector<entry> const&;
+    auto entries() const -> std::vector<Entry> const&;
 
 private:
-    std::vector<entry> m_entries;
+    std::vector<Entry> m_entries;
 };
 
 
-inline constexpr token::token(std::size_t i)
+inline constexpr Token::Token(std::size_t i)
     : m_index{i}
 {}
 
 
-inline entry::entry(std::string name)
+inline Entry::Entry(std::string name)
     : name{std::move(name)}
     , n_measurements{0}
     , duration{0}
@@ -109,25 +109,25 @@ inline entry::entry(std::string name)
 {}
 
 template<class D>
-inline auto entry::total() const -> D
+inline auto Entry::total() const -> D
 {
     return std::chrono::duration_cast<D>(this->duration);
 }
 
 template<class D>
-inline auto entry::min() const -> D
+inline auto Entry::min() const -> D
 {
     return std::chrono::duration_cast<D>(this->minimum);
 }
 
 template<class D>
-inline auto entry::max() const -> D
+inline auto Entry::max() const -> D
 {
     return std::chrono::duration_cast<D>(this->maximum);
 }
 
 template<class D>
-inline auto entry::mean() const -> D
+inline auto Entry::mean() const -> D
 {
     auto const m = static_cast<typename D::rep>(std::round(r_mean_ns));
 
@@ -135,7 +135,7 @@ inline auto entry::mean() const -> D
 }
 
 template<class D>
-inline auto entry::var() const -> D
+inline auto Entry::var() const -> D
 {
     auto const v = n_measurements > 1 ?  r_var_ns / (n_measurements - 1) : 0.0;
     auto const d = static_cast<typename D::rep>(std::round(v));
@@ -144,7 +144,7 @@ inline auto entry::var() const -> D
 }
 
 template<class D>
-inline auto entry::stddev() const -> D
+inline auto Entry::stddev() const -> D
 {
     auto const v = n_measurements > 1 ?  r_var_ns / (n_measurements - 1) : 0.0;
     auto const d = static_cast<typename D::rep>(std::round(std::sqrt(v)));
@@ -153,7 +153,7 @@ inline auto entry::stddev() const -> D
 }
 
 
-inline measurement::measurement(entry& e, clock::time_point start)
+inline measurement::measurement(Entry& e, clock::time_point start)
     : m_entry{e}
     , m_start{start}
 {}
@@ -195,25 +195,25 @@ inline void measurement::stop()
 }
 
 
-inline auto registry::create_entry(std::string name) -> token
+inline auto Registry::create_entry(std::string name) -> Token
 {
     m_entries.emplace_back(std::move(name));
-    return token { m_entries.size() - 1 };
+    return Token { m_entries.size() - 1 };
 }
 
-inline auto registry::record(token const& t) -> measurement
+inline auto Registry::record(Token const& t) -> measurement
 {
     return measurement { m_entries[t.m_index], clock::now() };
 }
 
-inline auto registry::get_entry(token const& t) const -> entry const&
+inline auto Registry::get_entry(Token const& t) const -> Entry const&
 {
     return m_entries[t.m_index];
 }
 
-inline auto registry::entries() const -> std::vector<entry> const&
+inline auto Registry::entries() const -> std::vector<Entry> const&
 {
     return m_entries;
 }
 
-} /* namespace eval::perf */
+} /* namespace iptsd::eval::perf */

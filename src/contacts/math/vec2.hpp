@@ -6,10 +6,10 @@
 #include <iostream>
 
 
-namespace math {
+namespace iptsd::math {
 
 template<class T>
-struct vec2_t {
+struct Vec2 {
 public:
     T x, y;
 
@@ -17,27 +17,27 @@ public:
     using value_type = T;
 
 public:
-    inline constexpr auto operator= (vec2_t<T> const& rhs) -> vec2_t<T>& = default;
+    inline constexpr auto operator= (Vec2<T> const& rhs) -> Vec2<T>& = default;
 
-    constexpr auto operator+= (vec2_t<T> const& v) -> vec2_t<T>&;
-    constexpr auto operator+= (T const& s) -> vec2_t<T>&;
+    constexpr auto operator+= (Vec2<T> const& v) -> Vec2<T>&;
+    constexpr auto operator+= (T const& s) -> Vec2<T>&;
 
-    constexpr auto operator-= (vec2_t<T> const& v) -> vec2_t<T>&;
-    constexpr auto operator-= (T const& s) -> vec2_t<T>&;
+    constexpr auto operator-= (Vec2<T> const& v) -> Vec2<T>&;
+    constexpr auto operator-= (T const& s) -> Vec2<T>&;
 
-    constexpr auto operator*= (T const& s) -> vec2_t<T>&;
-    constexpr auto operator/= (T const& s) -> vec2_t<T>&;
+    constexpr auto operator*= (T const& s) -> Vec2<T>&;
+    constexpr auto operator/= (T const& s) -> Vec2<T>&;
 
-    constexpr auto dot(vec2_t<T> const& v) const -> T;
+    constexpr auto dot(Vec2<T> const& v) const -> T;
     constexpr auto norm_l2() const -> T;
 
     template<class S>
-    constexpr auto cast() const -> vec2_t<S>;
+    constexpr auto cast() const -> Vec2<S>;
 };
 
 
 template<class T>
-inline constexpr auto vec2_t<T>::operator+= (vec2_t<T> const& v) -> vec2_t<T>&
+inline constexpr auto Vec2<T>::operator+= (Vec2<T> const& v) -> Vec2<T>&
 {
     this->x += v.x;
     this->y += v.y;
@@ -45,7 +45,7 @@ inline constexpr auto vec2_t<T>::operator+= (vec2_t<T> const& v) -> vec2_t<T>&
 }
 
 template<class T>
-inline constexpr auto vec2_t<T>::operator+= (T const& s) -> vec2_t<T>&
+inline constexpr auto Vec2<T>::operator+= (T const& s) -> Vec2<T>&
 {
     this->x += s;
     this->y += s;
@@ -53,7 +53,7 @@ inline constexpr auto vec2_t<T>::operator+= (T const& s) -> vec2_t<T>&
 }
 
 template<class T>
-inline constexpr auto vec2_t<T>::operator-= (vec2_t<T> const& v) -> vec2_t<T>&
+inline constexpr auto Vec2<T>::operator-= (Vec2<T> const& v) -> Vec2<T>&
 {
     this->x -= v.x;
     this->y -= v.y;
@@ -61,7 +61,7 @@ inline constexpr auto vec2_t<T>::operator-= (vec2_t<T> const& v) -> vec2_t<T>&
 }
 
 template<class T>
-inline constexpr auto vec2_t<T>::operator-= (T const& s) -> vec2_t<T>&
+inline constexpr auto Vec2<T>::operator-= (T const& s) -> Vec2<T>&
 {
     this->x -= s;
     this->y -= s;
@@ -69,7 +69,7 @@ inline constexpr auto vec2_t<T>::operator-= (T const& s) -> vec2_t<T>&
 }
 
 template<class T>
-inline constexpr auto vec2_t<T>::operator*= (T const& s) -> vec2_t<T>&
+inline constexpr auto Vec2<T>::operator*= (T const& s) -> Vec2<T>&
 {
     this->x *= s;
     this->y *= s;
@@ -77,7 +77,7 @@ inline constexpr auto vec2_t<T>::operator*= (T const& s) -> vec2_t<T>&
 }
 
 template<class T>
-inline constexpr auto vec2_t<T>::operator/= (T const& s) -> vec2_t<T>&
+inline constexpr auto Vec2<T>::operator/= (T const& s) -> Vec2<T>&
 {
     this->x /= s;
     this->y /= s;
@@ -86,13 +86,13 @@ inline constexpr auto vec2_t<T>::operator/= (T const& s) -> vec2_t<T>&
 
 
 template<class T>
-inline constexpr auto vec2_t<T>::dot(vec2_t<T> const& v) const -> T
+inline constexpr auto Vec2<T>::dot(Vec2<T> const& v) const -> T
 {
     return this->x * v.x + this->y * v.y;
 }
 
 template<class T>
-inline constexpr auto vec2_t<T>::norm_l2() const -> T
+inline constexpr auto Vec2<T>::norm_l2() const -> T
 {
     using std::sqrt;
 
@@ -101,94 +101,102 @@ inline constexpr auto vec2_t<T>::norm_l2() const -> T
 
 template<class T>
 template<class S>
-inline constexpr auto vec2_t<T>::cast() const -> vec2_t<S>
+inline constexpr auto Vec2<T>::cast() const -> Vec2<S>
 {
     return { static_cast<S>(this->x), static_cast<S>(this->y) };
 }
 
 
 template<class T>
-inline auto operator<< (std::ostream& os, vec2_t<T> const& v) -> std::ostream&
+inline auto operator<< (std::ostream& os, Vec2<T> const& v) -> std::ostream&
 {
     return os << "[" << v.x << ", " << v.y << "]";
 }
 
 template<class T>
-inline constexpr auto operator== (vec2_t<T> const& a, vec2_t<T> const& b) -> bool
+inline constexpr auto operator== (Vec2<T> const& a, Vec2<T> const& b) -> bool
 {
     return a.x == b.x && a.y == b.y;
 }
 
 template<class T>
-inline constexpr auto operator!= (vec2_t<T> const& a, vec2_t<T> const& b) -> bool
+inline constexpr auto operator!= (Vec2<T> const& a, Vec2<T> const& b) -> bool
 {
     return !(a == b);
 }
 
 template<class T>
-inline constexpr auto operator+ (vec2_t<T> const& a, vec2_t<T> const& b) -> vec2_t<T>
+inline constexpr auto operator+ (Vec2<T> const& a, Vec2<T> const& b) -> Vec2<T>
 {
     return { a.x + b.x, a.y + b.y };
 }
 
 template<class T>
-inline constexpr auto operator+ (vec2_t<T> const& v, T const& s) -> vec2_t<T>
+inline constexpr auto operator+ (Vec2<T> const& v, T const& s) -> Vec2<T>
 {
     return { v.x + s, v.y + s };
 }
 
 template<class T>
-inline constexpr auto operator+ (T const& s, vec2_t<T> const& v) -> vec2_t<T>
+inline constexpr auto operator+ (T const& s, Vec2<T> const& v) -> Vec2<T>
 {
     return { s + v.x, s + v.y };
 }
 
 template<class T>
-inline constexpr auto operator- (vec2_t<T> const& a, vec2_t<T> const& b) -> vec2_t<T>
+inline constexpr auto operator- (Vec2<T> const& a, Vec2<T> const& b) -> Vec2<T>
 {
     return { a.x - b.x, a.y - b.y };
 }
 
 template<class T>
-inline constexpr auto operator- (vec2_t<T> const& v, T const& s) -> vec2_t<T>
+inline constexpr auto operator- (Vec2<T> const& v, T const& s) -> Vec2<T>
 {
     return { v.x - s, v.y - s };
 }
 
 template<class T>
-inline constexpr auto operator- (T const& s, vec2_t<T> const& v) -> vec2_t<T>
+inline constexpr auto operator- (T const& s, Vec2<T> const& v) -> Vec2<T>
 {
     return { s - v.x, s - v.y };
 }
 
 template<class T>
-inline constexpr auto operator* (vec2_t<T> const& v, T const& s) -> vec2_t<T>
+inline constexpr auto operator* (Vec2<T> const& v, T const& s) -> Vec2<T>
 {
     return { v.x * s, v.y * s};
 }
 
 template<class T>
-inline constexpr auto operator* (T const& s, vec2_t<T> const& v) -> vec2_t<T>
+inline constexpr auto operator* (T const& s, Vec2<T> const& v) -> Vec2<T>
 {
     return { s * v.x, s * v.y };
 }
 
 template<class T>
-inline constexpr auto operator/ (vec2_t<T> const& v, T const& s) -> vec2_t<T>
+inline constexpr auto operator/ (Vec2<T> const& v, T const& s) -> Vec2<T>
 {
     return { v.x / s, v.y / s};
 }
 
 template<class T>
-inline constexpr auto operator/ (T const& s, vec2_t<T> const& v) -> vec2_t<T>
+inline constexpr auto operator/ (T const& s, Vec2<T> const& v) -> Vec2<T>
 {
     return { s / v.x, s / v.y };
 }
 
 
 template<class T>
-struct num<vec2_t<T>> {
-    static inline constexpr vec2_t<T> zero = { num<T>::zero, num<T>::zero };
+struct num<Vec2<T>> {
+    static inline constexpr Vec2<T> zero = { num<T>::zero, num<T>::zero };
 };
 
-} /* namespace math */
+} /* namespace iptsd::math */
+
+
+/* imports */
+namespace iptsd {
+
+using math::Vec2;
+
+} /* namespace iptsd */

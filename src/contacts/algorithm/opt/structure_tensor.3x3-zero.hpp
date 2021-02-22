@@ -5,13 +5,11 @@
 #include "algorithm/structure_tensor.hpp"
 
 
-namespace alg::stensor::impl {
+namespace iptsd::alg::stensor::impl {
 
 template<typename T>
-void structure_tensor_3x3_zero(container::image<math::mat2s_t<T>>& out,
-                               container::image<T> const& in,
-                               container::kernel<T, 3, 3> const& kx,
-                               container::kernel<T, 3, 3> const& ky)
+void structure_tensor_3x3_zero(Image<Mat2s<T>>& out, Image<T> const& in,
+                               Kernel<T, 3, 3> const& kx, Kernel<T, 3, 3> const& ky)
 {
     assert(in.size() == out.size());
     assert(kx.stride() == ky.stride());
@@ -215,7 +213,7 @@ void structure_tensor_3x3_zero(container::image<math::mat2s_t<T>>& out,
     ++i;
 
     // 0 < x < n - 1, y = n - 1
-    for (; i < in.size().product() - 1; ++i) {
+    for (; i < in.size().span() - 1; ++i) {
         T gx = math::num<T>::zero;
         T gy = math::num<T>::zero;
 
@@ -261,4 +259,4 @@ void structure_tensor_3x3_zero(container::image<math::mat2s_t<T>>& out,
     }
 }
 
-} /* namespace alg::stensor::impl */
+} /* namespace iptsd::alg::stensor::impl */

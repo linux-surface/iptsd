@@ -20,12 +20,16 @@
 #include "math/vec2.hpp"
 #include "math/mat2.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <array>
 #include <vector>
 #include <queue>
 
 
-touch_processor::touch_processor(index2_t size)
+namespace iptsd {
+
+TouchProcessor::TouchProcessor(index2_t size)
     : m_perf_reg{}
     , m_perf_t_total{m_perf_reg.create_entry("total")}
     , m_perf_t_prep{m_perf_reg.create_entry("preprocessing")}
@@ -63,8 +67,8 @@ touch_processor::touch_processor(index2_t size)
     , m_gf_window{11, 11}
     , m_touchpoints{}
 {
-    m_wdt_queue = std::priority_queue { std::less<alg::wdt::q_item<f32>>(), [](){
-        auto buf = std::vector<alg::wdt::q_item<f32>>{};
+    m_wdt_queue = std::priority_queue { std::less<alg::wdt::QItem<f32>>(), [](){
+        auto buf = std::vector<alg::wdt::QItem<f32>>{};
         buf.reserve(512);
         return buf;
     }() };
@@ -74,7 +78,7 @@ touch_processor::touch_processor(index2_t size)
     m_touchpoints.reserve(32);
 }
 
-auto touch_processor::process(container::image<f32> const& hm) -> std::vector<touch_point> const&
+auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> const&
 {
     auto _tr = m_perf_reg.record(m_perf_t_total);
 
@@ -85,7 +89,7 @@ auto touch_processor::process(container::image<f32> const& hm) -> std::vector<to
         alg::convolve(m_img_pp, hm, m_kern_pp);
 
         auto const sum = container::ops::sum(m_img_pp);
-        auto const avg = sum / m_img_pp.size().product();
+        auto const avg = sum / m_img_pp.size().span();
 
         container::ops::transform(m_img_pp, [&](auto const x) {
             return std::max(x - avg, 0.0f);
@@ -134,7 +138,7 @@ auto touch_processor::process(container::image<f32> const& hm) -> std::vector<to
         f32 const wr = 1.5;
         f32 const wh = 1.0;
 
-        for (index_t i = 0; i < m_img_pp.size().product(); ++i) {
+        for (index_t i = 0; i < m_img_pp.size().span(); ++i) {
             m_img_obj[i] = wh * m_img_pp[i] - wr * m_img_rdg[i];
         }
     }
@@ -162,9 +166,9 @@ auto touch_processor::process(container::image<f32> const& hm) -> std::vector<to
         auto _r = m_perf_reg.record(m_perf_t_cscr);
 
         m_cstats.clear();
-        m_cstats.assign(num_labels, component_stats { 0, 0, 0, 0 });
+        m_cstats.assign(num_labels, ComponentStats { 0, 0, 0, 0 });
 
-        for (index_t i = 0; i < m_img_pp.size().product(); ++i) {
+        for (index_t i = 0; i < m_img_pp.size().span(); ++i) {
             auto const label = m_img_lbl[i];
 
             if (label == 0)
@@ -258,7 +262,7 @@ auto touch_processor::process(container::image<f32> const& hm) -> std::vector<to
     {
         auto _r = m_perf_reg.record(m_perf_t_flt);
 
-        for (index_t i = 0; i < m_img_pp.size().product(); ++i) {
+        for (index_t i = 0; i < m_img_pp.size().span(); ++i) {
             auto const sigma = 1.0f;
 
             auto w_inc = m_img_dm1[i] / sigma;
@@ -291,10 +295,10 @@ auto touch_processor::process(container::image<f32> const& hm) -> std::vector<to
         alg::gfit::reserve(m_gf_params, m_maximas.size(), m_gf_window);
 
         for (std::size_t i = 0; i < m_maximas.size(); ++i) {
-            auto const [x, y] = container::image<f32>::unravel(m_img_pp.size(), m_maximas[i]);
+            auto const [x, y] = Image<f32>::unravel(m_img_pp.size(), m_maximas[i]);
 
             // TODO: move window inwards instead of clamping?
-            auto const bounds = alg::gfit::bbox {
+            auto const bounds = alg::gfit::BBox {
                 std::max(x - (m_gf_window.x - 1) / 2, 0),
                 std::min(x + (m_gf_window.x - 1) / 2, m_img_pp.size().x - 1),
                 std::max(y - (m_gf_window.y - 1) / 2, 0),
@@ -324,7 +328,7 @@ auto touch_processor::process(container::image<f32> const& hm) -> std::vector<to
 
         auto const cov = p.prec.inverse();
         if (!cov.has_value()) {
-            std::cout << "warning: failed to invert matrix\n";
+            spdlog::warn("failed to invert matrix");
             continue;
         }
 
@@ -333,7 +337,7 @@ auto touch_processor::process(container::image<f32> const& hm) -> std::vector<to
         auto const sd2 = std::sqrt(std::abs(ev2));
 
         if (sd1 <= math::num<f32>::eps || sd2 <= math::num<f32>::eps) {
-            std::cout << "warning: standard deviation too small\n";
+            spdlog::warn("standard deviation too small");
             continue;
         }
 
@@ -346,8 +350,10 @@ auto touch_processor::process(container::image<f32> const& hm) -> std::vector<to
         auto const y = std::clamp(static_cast<index_t>(p.mean.y), 0, m_img_lbl.size().y - 1);
         auto const cs = m_img_lbl[{ x, y }] > 0 ? m_cscore.at(m_img_lbl[{ x, y }] - 1) : 0.0f;
 
-        m_touchpoints.push_back(touch_point { cs, static_cast<f32>(p.scale), p.mean.cast<f32>(), cov->cast<f32>() });
+        m_touchpoints.push_back(TouchPoint { cs, static_cast<f32>(p.scale), p.mean.cast<f32>(), cov->cast<f32>() });
     }
 
     return m_touchpoints;
 }
+
+} /* namespace iptsd */
