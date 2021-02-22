@@ -14,6 +14,8 @@ our_includes = [
 	include_directories('.'),
 ]
 
-lib = static_library('libcontacts', sources, include_directories: includes)
+lib = static_library('contacts', sources, include_directories: includes,
+		     dependencies: deps)
+
 libcontacts = declare_dependency(dependencies: deps, link_with: lib,
 				 include_directories: our_includes)

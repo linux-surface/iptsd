@@ -23,6 +23,8 @@ cxxflags = [
 	'-Wno-missing-braces',
 	'-Wno-missing-field-initializers',
 	'-Wno-unused-parameter',
+
+	'-DSPDLOG_FMT_EXTERNAL',
 ]
 
 optflags = []
