@@ -24,8 +24,8 @@
 
 using namespace std::chrono;
 
-bool should_reset;
-bool should_exit;
+static bool should_reset = false;
+static bool should_exit = false;
 
 static void signal_reset(int sig)
 {
@@ -62,10 +62,7 @@ int main(void)
 {
 	IptsdContext iptsd;
 
-	should_reset = false;
 	Utils::signal(SIGUSR1, signal_reset);
-
-	should_exit = false;
 	Utils::signal(SIGTERM, signal_exit);
 	Utils::signal(SIGINT, signal_exit);
 
