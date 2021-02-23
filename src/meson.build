@@ -23,8 +23,6 @@ cxxflags = [
 	'-Wno-missing-braces',
 	'-Wno-missing-field-initializers',
 	'-Wno-unused-parameter',
-
-	'-DSPDLOG_FMT_EXTERNAL',
 ]
 
 optflags = []
@@ -52,6 +50,8 @@ optflags = cpp.get_supported_arguments(optflags)
 
 add_project_arguments(cxxflags, language: 'cpp')
 add_project_arguments(optflags, language: 'cpp')
+
+add_project_arguments('-DSPDLOG_FMT_EXTERNAL', language: 'cpp')
 
 subdir('common')
 subdir('contacts')
