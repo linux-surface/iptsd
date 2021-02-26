@@ -25,17 +25,20 @@ struct PrettyBuf {
 
 template <>
 struct fmt::formatter<PrettyBuf> {
-	char presentation = 'x';
+	char hexfmt = 'x';
+	char prefix = 'n';
 
 	constexpr auto parse(format_parse_context& ctx) {
 		auto it = ctx.begin(), end = ctx.end();
 
-		if (it != end && (*it == 'x' || *it == 'X')) {
-			presentation = *it++;
-		}
-
-		if (it != end && *it != '}') {
-			throw format_error("invalid format, expecting 'x' or 'X'");
+		while (it != end && *it != '}') {
+			if (*it == 'x' || *it == 'X') {
+				hexfmt = *it++;
+			} else if (*it == 'n' || *it == 'o' || *it == 'O') {
+				prefix = *it++;
+			} else {
+				throw format_error("invalid format");
+			}
 		}
 
 		return it;
@@ -43,12 +46,14 @@ struct fmt::formatter<PrettyBuf> {
 
 	template <class FormatContext>
 	auto format(PrettyBuf const& buf, FormatContext& ctx) {
-		char const* pfxstr = presentation == 'x' ? "{:04x}: " : "{:04X}: ";
-		char const* fmtstr = presentation == 'x' ? "{:02x} " : "{:02X} ";
+		char const* pfxstr = prefix == 'o' ? "{:04x}: " : "{:04X}: ";
+		char const* fmtstr = hexfmt == 'x' ? "{:02x} " : "{:02X} ";
 
 		auto it = ctx.out();
 		for (size_t i = 0; i < buf.size; i += 32) {
-			it = format_to(it, pfxstr, i);
+			if (prefix != 'n') {
+				it = format_to(it, pfxstr, i);
+			}
 
 			for (size_t j = 0; j < 32; j++) {
 				if (i + j >= buf.size)
@@ -112,7 +117,7 @@ int main(int argc, char *argv[])
 			fmt::print("====== Buffer: {} == Type: {} == Size: {} =====\n",
 				   header_type, header_buffer, header_size);
 
-			fmt::print("{:x}\n", buf);
+			fmt::print("{:ox}\n", buf);
 		}
 
 		ctrl.send_feedback();
