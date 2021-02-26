@@ -51,11 +51,31 @@ struct fmt::formatter<PrettyBuf> {
 
 		auto it = ctx.out();
 		for (size_t i = 0; i < buf.size; i += 32) {
+			size_t j = 0;
+
 			if (prefix != 'n') {
 				it = format_to(it, pfxstr, i);
 			}
 
-			for (size_t j = 0; j < 32 && i + j < buf.size; j++) {
+			for (; j < 8 && i + j < buf.size; j++) {
+				it = format_to(it, fmtstr, static_cast<unsigned char>(buf.data[i + j]));
+			}
+
+			it = format_to(it, " ");
+
+			for (; j < 16 && i + j < buf.size; j++) {
+				it = format_to(it, fmtstr, static_cast<unsigned char>(buf.data[i + j]));
+			}
+
+			it = format_to(it, " ");
+
+			for (; j < 24 && i + j < buf.size; j++) {
+				it = format_to(it, fmtstr, static_cast<unsigned char>(buf.data[i + j]));
+			}
+
+			it = format_to(it, " ");
+
+			for (; j < 32 && i + j < buf.size; j++) {
 				it = format_to(it, fmtstr, static_cast<unsigned char>(buf.data[i + j]));
 			}
 
