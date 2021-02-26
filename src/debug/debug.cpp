@@ -55,10 +55,7 @@ struct fmt::formatter<PrettyBuf> {
 				it = format_to(it, pfxstr, i);
 			}
 
-			for (size_t j = 0; j < 32; j++) {
-				if (i + j >= buf.size)
-					continue;
-
+			for (size_t j = 0; j < 32 && i + j < buf.size; j++) {
 				it = format_to(it, fmtstr, static_cast<unsigned char>(buf.data[i + j]));
 			}
 
