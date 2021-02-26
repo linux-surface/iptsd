@@ -1,7 +1,7 @@
 build/
-subprojects/
 out/
 
+subprojects/*
 !subprojects/*.wrap
 
 .cache
