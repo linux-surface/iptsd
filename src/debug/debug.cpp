@@ -43,10 +43,13 @@ struct fmt::formatter<PrettyBuf> {
 
 	template <class FormatContext>
 	auto format(PrettyBuf const& buf, FormatContext& ctx) {
+		char const* pfxstr = presentation == 'x' ? "{:04x}: " : "{:04X}: ";
 		char const* fmtstr = presentation == 'x' ? "{:02x} " : "{:02X} ";
 
 		auto it = ctx.out();
 		for (size_t i = 0; i < buf.size; i += 32) {
+			it = format_to(it, pfxstr, i);
+
 			for (size_t j = 0; j < 32; j++) {
 				if (i + j >= buf.size)
 					continue;
