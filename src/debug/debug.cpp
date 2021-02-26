@@ -5,6 +5,7 @@
 #include <ipts/protocol.h>
 
 #include <CLI/CLI.hpp>
+#include <fmt/format.h>
 
 #include <cstdint>
 #include <cstdio>
@@ -23,13 +24,13 @@ static void print_buffer(char *buffer, size_t size)
 			if (i + j >= size)
 				continue;
 
-			std::printf("%02hhX ", buffer[i + j]);
+			fmt::print("{:02X} ", static_cast<unsigned char>(buffer[i + j]));
 		}
 
-		std::printf("\n");
+		fmt::print("\n");
 	}
 
-	std::printf("\n");
+	fmt::print("\n");
 }
 
 int main(int argc, char *argv[])
@@ -50,12 +51,12 @@ int main(int argc, char *argv[])
 
 	IptsControl ctrl;
 
-	std::printf("Vendor:       %04X\n", ctrl.info.vendor);
-	std::printf("Product:      %04X\n", ctrl.info.product);
-	std::printf("Version:      %u\n", ctrl.info.version);
-	std::printf("Buffer Size:  %u\n", ctrl.info.buffer_size);
-	std::printf("Max Contacts: %d\n", ctrl.info.max_contacts);
-	std::printf("\n");
+	fmt::print("Vendor:       {:04X}\n", ctrl.info.vendor);
+	fmt::print("Product:      {:04X}\n", ctrl.info.product);
+	fmt::print("Version:      {}\n", ctrl.info.version);
+	fmt::print("Buffer Size:  {}\n", ctrl.info.buffer_size);
+	fmt::print("Max Contacts: {}\n", ctrl.info.max_contacts);
+	fmt::print("\n");
 
 	char *data = new char[ctrl.info.buffer_size];
 
@@ -70,9 +71,13 @@ int main(int argc, char *argv[])
 		if (file) {
 			file.write(data, sizeof(struct ipts_data) + header->size);
 		} else {
-			std::cout << "====== Buffer: " << header->buffer
-				  << " == Type: " << header->type << " == Size: " << header->size
-				  << " =====" << std::endl;
+			auto const header_type = header->type;
+			auto const header_buffer = header->buffer;
+			auto const header_size = header->size;
+
+			fmt::print("====== Buffer: {} == Type: {} == Size: {} =====\n",
+				   header_type, header_buffer, header_size);
+
 			print_buffer(&data[sizeof(struct ipts_data)], header->size);
 		}
 
