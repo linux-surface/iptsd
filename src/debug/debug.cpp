@@ -17,21 +17,50 @@
 #include <string>
 #include <vector>
 
-static void print_buffer(char *buffer, size_t size)
-{
-	for (size_t i = 0; i < size; i += 32) {
-		for (size_t j = 0; j < 32; j++) {
-			if (i + j >= size)
-				continue;
 
-			fmt::print("{:02X} ", static_cast<unsigned char>(buffer[i + j]));
+struct PrettyBuf {
+	char const* data;
+	size_t size;
+};
+
+template <>
+struct fmt::formatter<PrettyBuf> {
+	char presentation = 'x';
+
+	constexpr auto parse(format_parse_context& ctx) {
+		auto it = ctx.begin(), end = ctx.end();
+
+		if (it != end && (*it == 'x' || *it == 'X')) {
+			presentation = *it++;
 		}
 
-		fmt::print("\n");
+		if (it != end && *it != '}') {
+			throw format_error("invalid format, expecting 'x' or 'X'");
+		}
+
+		return it;
 	}
 
-	fmt::print("\n");
-}
+	template <class FormatContext>
+	auto format(PrettyBuf const& buf, FormatContext& ctx) {
+		char const* fmtstr = presentation == 'x' ? "{:02x} " : "{:02X} ";
+
+		auto it = ctx.out();
+		for (size_t i = 0; i < buf.size; i += 32) {
+			for (size_t j = 0; j < 32; j++) {
+				if (i + j >= buf.size)
+					continue;
+
+				it = format_to(it, fmtstr, static_cast<unsigned char>(buf.data[i + j]));
+			}
+
+			it = format_to(it, "\n");
+		}
+
+		return format_to(it, "\n");
+	}
+};
+
 
 int main(int argc, char *argv[])
 {
@@ -75,10 +104,12 @@ int main(int argc, char *argv[])
 			auto const header_buffer = header->buffer;
 			auto const header_size = header->size;
 
+			auto const buf = PrettyBuf { &data[sizeof(struct ipts_data)], header->size };
+
 			fmt::print("====== Buffer: {} == Type: {} == Size: {} =====\n",
 				   header_type, header_buffer, header_size);
 
-			print_buffer(&data[sizeof(struct ipts_data)], header->size);
+			fmt::print("{:x}\n", buf);
 		}
 
 		ctrl.send_feedback();
