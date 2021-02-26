@@ -4,9 +4,12 @@
 #include <ipts/ipts.h>
 #include <ipts/protocol.h>
 
+#include <CLI/CLI.hpp>
+
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -29,56 +32,20 @@ static void print_buffer(char *buffer, size_t size)
 	std::printf("\n");
 }
 
-static void help(std::string pname)
-{
-	std::cout << pname << " - Read raw IPTS data" << std::endl;
-	std::cout << std::endl;
-	std::cout << "Usage:" << std::endl;
-	std::cout << "  " << pname << std::endl;
-	std::cout << "  " << pname << " --binary <file>" << std::endl;
-	std::cout << "  " << pname << " --help" << std::endl;
-	std::cout << std::endl;
-	std::cout << "Options:" << std::endl;
-	std::cout << "  -h | --help                  Show this help text" << std::endl;
-	std::cout << "  -b <file> | --binary <file>  Write data to binary file instead of stdout"
-		  << std::endl;
-}
-
 int main(int argc, char *argv[])
 {
-	std::ofstream file;
-	std::vector<std::string> args(argv, &argv[argc]);
+	auto filename = std::filesystem::path{};
 
-	for (size_t i = 1; i < std::size(args); i++) {
-		std::string arg = args[i];
+	auto app = CLI::App { "Read raw IPTS data" };
+	app.add_option("-b,--binary", filename, "Write data to binary file instead of stdout")
+		->type_name("FILE");
 
-		if (arg == "-h" || arg == "--help") {
-			help(args[0]);
-			return 0;
-		}
+	CLI11_PARSE(app, argc, argv);
 
-		if (arg == "-b" || arg == "--binary") {
-			if (i + 1 >= std::size(args)) {
-				std::cerr << "Error: Missing command line argument to " << arg
-					  << std::endl
-					  << std::endl;
-				help(args[0]);
-				return EXIT_FAILURE;
-			}
-
-			std::string filename = args[++i];
-			file = std::ofstream(filename, std::ios::out | std::ios::binary);
-			if (!file) {
-				std::cerr << "Failed to open file '" << filename << "'"
-					  << std::endl;
-				return EXIT_FAILURE;
-			}
-		} else {
-			std::cerr << "Error: Unknown command line argument " << arg << std::endl
-				  << std::endl;
-			help(args[0]);
-			return EXIT_FAILURE;
-		}
+	auto file = std::ofstream {};
+	if (!filename.empty()) {
+		file.exceptions(std::ios::badbit | std::ios::failbit);
+		file.open(filename, std::ios::out | std::ios::binary);
 	}
 
 	IptsControl ctrl;
