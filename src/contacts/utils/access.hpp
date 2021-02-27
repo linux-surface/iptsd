@@ -2,6 +2,8 @@
 
 #include "types.hpp"
 
+#include <common/compiler.hpp>
+
 #include <array>
 #include <cstdio>
 #include <stdexcept>
@@ -63,7 +65,7 @@ inline void ensure(index_t size, index_t i)
         return;
     }
 
-    if (0 <= i && i < size) {
+    if (0 <= i && i < size) [[IPTSD_LIKELY]] {
         return;
     }
 
@@ -77,7 +79,7 @@ inline void ensure(index2_t shape, index2_t i)
         return;
     }
 
-    if (0 <= i.x && i.x < shape.x && 0 <= i.y && i.y < shape.y) {
+    if (0 <= i.x && i.x < shape.x && 0 <= i.y && i.y < shape.y) [[IPTSD_LIKELY]] {
         return;
     }
 
