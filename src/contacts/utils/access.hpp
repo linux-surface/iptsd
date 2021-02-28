@@ -36,7 +36,7 @@ namespace impl {
  * accesses.
  */
 
-[[IPTSD_COLD, IPTSD_NOINLINE, IPTSD_NORETURN]]
+[[noreturn, IPTSD_COLD, IPTSD_NOINLINE]]
 inline auto blow_up(index_t size, index_t i) {
     auto buf = std::array<char, 128> {};
 
@@ -45,7 +45,7 @@ inline auto blow_up(index_t size, index_t i) {
     throw std::out_of_range { buf.data() };
 }
 
-[[IPTSD_COLD, IPTSD_NOINLINE, IPTSD_NORETURN]]
+[[noreturn, IPTSD_COLD, IPTSD_NOINLINE]]
 inline auto blow_up(index2_t shape, index2_t i) {
     auto buf = std::array<char, 128> {};
 

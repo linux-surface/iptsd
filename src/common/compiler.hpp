@@ -46,14 +46,6 @@
 #define IPTSD_NOINLINE
 #endif /* IPTSD_HAS_STD_CPP_ATTRIBUTE(noinline) */
 
-#if IPTSD_HAS_STD_CPP_ATTRIBUTE(noreturn)
-#define IPTSD_NORETURN noreturn
-#elif IPTSD_HAS_CPP_ATTRIBUTE(gnu::noreturn)
-#define IPTSD_NORETURN gnu::noreturn
-#else
-#define IPTSD_NORETURN
-#endif /* IPTSD_HAS_STD_CPP_ATTRIBUTE(noreturn) */
-
 #if IPTSD_HAS_STD_CPP_ATTRIBUTE(cold)
 #define IPTSD_COLD cold
 #elif IPTSD_HAS_CPP_ATTRIBUTE(gnu::cold)
