@@ -24,13 +24,13 @@ public:
 template<class T>
 inline constexpr auto Vec6<T>::operator[] (index_t i) -> T&
 {
-    return utils::access::access<T>(data, data.size(), i);
+    return utils::access::access<T, index_t>(data, data.size(), i);
 }
 
 template<class T>
 inline constexpr auto Vec6<T>::operator[] (index_t i) const -> T const&
 {
-    return utils::access::access<T>(data, data.size(), i);
+    return utils::access::access<T, index_t>(data, data.size(), i);
 }
 
 

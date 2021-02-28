@@ -39,8 +39,9 @@ namespace impl {
  * accesses.
  */
 
+template<class I>
 [[noreturn, IPTSD_COLD, IPTSD_NOINLINE]]
-inline auto blow_up(index_t size, index_t i) {
+inline auto blow_up(I size, I i) {
     auto buf = std::array<char, 128> {};
 
     fmt::format_to_n(buf.data(), buf.size(), "invalid access: size is {}, index is {}", size, i);
@@ -48,77 +49,55 @@ inline auto blow_up(index_t size, index_t i) {
     throw std::out_of_range { buf.data() };
 }
 
-[[noreturn, IPTSD_COLD, IPTSD_NOINLINE]]
-inline auto blow_up(index2_t shape, index2_t i) {
-    auto buf = std::array<char, 128> {};
-
-    fmt::format_to_n(buf.data(), buf.size(), "invalid access: size is {}, index is {}", shape, i);
-
-    throw std::out_of_range { buf.data() };
-}
-
 } /* namespace impl */
 
 
+template<class I>
 [[IPTSD_ALWAYS_INLINE]]
-inline void ensure(index_t size, index_t i)
+inline void ensure(I size, I i)
 {
     if constexpr (mode == access_mode::unchecked) {
         return;
     }
 
-    if (0 <= i && i < size) [[IPTSD_LIKELY]] {
+    if (I { 0 } <= i && i < size) [[IPTSD_LIKELY]] {
         return;
     }
 
     impl::blow_up(size, i);
 }
 
+
+template<class V, class I, class T>
 [[IPTSD_ALWAYS_INLINE]]
-inline void ensure(index2_t shape, index2_t i)
-{
-    if constexpr (mode == access_mode::unchecked) {
-        return;
-    }
-
-    if (0 <= i.x && i.x < shape.x && 0 <= i.y && i.y < shape.y) [[IPTSD_LIKELY]] {
-        return;
-    }
-
-    impl::blow_up(shape, i);
-}
-
-
-template<class V, class T>
-[[IPTSD_ALWAYS_INLINE]]
-inline constexpr auto access(T const& data, index_t size, index_t i) -> V const&
+inline constexpr auto access(T const& data, I size, I i) -> V const&
 {
     ensure(size, i);
 
     return data[i];
 }
 
-template<class V, class T>
+template<class V, class I, class T>
 [[IPTSD_ALWAYS_INLINE]]
-inline constexpr auto access(T& data, index_t size, index_t i) -> V&
+inline constexpr auto access(T& data, I size, I i) -> V&
 {
     ensure(size, i);
 
     return data[i];
 }
 
-template<class V, class T, class F>
+template<class V, class I, class T, class F>
 [[IPTSD_ALWAYS_INLINE]]
-inline constexpr auto access(T const& data, F ravel, index2_t shape, index2_t i) -> V const&
+inline constexpr auto access(T const& data, F ravel, I shape, I i) -> V const&
 {
     ensure(shape, i);
 
     return data[ravel(shape, i)];
 }
 
-template<class V, class T, class F>
+template<class V, class I, class T, class F>
 [[IPTSD_ALWAYS_INLINE]]
-inline constexpr auto access(T& data, F ravel, index2_t shape, index2_t i) -> V&
+inline constexpr auto access(T& data, F ravel, I shape, I i) -> V&
 {
     ensure(shape, i);
 

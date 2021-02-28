@@ -59,6 +59,26 @@ inline constexpr auto operator!= (index2_t const& a, index2_t const& b) -> bool
     return !(a == b);
 }
 
+inline constexpr auto operator> (index2_t const& a, index2_t const& b) -> bool
+{
+    return a.x > b.x && a.y > b.y;
+}
+
+inline constexpr auto operator>= (index2_t const& a, index2_t const& b) -> bool
+{
+    return a.x >= b.x && a.y >= b.y;
+}
+
+inline constexpr auto operator< (index2_t const& a, index2_t const& b) -> bool
+{
+    return a.x < b.x && a.y < b.y;
+}
+
+inline constexpr auto operator<= (index2_t const& a, index2_t const& b) -> bool
+{
+    return a.x <= b.x && a.y <= b.y;
+}
+
 inline constexpr auto operator+ (index2_t const& a, index2_t const& b) -> index2_t
 {
     return { a.x + b.x, a.y + b.y };
