@@ -13,6 +13,7 @@
 #include <ipts/ipts.h>
 #include <ipts/parser.hpp>
 
+#include <atomic>
 #include <chrono>
 #include <csignal>
 #include <cstdio>
@@ -49,8 +50,8 @@ int main(void)
 {
 	IptsdContext iptsd;
 
-	auto should_exit = false;
-	auto should_reset = false;
+	auto should_exit = std::atomic_bool { false };
+	auto should_reset = std::atomic_bool { false };
 
 	iptsd::utils::signal<SIGUSR1>([&](int) { should_reset = true; });
 	iptsd::utils::signal<SIGTERM>([&](int) { should_exit = true; });
