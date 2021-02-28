@@ -24,19 +24,6 @@
 
 using namespace std::chrono;
 
-static bool should_reset = false;
-static bool should_exit = false;
-
-static void signal_reset(int sig)
-{
-	should_reset = true;
-}
-
-static void signal_exit(int sig)
-{
-	should_exit = true;
-}
-
 static bool iptsd_loop(IptsdContext *iptsd)
 {
 	u32 doorbell = iptsd->control->doorbell();
@@ -62,9 +49,12 @@ int main(void)
 {
 	IptsdContext iptsd;
 
-	iptsd::utils::signal(SIGUSR1, signal_reset);
-	iptsd::utils::signal(SIGTERM, signal_exit);
-	iptsd::utils::signal(SIGINT, signal_exit);
+	auto should_exit = false;
+	auto should_reset = false;
+
+	iptsd::utils::signal<SIGUSR1>([&](int) { should_reset = true; });
+	iptsd::utils::signal<SIGTERM>([&](int) { should_exit = true; });
+	iptsd::utils::signal<SIGINT>([&](int) { should_exit = true; });
 
 	iptsd.control = new IptsControl();
 	struct ipts_device_info info = iptsd.control->info;
