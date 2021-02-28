@@ -30,6 +30,9 @@ optflags = []
 debug = get_option('debug')
 optimize = not debug and get_option('optimization') in ['2', '3']
 
+access_checks = get_option('access_checks')
+check_access = access_checks.enabled() or (access_checks.auto() and not optimize)
+
 fast_math = get_option('fast_math')
 if fast_math.enabled() or (fast_math.auto() and optimize)
 	optflags += ['-ffast-math']
@@ -50,6 +53,10 @@ optflags = cpp.get_supported_arguments(optflags)
 
 add_project_arguments(cxxflags, language: 'cpp')
 add_project_arguments(optflags, language: 'cpp')
+
+if check_access
+	add_project_arguments('-DIPTSD_CONFIG_ACCESS_CHECKS', language: 'cpp')
+endif
 
 add_project_arguments('-DSPDLOG_FMT_EXTERNAL', language: 'cpp')
 
