@@ -36,7 +36,7 @@ namespace impl {
  * accesses.
  */
 
-[[noreturn, gnu::cold, gnu::noinline]]
+[[IPTSD_COLD, IPTSD_NOINLINE, IPTSD_NORETURN]]
 inline auto blow_up(index_t size, index_t i) {
     auto buf = std::array<char, 128> {};
 
@@ -45,7 +45,7 @@ inline auto blow_up(index_t size, index_t i) {
     throw std::out_of_range { buf.data() };
 }
 
-[[noreturn, gnu::cold, gnu::noinline]]
+[[IPTSD_COLD, IPTSD_NOINLINE, IPTSD_NORETURN]]
 inline auto blow_up(index2_t shape, index2_t i) {
     auto buf = std::array<char, 128> {};
 
@@ -58,7 +58,7 @@ inline auto blow_up(index2_t shape, index2_t i) {
 } /* namespace impl */
 
 
-[[gnu::always_inline]]
+[[IPTSD_ALWAYS_INLINE]]
 inline void ensure(index_t size, index_t i)
 {
     if constexpr (mode == access_mode::unchecked) {
@@ -72,7 +72,7 @@ inline void ensure(index_t size, index_t i)
     impl::blow_up(size, i);
 }
 
-[[gnu::always_inline]]
+[[IPTSD_ALWAYS_INLINE]]
 inline void ensure(index2_t shape, index2_t i)
 {
     if constexpr (mode == access_mode::unchecked) {
@@ -88,7 +88,7 @@ inline void ensure(index2_t shape, index2_t i)
 
 
 template<class V, class T>
-[[gnu::always_inline]]
+[[IPTSD_ALWAYS_INLINE]]
 inline constexpr auto access(T const& data, index_t size, index_t i) -> V const&
 {
     ensure(size, i);
@@ -97,7 +97,7 @@ inline constexpr auto access(T const& data, index_t size, index_t i) -> V const&
 }
 
 template<class V, class T>
-[[gnu::always_inline]]
+[[IPTSD_ALWAYS_INLINE]]
 inline constexpr auto access(T& data, index_t size, index_t i) -> V&
 {
     ensure(size, i);
@@ -106,7 +106,7 @@ inline constexpr auto access(T& data, index_t size, index_t i) -> V&
 }
 
 template<class V, class T, class F>
-[[gnu::always_inline]]
+[[IPTSD_ALWAYS_INLINE]]
 inline constexpr auto access(T const& data, F ravel, index2_t shape, index2_t i) -> V const&
 {
     ensure(shape, i);
@@ -115,7 +115,7 @@ inline constexpr auto access(T const& data, F ravel, index2_t shape, index2_t i)
 }
 
 template<class V, class T, class F>
-[[gnu::always_inline]]
+[[IPTSD_ALWAYS_INLINE]]
 inline constexpr auto access(T& data, F ravel, index2_t shape, index2_t i) -> V&
 {
     ensure(shape, i);
