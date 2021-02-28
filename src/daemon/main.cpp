@@ -53,9 +53,9 @@ int main(void)
 	auto should_exit = std::atomic_bool { false };
 	auto should_reset = std::atomic_bool { false };
 
-	iptsd::utils::signal<SIGUSR1>([&](int) { should_reset = true; });
-	iptsd::utils::signal<SIGTERM>([&](int) { should_exit = true; });
-	iptsd::utils::signal<SIGINT>([&](int) { should_exit = true; });
+	auto const _sigusr1 = iptsd::utils::signal<SIGUSR1>([&](int) { should_reset = true; });
+	auto const _sigterm = iptsd::utils::signal<SIGTERM>([&](int) { should_exit = true; });
+	auto const _sigint = iptsd::utils::signal<SIGINT>([&](int) { should_exit = true; });
 
 	iptsd.control = new IptsControl();
 	struct ipts_device_info info = iptsd.control->info;
