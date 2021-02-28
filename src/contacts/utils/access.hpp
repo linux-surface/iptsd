@@ -4,6 +4,9 @@
 
 #include <common/compiler.hpp>
 
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+
 #include <array>
 #include <cstdio>
 #include <stdexcept>
@@ -40,7 +43,7 @@ namespace impl {
 inline auto blow_up(index_t size, index_t i) {
     auto buf = std::array<char, 128> {};
 
-    std::snprintf(buf.data(), buf.size(), "invalid access: size is %d, index is %d", size, i);
+    fmt::format_to_n(buf.data(), buf.size(), "invalid access: size is {}, index is {}", size, i);
 
     throw std::out_of_range { buf.data() };
 }
@@ -49,8 +52,7 @@ inline auto blow_up(index_t size, index_t i) {
 inline auto blow_up(index2_t shape, index2_t i) {
     auto buf = std::array<char, 128> {};
 
-    std::snprintf(buf.data(), buf.size(), "invalid access: size is [%d, %d], index is [%d, %d]",
-                  shape.x, shape.y, i.x, i.y);
+    fmt::format_to_n(buf.data(), buf.size(), "invalid access: size is {}, index is {}", shape, i);
 
     throw std::out_of_range { buf.data() };
 }
