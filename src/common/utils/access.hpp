@@ -40,10 +40,11 @@ namespace impl {
 
 template<class I>
 [[noreturn, IPTSD_COLD, IPTSD_NOINLINE]]
-inline auto blow_up(I size, I i) {
+inline auto blow_up(I i, I begin, I end) {
 	auto buf = std::array<char, 128> {};
 
-	fmt::format_to_n(buf.data(), buf.size(), "invalid access: size is {}, index is {}", size, i);
+	fmt::format_to_n(buf.data(), buf.size(), "invalid access: {} not in range {} to {}",
+			 i, begin, end);
 
 	throw std::out_of_range { buf.data() };
 }
@@ -53,24 +54,31 @@ inline auto blow_up(I size, I i) {
 
 template<class I>
 [[IPTSD_ALWAYS_INLINE]]
-inline void ensure(I size, I i)
+inline void ensure(I i, I begin, I end)
 {
 	if constexpr (mode == AccessMode::Unchecked) {
 		return;
 	}
 
-	if (I { 0 } <= i && i < size) [[IPTSD_LIKELY]] {
+	if (begin <= i && i < end) [[IPTSD_LIKELY]] {
 		return;
 	}
 
-	impl::blow_up(size, i);
+	impl::blow_up(i, begin, end);
+}
+
+template<class I>
+[[IPTSD_ALWAYS_INLINE]]
+inline void ensure(I i, I size)
+{
+	ensure(i, I { 0 }, size);
 }
 
 template<class V, class I, class T>
 [[IPTSD_ALWAYS_INLINE]]
 inline constexpr auto access(T const& data, I size, I i) -> V const&
 {
-	ensure(size, i);
+	ensure(i, size);
 
 	return data[i];
 }
@@ -79,7 +87,7 @@ template<class V, class I, class T>
 [[IPTSD_ALWAYS_INLINE]]
 inline constexpr auto access(T& data, I size, I i) -> V&
 {
-	ensure(size, i);
+	ensure(i, size);
 
 	return data[i];
 }
