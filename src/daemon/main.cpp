@@ -8,7 +8,7 @@
 #include "touch.hpp"
 
 #include <common/types.hpp>
-#include <common/utils.hpp>
+#include <common/utils/signal.hpp>
 #include <ipts/control.hpp>
 #include <ipts/ipts.h>
 #include <ipts/parser.hpp>
@@ -62,9 +62,9 @@ int main(void)
 {
 	IptsdContext iptsd;
 
-	Utils::signal(SIGUSR1, signal_reset);
-	Utils::signal(SIGTERM, signal_exit);
-	Utils::signal(SIGINT, signal_exit);
+	iptsd::utils::signal(SIGUSR1, signal_reset);
+	iptsd::utils::signal(SIGTERM, signal_exit);
+	iptsd::utils::signal(SIGINT, signal_exit);
 
 	iptsd.control = new IptsControl();
 	struct ipts_device_info info = iptsd.control->info;
