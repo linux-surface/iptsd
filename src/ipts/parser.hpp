@@ -65,7 +65,7 @@ private:
 
 	template <typename T> T read()
 	{
-		T value;
+		T value {};
 
 		// We have to break type safety here, since all we have is a bytestream.
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
