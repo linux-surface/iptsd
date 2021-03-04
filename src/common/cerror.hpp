@@ -11,7 +11,7 @@ namespace iptsd::common {
 
 inline auto cerror(std::string msg) -> std::system_error
 {
-	return std::system_error{ std::error_code{ errno, std::system_category() }, msg };
+	return std::system_error {std::error_code {errno, std::system_category()}, msg};
 }
 
 } /* namespace iptsd::common */

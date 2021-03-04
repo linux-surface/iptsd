@@ -4,8 +4,8 @@
 
 #include "ipts.h"
 
-#include <common/types.hpp>
 #include <common/cerror.hpp>
+#include <common/types.hpp>
 
 #include <cstddef>
 #include <fcntl.h>

@@ -15,6 +15,7 @@ ColumnLimit: 100
 # Put braces on a new line for functions
 BraceWrapping:
   AfterFunction: true
+  SplitEmptyRecord: false
 BreakBeforeBraces: Custom
 
 # Dont add unneccessary breaks, stay on the same line
@@ -24,13 +25,14 @@ BreakStringLiterals: false
 
 # Except for functions
 AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: Empty
 
 # Misc
 AlignConsecutiveMacros: true
-Cpp11BracedListStyle: false
 IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '^<(common|contacts|ipts)/'
     Priority: 2
 KeepEmptyLinesAtTheStartOfBlocks: false
 SpacesInContainerLiterals: false
+SpaceBeforeCpp11BracedList: true

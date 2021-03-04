@@ -42,8 +42,7 @@ template <int s> void SignalStub<s>::handler(int signum)
 
 template <int s> template <class F> auto SignalStub<s>::setup(F &&callback)
 {
-	struct sigaction sig {
-	};
+	struct sigaction sig {};
 	sig.sa_handler = SignalStub<s>::handler;
 
 	// unregister handler before we replace it
@@ -54,7 +53,7 @@ template <int s> template <class F> auto SignalStub<s>::setup(F &&callback)
 	}
 
 	// replace seat; this will unregister any old handler
-	s_seat.m_handler = std::function{ std::forward<F>(callback) };
+	s_seat.m_handler = std::function {std::forward<F>(callback)};
 
 	// register new handler
 	int ret = sigaction(s, &sig, nullptr);

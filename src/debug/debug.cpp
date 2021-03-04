@@ -5,30 +5,28 @@
 #include <ipts/protocol.h>
 
 #include <CLI/CLI.hpp>
-#include <fmt/format.h>
-
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
+#include <fmt/format.h>
 #include <fstream>
 #include <iostream>
 #include <iterator>
 #include <string>
 #include <vector>
 
-
 struct PrettyBuf {
-	char const* data;
+	char const *data;
 	size_t size;
 };
 
-template <>
-struct fmt::formatter<PrettyBuf> {
+template <> struct fmt::formatter<PrettyBuf> {
 	char hexfmt = 'x';
 	char prefix = 'n';
 
-	constexpr auto parse(format_parse_context& ctx) {
+	constexpr auto parse(format_parse_context &ctx)
+	{
 		auto it = ctx.begin(), end = ctx.end();
 
 		while (it != end && *it != '}') {
@@ -44,10 +42,10 @@ struct fmt::formatter<PrettyBuf> {
 		return it;
 	}
 
-	template <class FormatContext>
-	auto format(PrettyBuf const& buf, FormatContext& ctx) {
-		char const* pfxstr = prefix == 'o' ? "{:04x}: " : "{:04X}: ";
-		char const* fmtstr = hexfmt == 'x' ? "{:02x} " : "{:02X} ";
+	template <class FormatContext> auto format(PrettyBuf const &buf, FormatContext &ctx)
+	{
+		char const *pfxstr = prefix == 'o' ? "{:04x}: " : "{:04X}: ";
+		char const *fmtstr = hexfmt == 'x' ? "{:02x} " : "{:02X} ";
 
 		auto it = ctx.out();
 		for (size_t i = 0; i < buf.size; i += 32) {
@@ -58,25 +56,29 @@ struct fmt::formatter<PrettyBuf> {
 			}
 
 			for (; j < 8 && i + j < buf.size; j++) {
-				it = format_to(it, fmtstr, static_cast<unsigned char>(buf.data[i + j]));
+				it = format_to(it, fmtstr,
+					       static_cast<unsigned char>(buf.data[i + j]));
 			}
 
 			it = format_to(it, " ");
 
 			for (; j < 16 && i + j < buf.size; j++) {
-				it = format_to(it, fmtstr, static_cast<unsigned char>(buf.data[i + j]));
+				it = format_to(it, fmtstr,
+					       static_cast<unsigned char>(buf.data[i + j]));
 			}
 
 			it = format_to(it, " ");
 
 			for (; j < 24 && i + j < buf.size; j++) {
-				it = format_to(it, fmtstr, static_cast<unsigned char>(buf.data[i + j]));
+				it = format_to(it, fmtstr,
+					       static_cast<unsigned char>(buf.data[i + j]));
 			}
 
 			it = format_to(it, " ");
 
 			for (; j < 32 && i + j < buf.size; j++) {
-				it = format_to(it, fmtstr, static_cast<unsigned char>(buf.data[i + j]));
+				it = format_to(it, fmtstr,
+					       static_cast<unsigned char>(buf.data[i + j]));
 			}
 
 			it = format_to(it, "\n");
@@ -86,12 +88,11 @@ struct fmt::formatter<PrettyBuf> {
 	}
 };
 
-
 int main(int argc, char *argv[])
 {
-	auto filename = std::filesystem::path{};
+	auto filename = std::filesystem::path {};
 
-	auto app = CLI::App { "Read raw IPTS data" };
+	auto app = CLI::App {"Read raw IPTS data"};
 	app.add_option("-b,--binary", filename, "Write data to binary file instead of stdout")
 		->type_name("FILE");
 
@@ -129,10 +130,10 @@ int main(int argc, char *argv[])
 			auto const header_buffer = header->buffer;
 			auto const header_size = header->size;
 
-			auto const buf = PrettyBuf { &data[sizeof(struct ipts_data)], header->size };
+			auto const buf = PrettyBuf {&data[sizeof(struct ipts_data)], header->size};
 
-			fmt::print("====== Buffer: {} == Type: {} == Size: {} =====\n",
-				   header_type, header_buffer, header_size);
+			fmt::print("====== Buffer: {} == Type: {} == Size: {} =====\n", header_type,
+				   header_buffer, header_size);
 
 			fmt::print("{:ox}\n", buf);
 		}

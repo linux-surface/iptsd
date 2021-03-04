@@ -2,8 +2,8 @@
 
 #include "uinput-device.hpp"
 
-#include <common/types.hpp>
 #include <common/cerror.hpp>
+#include <common/types.hpp>
 
 #include <cstring>
 #include <fcntl.h>
