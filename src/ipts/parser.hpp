@@ -90,7 +90,7 @@ public:
 
 	IptsParser(size_t size) : data(size) {};
 
-	u8 *buffer();
+	std::span<u8> buffer();
 	void parse();
 };
 

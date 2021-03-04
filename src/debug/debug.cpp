@@ -13,6 +13,7 @@
 #include <fstream>
 #include <iostream>
 #include <iterator>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -120,7 +121,7 @@ int main(int argc, char *argv[])
 		if (doorbell <= ctrl.current_doorbell)
 			continue;
 
-		ctrl.read(data, ctrl.info.buffer_size);
+		ctrl.read(std::span<u8>(reinterpret_cast<u8 *>(data), ctrl.info.buffer_size));
 		struct ipts_data *header = (struct ipts_data *)data;
 
 		if (file) {

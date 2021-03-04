@@ -13,9 +13,9 @@
 #include <stdexcept>
 #include <utility>
 
-u8 *IptsParser::buffer()
+std::span<u8> IptsParser::buffer()
 {
-	return this->data.data();
+	return std::span(this->data);
 }
 
 void IptsParser::read(std::span<u8> dest)

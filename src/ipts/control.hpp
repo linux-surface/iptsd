@@ -9,6 +9,7 @@
 
 #include <array>
 #include <cstddef>
+#include <span>
 
 class IptsControl {
 public:
@@ -20,7 +21,7 @@ public:
 
 	void send_feedback();
 	u32 doorbell();
-	ssize_t read(void *buf, size_t size);
+	ssize_t read(std::span<u8> dest);
 	void reset();
 
 private:

@@ -29,10 +29,9 @@ static bool iptsd_loop(IptsdContext *iptsd)
 {
 	u32 doorbell = iptsd->control->doorbell();
 	u32 diff = doorbell - iptsd->control->current_doorbell;
-	u32 size = iptsd->control->info.buffer_size;
 
 	while (doorbell > iptsd->control->current_doorbell) {
-		iptsd->control->read(iptsd->parser->buffer(), size);
+		iptsd->control->read(iptsd->parser->buffer());
 
 		try {
 			iptsd->parser->parse();

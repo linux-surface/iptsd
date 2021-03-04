@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <fcntl.h>
+#include <span>
 #include <string>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -118,11 +119,11 @@ u32 IptsControl::doorbell()
 	return doorbell;
 }
 
-ssize_t IptsControl::read(void *buf, size_t count)
+ssize_t IptsControl::read(std::span<u8> dest)
 {
 	this->wait_for_device();
 
-	int ret = ::read(this->current(), buf, count);
+	ssize_t ret = ::read(this->current(), dest.data(), dest.size());
 	if (ret == -1)
 		throw iptsd::common::cerror("Failed to read from buffer");
 
