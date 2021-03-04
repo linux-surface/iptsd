@@ -8,7 +8,7 @@
 #include "touch.hpp"
 
 #include <common/types.hpp>
-#include <common/utils/signal.hpp>
+#include <common/signal.hpp>
 #include <ipts/control.hpp>
 #include <ipts/ipts.h>
 #include <ipts/parser.hpp>
@@ -53,9 +53,9 @@ int main(void)
 	auto should_exit = std::atomic_bool { false };
 	auto should_reset = std::atomic_bool { false };
 
-	auto const _sigusr1 = iptsd::utils::signal<SIGUSR1>([&](int) { should_reset = true; });
-	auto const _sigterm = iptsd::utils::signal<SIGTERM>([&](int) { should_exit = true; });
-	auto const _sigint = iptsd::utils::signal<SIGINT>([&](int) { should_exit = true; });
+	auto const _sigusr1 = iptsd::common::signal<SIGUSR1>([&](int) { should_reset = true; });
+	auto const _sigterm = iptsd::common::signal<SIGTERM>([&](int) { should_exit = true; });
+	auto const _sigint = iptsd::common::signal<SIGINT>([&](int) { should_exit = true; });
 
 	iptsd.control = new IptsControl();
 	struct ipts_device_info info = iptsd.control->info;

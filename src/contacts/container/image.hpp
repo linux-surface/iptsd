@@ -147,25 +147,25 @@ inline auto Image<T>::data() const -> const_pointer
 template<class T>
 inline auto Image<T>::operator[] (index2_t const& i) const -> const_reference
 {
-    return utils::access::access<T>(m_data, ravel, m_size, i);
+    return common::access::access<T>(m_data, ravel, m_size, i);
 }
 
 template<class T>
 inline auto Image<T>::operator[] (index2_t const& i) -> reference
 {
-    return utils::access::access<T>(m_data, ravel, m_size, i);
+    return common::access::access<T>(m_data, ravel, m_size, i);
 }
 
 template<class T>
 inline auto Image<T>::operator[] (index_t const& i) const -> const_reference
 {
-    return utils::access::access<T>(m_data, m_size.span(), i);
+    return common::access::access<T>(m_data, m_size.span(), i);
 }
 
 template<class T>
 inline auto Image<T>::operator[] (index_t const& i) -> reference
 {
-    return utils::access::access<T>(m_data, m_size.span(), i);
+    return common::access::access<T>(m_data, m_size.span(), i);
 }
 
 template<class T>

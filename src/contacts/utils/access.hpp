@@ -3,10 +3,10 @@
 #include "types.hpp"
 
 #include <common/compiler.hpp>
-#include <common/utils/access.hpp>
+#include <common/access.hpp>
 
 
-namespace iptsd::utils::access {
+namespace iptsd::common::access {
 
 template<class V, class I, class T, class F>
 [[IPTSD_ALWAYS_INLINE]]
@@ -26,4 +26,4 @@ inline constexpr auto access(T& data, F ravel, I shape, I i) -> V&
     return data[ravel(shape, i)];
 }
 
-} /* namespace iptsd::utils::access */
+} /* namespace iptsd::common::access */

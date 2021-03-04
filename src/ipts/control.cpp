@@ -5,7 +5,7 @@
 #include "ipts.h"
 
 #include <common/types.hpp>
-#include <common/utils/cerror.hpp>
+#include <common/cerror.hpp>
 
 #include <cstddef>
 #include <fcntl.h>
@@ -20,7 +20,7 @@ IptsControl::IptsControl(void)
 
 		int ret = open(name.c_str(), O_RDONLY);
 		if (ret == -1)
-			throw iptsd::utils::cerror("Failed to open " + name);
+			throw iptsd::common::cerror("Failed to open " + name);
 
 		this->files[i] = ret;
 	}
@@ -70,7 +70,7 @@ void IptsControl::get_device_info(void)
 
 	int ret = ioctl(this->current(), IPTS_IOCTL_GET_DEVICE_INFO, &this->info);
 	if (ret == -1)
-		throw iptsd::utils::cerror("Failed to get device info");
+		throw iptsd::common::cerror("Failed to get device info");
 }
 
 void IptsControl::send_feedback(int file)
@@ -79,7 +79,7 @@ void IptsControl::send_feedback(int file)
 
 	int ret = ioctl(file, IPTS_IOCTL_SEND_FEEDBACK, nullptr);
 	if (ret == -1)
-		throw iptsd::utils::cerror("Failed to send feedback");
+		throw iptsd::common::cerror("Failed to send feedback");
 }
 
 void IptsControl::send_feedback(void)
@@ -104,7 +104,7 @@ u32 IptsControl::doorbell(void)
 
 	int ret = ioctl(this->current(), IPTS_IOCTL_GET_DOORBELL, &doorbell);
 	if (ret == -1)
-		throw iptsd::utils::cerror("Failed to get doorbell");
+		throw iptsd::common::cerror("Failed to get doorbell");
 
 	/*
 	 * If the new doorbell is lower than the value we have stored,
@@ -126,7 +126,7 @@ int IptsControl::read(void *buf, size_t count)
 
 	int ret = ::read(this->current(), buf, count);
 	if (ret == -1)
-		throw iptsd::utils::cerror("Failed to read from buffer");
+		throw iptsd::common::cerror("Failed to read from buffer");
 
 	return ret;
 }
@@ -137,5 +137,5 @@ void IptsControl::reset(void)
 
 	int ret = ioctl(this->current(), IPTS_IOCTL_SEND_RESET, nullptr);
 	if (ret == -1)
-		throw iptsd::utils::cerror("Failed to reset IPTS");
+		throw iptsd::common::cerror("Failed to reset IPTS");
 }

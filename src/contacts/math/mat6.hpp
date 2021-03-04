@@ -45,7 +45,7 @@ inline constexpr auto Mat6<T>::operator[] (index2_t i) -> T&
         return i.x * shape.y + i.y;
     };
 
-    return utils::access::access<T>(data, ravel, { 6, 6 }, i);
+    return common::access::access<T>(data, ravel, { 6, 6 }, i);
 }
 
 template<class T>
@@ -55,7 +55,7 @@ inline constexpr auto Mat6<T>::operator[] (index2_t i) const -> T const&
         return i.x * shape.y + i.y;
     };
 
-    return utils::access::access<T>(data, ravel, { 6, 6 }, i);
+    return common::access::access<T>(data, ravel, { 6, 6 }, i);
 }
 
 } /* namespace iptsd::math */

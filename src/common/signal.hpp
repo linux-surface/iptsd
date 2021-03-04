@@ -1,23 +1,20 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_COMMON_UTILS_SIGNAL_HPP_
-#define _IPTSD_COMMON_UTILS_SIGNAL_HPP_
+#ifndef _IPTSD_COMMON_SIGNAL_HPP_
+#define _IPTSD_COMMON_SIGNAL_HPP_
 
-#include <common/utils/cerror.hpp>
+#include "cerror.hpp"
 
 #include <csignal>
 #include <functional>
 #include <type_traits>
 
-
-namespace iptsd::utils {
+namespace iptsd::common {
 namespace detail {
 
-template<int s>
-class SignalStub {
+template <int s> class SignalStub {
 public:
-	template<class F>
-	static auto setup(F&& callback);
+	template <class F> static auto setup(F &&callback);
 
 	static void clear();
 
@@ -30,8 +27,7 @@ private:
 	std::function<void(int)> m_handler;
 };
 
-template<int s>
-SignalStub<s>::~SignalStub()
+template <int s> SignalStub<s>::~SignalStub()
 {
 	if (m_handler) {
 		sigaction(s, nullptr, nullptr);
@@ -39,39 +35,36 @@ SignalStub<s>::~SignalStub()
 	}
 }
 
-template<int s>
-void SignalStub<s>::handler(int signum)
+template <int s> void SignalStub<s>::handler(int signum)
 {
 	s_seat.m_handler(signum);
 }
 
-template<int s>
-template<class F>
-auto SignalStub<s>::setup(F&& callback)
+template <int s> template <class F> auto SignalStub<s>::setup(F &&callback)
 {
-	struct sigaction sig {};
+	struct sigaction sig {
+	};
 	sig.sa_handler = SignalStub<s>::handler;
 
 	// unregister handler before we replace it
 	if (s_seat.m_handler) {
 		int ret = sigaction(s, nullptr, nullptr);
 		if (ret == -1)
-			throw iptsd::utils::cerror("Failed to unregister signal handler");
+			throw iptsd::common::cerror("Failed to unregister signal handler");
 	}
 
 	// replace seat; this will unregister any old handler
-	s_seat.m_handler = std::function { std::forward<F>(callback) };
+	s_seat.m_handler = std::function{ std::forward<F>(callback) };
 
 	// register new handler
 	int ret = sigaction(s, &sig, nullptr);
 	if (ret == -1) {
 		s_seat.m_handler = {};
-		throw iptsd::utils::cerror("Failed to register signal handler");
+		throw iptsd::common::cerror("Failed to register signal handler");
 	}
 }
 
-template<int s>
-void SignalStub<s>::clear()
+template <int s> void SignalStub<s>::clear()
 {
 	if (s_seat.m_handler) {
 		sigaction(s, nullptr, nullptr);
@@ -79,32 +72,24 @@ void SignalStub<s>::clear()
 	}
 }
 
-
-template<int s>
-class SignalGuard {
+template <int s> class SignalGuard {
 public:
 	~SignalGuard();
 };
 
-template<int s>
-SignalGuard<s>::~SignalGuard()
+template <int s> SignalGuard<s>::~SignalGuard()
 {
 	SignalStub<s>::clear();
 }
 
 } /* namespace detail */
 
-using detail::SignalGuard;
-
-
-template<int s, class F>
-[[nodiscard]]
-auto signal(F&& callback) -> SignalGuard<s>
+template <int s, class F> [[nodiscard]] auto signal(F &&callback) -> detail::SignalGuard<s>
 {
 	detail::SignalStub<s>::setup(std::forward<F>(callback));
 	return {};
 }
 
-} /* namespace iptsd::utils */
+} /* namespace iptsd::common */
 
-#endif /* _IPTSD_COMMON_UTILS_SIGNAL_HPP_ */
+#endif /* _IPTSD_COMMON_SIGNAL_HPP_ */

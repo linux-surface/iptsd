@@ -103,23 +103,23 @@ auto Kernel<T, Nx, Ny>::data() const -> const_pointer
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[] (index2_t const& i) const -> const_reference
 {
-    return utils::access::access<T>(this->buf, ravel, { Nx, Ny }, i);
+    return common::access::access<T>(this->buf, ravel, { Nx, Ny }, i);
 }
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[] (index2_t const& i) -> reference
 {
-    return utils::access::access<T>(this->buf, ravel, { Nx, Ny }, i);
+    return common::access::access<T>(this->buf, ravel, { Nx, Ny }, i);
 }
 
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[] (index_t const& i) const -> const_reference
 {
-    return utils::access::access<T>(this->buf, Nx * Ny, i);
+    return common::access::access<T>(this->buf, Nx * Ny, i);
 }
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[] (index_t const& i) -> reference
 {
-    return utils::access::access<T>(this->buf, Nx * Ny, i);
+    return common::access::access<T>(this->buf, Nx * Ny, i);
 }
 
 template<class T, index_t Nx, index_t Ny>
