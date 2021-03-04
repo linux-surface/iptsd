@@ -57,7 +57,6 @@ private:
 	size_t current;
 
 	IptsHeatmap *heatmap;
-	IptsStylusData stylus;
 
 	void read(void *dest, size_t size);
 	void skip(size_t size);

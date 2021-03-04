@@ -138,36 +138,38 @@ void IptsParser::parse_stylus(struct ipts_payload_frame frame)
 
 void IptsParser::parse_stylus_report(struct ipts_report report)
 {
+	IptsStylusData stylus;
+
 	auto stylus_report = this->read<struct ipts_stylus_report>();
-	this->stylus.serial = stylus_report.serial;
+	stylus.serial = stylus_report.serial;
 
 	for (u8 i = 0; i < stylus_report.elements; i++) {
 		if (report.type == IPTS_REPORT_TYPE_STYLUS_V1) {
 			auto data = this->read<struct ipts_stylus_data_v1>();
 
-			this->stylus.mode = data.mode;
-			this->stylus.x = data.x;
-			this->stylus.y = data.y;
-			this->stylus.pressure = data.pressure * 4;
-			this->stylus.azimuth = 0;
-			this->stylus.altitude = 0;
-			this->stylus.timestamp = 0;
+			stylus.mode = data.mode;
+			stylus.x = data.x;
+			stylus.y = data.y;
+			stylus.pressure = data.pressure * 4;
+			stylus.azimuth = 0;
+			stylus.altitude = 0;
+			stylus.timestamp = 0;
 		}
 
 		if (report.type == IPTS_REPORT_TYPE_STYLUS_V2) {
 			auto data = this->read<struct ipts_stylus_data_v2>();
 
-			this->stylus.mode = data.mode;
-			this->stylus.x = data.x;
-			this->stylus.y = data.y;
-			this->stylus.pressure = data.pressure;
-			this->stylus.azimuth = data.azimuth;
-			this->stylus.altitude = data.altitude;
-			this->stylus.timestamp = data.timestamp;
+			stylus.mode = data.mode;
+			stylus.x = data.x;
+			stylus.y = data.y;
+			stylus.pressure = data.pressure;
+			stylus.azimuth = data.azimuth;
+			stylus.altitude = data.altitude;
+			stylus.timestamp = data.timestamp;
 		}
 
 		if (this->on_stylus)
-			this->on_stylus(this->stylus);
+			this->on_stylus(stylus);
 	}
 }
 
