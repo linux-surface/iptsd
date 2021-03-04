@@ -120,7 +120,7 @@ u32 IptsControl::doorbell()
 	return doorbell;
 }
 
-int IptsControl::read(void *buf, size_t count)
+ssize_t IptsControl::read(void *buf, size_t count)
 {
 	this->wait_for_device();
 
