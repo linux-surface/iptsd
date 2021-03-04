@@ -13,7 +13,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-IptsControl::IptsControl(void)
+IptsControl::IptsControl()
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++) {
 		std::string name("/dev/ipts/" + std::to_string(i));
@@ -32,18 +32,18 @@ IptsControl::IptsControl(void)
 	this->current_doorbell = this->doorbell();
 }
 
-IptsControl::~IptsControl(void)
+IptsControl::~IptsControl()
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++)
 		close(this->files[i]);
 }
 
-int IptsControl::current(void)
+int IptsControl::current()
 {
 	return this->files[this->current_doorbell % IPTS_BUFFERS];
 }
 
-bool IptsControl::ready(void)
+bool IptsControl::ready()
 {
 	u8 ready = 0;
 
@@ -54,7 +54,7 @@ bool IptsControl::ready(void)
 	return ready > 0;
 }
 
-void IptsControl::wait_for_device(void)
+void IptsControl::wait_for_device()
 {
 	for (int i = 0; i < 5; i++) {
 		if (this->ready())
@@ -64,7 +64,7 @@ void IptsControl::wait_for_device(void)
 	}
 }
 
-void IptsControl::get_device_info(void)
+void IptsControl::get_device_info()
 {
 	this->wait_for_device();
 
@@ -82,7 +82,7 @@ void IptsControl::send_feedback(int file)
 		throw iptsd::common::cerror("Failed to send feedback");
 }
 
-void IptsControl::send_feedback(void)
+void IptsControl::send_feedback()
 {
 	int file = this->current();
 	this->send_feedback(file);
@@ -90,13 +90,13 @@ void IptsControl::send_feedback(void)
 	this->current_doorbell++;
 }
 
-void IptsControl::flush(void)
+void IptsControl::flush()
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++)
 		this->send_feedback(this->files[i]);
 }
 
-u32 IptsControl::doorbell(void)
+u32 IptsControl::doorbell()
 {
 	this->wait_for_device();
 
@@ -131,7 +131,7 @@ int IptsControl::read(void *buf, size_t count)
 	return ret;
 }
 
-void IptsControl::reset(void)
+void IptsControl::reset()
 {
 	this->wait_for_device();
 

@@ -22,13 +22,13 @@ IptsParser::IptsParser(size_t size)
 	this->on_heatmap = nullptr;
 }
 
-IptsParser::~IptsParser(void)
+IptsParser::~IptsParser()
 {
 	delete std::exchange(this->heatmap, nullptr);
 	delete[] std::exchange(this->data, nullptr);
 }
 
-u8 *IptsParser::buffer(void)
+u8 *IptsParser::buffer()
 {
 	return this->data;
 }
@@ -53,13 +53,13 @@ void IptsParser::skip(size_t size)
 	this->current += size;
 }
 
-void IptsParser::reset(void)
+void IptsParser::reset()
 {
 	this->current = 0;
 	std::memset(this->data, 0, this->size);
 }
 
-void IptsParser::parse(void)
+void IptsParser::parse()
 {
 	auto header = this->read<struct ipts_data>();
 
@@ -75,7 +75,7 @@ void IptsParser::parse(void)
 	this->reset();
 }
 
-void IptsParser::parse_payload(void)
+void IptsParser::parse_payload()
 {
 	auto payload = this->read<struct ipts_payload>();
 
@@ -96,7 +96,7 @@ void IptsParser::parse_payload(void)
 	}
 }
 
-void IptsParser::parse_hid(void)
+void IptsParser::parse_hid()
 {
 	auto report = this->read<u8>();
 

@@ -14,23 +14,23 @@ public:
 	struct ipts_device_info info;
 	u32 current_doorbell;
 
-	IptsControl(void);
-	~IptsControl(void);
+	IptsControl();
+	~IptsControl();
 
-	void send_feedback(void);
-	u32 doorbell(void);
+	void send_feedback();
+	u32 doorbell();
 	int read(void *buf, size_t size);
-	void reset(void);
+	void reset();
 
 private:
 	int files[IPTS_BUFFERS];
 
-	int current(void);
-	bool ready(void);
-	void wait_for_device(void);
-	void get_device_info(void);
+	int current();
+	bool ready();
+	void wait_for_device();
+	void get_device_info();
 	void send_feedback(int file);
-	void flush(void);
+	void flush();
 };
 
 #endif /* _IPTSD_IPTS_CONTROL_HPP_ */
