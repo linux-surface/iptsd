@@ -166,8 +166,8 @@ void IptsParser::parse_heatmap(struct ipts_payload_frame frame)
 	bool has_dim = false;
 	bool has_timestamp = false;
 
-	struct ipts_heatmap_dim dim;
-	struct ipts_heatmap_timestamp time;
+	struct ipts_heatmap_dim dim {};
+	struct ipts_heatmap_timestamp time {};
 
 	while (size < frame.size) {
 		auto report = this->read<struct ipts_report>();
