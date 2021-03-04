@@ -5,8 +5,6 @@ sources = [
 deps = [
 	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
 	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
-	dependency('Microsoft.GSL', modules:['Microsoft.GSL::GSL'],
-		   fallback: ['microsoft-gsl', 'microsoft_gsl_dep']),
 ]
 
 our_includes = [
