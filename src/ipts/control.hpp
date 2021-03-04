@@ -12,8 +12,8 @@
 
 class IptsControl {
 public:
-	struct ipts_device_info info;
-	u32 current_doorbell;
+	struct ipts_device_info info {};
+	u32 current_doorbell = 0;
 
 	IptsControl();
 	~IptsControl();

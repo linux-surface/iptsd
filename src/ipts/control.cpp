@@ -25,8 +25,6 @@ IptsControl::IptsControl() : files()
 		this->files.at(i) = ret;
 	}
 
-	this->current_doorbell = 0;
-
 	this->flush();
 	this->get_device_info();
 	this->current_doorbell = this->doorbell();
