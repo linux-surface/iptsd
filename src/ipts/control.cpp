@@ -13,7 +13,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-IptsControl::IptsControl()
+IptsControl::IptsControl() : files()
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++) {
 		std::string name("/dev/ipts/" + std::to_string(i));
@@ -22,7 +22,7 @@ IptsControl::IptsControl()
 		if (ret == -1)
 			throw iptsd::common::cerror("Failed to open " + name);
 
-		this->files[i] = ret;
+		this->files.at(i) = ret;
 	}
 
 	this->current_doorbell = 0;
@@ -35,12 +35,12 @@ IptsControl::IptsControl()
 IptsControl::~IptsControl()
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++)
-		close(this->files[i]);
+		close(this->files.at(i));
 }
 
 int IptsControl::current()
 {
-	return this->files[this->current_doorbell % IPTS_BUFFERS];
+	return this->files.at(this->current_doorbell % IPTS_BUFFERS);
 }
 
 bool IptsControl::ready()
@@ -93,7 +93,7 @@ void IptsControl::send_feedback()
 void IptsControl::flush()
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++)
-		this->send_feedback(this->files[i]);
+		this->send_feedback(this->files.at(i));
 }
 
 u32 IptsControl::doorbell()

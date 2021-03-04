@@ -7,6 +7,7 @@
 
 #include <common/types.hpp>
 
+#include <array>
 #include <cstddef>
 
 class IptsControl {
@@ -23,7 +24,7 @@ public:
 	void reset();
 
 private:
-	int files[IPTS_BUFFERS];
+	std::array<int, IPTS_BUFFERS> files;
 
 	int current();
 	bool ready();
