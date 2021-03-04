@@ -8,19 +8,10 @@
 #include <common/types.hpp>
 
 #include <cstring>
+#include <memory>
 #include <span>
 #include <stdexcept>
 #include <utility>
-
-IptsParser::IptsParser(size_t size) : data(size)
-{
-	this->heatmap = nullptr;
-}
-
-IptsParser::~IptsParser()
-{
-	delete std::exchange(this->heatmap, nullptr);
-}
 
 u8 *IptsParser::buffer()
 {
@@ -219,11 +210,11 @@ void IptsParser::parse_heatmap_data(struct ipts_heatmap_dim dim, struct ipts_hea
 {
 	if (this->heatmap) {
 		if (this->heatmap->width != dim.width || this->heatmap->height != dim.height)
-			delete std::exchange(this->heatmap, nullptr);
+			this->heatmap.reset(nullptr);
 	}
 
 	if (!this->heatmap)
-		this->heatmap = new IptsHeatmap(dim.width, dim.height);
+		this->heatmap = std::make_unique<IptsHeatmap>(dim.width, dim.height);
 
 	this->read(std::span(this->heatmap->data));
 

@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <functional>
+#include <memory>
 #include <span>
 #include <vector>
 
@@ -56,7 +57,7 @@ private:
 	std::vector<u8> data;
 	size_t index = 0;
 
-	IptsHeatmap *heatmap;
+	std::unique_ptr<IptsHeatmap> heatmap;
 
 	void read(std::span<u8> dest);
 	void skip(size_t size);
@@ -87,8 +88,7 @@ public:
 	std::function<void(IptsStylusData)> on_stylus;
 	std::function<void(IptsHeatmap)> on_heatmap;
 
-	IptsParser(size_t size);
-	~IptsParser();
+	IptsParser(size_t size) : data(size) {};
 
 	u8 *buffer();
 	void parse();
