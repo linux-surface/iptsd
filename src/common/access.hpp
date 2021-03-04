@@ -3,8 +3,6 @@
 #ifndef _IPTSD_COMMON_ACCESS_HPP_
 #define _IPTSD_COMMON_ACCESS_HPP_
 
-#include "compiler.hpp"
-
 #include <array>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
@@ -35,7 +33,7 @@ namespace impl {
  * accesses.
  */
 
-template <class I> [[noreturn, IPTSD_COLD, IPTSD_NOINLINE]] inline auto blow_up(I i, I begin, I end)
+template <class I> [[noreturn, gnu::cold, gnu::noinline]] inline auto blow_up(I i, I begin, I end)
 {
 	auto buf = std::array<char, 128>{};
 
@@ -47,24 +45,24 @@ template <class I> [[noreturn, IPTSD_COLD, IPTSD_NOINLINE]] inline auto blow_up(
 
 } /* namespace impl */
 
-template <class I> [[IPTSD_ALWAYS_INLINE]] inline void ensure(I i, I begin, I end)
+template <class I> [[gnu::always_inline]] inline void ensure(I i, I begin, I end)
 {
 	if constexpr (mode == AccessMode::Unchecked)
 		return;
 
-	if (begin <= i && i < end) [[IPTSD_LIKELY]]
+	if (begin <= i && i < end) [[likely]]
 		return;
 
 	impl::blow_up(i, begin, end);
 }
 
-template <class I> [[IPTSD_ALWAYS_INLINE]] inline void ensure(I i, I size)
+template <class I> [[gnu::always_inline]] inline void ensure(I i, I size)
 {
 	ensure(i, I{ 0 }, size);
 }
 
 template <class V, class I, class T>
-[[IPTSD_ALWAYS_INLINE]] inline constexpr auto access(T const &data, I size, I i) -> V const &
+[[gnu::always_inline]] inline constexpr auto access(T const &data, I size, I i) -> V const &
 {
 	ensure(i, size);
 
@@ -72,7 +70,7 @@ template <class V, class I, class T>
 }
 
 template <class V, class I, class T>
-[[IPTSD_ALWAYS_INLINE]] inline constexpr auto access(T &data, I size, I i) -> V &
+[[gnu::always_inline]] inline constexpr auto access(T &data, I size, I i) -> V &
 {
 	ensure(i, size);
 

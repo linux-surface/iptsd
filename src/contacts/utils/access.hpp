@@ -2,14 +2,13 @@
 
 #include "types.hpp"
 
-#include <common/compiler.hpp>
 #include <common/access.hpp>
 
 
 namespace iptsd::common::access {
 
 template<class V, class I, class T, class F>
-[[IPTSD_ALWAYS_INLINE]]
+[[gnu::always_inline]]
 inline constexpr auto access(T const& data, F ravel, I shape, I i) -> V const&
 {
     ensure(i, shape);
@@ -18,7 +17,7 @@ inline constexpr auto access(T const& data, F ravel, I shape, I i) -> V const&
 }
 
 template<class V, class I, class T, class F>
-[[IPTSD_ALWAYS_INLINE]]
+[[gnu::always_inline]]
 inline constexpr auto access(T& data, F ravel, I shape, I i) -> V&
 {
     ensure(i, shape);
