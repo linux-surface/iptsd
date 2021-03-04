@@ -13,40 +13,41 @@
 
 class IptsSingletouchData {
 public:
-	bool touch;
-	u16 x;
-	u16 y;
+	bool touch = 0;
+	u16 x = 0;
+	u16 y = 0;
 };
 
 class IptsStylusData {
 public:
-	u16 timestamp;
-	u16 mode;
-	u16 x;
-	u16 y;
-	u16 pressure;
-	u16 altitude;
-	u16 azimuth;
-	u32 serial;
+	u16 timestamp = 0;
+	u16 mode = 0;
+	u16 x = 0;
+	u16 y = 0;
+	u16 pressure = 0;
+	u16 altitude = 0;
+	u16 azimuth = 0;
+	u32 serial = 0;
 };
 
 class IptsHeatmap {
 public:
 	u8 width;
 	u8 height;
-	u8 y_min;
-	u8 y_max;
-	u8 x_min;
-	u8 x_max;
-	u8 z_min;
-	u8 z_max;
 	u16 size;
-	u16 count;
-	u32 timestamp;
+
+	u8 y_min = 0;
+	u8 y_max = 0;
+	u8 x_min = 0;
+	u8 x_max = 0;
+	u8 z_min = 0;
+	u8 z_max = 0;
+	u16 count = 0;
+	u32 timestamp = 0;
 
 	std::vector<u8> data;
 
-	IptsHeatmap(u8 width, u8 height);
+	IptsHeatmap(u8 w, u8 h) : width(w), height(h), size(w * h), data(size) {};
 };
 
 class IptsParser {

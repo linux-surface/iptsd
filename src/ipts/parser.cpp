@@ -10,13 +10,6 @@
 #include <stdexcept>
 #include <utility>
 
-IptsHeatmap::IptsHeatmap(u8 width, u8 height) : data(width * height)
-{
-	this->width = width;
-	this->height = height;
-	this->size = width * height;
-}
-
 IptsParser::IptsParser(size_t size)
 {
 	this->current = 0;
