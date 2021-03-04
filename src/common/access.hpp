@@ -35,12 +35,9 @@ namespace impl {
 
 template <class I> [[noreturn, gnu::cold, gnu::noinline]] inline auto blow_up(I i, I begin, I end)
 {
-	auto buf = std::array<char, 128> {};
+	std::string msg = fmt::format("invalid access: {} not in range {} to {}", i, begin, end);
 
-	fmt::format_to_n(buf.data(), buf.size(), "invalid access: {} not in range {} to {}", i,
-			 begin, end);
-
-	throw std::out_of_range {buf.data()};
+	throw std::out_of_range(msg);
 }
 
 } /* namespace impl */
