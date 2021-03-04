@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <functional>
+#include <span>
 #include <vector>
 
 class IptsSingletouchData {
@@ -52,25 +53,28 @@ public:
 
 class IptsParser {
 private:
-	u8 *data;
-	size_t size;
-	size_t current;
+	std::vector<u8> data;
+	size_t index = 0;
 
 	IptsHeatmap *heatmap;
 
-	void read(void *dest, size_t size);
+	void read(std::span<u8> dest);
 	void skip(size_t size);
-	void reset(void);
+	void reset();
 
-	template <typename T> T read(void)
+	template <typename T> T read()
 	{
 		T value;
-		this->read(&value, sizeof(value));
+
+		// We have to break type safety here, since all we have is a bytestream.
+		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+		this->read(std::span(reinterpret_cast<u8 *>(&value), sizeof(value)));
+
 		return value;
 	}
 
-	void parse_payload(void);
-	void parse_hid(void);
+	void parse_payload();
+	void parse_hid();
 
 	void parse_stylus(struct ipts_payload_frame frame);
 	void parse_stylus_report(struct ipts_report report);
@@ -84,7 +88,7 @@ public:
 	std::function<void(IptsHeatmap)> on_heatmap;
 
 	IptsParser(size_t size);
-	~IptsParser(void);
+	~IptsParser();
 
 	u8 *buffer();
 	void parse();

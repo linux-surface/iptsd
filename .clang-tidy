@@ -1,1 +1,1 @@
-Checks: 'cppcoreguidelines-*,clang-analyzer-*,-clang-analyzer-osx*'
+Checks: 'cppcoreguidelines-*,clang-analyzer-*,-clang-analyzer-osx*,-cppcoreguidelines-non-private-member-variables-in-classes,-cppcoreguidelines-special-member-functions'

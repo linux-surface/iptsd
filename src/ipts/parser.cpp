@@ -4,59 +4,54 @@
 
 #include "protocol.h"
 
+#include <common/access.hpp>
 #include <common/types.hpp>
 
 #include <cstring>
+#include <span>
 #include <stdexcept>
 #include <utility>
 
-IptsParser::IptsParser(size_t size)
+IptsParser::IptsParser(size_t size) : data(size)
 {
-	this->current = 0;
-	this->size = size;
 	this->heatmap = nullptr;
-	this->data = new u8[size];
-
-	this->on_singletouch = nullptr;
-	this->on_stylus = nullptr;
-	this->on_heatmap = nullptr;
 }
 
 IptsParser::~IptsParser()
 {
 	delete std::exchange(this->heatmap, nullptr);
-	delete[] std::exchange(this->data, nullptr);
 }
 
 u8 *IptsParser::buffer()
 {
-	return this->data;
+	return this->data.data();
 }
 
-void IptsParser::read(void *dest, size_t size)
+void IptsParser::read(std::span<u8> dest)
 {
-	if (!dest)
-		throw std::invalid_argument("Destination buffer is NULL");
+	iptsd::common::access::ensure(this->index + dest.size(), this->data.size());
 
-	if (this->current + size > this->size)
-		throw std::out_of_range("Reading beyond buffer size");
+	auto begin = this->data.begin();
+	std::advance(begin, this->index);
 
-	std::memcpy(dest, &this->data[this->current], size);
-	this->current += size;
+	auto end = begin;
+	std::advance(end, dest.size());
+
+	std::copy(begin, end, dest.begin());
+	this->index += dest.size();
 }
 
 void IptsParser::skip(size_t size)
 {
-	if (this->current + size > this->size)
-		throw std::out_of_range("Reading beyond buffer size");
+	iptsd::common::access::ensure(this->index + size, this->data.size());
 
-	this->current += size;
+	this->index += size;
 }
 
 void IptsParser::reset()
 {
-	this->current = 0;
-	std::memset(this->data, 0, this->size);
+	this->index = 0;
+	std::fill(this->data.begin(), this->data.end(), 0);
 }
 
 void IptsParser::parse()
@@ -230,7 +225,7 @@ void IptsParser::parse_heatmap_data(struct ipts_heatmap_dim dim, struct ipts_hea
 	if (!this->heatmap)
 		this->heatmap = new IptsHeatmap(dim.width, dim.height);
 
-	this->read(this->heatmap->data.data(), this->heatmap->size);
+	this->read(std::span(this->heatmap->data));
 
 	this->heatmap->y_min = dim.y_min;
 	this->heatmap->y_max = dim.y_max;
