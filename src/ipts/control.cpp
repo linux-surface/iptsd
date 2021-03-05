@@ -5,6 +5,7 @@
 #include "ipts.h"
 
 #include <common/cerror.hpp>
+#include <common/cwrap.hpp>
 #include <common/types.hpp>
 
 #include <cstddef>
@@ -17,9 +18,9 @@
 IptsControl::IptsControl() : files()
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++) {
-		std::string name("/dev/ipts/" + std::to_string(i));
+		std::string name = "/dev/ipts/" + std::to_string(i);
 
-		int ret = open(name.c_str(), O_RDONLY);
+		int ret = iptsd::common::open(name, O_RDONLY);
 		if (ret == -1)
 			throw iptsd::common::cerror("Failed to open " + name);
 
@@ -46,7 +47,7 @@ bool IptsControl::ready()
 {
 	u8 ready = 0;
 
-	int ret = ioctl(this->current(), IPTS_IOCTL_GET_DEVICE_READY, &ready);
+	int ret = iptsd::common::ioctl(this->current(), IPTS_IOCTL_GET_DEVICE_READY, &ready);
 	if (ret == -1)
 		return false;
 
@@ -67,7 +68,7 @@ void IptsControl::get_device_info()
 {
 	this->wait_for_device();
 
-	int ret = ioctl(this->current(), IPTS_IOCTL_GET_DEVICE_INFO, &this->info);
+	int ret = iptsd::common::ioctl(this->current(), IPTS_IOCTL_GET_DEVICE_INFO, &this->info);
 	if (ret == -1)
 		throw iptsd::common::cerror("Failed to get device info");
 }
@@ -76,7 +77,7 @@ void IptsControl::send_feedback(int file)
 {
 	this->wait_for_device();
 
-	int ret = ioctl(file, IPTS_IOCTL_SEND_FEEDBACK, nullptr);
+	int ret = iptsd::common::ioctl(file, IPTS_IOCTL_SEND_FEEDBACK);
 	if (ret == -1)
 		throw iptsd::common::cerror("Failed to send feedback");
 }
@@ -101,7 +102,7 @@ u32 IptsControl::doorbell()
 
 	u32 doorbell = 0;
 
-	int ret = ioctl(this->current(), IPTS_IOCTL_GET_DOORBELL, &doorbell);
+	int ret = iptsd::common::ioctl(this->current(), IPTS_IOCTL_GET_DOORBELL, &doorbell);
 	if (ret == -1)
 		throw iptsd::common::cerror("Failed to get doorbell");
 
@@ -123,7 +124,7 @@ ssize_t IptsControl::read(std::span<u8> dest)
 {
 	this->wait_for_device();
 
-	ssize_t ret = ::read(this->current(), dest.data(), dest.size());
+	ssize_t ret = iptsd::common::read(this->current(), dest);
 	if (ret == -1)
 		throw iptsd::common::cerror("Failed to read from buffer");
 
@@ -134,7 +135,7 @@ void IptsControl::reset()
 {
 	this->wait_for_device();
 
-	int ret = ioctl(this->current(), IPTS_IOCTL_SEND_RESET, nullptr);
+	int ret = iptsd::common::ioctl(this->current(), IPTS_IOCTL_SEND_RESET);
 	if (ret == -1)
 		throw iptsd::common::cerror("Failed to reset IPTS");
 }
