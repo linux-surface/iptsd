@@ -40,4 +40,9 @@ public:
 	StylusDevice &active_stylus();
 };
 
+inline StylusDevice &DeviceManager::active_stylus()
+{
+	return this->styli.at(this->active);
+}
+
 #endif /* _IPTSD_DAEMON_DEVICES_HPP_ */

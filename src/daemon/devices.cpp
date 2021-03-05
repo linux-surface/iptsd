@@ -120,8 +120,3 @@ void DeviceManager::switch_stylus(u32 serial)
 	this->styli.push_back(std::move(stylus));
 	this->active = this->styli.size() - 1;
 }
-
-inline StylusDevice &DeviceManager::active_stylus()
-{
-	return this->styli.at(this->active);
-}
