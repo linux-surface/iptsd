@@ -10,18 +10,18 @@
 
 class IptsdConfig {
 public:
-	bool invert_x;
-	bool invert_y;
+	bool invert_x = false;
+	bool invert_y = false;
 
-	i32 width;
-	i32 height;
+	i32 width = 0;
+	i32 height = 0;
 
 	struct ipts_device_info info;
 
 	IptsdConfig(struct ipts_device_info info);
 
 private:
-	void load_dir(std::string name, struct ipts_device_info info);
+	void load_dir(std::string name);
 };
 
 #endif /* _IPTSD_DAEMON_CONFIG_HPP_ */

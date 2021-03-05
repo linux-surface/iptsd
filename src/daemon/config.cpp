@@ -25,7 +25,8 @@ static bool to_bool(std::string value)
 
 static int parse_dev(void *user, const char *c_section, const char *c_name, const char *c_value)
 {
-	struct iptsd_config_device *dev = (struct iptsd_config_device *)user;
+	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+	struct iptsd_config_device *dev = reinterpret_cast<struct iptsd_config_device *>(user);
 
 	std::string section(c_section);
 	std::string name(c_name);
@@ -45,7 +46,8 @@ static int parse_dev(void *user, const char *c_section, const char *c_name, cons
 
 static int parse_conf(void *user, const char *c_section, const char *c_name, const char *c_value)
 {
-	IptsdConfig *config = (IptsdConfig *)user;
+	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+	IptsdConfig *config = reinterpret_cast<IptsdConfig *>(user);
 
 	std::string section(c_section);
 	std::string name(c_name);
@@ -69,7 +71,7 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	return 1;
 }
 
-void IptsdConfig::load_dir(std::string name, struct ipts_device_info info)
+void IptsdConfig::load_dir(std::string name)
 {
 	if (!std::filesystem::exists(name))
 		return;
@@ -78,23 +80,21 @@ void IptsdConfig::load_dir(std::string name, struct ipts_device_info info)
 		if (!p.is_regular_file())
 			continue;
 
-		struct iptsd_config_device dev;
+		struct iptsd_config_device dev {};
 		ini_parse(p.path().c_str(), parse_dev, &dev);
 
-		if (dev.vendor != info.vendor || dev.product != info.product)
+		if (dev.vendor != this->info.vendor || dev.product != this->info.product)
 			continue;
 
 		ini_parse(p.path().c_str(), parse_conf, this);
 	}
 }
 
-IptsdConfig::IptsdConfig(struct ipts_device_info info)
+IptsdConfig::IptsdConfig(struct ipts_device_info info) : info(info)
 {
-	this->load_dir(IPTSD_CONFIG_DIR, info);
-	this->load_dir("./etc/config", info);
+	this->load_dir(IPTSD_CONFIG_DIR);
+	this->load_dir("./etc/config");
 
 	if (std::filesystem::exists(IPTSD_CONFIG_FILE))
 		ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
-
-	this->info = info;
 }
