@@ -10,8 +10,10 @@ sources = [
 ]
 
 deps = [
+	libcommon,
 	libcontacts,
 	libipts,
+	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
 	dependency('inih', fallback: ['inih', 'inih_dep']),
 ]
 

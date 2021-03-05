@@ -3,6 +3,7 @@ sources = [
 ]
 
 deps = [
+	libcommon,
 	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
 	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
 ]

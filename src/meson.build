@@ -60,6 +60,7 @@ endif
 
 add_project_arguments('-DSPDLOG_FMT_EXTERNAL', language: 'cpp')
 
+subdir('common')
 subdir('contacts')
 subdir('ipts')
 
