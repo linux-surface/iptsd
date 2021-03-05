@@ -45,9 +45,9 @@ static void emit(TouchDevice dev, IptsSingletouchData data)
 void iptsd_singletouch_input(IptsdContext *iptsd, IptsSingletouchData data)
 {
 	if (data.touch)
-		emit(iptsd->devices->touch, data);
+		emit(iptsd->devices.touch, data);
 	else
-		lift(iptsd->devices->touch);
+		lift(iptsd->devices.touch);
 
-	iptsd->devices->touch.emit(EV_SYN, SYN_REPORT, 0);
+	iptsd->devices.touch.emit(EV_SYN, SYN_REPORT, 0);
 }

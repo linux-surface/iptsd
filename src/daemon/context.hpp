@@ -13,18 +13,14 @@
 
 class IptsdContext {
 public:
-	IptsdConfig *config;
-	IptsControl *control;
-	IptsParser *parser;
-	DeviceManager *devices;
+	IptsControl control;
+	IptsdConfig config;
+	DeviceManager devices;
+	IptsParser parser;
 
-	~IptsdContext(void)
-	{
-		delete std::exchange(this->config, nullptr);
-		delete std::exchange(this->control, nullptr);
-		delete std::exchange(this->parser, nullptr);
-		delete std::exchange(this->devices, nullptr);
-	};
+	IptsdContext()
+		: control(), config(control.info), devices(&config),
+		  parser(control.info.buffer_size) {};
 };
 
 #endif /* _IPTSD_DAEMON_CONTEXT_HPP_ */

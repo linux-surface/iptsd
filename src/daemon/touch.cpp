@@ -73,7 +73,7 @@ static void handle_multi(TouchDevice *touch, std::vector<TouchInput> &inputs)
 
 void iptsd_touch_input(IptsdContext *iptsd, IptsHeatmap data)
 {
-	TouchDevice *touch = &iptsd->devices->touch;
+	TouchDevice *touch = &iptsd->devices.touch;
 
 	std::vector<TouchInput> inputs = touch->manager.process(data);
 
