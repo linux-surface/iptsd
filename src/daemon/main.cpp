@@ -18,6 +18,7 @@
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
+#include <fmt/format.h>
 #include <functional>
 #include <iostream>
 #include <stdexcept>
@@ -58,7 +59,8 @@ int main(void)
 
 	struct ipts_device_info info = ctx.control.info;
 	system_clock::time_point timeout = system_clock::now() + 5s;
-	std::printf("Connected to device %04X:%04X\n", info.vendor, info.product);
+
+	fmt::print("Connected to device {:04X}:{:04X}\n", info.vendor, info.product);
 
 	ctx.parser.on_singletouch = [&](auto data) { iptsd_singletouch_input(&ctx, data); };
 	ctx.parser.on_stylus = [&](auto data) { iptsd_stylus_input(&ctx, data); };
