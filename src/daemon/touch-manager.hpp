@@ -29,11 +29,10 @@ public:
 	iptsd::container::Image<f32> *hm;
 	iptsd::TouchProcessor *processor;
 
+	IptsdConfig conf;
 	std::vector<TouchInput> inputs;
 
-	IptsdConfig *conf;
-
-	TouchManager(IptsdConfig *conf);
+	TouchManager(IptsdConfig conf);
 	~TouchManager(void);
 
 	std::vector<TouchInput> &process(IptsHeatmap data);

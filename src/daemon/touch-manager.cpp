@@ -20,9 +20,8 @@
 #include <utility>
 #include <vector>
 
-TouchManager::TouchManager(IptsdConfig *conf) : inputs(conf->info.max_contacts)
+TouchManager::TouchManager(IptsdConfig conf) : conf(conf), inputs(conf.info.max_contacts)
 {
-	this->conf = conf;
 	this->hm = nullptr;
 	this->processor = nullptr;
 }
@@ -65,17 +64,17 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 
 	std::vector<iptsd::TouchPoint> contacts = this->processor->process(*this->hm);
 
-	size_t max_contacts = (size_t)this->conf->info.max_contacts;
+	size_t max_contacts = (size_t)this->conf.info.max_contacts;
 	size_t count = std::min(std::size(contacts), max_contacts);
 
 	for (size_t i = 0; i < count; i++) {
 		f64 x = (contacts[i].mean.x + 0.5) / data.width;
 		f64 y = (contacts[i].mean.y + 0.5) / data.height;
 
-		if (this->conf->invert_x)
+		if (this->conf.invert_x)
 			x = 1 - x;
 
-		if (this->conf->invert_y)
+		if (this->conf.invert_y)
 			y = 1 - y;
 
 		this->inputs[i].x = (i32)(x * IPTS_MAX_X);

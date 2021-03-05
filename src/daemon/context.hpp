@@ -19,7 +19,7 @@ public:
 	IptsParser parser;
 
 	IptsdContext()
-		: control(), config(control.info), devices(&config),
+		: control(), config(control.info), devices(config),
 		  parser(control.info.buffer_size) {};
 };
 

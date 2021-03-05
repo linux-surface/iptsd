@@ -15,25 +15,25 @@ class StylusDevice : public UinputDevice {
 public:
 	u32 serial;
 
-	StylusDevice(IptsdConfig *conf);
+	StylusDevice(IptsdConfig conf);
 };
 
 class TouchDevice : public UinputDevice {
 public:
 	TouchManager manager;
 
-	TouchDevice(IptsdConfig *conf);
+	TouchDevice(IptsdConfig conf);
 };
 
 class DeviceManager {
 public:
-	IptsdConfig *conf;
+	IptsdConfig conf;
 
 	TouchDevice touch;
 	StylusDevice *active_stylus;
 	std::vector<StylusDevice *> styli;
 
-	DeviceManager(IptsdConfig *conf);
+	DeviceManager(IptsdConfig conf);
 	~DeviceManager(void);
 
 	void switch_stylus(u32 serial);

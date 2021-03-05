@@ -25,12 +25,12 @@ static i32 res(i32 virt, i32 phys)
 	return (i32)std::round(res);
 }
 
-StylusDevice::StylusDevice(IptsdConfig *conf) : UinputDevice()
+StylusDevice::StylusDevice(IptsdConfig conf) : UinputDevice()
 {
 	this->name = "IPTS Stylus";
-	this->vendor = conf->info.vendor;
-	this->product = conf->info.product;
-	this->version = conf->info.version;
+	this->vendor = conf.info.vendor;
+	this->product = conf.info.product;
+	this->version = conf.info.version;
 
 	this->set_evbit(EV_KEY);
 	this->set_evbit(EV_ABS);
@@ -43,8 +43,8 @@ StylusDevice::StylusDevice(IptsdConfig *conf) : UinputDevice()
 	this->set_keybit(BTN_TOOL_PEN);
 	this->set_keybit(BTN_TOOL_RUBBER);
 
-	i32 res_x = res(IPTS_MAX_X, conf->width);
-	i32 res_y = res(IPTS_MAX_Y, conf->height);
+	i32 res_x = res(IPTS_MAX_X, conf.width);
+	i32 res_y = res(IPTS_MAX_Y, conf.height);
 
 	this->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
@@ -56,12 +56,12 @@ StylusDevice::StylusDevice(IptsdConfig *conf) : UinputDevice()
 	this->create();
 }
 
-TouchDevice::TouchDevice(IptsdConfig *conf) : UinputDevice(), manager(conf)
+TouchDevice::TouchDevice(IptsdConfig conf) : UinputDevice(), manager(conf)
 {
 	this->name = "IPTS Touch";
-	this->vendor = conf->info.vendor;
-	this->product = conf->info.product;
-	this->version = conf->info.version;
+	this->vendor = conf.info.vendor;
+	this->product = conf.info.product;
+	this->version = conf.info.version;
 
 	this->set_evbit(EV_ABS);
 	this->set_evbit(EV_KEY);
@@ -69,13 +69,13 @@ TouchDevice::TouchDevice(IptsdConfig *conf) : UinputDevice(), manager(conf)
 	this->set_propbit(INPUT_PROP_DIRECT);
 	this->set_keybit(BTN_TOUCH);
 
-	f32 diag = std::sqrt(conf->width * conf->width + conf->height * conf->height);
-	i32 res_x = res(IPTS_MAX_X, conf->width);
-	i32 res_y = res(IPTS_MAX_Y, conf->height);
+	f32 diag = std::sqrt(conf.width * conf.width + conf.height * conf.height);
+	i32 res_x = res(IPTS_MAX_X, conf.width);
+	i32 res_y = res(IPTS_MAX_Y, conf.height);
 	i32 res_d = res(IPTS_DIAGONAL, diag);
 
-	this->set_absinfo(ABS_MT_SLOT, 0, conf->info.max_contacts, 0);
-	this->set_absinfo(ABS_MT_TRACKING_ID, 0, conf->info.max_contacts, 0);
+	this->set_absinfo(ABS_MT_SLOT, 0, conf.info.max_contacts, 0);
+	this->set_absinfo(ABS_MT_TRACKING_ID, 0, conf.info.max_contacts, 0);
 	this->set_absinfo(ABS_MT_POSITION_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_MT_POSITION_Y, 0, IPTS_MAX_Y, res_y);
 	this->set_absinfo(ABS_MT_TOOL_TYPE, 0, MT_TOOL_MAX, 0);
@@ -90,12 +90,11 @@ TouchDevice::TouchDevice(IptsdConfig *conf) : UinputDevice(), manager(conf)
 	this->create();
 }
 
-DeviceManager::DeviceManager(IptsdConfig *conf) : touch(conf)
+DeviceManager::DeviceManager(IptsdConfig conf) : conf(conf), touch(conf)
 {
-	if (conf->width == 0 || conf->height == 0)
+	if (conf.width == 0 || conf.height == 0)
 		throw std::runtime_error("Display size is 0");
 
-	this->conf = conf;
 	this->switch_stylus(0);
 }
 
