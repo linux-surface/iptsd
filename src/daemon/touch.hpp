@@ -7,6 +7,6 @@
 
 #include <ipts/parser.hpp>
 
-void iptsd_touch_input(IptsdContext *iptsd, IptsHeatmap data);
+void iptsd_touch_input(IptsdContext &ctx, IptsHeatmap data);
 
 #endif /* _IPTSD_DAEMON_TOUCH_HPP_ */

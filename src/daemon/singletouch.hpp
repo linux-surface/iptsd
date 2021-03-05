@@ -7,6 +7,6 @@
 
 #include <ipts/parser.hpp>
 
-void iptsd_singletouch_input(IptsdContext *iptsd, IptsSingletouchData data);
+void iptsd_singletouch_input(IptsdContext &ctx, IptsSingletouchData data);
 
 #endif /* _IPTSD_DAEMON_SINGLETOUCH_HPP_ */

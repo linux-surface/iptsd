@@ -7,6 +7,6 @@
 
 #include <ipts/parser.hpp>
 
-void iptsd_stylus_input(IptsdContext *iptsd, IptsStylusData data);
+void iptsd_stylus_input(IptsdContext &ctx, IptsStylusData data);
 
 #endif /* _IPTSD_DAEMON_STYLUS_HPP_ */

@@ -62,9 +62,9 @@ int main(void)
 
 	fmt::print("Connected to device {:04X}:{:04X}\n", info.vendor, info.product);
 
-	ctx.parser.on_singletouch = [&](auto data) { iptsd_singletouch_input(&ctx, data); };
-	ctx.parser.on_stylus = [&](auto data) { iptsd_stylus_input(&ctx, data); };
-	ctx.parser.on_heatmap = [&](auto data) { iptsd_touch_input(&ctx, data); };
+	ctx.parser.on_singletouch = [&](auto data) { iptsd_singletouch_input(ctx, data); };
+	ctx.parser.on_stylus = [&](auto data) { iptsd_stylus_input(ctx, data); };
+	ctx.parser.on_heatmap = [&](auto data) { iptsd_touch_input(ctx, data); };
 
 	while (true) {
 		if (iptsd_loop(ctx))
