@@ -39,7 +39,7 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 
 void iptsd_stylus_input(IptsdContext *iptsd, IptsStylusData data)
 {
-	StylusDevice *stylus = iptsd->devices.active_stylus;
+	StylusDevice stylus = iptsd->devices.active_stylus();
 
 	bool prox = (data.mode & IPTS_STYLUS_REPORT_MODE_PROX) >> 0;
 	bool touch = (data.mode & IPTS_STYLUS_REPORT_MODE_TOUCH) >> 1;
@@ -51,18 +51,18 @@ void iptsd_stylus_input(IptsdContext *iptsd, IptsStylusData data)
 
 	std::tuple<i32, i32> tilt = get_tilt(data.altitude, data.azimuth);
 
-	stylus->emit(EV_KEY, BTN_TOUCH, touch);
-	stylus->emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
-	stylus->emit(EV_KEY, BTN_TOOL_RUBBER, btn_rubber);
-	stylus->emit(EV_KEY, BTN_STYLUS, button);
+	stylus.emit(EV_KEY, BTN_TOUCH, touch);
+	stylus.emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
+	stylus.emit(EV_KEY, BTN_TOOL_RUBBER, btn_rubber);
+	stylus.emit(EV_KEY, BTN_STYLUS, button);
 
-	stylus->emit(EV_ABS, ABS_X, data.x);
-	stylus->emit(EV_ABS, ABS_Y, data.y);
-	stylus->emit(EV_ABS, ABS_PRESSURE, data.pressure);
-	stylus->emit(EV_ABS, ABS_MISC, data.timestamp);
+	stylus.emit(EV_ABS, ABS_X, data.x);
+	stylus.emit(EV_ABS, ABS_Y, data.y);
+	stylus.emit(EV_ABS, ABS_PRESSURE, data.pressure);
+	stylus.emit(EV_ABS, ABS_MISC, data.timestamp);
 
-	stylus->emit(EV_ABS, ABS_TILT_X, std::get<0>(tilt));
-	stylus->emit(EV_ABS, ABS_TILT_Y, std::get<1>(tilt));
+	stylus.emit(EV_ABS, ABS_TILT_X, std::get<0>(tilt));
+	stylus.emit(EV_ABS, ABS_TILT_Y, std::get<1>(tilt));
 
-	stylus->emit(EV_SYN, SYN_REPORT, 0);
+	stylus.emit(EV_SYN, SYN_REPORT, 0);
 }

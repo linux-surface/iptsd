@@ -15,6 +15,8 @@ deps = [
 	libipts,
 	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
 	dependency('inih', fallback: ['inih', 'inih_dep']),
+	dependency('Microsoft.GSL', modules:['Microsoft.GSL::GSL'],
+		   fallback: ['microsoft-gsl', 'microsoft_gsl_dep']),
 ]
 
 executable('iptsd', sources, dependencies: deps,

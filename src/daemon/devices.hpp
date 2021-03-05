@@ -13,7 +13,7 @@
 
 class StylusDevice : public UinputDevice {
 public:
-	u32 serial;
+	u32 serial = 0;
 
 	StylusDevice(IptsdConfig conf);
 };
@@ -30,13 +30,14 @@ public:
 	IptsdConfig conf;
 
 	TouchDevice touch;
-	StylusDevice *active_stylus;
-	std::vector<StylusDevice *> styli;
+	std::vector<StylusDevice> styli;
+
+	size_t active = 0;
 
 	DeviceManager(IptsdConfig conf);
-	~DeviceManager(void);
 
 	void switch_stylus(u32 serial);
+	StylusDevice &active_stylus();
 };
 
 #endif /* _IPTSD_DAEMON_DEVICES_HPP_ */

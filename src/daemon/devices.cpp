@@ -12,6 +12,7 @@
 #include <climits>
 #include <cmath>
 #include <cstddef>
+#include <gsl/gsl>
 #include <iterator>
 #include <linux/input-event-codes.h>
 #include <linux/input.h>
@@ -21,8 +22,8 @@
 
 static i32 res(i32 virt, i32 phys)
 {
-	f64 res = (f64)(virt * 10) / (f64)phys;
-	return (i32)std::round(res);
+	f64 res = static_cast<f64>(virt * 10) / static_cast<f64>(phys);
+	return gsl::narrow_cast<i32>(std::round(res));
 }
 
 StylusDevice::StylusDevice(IptsdConfig conf) : UinputDevice()
@@ -49,8 +50,8 @@ StylusDevice::StylusDevice(IptsdConfig conf) : UinputDevice()
 	this->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
 	this->set_absinfo(ABS_PRESSURE, 0, 4096, 0);
-	this->set_absinfo(ABS_TILT_X, -9000, 9000, 18000 / M_PI);
-	this->set_absinfo(ABS_TILT_Y, -9000, 9000, 18000 / M_PI);
+	this->set_absinfo(ABS_TILT_X, -9000, 9000, gsl::narrow_cast<i32>(18000 / M_PI));
+	this->set_absinfo(ABS_TILT_Y, -9000, 9000, gsl::narrow_cast<i32>(18000 / M_PI));
 	this->set_absinfo(ABS_MISC, 0, USHRT_MAX, 0);
 
 	this->create();
@@ -69,10 +70,10 @@ TouchDevice::TouchDevice(IptsdConfig conf) : UinputDevice(), manager(conf)
 	this->set_propbit(INPUT_PROP_DIRECT);
 	this->set_keybit(BTN_TOUCH);
 
-	f32 diag = std::sqrt(conf.width * conf.width + conf.height * conf.height);
+	f64 diag = std::sqrt(conf.width * conf.width + conf.height * conf.height);
 	i32 res_x = res(IPTS_MAX_X, conf.width);
 	i32 res_y = res(IPTS_MAX_Y, conf.height);
-	i32 res_d = res(IPTS_DIAGONAL, diag);
+	i32 res_d = res(IPTS_DIAGONAL, gsl::narrow_cast<i32>(diag));
 
 	this->set_absinfo(ABS_MT_SLOT, 0, conf.info.max_contacts, 0);
 	this->set_absinfo(ABS_MT_TRACKING_ID, 0, conf.info.max_contacts, 0);
@@ -98,30 +99,29 @@ DeviceManager::DeviceManager(IptsdConfig conf) : conf(conf), touch(conf)
 	this->switch_stylus(0);
 }
 
-DeviceManager::~DeviceManager(void)
-{
-	for (size_t i = 0; i < std::size(this->styli); i++)
-		delete std::exchange(this->styli[i], nullptr);
-}
-
 void DeviceManager::switch_stylus(u32 serial)
 {
 	for (size_t i = 0; i < std::size(this->styli); i++) {
-		if (this->styli[i]->serial != serial)
+		if (this->styli.at(i).serial != serial)
 			continue;
 
-		this->active_stylus = this->styli[i];
+		this->active = i;
 		return;
 	}
 
-	if (std::size(this->styli) > 0 && this->active_stylus->serial == 0) {
-		this->active_stylus->serial = serial;
+	if (this->styli.size() > 0 && this->active_stylus().serial == 0) {
+		this->active_stylus().serial = serial;
 		return;
 	}
 
-	StylusDevice *stylus = new StylusDevice(this->conf);
-	stylus->serial = serial;
+	StylusDevice stylus(this->conf);
+	stylus.serial = serial;
 
-	this->styli.insert(this->styli.end(), stylus);
-	this->active_stylus = stylus;
+	this->styli.push_back(std::move(stylus));
+	this->active = this->styli.size() - 1;
+}
+
+inline StylusDevice &DeviceManager::active_stylus()
+{
+	return this->styli.at(this->active);
 }
