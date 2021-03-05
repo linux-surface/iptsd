@@ -11,6 +11,7 @@
 #include <ipts/protocol.h>
 
 #include <cmath>
+#include <gsl/gsl>
 #include <linux/input-event-codes.h>
 #include <tuple>
 
@@ -19,20 +20,20 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 	if (altitude <= 0)
 		return std::tuple<i32, i32>(0, 0);
 
-	f32 alt = ((f32)altitude) / 18000 * M_PI;
-	f32 azm = ((f32)azimuth) / 18000 * M_PI;
+	f64 alt = static_cast<f64>(altitude) / 18000 * M_PI;
+	f64 azm = static_cast<f64>(azimuth) / 18000 * M_PI;
 
-	f32 sin_alt = std::sin(alt);
-	f32 sin_azm = std::sin(azm);
+	f64 sin_alt = std::sin(alt);
+	f64 sin_azm = std::sin(azm);
 
-	f32 cos_alt = std::cos(alt);
-	f32 cos_azm = std::cos(azm);
+	f64 cos_alt = std::cos(alt);
+	f64 cos_azm = std::cos(azm);
 
-	f32 atan_x = std::atan2(cos_alt, sin_alt * cos_azm);
-	f32 atan_y = std::atan2(cos_alt, sin_alt * sin_azm);
+	f64 atan_x = std::atan2(cos_alt, sin_alt * cos_azm);
+	f64 atan_y = std::atan2(cos_alt, sin_alt * sin_azm);
 
-	i32 tx = 9000 - (atan_x * 4500 / M_PI_4);
-	i32 ty = (atan_y * 4500 / M_PI_4) - 9000;
+	i32 tx = 9000 - gsl::narrow_cast<i32>(atan_x * 4500 / M_PI_4);
+	i32 ty = gsl::narrow_cast<i32>(atan_y * 4500 / M_PI_4) - 9000;
 
 	return std::tuple<i32, i32>(tx, ty);
 }
