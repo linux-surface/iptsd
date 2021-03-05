@@ -16,21 +16,11 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <gsl/gsl>
 #include <iterator>
+#include <memory>
 #include <utility>
 #include <vector>
-
-TouchManager::TouchManager(IptsdConfig conf) : conf(conf), inputs(conf.info.max_contacts)
-{
-	this->hm = nullptr;
-	this->processor = nullptr;
-}
-
-TouchManager::~TouchManager(void)
-{
-	delete std::exchange(this->hm, nullptr);
-	delete std::exchange(this->processor, nullptr);
-}
 
 void TouchManager::resize(u8 width, u8 height)
 {
@@ -38,19 +28,19 @@ void TouchManager::resize(u8 width, u8 height)
 		iptsd::index2_t size = this->hm->size();
 
 		if (size.x != width || size.y != height) {
-			delete std::exchange(this->hm, nullptr);
-			delete std::exchange(this->processor, nullptr);
+			this->hm.reset(nullptr);
+			this->processor.reset(nullptr);
 		}
 	}
 
 	if (!this->hm) {
-		iptsd::index2_t size;
-		size.x = width;
-		size.y = height;
+		iptsd::index2_t size {width, height};
 
-		this->hm = new iptsd::container::Image<f32>(size);
-		this->processor = new iptsd::TouchProcessor(size);
-		this->diagonal = std::sqrt(width * width + height * height);
+		f64 diag = std::sqrt(width * width + height * height);
+		this->diagonal = gsl::narrow_cast<i32>(diag);
+
+		this->hm = std::make_unique<iptsd::container::Image<f32>>(size);
+		this->processor = std::make_unique<iptsd::TouchProcessor>(size);
 	}
 }
 
@@ -64,10 +54,10 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 
 	std::vector<iptsd::TouchPoint> contacts = this->processor->process(*this->hm);
 
-	size_t max_contacts = (size_t)this->conf.info.max_contacts;
-	size_t count = std::min(std::size(contacts), max_contacts);
+	i32 max_contacts = this->conf.info.max_contacts;
+	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()), max_contacts);
 
-	for (size_t i = 0; i < count; i++) {
+	for (i32 i = 0; i < count; i++) {
 		f64 x = (contacts[i].mean.x + 0.5) / data.width;
 		f64 y = (contacts[i].mean.y + 0.5) / data.height;
 
@@ -84,14 +74,14 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 		f64 s1 = std::sqrt(eigen.w[0]);
 		f64 s2 = std::sqrt(eigen.w[1]);
 
-		f32 d1 = 4 * s1 / this->diagonal;
-		f32 d2 = 4 * s2 / this->diagonal;
+		f64 d1 = 4 * s1 / this->diagonal;
+		f64 d2 = 4 * s2 / this->diagonal;
 
-		f32 major = std::max(d1, d2);
-		f32 minor = std::min(d1, d2);
+		f64 major = std::max(d1, d2);
+		f64 minor = std::min(d1, d2);
 
-		this->inputs[i].major = (i32)(major * IPTS_DIAGONAL);
-		this->inputs[i].minor = (i32)(minor * IPTS_DIAGONAL);
+		this->inputs[i].major = gsl::narrow_cast<i32>(major * IPTS_DIAGONAL);
+		this->inputs[i].minor = gsl::narrow_cast<i32>(minor * IPTS_DIAGONAL);
 
 		iptsd::math::Vec2<f64> v1 = eigen.v[0].cast<f64>() * s1;
 		f64 angle = M_PI_2 - std::atan2(v1.x, v1.y);
@@ -108,7 +98,7 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 		this->inputs[i].active = true;
 	}
 
-	for (size_t i = count; i < max_contacts; i++) {
+	for (i32 i = count; i < max_contacts; i++) {
 		this->inputs[i].index = i;
 		this->inputs[i].active = false;
 	}
