@@ -12,39 +12,39 @@
 #include <linux/input.h>
 #include <vector>
 
-static void lift_mt(TouchDevice *dev)
+static void lift_mt(TouchDevice &dev)
 {
-	dev->emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
+	dev.emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
 }
 
-static void emit_mt(TouchDevice *dev, TouchInput in)
+static void emit_mt(TouchDevice &dev, TouchInput in)
 {
-	dev->emit(EV_ABS, ABS_MT_TRACKING_ID, in.index);
-	dev->emit(EV_ABS, ABS_MT_POSITION_X, in.x);
-	dev->emit(EV_ABS, ABS_MT_POSITION_Y, in.y);
+	dev.emit(EV_ABS, ABS_MT_TRACKING_ID, in.index);
+	dev.emit(EV_ABS, ABS_MT_POSITION_X, in.x);
+	dev.emit(EV_ABS, ABS_MT_POSITION_Y, in.y);
 
-	dev->emit(EV_ABS, ABS_MT_TOOL_TYPE, MT_TOOL_FINGER);
-	dev->emit(EV_ABS, ABS_MT_TOOL_X, in.x);
-	dev->emit(EV_ABS, ABS_MT_TOOL_Y, in.y);
+	dev.emit(EV_ABS, ABS_MT_TOOL_TYPE, MT_TOOL_FINGER);
+	dev.emit(EV_ABS, ABS_MT_TOOL_X, in.x);
+	dev.emit(EV_ABS, ABS_MT_TOOL_Y, in.y);
 
-	dev->emit(EV_ABS, ABS_MT_ORIENTATION, in.orientation);
-	dev->emit(EV_ABS, ABS_MT_TOUCH_MAJOR, in.major);
-	dev->emit(EV_ABS, ABS_MT_TOUCH_MINOR, in.minor);
+	dev.emit(EV_ABS, ABS_MT_ORIENTATION, in.orientation);
+	dev.emit(EV_ABS, ABS_MT_TOUCH_MAJOR, in.major);
+	dev.emit(EV_ABS, ABS_MT_TOUCH_MINOR, in.minor);
 }
 
-static void lift_st(TouchDevice *dev)
+static void lift_st(TouchDevice &dev)
 {
-	dev->emit(EV_KEY, BTN_TOUCH, 0);
+	dev.emit(EV_KEY, BTN_TOUCH, 0);
 }
 
-static void emit_st(TouchDevice *dev, TouchInput in)
+static void emit_st(TouchDevice &dev, TouchInput in)
 {
-	dev->emit(EV_KEY, BTN_TOUCH, 1);
-	dev->emit(EV_ABS, ABS_X, in.x);
-	dev->emit(EV_ABS, ABS_Y, in.y);
+	dev.emit(EV_KEY, BTN_TOUCH, 1);
+	dev.emit(EV_ABS, ABS_X, in.x);
+	dev.emit(EV_ABS, ABS_Y, in.y);
 }
 
-static void handle_single(TouchDevice *touch, std::vector<TouchInput> &inputs)
+static void handle_single(TouchDevice &touch, std::vector<TouchInput> &inputs)
 {
 	for (TouchInput &in : inputs) {
 		if (!in.active)
@@ -57,10 +57,10 @@ static void handle_single(TouchDevice *touch, std::vector<TouchInput> &inputs)
 	lift_st(touch);
 }
 
-static void handle_multi(TouchDevice *touch, std::vector<TouchInput> &inputs)
+static void handle_multi(TouchDevice &touch, std::vector<TouchInput> &inputs)
 {
 	for (TouchInput &in : inputs) {
-		touch->emit(EV_ABS, ABS_MT_SLOT, in.index);
+		touch.emit(EV_ABS, ABS_MT_SLOT, in.index);
 
 		if (!in.active) {
 			lift_mt(touch);
@@ -73,12 +73,12 @@ static void handle_multi(TouchDevice *touch, std::vector<TouchInput> &inputs)
 
 void iptsd_touch_input(IptsdContext *iptsd, IptsHeatmap data)
 {
-	TouchDevice *touch = &iptsd->devices.touch;
+	TouchDevice &touch = iptsd->devices.touch;
 
-	std::vector<TouchInput> inputs = touch->manager.process(data);
+	std::vector<TouchInput> inputs = touch.manager.process(data);
 
 	handle_multi(touch, inputs);
 	handle_single(touch, inputs);
 
-	touch->emit(EV_SYN, SYN_REPORT, 0);
+	touch.emit(EV_SYN, SYN_REPORT, 0);
 }
