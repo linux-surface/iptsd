@@ -1,1 +1,1 @@
-Checks: 'cppcoreguidelines-*,clang-analyzer-*,-clang-analyzer-osx*,-cppcoreguidelines-non-private-member-variables-in-classes,-cppcoreguidelines-special-member-functions'
+Checks: 'cppcoreguidelines-*,clang-analyzer-*,-clang-analyzer-osx*,-cppcoreguidelines-non-private-member-variables-in-classes,-cppcoreguidelines-special-member-functions,-cppcoreguidelines-avoid-magic-numbers'
