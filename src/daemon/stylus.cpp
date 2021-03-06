@@ -38,7 +38,7 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 	return std::tuple<i32, i32>(tx, ty);
 }
 
-void iptsd_stylus_input(IptsdContext &ctx, IptsStylusData data)
+void iptsd_stylus_input(IptsdContext &ctx, const IptsStylusData &data)
 {
 	StylusDevice &stylus = ctx.devices.styli.back();
 

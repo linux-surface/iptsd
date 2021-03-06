@@ -71,7 +71,7 @@ static void handle_multi(TouchDevice &touch, std::vector<TouchInput> &inputs)
 	}
 }
 
-void iptsd_touch_input(IptsdContext &ctx, IptsHeatmap data)
+void iptsd_touch_input(IptsdContext &ctx, const IptsHeatmap &data)
 {
 	TouchDevice &touch = ctx.devices.touch;
 

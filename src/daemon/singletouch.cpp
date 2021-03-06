@@ -42,7 +42,7 @@ static void emit(TouchDevice &dev, IptsSingletouchData data)
 	dev.emit(EV_ABS, ABS_Y, y);
 }
 
-void iptsd_singletouch_input(IptsdContext &ctx, IptsSingletouchData data)
+void iptsd_singletouch_input(IptsdContext &ctx, const IptsSingletouchData &data)
 {
 	if (data.touch)
 		emit(ctx.devices.touch, data);

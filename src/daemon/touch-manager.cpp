@@ -44,7 +44,7 @@ void TouchManager::resize(u8 width, u8 height)
 	}
 }
 
-std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
+std::vector<TouchInput> &TouchManager::process(const IptsHeatmap &data)
 {
 	this->resize(data.width, data.height);
 

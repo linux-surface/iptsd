@@ -84,9 +84,9 @@ private:
 	void parse_heatmap_data(struct ipts_heatmap_dim dim, struct ipts_heatmap_timestamp time);
 
 public:
-	std::function<void(IptsSingletouchData)> on_singletouch;
-	std::function<void(IptsStylusData)> on_stylus;
-	std::function<void(IptsHeatmap)> on_heatmap;
+	std::function<void(const IptsSingletouchData &)> on_singletouch;
+	std::function<void(const IptsStylusData &)> on_stylus;
+	std::function<void(const IptsHeatmap &)> on_heatmap;
 
 	IptsParser(size_t size) : data(size) {};
 

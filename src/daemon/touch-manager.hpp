@@ -35,7 +35,7 @@ public:
 
 	TouchManager(IptsdConfig conf) : conf(conf), inputs(conf.info.max_contacts) {};
 
-	std::vector<TouchInput> &process(IptsHeatmap data);
+	std::vector<TouchInput> &process(const IptsHeatmap &data);
 
 private:
 	void resize(u8 width, u8 height);
