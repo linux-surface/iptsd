@@ -49,7 +49,10 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 	this->resize(data.width, data.height);
 
 	std::transform(data.data.begin(), data.data.end(), this->hm->begin(), [&](auto v) {
-		return 1.0f - (f32)(v - data.z_min) / (f32)(data.z_max - data.z_min);
+		f32 val = static_cast<f32>(v - data.z_min) /
+			  static_cast<f32>(data.z_max - data.z_min);
+
+		return 1.0f - val;
 	});
 
 	const std::vector<iptsd::TouchPoint> &contacts = this->processor->process(*this->hm);
@@ -67,8 +70,8 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 		if (this->conf.invert_y)
 			y = 1 - y;
 
-		this->inputs[i].x = (i32)(x * IPTS_MAX_X);
-		this->inputs[i].y = (i32)(y * IPTS_MAX_Y);
+		this->inputs[i].x = gsl::narrow_cast<i32>(x * IPTS_MAX_X);
+		this->inputs[i].y = gsl::narrow_cast<i32>(y * IPTS_MAX_Y);
 
 		iptsd::math::Eigen2<f32> eigen = contacts[i].cov.eigen();
 		f64 s1 = std::sqrt(eigen.w[0]);
@@ -92,7 +95,7 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 		if (angle > M_PI)
 			angle -= M_PI;
 
-		this->inputs[i].orientation = (i32)(angle / M_PI * 180);
+		this->inputs[i].orientation = gsl::narrow_cast<i32>(angle / M_PI * 180);
 
 		this->inputs[i].index = i;
 		this->inputs[i].active = true;
