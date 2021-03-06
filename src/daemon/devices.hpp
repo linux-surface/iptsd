@@ -28,21 +28,12 @@ public:
 class DeviceManager {
 public:
 	IptsdConfig conf;
-
 	TouchDevice touch;
 	std::vector<StylusDevice> styli;
-
-	size_t active = 0;
 
 	DeviceManager(IptsdConfig conf);
 
 	void switch_stylus(u32 serial);
-	StylusDevice &active_stylus();
 };
-
-inline StylusDevice &DeviceManager::active_stylus()
-{
-	return this->styli.at(this->active);
-}
 
 #endif /* _IPTSD_DAEMON_DEVICES_HPP_ */

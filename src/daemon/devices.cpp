@@ -101,16 +101,16 @@ DeviceManager::DeviceManager(IptsdConfig conf) : conf(conf), touch(conf)
 
 void DeviceManager::switch_stylus(u32 serial)
 {
-	for (size_t i = 0; i < std::size(this->styli); i++) {
-		if (this->styli.at(i).serial != serial)
+	for (StylusDevice &s : this->styli) {
+		if (s.serial != serial)
 			continue;
 
-		this->active = i;
+		std::swap(s, this->styli.back());
 		return;
 	}
 
-	if (this->styli.size() > 0 && this->active_stylus().serial == 0) {
-		this->active_stylus().serial = serial;
+	if (this->styli.size() > 0 && this->styli.back().serial == 0) {
+		this->styli.back().serial = serial;
 		return;
 	}
 
@@ -118,5 +118,4 @@ void DeviceManager::switch_stylus(u32 serial)
 	stylus.serial = serial;
 
 	this->styli.push_back(std::move(stylus));
-	this->active = this->styli.size() - 1;
 }

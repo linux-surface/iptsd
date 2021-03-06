@@ -40,7 +40,7 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 
 void iptsd_stylus_input(IptsdContext &ctx, IptsStylusData data)
 {
-	StylusDevice &stylus = ctx.devices.active_stylus();
+	StylusDevice &stylus = ctx.devices.styli.back();
 
 	bool prox = (data.mode & IPTS_STYLUS_REPORT_MODE_PROX) >> 0;
 	bool touch = (data.mode & IPTS_STYLUS_REPORT_MODE_TOUCH) >> 1;
