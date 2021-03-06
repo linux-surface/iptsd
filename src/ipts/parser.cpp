@@ -13,12 +13,7 @@
 #include <stdexcept>
 #include <utility>
 
-std::span<u8> IptsParser::buffer()
-{
-	return std::span(this->data);
-}
-
-void IptsParser::read(std::span<u8> dest)
+void IptsParser::read(const std::span<u8> dest)
 {
 	iptsd::common::access::ensure(this->index + dest.size(), this->data.size());
 
@@ -32,7 +27,7 @@ void IptsParser::read(std::span<u8> dest)
 	this->index += dest.size();
 }
 
-void IptsParser::skip(size_t size)
+void IptsParser::skip(const size_t size)
 {
 	iptsd::common::access::ensure(this->index + size, this->data.size());
 
@@ -47,7 +42,7 @@ void IptsParser::reset()
 
 void IptsParser::parse()
 {
-	auto header = this->read<struct ipts_data>();
+	const auto header = this->read<struct ipts_data>();
 
 	switch (header.type) {
 	case IPTS_DATA_TYPE_PAYLOAD:
@@ -63,10 +58,10 @@ void IptsParser::parse()
 
 void IptsParser::parse_payload()
 {
-	auto payload = this->read<struct ipts_payload>();
+	const auto payload = this->read<struct ipts_payload>();
 
 	for (u32 i = 0; i < payload.frames; i++) {
-		auto frame = this->read<struct ipts_payload_frame>();
+		const auto frame = this->read<struct ipts_payload_frame>();
 
 		switch (frame.type) {
 		case IPTS_PAYLOAD_FRAME_TYPE_STYLUS:
@@ -84,13 +79,13 @@ void IptsParser::parse_payload()
 
 void IptsParser::parse_hid()
 {
-	auto report = this->read<u8>();
+	const auto report = this->read<u8>();
 
 	// Make sure that we only handle singletouch inputs.
 	if (report != IPTS_SINGLETOUCH_REPORT_ID)
 		return;
 
-	auto singletouch = this->read<struct ipts_singletouch_data>();
+	const auto singletouch = this->read<struct ipts_singletouch_data>();
 
 	IptsSingletouchData data;
 	data.touch = singletouch.touch;
@@ -101,12 +96,12 @@ void IptsParser::parse_hid()
 		this->on_singletouch(data);
 }
 
-void IptsParser::parse_stylus(struct ipts_payload_frame frame)
+void IptsParser::parse_stylus(const struct ipts_payload_frame &frame)
 {
 	u32 size = 0;
 
 	while (size < frame.size) {
-		auto report = this->read<struct ipts_report>();
+		const auto report = this->read<struct ipts_report>();
 
 		switch (report.type) {
 		case IPTS_REPORT_TYPE_STYLUS_V1:
@@ -122,16 +117,16 @@ void IptsParser::parse_stylus(struct ipts_payload_frame frame)
 	}
 }
 
-void IptsParser::parse_stylus_report(struct ipts_report report)
+void IptsParser::parse_stylus_report(const struct ipts_report &report)
 {
 	IptsStylusData stylus;
 
-	auto stylus_report = this->read<struct ipts_stylus_report>();
+	const auto stylus_report = this->read<struct ipts_stylus_report>();
 	stylus.serial = stylus_report.serial;
 
 	for (u8 i = 0; i < stylus_report.elements; i++) {
 		if (report.type == IPTS_REPORT_TYPE_STYLUS_V1) {
-			auto data = this->read<struct ipts_stylus_data_v1>();
+			const auto data = this->read<struct ipts_stylus_data_v1>();
 
 			stylus.mode = data.mode;
 			stylus.x = data.x;
@@ -143,7 +138,7 @@ void IptsParser::parse_stylus_report(struct ipts_report report)
 		}
 
 		if (report.type == IPTS_REPORT_TYPE_STYLUS_V2) {
-			auto data = this->read<struct ipts_stylus_data_v2>();
+			const auto data = this->read<struct ipts_stylus_data_v2>();
 
 			stylus.mode = data.mode;
 			stylus.x = data.x;
@@ -159,7 +154,7 @@ void IptsParser::parse_stylus_report(struct ipts_report report)
 	}
 }
 
-void IptsParser::parse_heatmap(struct ipts_payload_frame frame)
+void IptsParser::parse_heatmap(const struct ipts_payload_frame &frame)
 {
 	u32 size = 0;
 	bool has_hm = false;
@@ -170,7 +165,7 @@ void IptsParser::parse_heatmap(struct ipts_payload_frame frame)
 	struct ipts_heatmap_timestamp time {};
 
 	while (size < frame.size) {
-		auto report = this->read<struct ipts_report>();
+		const auto report = this->read<struct ipts_report>();
 
 		switch (report.type) {
 		case IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP: {
@@ -206,7 +201,8 @@ void IptsParser::parse_heatmap(struct ipts_payload_frame frame)
 		this->on_heatmap(*this->heatmap);
 }
 
-void IptsParser::parse_heatmap_data(struct ipts_heatmap_dim dim, struct ipts_heatmap_timestamp time)
+void IptsParser::parse_heatmap_data(const struct ipts_heatmap_dim &dim,
+				    const struct ipts_heatmap_timestamp &time)
 {
 	if (this->heatmap) {
 		if (this->heatmap->width != dim.width || this->heatmap->height != dim.height)

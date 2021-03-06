@@ -59,8 +59,8 @@ private:
 
 	std::unique_ptr<IptsHeatmap> heatmap;
 
-	void read(std::span<u8> dest);
-	void skip(size_t size);
+	void read(const std::span<u8> dest);
+	void skip(const size_t size);
 	void reset();
 
 	template <typename T> T read()
@@ -77,11 +77,12 @@ private:
 	void parse_payload();
 	void parse_hid();
 
-	void parse_stylus(struct ipts_payload_frame frame);
-	void parse_stylus_report(struct ipts_report report);
+	void parse_stylus(const struct ipts_payload_frame &frame);
+	void parse_stylus_report(const struct ipts_report &report);
 
-	void parse_heatmap(struct ipts_payload_frame frame);
-	void parse_heatmap_data(struct ipts_heatmap_dim dim, struct ipts_heatmap_timestamp time);
+	void parse_heatmap(const struct ipts_payload_frame &frame);
+	void parse_heatmap_data(const struct ipts_heatmap_dim &dim,
+				const struct ipts_heatmap_timestamp &time);
 
 public:
 	std::function<void(const IptsSingletouchData &)> on_singletouch;
@@ -90,8 +91,13 @@ public:
 
 	IptsParser(size_t size) : data(size) {};
 
-	std::span<u8> buffer();
+	const std::span<u8> buffer();
 	void parse();
 };
+
+inline const std::span<u8> IptsParser::buffer()
+{
+	return std::span(this->data);
+}
 
 #endif /* IPTSD_IPTS_PARSER_HPP */
