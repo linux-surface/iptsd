@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_DAEMON_DEVICES_HPP_
-#define _IPTSD_DAEMON_DEVICES_HPP_
+#ifndef IPTSD_DAEMON_DEVICES_HPP
+#define IPTSD_DAEMON_DEVICES_HPP
 
 #include "config.hpp"
 #include "touch-manager.hpp"
@@ -36,4 +36,4 @@ public:
 	void switch_stylus(u32 serial);
 };
 
-#endif /* _IPTSD_DAEMON_DEVICES_HPP_ */
+#endif /* IPTSD_DAEMON_DEVICES_HPP */

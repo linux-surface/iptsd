@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_IPTS_PARSER_HPP_
-#define _IPTSD_IPTS_PARSER_HPP_
+#ifndef IPTSD_IPTS_PARSER_HPP
+#define IPTSD_IPTS_PARSER_HPP
 
 #include "protocol.h"
 
@@ -94,4 +94,4 @@ public:
 	void parse();
 };
 
-#endif /* _IPTSD_IPTS_PARSER_HPP_ */
+#endif /* IPTSD_IPTS_PARSER_HPP */

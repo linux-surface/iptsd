@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_IPTS_PROTOCOL_H_
-#define _IPTSD_IPTS_PROTOCOL_H_
+#ifndef IPTSD_IPTS_PROTOCOL_H
+#define IPTSD_IPTS_PROTOCOL_H
 
 #include <stdint.h>
 
@@ -106,4 +106,4 @@ struct ipts_heatmap_timestamp {
 	uint32_t timestamp;
 } __attribute__((__packed__));
 
-#endif /* _IPTSD_IPTS_PROTOCOL_H_ */
+#endif /* IPTSD_IPTS_PROTOCOL_H */

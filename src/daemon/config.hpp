@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_DAEMON_CONFIG_HPP_
-#define _IPTSD_DAEMON_CONFIG_HPP_
+#ifndef IPTSD_DAEMON_CONFIG_HPP
+#define IPTSD_DAEMON_CONFIG_HPP
 
 #include <common/types.hpp>
 #include <ipts/ipts.h>
@@ -24,4 +24,4 @@ private:
 	void load_dir(const std::string &name);
 };
 
-#endif /* _IPTSD_DAEMON_CONFIG_HPP_ */
+#endif /* IPTSD_DAEMON_CONFIG_HPP */

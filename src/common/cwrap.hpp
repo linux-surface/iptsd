@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_COMMON_CWRAP_HPP_
-#define _IPTSD_COMMON_CWRAP_HPP_
+#ifndef IPTSD_COMMON_CWRAP_HPP
+#define IPTSD_COMMON_CWRAP_HPP
 
 #include "types.hpp"
 
@@ -42,4 +42,4 @@ template <class T> inline int ioctl(int fd, unsigned long rq, T data)
 
 } // namespace iptsd::common
 
-#endif /* _IPTSD_COMMON_CWRAP_HPP_ */
+#endif /* IPTSD_COMMON_CWRAP_HPP */

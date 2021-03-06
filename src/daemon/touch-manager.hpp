@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_DAEMON_TOUCH_MANAGER_HPP_
-#define _IPTSD_DAEMON_TOUCH_MANAGER_HPP_
+#ifndef IPTSD_DAEMON_TOUCH_MANAGER_HPP
+#define IPTSD_DAEMON_TOUCH_MANAGER_HPP
 
 #include "config.hpp"
 
@@ -41,4 +41,4 @@ private:
 	void resize(u8 width, u8 height);
 };
 
-#endif /* _IPTSD_DAEMON_TOUCH_MANAGER_HPP_ */
+#endif /* IPTSD_DAEMON_TOUCH_MANAGER_HPP */

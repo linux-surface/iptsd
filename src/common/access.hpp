@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_COMMON_ACCESS_HPP_
-#define _IPTSD_COMMON_ACCESS_HPP_
+#ifndef IPTSD_COMMON_ACCESS_HPP
+#define IPTSD_COMMON_ACCESS_HPP
 
 #include <array>
 #include <fmt/format.h>
@@ -76,4 +76,4 @@ template <class V, class I, class T>
 
 } /* namespace iptsd::common::access */
 
-#endif /* _IPTSD_COMMON_ACCESS_HPP_ */
+#endif /* IPTSD_COMMON_ACCESS_HPP */

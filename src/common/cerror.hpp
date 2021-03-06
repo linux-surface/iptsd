@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_COMMON_CERROR_HPP_
-#define _IPTSD_COMMON_CERROR_HPP_
+#ifndef IPTSD_COMMON_CERROR_HPP
+#define IPTSD_COMMON_CERROR_HPP
 
 #include <cerrno>
 #include <string>
@@ -16,4 +16,4 @@ inline auto cerror(const std::string &msg) -> std::system_error
 
 } /* namespace iptsd::common */
 
-#endif /* _IPTSD_COMMON_CERROR_HPP_ */
+#endif /* IPTSD_COMMON_CERROR_HPP */

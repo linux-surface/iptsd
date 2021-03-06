@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_COMMON_SIGNAL_HPP_
-#define _IPTSD_COMMON_SIGNAL_HPP_
+#ifndef IPTSD_COMMON_SIGNAL_HPP
+#define IPTSD_COMMON_SIGNAL_HPP
 
 #include "cerror.hpp"
 
@@ -91,4 +91,4 @@ template <int s, class F> [[nodiscard]] auto signal(F &&callback) -> detail::Sig
 
 } /* namespace iptsd::common */
 
-#endif /* _IPTSD_COMMON_SIGNAL_HPP_ */
+#endif /* IPTSD_COMMON_SIGNAL_HPP */

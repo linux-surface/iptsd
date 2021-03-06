@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef _IPTSD_DAEMON_STYLUS_HPP_
-#define _IPTSD_DAEMON_STYLUS_HPP_
+#ifndef IPTSD_DAEMON_STYLUS_HPP
+#define IPTSD_DAEMON_STYLUS_HPP
 
 #include "context.hpp"
 
@@ -9,4 +9,4 @@
 
 void iptsd_stylus_input(IptsdContext &ctx, IptsStylusData data);
 
-#endif /* _IPTSD_DAEMON_STYLUS_HPP_ */
+#endif /* IPTSD_DAEMON_STYLUS_HPP */
