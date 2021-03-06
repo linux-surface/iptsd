@@ -21,7 +21,7 @@ public:
 	IptsdConfig(struct ipts_device_info info);
 
 private:
-	void load_dir(std::string name);
+	void load_dir(const std::string &name);
 };
 
 #endif /* _IPTSD_DAEMON_CONFIG_HPP_ */

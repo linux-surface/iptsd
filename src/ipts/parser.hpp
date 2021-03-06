@@ -15,7 +15,7 @@
 
 class IptsSingletouchData {
 public:
-	bool touch = 0;
+	bool touch = false;
 	u16 x = 0;
 	u16 y = 0;
 };

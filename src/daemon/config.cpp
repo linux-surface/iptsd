@@ -26,7 +26,7 @@ static bool to_bool(std::string value)
 static int parse_dev(void *user, const char *c_section, const char *c_name, const char *c_value)
 {
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-	struct iptsd_config_device *dev = reinterpret_cast<struct iptsd_config_device *>(user);
+	auto *dev = reinterpret_cast<struct iptsd_config_device *>(user);
 
 	std::string section(c_section);
 	std::string name(c_name);
@@ -47,7 +47,7 @@ static int parse_dev(void *user, const char *c_section, const char *c_name, cons
 static int parse_conf(void *user, const char *c_section, const char *c_name, const char *c_value)
 {
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-	IptsdConfig *config = reinterpret_cast<IptsdConfig *>(user);
+	auto *config = reinterpret_cast<IptsdConfig *>(user);
 
 	std::string section(c_section);
 	std::string name(c_name);
@@ -71,7 +71,7 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	return 1;
 }
 
-void IptsdConfig::load_dir(std::string name)
+void IptsdConfig::load_dir(const std::string &name)
 {
 	if (!std::filesystem::exists(name))
 		return;

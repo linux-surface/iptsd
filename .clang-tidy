@@ -1,1 +1,3 @@
-Checks: 'cppcoreguidelines-*,clang-analyzer-*,-clang-analyzer-osx*,-cppcoreguidelines-non-private-member-variables-in-classes,-cppcoreguidelines-special-member-functions,-cppcoreguidelines-avoid-magic-numbers'
+Checks: 'bugprone-*,cert-*,clang-analyzer-*,cppcoreguidelines-*,modernize-*,performance-*,-clang-analyzer-osx*, -cppcoreguidelines-non-private-member-variables-in-classes,-cppcoreguidelines-special-member-functions, -cppcoreguidelines-avoid-magic-numbers,-modernize-use-trailing-return-type'
+HeaderFilterRegex: 'src/.*hpp'
+FormatStyle: file

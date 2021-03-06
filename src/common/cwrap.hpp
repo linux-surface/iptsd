@@ -14,7 +14,7 @@
 
 namespace iptsd::common {
 
-inline int open(std::string file, int args)
+inline int open(const std::string &file, int args)
 {
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
 	return ::open(file.c_str(), args);
