@@ -52,7 +52,7 @@ std::vector<TouchInput> &TouchManager::process(IptsHeatmap data)
 		return 1.0f - (f32)(v - data.z_min) / (f32)(data.z_max - data.z_min);
 	});
 
-	std::vector<iptsd::TouchPoint> contacts = this->processor->process(*this->hm);
+	const std::vector<iptsd::TouchPoint> &contacts = this->processor->process(*this->hm);
 
 	i32 max_contacts = this->conf.info.max_contacts;
 	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()), max_contacts);
