@@ -46,7 +46,7 @@ static bool iptsd_loop(IptsdContext &ctx)
 	return diff > 0;
 }
 
-int main(void)
+int main()
 {
 	IptsdContext ctx {};
 
