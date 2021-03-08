@@ -20,10 +20,10 @@ public:
     using const_reference        = value_type const&;
     using pointer                = value_type*;
     using const_pointer          = value_type const*;
-    using iterator               = T*;
-    using const_iterator         = T const*;
-    using reverse_iterator       = T*;
-    using const_reverse_iterator = T const*;
+    using iterator               = typename std::array<T, Nx * Ny>::iterator;
+    using const_iterator         = typename std::array<T, Nx * Ny>::const_iterator;
+    using reverse_iterator       = typename std::array<T, Nx * Ny>::reverse_iterator;
+    using const_reverse_iterator = typename std::array<T, Nx * Ny>::const_reverse_iterator;
 
 public:
     template<class... Args>
@@ -125,35 +125,35 @@ auto Kernel<T, Nx, Ny>::operator[] (index_t const& i) -> reference
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::begin() -> iterator
 {
-    return &this->buf[0];
+    return this->buf.begin();
 }
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::end() -> iterator
 {
-    return &this->buf[Nx * Ny];
+    return this->buf.end();
 }
 
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::begin() const -> const_iterator
 {
-    return &this->buf[0];
+    return this->buf.begin();
 }
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::end() const -> const_iterator
 {
-    return &this->buf[Nx * Ny];
+    return this->buf.end();
 }
 
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::cbegin() const -> const_iterator
 {
-    return &this->buf[0];
+    return this->buf.cbegin();
 }
 
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::cend() const -> const_iterator
 {
-    return &this->buf[Nx * Ny];
+    return this->buf.cend();
 }
 
 
