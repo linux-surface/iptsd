@@ -29,8 +29,6 @@ void IptsParser::read(const std::span<u8> dest)
 
 void IptsParser::skip(const size_t size)
 {
-	iptsd::common::access::ensure(this->index + size, this->data.size());
-
 	this->index += size;
 }
 
