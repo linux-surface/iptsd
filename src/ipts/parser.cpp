@@ -52,6 +52,9 @@ void IptsParser::parse(bool reset)
 	default:
 		this->skip(header.size);
 	}
+
+	if (reset)
+		this->reset();
 }
 
 void IptsParser::parse_loop()
