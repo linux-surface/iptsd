@@ -11,3 +11,19 @@ deps = [
 
 executable('ipts-dbg', sources, dependencies: deps,
 	   include_directories: includes, install: true)
+
+sources = [
+	'proto-plot.cpp',
+	'visualization.cpp',
+]
+
+deps = [
+	libcommon,
+	libipts,
+	libcontacts,
+	dependency('CLI11', fallback: ['CLI11', 'CLI11_dep']),
+	dependency('cairo'),
+]
+
+executable('ipts-proto-plot', sources, dependencies: deps,
+	   include_directories: includes, install: true)
