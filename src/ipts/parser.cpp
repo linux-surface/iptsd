@@ -38,7 +38,7 @@ void IptsParser::reset()
 	std::fill(this->data.begin(), this->data.end(), 0);
 }
 
-void IptsParser::parse()
+void IptsParser::parse(bool reset)
 {
 	const auto header = this->read<struct ipts_data>();
 
@@ -49,7 +49,15 @@ void IptsParser::parse()
 	case IPTS_DATA_TYPE_HID_REPORT:
 		this->parse_hid();
 		break;
+	default:
+		this->skip(header.size);
 	}
+}
+
+void IptsParser::parse_loop()
+{
+	while (this->index < this->data.size())
+		this->parse(false);
 
 	this->reset();
 }
