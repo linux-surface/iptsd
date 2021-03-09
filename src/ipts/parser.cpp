@@ -94,6 +94,9 @@ void IptsParser::parse_hid(const struct ipts_data &header)
 	case IPTS_HID_REPORT_SINGLETOUCH:
 		this->parse_singletouch();
 		break;
+	case IPTS_HID_REPORT_HEATMAP:
+		this->parse_hid_heatmap(header);
+		break;
 	default:
 		this->skip(header.size - sizeof(report));
 		break;
@@ -240,4 +243,79 @@ void IptsParser::parse_heatmap_data(const struct ipts_heatmap_dim &dim,
 
 	this->heatmap->count = time.count;
 	this->heatmap->timestamp = time.timestamp;
+}
+
+void IptsParser::parse_hid_heatmap(const struct ipts_data &header)
+{
+	const auto hid_header = this->read<struct ipts_hid_heatmap_header>();
+
+	if (this->heatmap) {
+		if (this->heatmap->size != hid_header.hm_size)
+			this->heatmap.reset(nullptr);
+	}
+
+	if (!this->heatmap)
+		this->heatmap = std::make_unique<IptsHeatmap>(hid_header.hm_size);
+
+	this->read(std::span(this->heatmap->data));
+
+	this->parse_hid_heatmap_data();
+	this->skip(header.size - hid_header.size - 7);
+}
+
+void IptsParser::parse_hid_heatmap_data()
+{
+	const auto frame_size = this->read<u32>();
+
+	// The first three bytes contain bogus data, skip them.
+	this->skip(3);
+	u32 size = 3;
+
+	bool has_dim = false;
+	bool has_timestamp = false;
+
+	while (size < frame_size) {
+		const auto report = this->read<struct ipts_report>();
+
+		switch (report.type) {
+		case IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP: {
+			const auto time = this->read<struct ipts_heatmap_timestamp>();
+
+			this->heatmap->count = time.count;
+			this->heatmap->timestamp = time.timestamp;
+
+			has_timestamp = true;
+			break;
+		}
+		case IPTS_REPORT_TYPE_HEATMAP_DIM: {
+			const auto dim = this->read<struct ipts_heatmap_dim>();
+
+			this->heatmap->height = dim.height;
+			this->heatmap->width = dim.width;
+			this->heatmap->y_min = dim.y_min;
+			this->heatmap->y_max = dim.y_max;
+			this->heatmap->x_min = dim.x_min;
+			this->heatmap->x_max = dim.x_max;
+
+			// These values are both 0 in the binary data, which
+			// doesnt make sense. Lets use sane ones instead.
+			this->heatmap->z_min = 0;
+			this->heatmap->z_max = 255;
+
+			has_dim = true;
+			break;
+		}
+		default:
+			this->skip(report.size);
+			break;
+		}
+
+		size += report.size + sizeof(struct ipts_report);
+	}
+
+	if (!has_dim || !has_timestamp)
+		return;
+
+	if (this->on_heatmap)
+		this->on_heatmap(*this->heatmap);
 }

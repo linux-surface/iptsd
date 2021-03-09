@@ -25,6 +25,7 @@
 #define IPTS_STYLUS_REPORT_MODE_BUTTON (1 << 2)
 #define IPTS_STYLUS_REPORT_MODE_RUBBER (1 << 3)
 
+#define IPTS_HID_REPORT_HEATMAP	    0x0B
 #define IPTS_HID_REPORT_SINGLETOUCH 0x40
 
 #define IPTS_SINGLETOUCH_MAX_VALUE (1 << 15)
@@ -105,6 +106,13 @@ struct ipts_heatmap_timestamp {
 	uint8_t reserved[2];
 	uint16_t count;
 	uint32_t timestamp;
+} __attribute__((__packed__));
+
+struct ipts_hid_heatmap_header {
+	uint16_t timestamp;
+	uint32_t size;
+	uint8_t reserved[15];
+	uint32_t hm_size;
 } __attribute__((__packed__));
 
 #endif /* IPTSD_IPTS_PROTOCOL_H */

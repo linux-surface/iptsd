@@ -50,6 +50,7 @@ public:
 	std::vector<u8> data;
 
 	IptsHeatmap(u8 w, u8 h) : width(w), height(h), size(w * h), data(size) {};
+	IptsHeatmap(u16 size) : width(0), height(0), size(size), data(size) {};
 };
 
 class IptsParser {
@@ -78,6 +79,8 @@ private:
 	void parse_hid(const struct ipts_data &header);
 
 	void parse_singletouch();
+	void parse_hid_heatmap(const struct ipts_data &header);
+	void parse_hid_heatmap_data();
 
 	void parse_stylus(const struct ipts_payload_frame &frame);
 	void parse_stylus_report(const struct ipts_report &report);
