@@ -27,3 +27,18 @@ deps = [
 
 executable('ipts-proto-plot', sources, dependencies: deps,
 	   include_directories: includes, install: true)
+
+sources = [
+	'proto-rt.cpp',
+	'visualization.cpp',
+]
+
+deps = [
+	libcommon,
+	libipts,
+	libcontacts,
+	dependency('gtk+-3.0'),
+]
+
+executable('ipts-proto-rt', sources, dependencies: deps,
+	   include_directories: includes, install: true)
