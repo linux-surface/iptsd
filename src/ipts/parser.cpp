@@ -47,7 +47,7 @@ void IptsParser::parse(bool reset)
 		this->parse_payload();
 		break;
 	case IPTS_DATA_TYPE_HID_REPORT:
-		this->parse_hid();
+		this->parse_hid(header);
 		break;
 	default:
 		this->skip(header.size);
@@ -86,14 +86,22 @@ void IptsParser::parse_payload()
 	}
 }
 
-void IptsParser::parse_hid()
+void IptsParser::parse_hid(const struct ipts_data &header)
 {
 	const auto report = this->read<u8>();
 
-	// Make sure that we only handle singletouch inputs.
-	if (report != IPTS_SINGLETOUCH_REPORT_ID)
-		return;
+	switch (report) {
+	case IPTS_HID_REPORT_SINGLETOUCH:
+		this->parse_singletouch();
+		break;
+	default:
+		this->skip(header.size - sizeof(report));
+		break;
+	}
+}
 
+void IptsParser::parse_singletouch()
+{
 	const auto singletouch = this->read<struct ipts_singletouch_data>();
 
 	IptsSingletouchData data;

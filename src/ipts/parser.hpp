@@ -75,7 +75,9 @@ private:
 	}
 
 	void parse_payload();
-	void parse_hid();
+	void parse_hid(const struct ipts_data &header);
+
+	void parse_singletouch();
 
 	void parse_stylus(const struct ipts_payload_frame &frame);
 	void parse_stylus_report(const struct ipts_report &report);
