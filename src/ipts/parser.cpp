@@ -121,7 +121,14 @@ void IptsParser::parse_stylus(const struct ipts_payload_frame &frame)
 	u32 size = 0;
 
 	while (size < frame.size) {
+		if (size + sizeof(struct ipts_report) > frame.size)
+			break;
+
 		const auto report = this->read<struct ipts_report>();
+		size += sizeof(struct ipts_report);
+
+		if (size + report.size > frame.size)
+			break;
 
 		switch (report.type) {
 		case IPTS_REPORT_TYPE_STYLUS_V1:
@@ -133,8 +140,10 @@ void IptsParser::parse_stylus(const struct ipts_payload_frame &frame)
 			break;
 		}
 
-		size += report.size + sizeof(report);
+		size += report.size;
 	}
+
+	this->skip(frame.size - size);
 }
 
 void IptsParser::parse_stylus_report(const struct ipts_report &report)
@@ -185,7 +194,14 @@ void IptsParser::parse_heatmap(const struct ipts_payload_frame &frame)
 	struct ipts_heatmap_timestamp time {};
 
 	while (size < frame.size) {
+		if (size + sizeof(struct ipts_report) > frame.size)
+			break;
+
 		const auto report = this->read<struct ipts_report>();
+		size += sizeof(struct ipts_report);
+
+		if (size + report.size > frame.size)
+			break;
 
 		switch (report.type) {
 		case IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP: {
@@ -211,8 +227,10 @@ void IptsParser::parse_heatmap(const struct ipts_payload_frame &frame)
 			break;
 		}
 
-		size += report.size + sizeof(struct ipts_report);
+		size += report.size;
 	}
+
+	this->skip(frame.size - size);
 
 	if (!has_hm)
 		return;
@@ -275,7 +293,14 @@ void IptsParser::parse_hid_heatmap_data()
 	bool has_timestamp = false;
 
 	while (size < frame_size) {
+		if (size + sizeof(struct ipts_report) > frame_size)
+			break;
+
 		const auto report = this->read<struct ipts_report>();
+		size += sizeof(struct ipts_report);
+
+		if (size + report.size > frame_size)
+			break;
 
 		switch (report.type) {
 		case IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP: {
@@ -310,8 +335,10 @@ void IptsParser::parse_hid_heatmap_data()
 			break;
 		}
 
-		size += report.size + sizeof(struct ipts_report);
+		size += report.size;
 	}
+
+	this->skip(frame_size - size);
 
 	if (!has_dim || !has_timestamp)
 		return;
