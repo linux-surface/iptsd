@@ -18,9 +18,11 @@
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
+#include <exception>
 #include <fmt/format.h>
 #include <functional>
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <thread>
 
@@ -37,7 +39,7 @@ static bool iptsd_loop(IptsdContext &ctx)
 		try {
 			ctx.parser.parse();
 		} catch (std::out_of_range &e) {
-			std::cerr << e.what() << std::endl;
+			spdlog::error(e.what());
 		}
 
 		ctx.control.send_feedback();
@@ -46,12 +48,12 @@ static bool iptsd_loop(IptsdContext &ctx)
 	return diff > 0;
 }
 
-int main()
+static int iptsd_main()
 {
 	IptsdContext ctx {};
 
-	auto should_exit = std::atomic_bool {false};
-	auto should_reset = std::atomic_bool {false};
+	std::atomic_bool should_exit {false};
+	std::atomic_bool should_reset {false};
 
 	auto const _sigusr1 = iptsd::common::signal<SIGUSR1>([&](int) { should_reset = true; });
 	auto const _sigterm = iptsd::common::signal<SIGTERM>([&](int) { should_exit = true; });
@@ -60,7 +62,7 @@ int main()
 	struct ipts_device_info info = ctx.control.info;
 	system_clock::time_point timeout = system_clock::now() + 5s;
 
-	fmt::print("Connected to device {:04X}:{:04X}\n", info.vendor, info.product);
+	spdlog::info("Connected to device {:04X}:{:04X}\n", info.vendor, info.product);
 
 	ctx.parser.on_singletouch = [&](const auto &data) { iptsd_singletouch_input(ctx, data); };
 	ctx.parser.on_stylus = [&](const auto &data) { iptsd_stylus_input(ctx, data); };
@@ -73,13 +75,30 @@ int main()
 		std::this_thread::sleep_for(timeout > system_clock::now() ? 10ms : 200ms);
 
 		if (should_reset) {
+			spdlog::info("Resetting touch sensor");
+
 			ctx.control.reset();
 			should_reset = false;
 		}
 
-		if (should_exit)
+		if (should_exit) {
+			spdlog::info("Stopping");
+
 			return EXIT_FAILURE;
+		}
 	}
 
 	return 0;
+}
+
+int main()
+{
+	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
+
+	try {
+		return iptsd_main();
+	} catch (std::exception &e) {
+		spdlog::error(e.what());
+		return EXIT_FAILURE;
+	}
 }

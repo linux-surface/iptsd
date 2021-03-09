@@ -17,6 +17,7 @@ deps = [
 	dependency('inih', fallback: ['inih', 'inih_dep']),
 	dependency('Microsoft.GSL', modules:['Microsoft.GSL::GSL'],
 		   fallback: ['microsoft-gsl', 'microsoft_gsl_dep']),
+	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
 ]
 
 executable('iptsd', sources, dependencies: deps,

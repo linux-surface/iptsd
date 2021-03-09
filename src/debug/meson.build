@@ -7,6 +7,7 @@ deps = [
 	libipts,
 	dependency('CLI11', fallback: ['CLI11', 'CLI11_dep']),
 	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
+	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
 ]
 
 executable('ipts-dbg', sources, dependencies: deps,
@@ -22,6 +23,8 @@ deps = [
 	libipts,
 	libcontacts,
 	dependency('CLI11', fallback: ['CLI11', 'CLI11_dep']),
+	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
+	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
 	dependency('cairo'),
 ]
 
@@ -37,6 +40,8 @@ deps = [
 	libcommon,
 	libipts,
 	libcontacts,
+	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
+	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
 	dependency('gtk+-3.0'),
 ]
 

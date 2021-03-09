@@ -99,10 +99,8 @@ auto MainContext::draw_event(cairo::Cairo &cr) -> bool
 	return false;
 }
 
-int main(int argc, char *argv[])
+static int rt_main(int argc, char *argv[])
 {
-	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
-
 	const iptsd::index2_t size {72, 48};
 	MainContext ctx {size};
 	iptsd::TouchProcessor prc {size};
@@ -174,4 +172,16 @@ int main(int argc, char *argv[])
 	updt.join();
 
 	return status;
+}
+
+int main(int argc, char *argv[])
+{
+	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
+
+	try {
+		return rt_main(argc, argv);
+	} catch (std::exception &e) {
+		spdlog::error(e.what());
+		return EXIT_FAILURE;
+	}
 }

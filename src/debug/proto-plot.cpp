@@ -26,10 +26,8 @@ enum class mode_type {
 	perf,
 };
 
-int main(int argc, char *argv[])
+static int plot_main(int argc, char *argv[])
 {
-	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
-
 	auto mode = mode_type::plot;
 	auto path_in = std::string {};
 	auto path_out = std::string {};
@@ -146,5 +144,19 @@ int main(int argc, char *argv[])
 		fmt::format_to_n(fname.begin(), fname.size(), "out-{:04d}.png", i);
 
 		surface.write_to_png(dir_out / fname.data());
+	}
+
+	return 0;
+}
+
+int main(int argc, char *argv[])
+{
+	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
+
+	try {
+		return plot_main(argc, argv);
+	} catch (std::exception &e) {
+		spdlog::error(e.what());
+		return EXIT_FAILURE;
 	}
 }

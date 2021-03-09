@@ -14,6 +14,7 @@
 #include <iostream>
 #include <iterator>
 #include <span>
+#include <spdlog/spdlog.h>
 #include <string>
 #include <vector>
 
@@ -89,7 +90,7 @@ template <> struct fmt::formatter<PrettyBuf> {
 	}
 };
 
-int main(int argc, char *argv[])
+static int dbg_main(int argc, char *argv[])
 {
 	auto filename = std::filesystem::path {};
 
@@ -143,4 +144,16 @@ int main(int argc, char *argv[])
 	}
 
 	return 0;
+}
+
+int main(int argc, char *argv[])
+{
+	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
+
+	try {
+		return dbg_main(argc, argv);
+	} catch (std::exception &e) {
+		spdlog::error(e.what());
+		return EXIT_FAILURE;
+	}
 }
