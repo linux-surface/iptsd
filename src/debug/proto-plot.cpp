@@ -1,10 +1,10 @@
 #include "gfx/cairo.hpp"
 #include "visualization.hpp"
 
-#include <contacts/container/image.hpp>
+#include <common/types.hpp>
 #include <contacts/eval/perf.hpp>
 #include <contacts/processor.hpp>
-#include <contacts/types.hpp>
+#include <container/image.hpp>
 #include <ipts/parser.hpp>
 
 #include <CLI/CLI.hpp>
@@ -62,12 +62,12 @@ static int main(int argc, char *argv[])
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 	ifs.read(reinterpret_cast<char *>(parser.buffer().data()), size);
 
-	std::vector<contacts::container::Image<f32>> heatmaps;
+	std::vector<container::Image<f32>> heatmaps;
 
 	parser.on_heatmap = [&](const auto &data) {
-		contacts::index2_t size = {data.width, data.height};
+		index2_t size = {data.width, data.height};
 
-		contacts::container::Image<f32> hm {size};
+		container::Image<f32> hm {size};
 		std::transform(data.data.begin(), data.data.end(), hm.begin(), [&](auto v) {
 			f32 val = static_cast<f32>(v - data.z_min) /
 				  static_cast<f32>(data.z_max - data.z_min);
@@ -87,7 +87,7 @@ static int main(int argc, char *argv[])
 
 	contacts::TouchProcessor proc {heatmaps[0].size()};
 
-	std::vector<contacts::container::Image<f32>> out;
+	std::vector<container::Image<f32>> out;
 	out.reserve(heatmaps.size());
 
 	std::vector<std::vector<contacts::TouchPoint>> out_tp;

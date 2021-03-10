@@ -1,7 +1,9 @@
 #pragma once
 
-#include "types.hpp"
-#include "container/image.hpp"
+#include <common/types.hpp>
+#include <container/image.hpp>
+
+using namespace iptsd::container;
 
 
 namespace iptsd::contacts::alg {

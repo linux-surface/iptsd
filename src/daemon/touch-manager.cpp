@@ -5,13 +5,12 @@
 #include "config.hpp"
 
 #include <common/types.hpp>
-#include <contacts/container/image.hpp>
-#include <contacts/math/mat2.hpp>
-#include <contacts/math/vec2.hpp>
 #include <contacts/processor.hpp>
-#include <contacts/types.hpp>
+#include <container/image.hpp>
 #include <ipts/parser.hpp>
 #include <ipts/protocol.h>
+#include <math/mat2.hpp>
+#include <math/vec2.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -27,7 +26,7 @@ namespace iptsd::daemon {
 void TouchManager::resize(u8 width, u8 height)
 {
 	if (this->hm) {
-		contacts::index2_t size = this->hm->size();
+		index2_t size = this->hm->size();
 
 		if (size.x != width || size.y != height) {
 			this->hm.reset(nullptr);
@@ -36,12 +35,12 @@ void TouchManager::resize(u8 width, u8 height)
 	}
 
 	if (!this->hm) {
-		contacts::index2_t size {width, height};
+		index2_t size {width, height};
 
 		f64 diag = std::sqrt(width * width + height * height);
 		this->diagonal = gsl::narrow_cast<i32>(diag);
 
-		this->hm = std::make_unique<contacts::container::Image<f32>>(size);
+		this->hm = std::make_unique<container::Image<f32>>(size);
 		this->processor = std::make_unique<contacts::TouchProcessor>(size);
 	}
 }
@@ -75,7 +74,7 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		this->inputs[i].x = gsl::narrow_cast<i32>(x * IPTS_MAX_X);
 		this->inputs[i].y = gsl::narrow_cast<i32>(y * IPTS_MAX_Y);
 
-		contacts::math::Eigen2<f32> eigen = contacts[i].cov.eigen();
+		math::Eigen2<f32> eigen = contacts[i].cov.eigen();
 		f64 s1 = std::sqrt(eigen.w[0]);
 		f64 s2 = std::sqrt(eigen.w[1]);
 
@@ -88,7 +87,7 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		this->inputs[i].major = gsl::narrow_cast<i32>(major * IPTS_DIAGONAL);
 		this->inputs[i].minor = gsl::narrow_cast<i32>(minor * IPTS_DIAGONAL);
 
-		contacts::math::Vec2<f64> v1 = eigen.v[0].cast<f64>() * s1;
+		math::Vec2<f64> v1 = eigen.v[0].cast<f64>() * s1;
 		f64 angle = M_PI_2 - std::atan2(v1.x, v1.y);
 
 		// Make sure that the angle is always a positive number

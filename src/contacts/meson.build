@@ -4,6 +4,8 @@ sources = [
 
 deps = [
 	libcommon,
+	libcontainer,
+	libmath,
 	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
 	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
 ]

@@ -2,10 +2,10 @@
 #include "gfx/gtk.hpp"
 #include "visualization.hpp"
 
-#include <contacts/container/image.hpp>
+#include <common/types.hpp>
 #include <contacts/eval/perf.hpp>
 #include <contacts/processor.hpp>
-#include <contacts/types.hpp>
+#include <container/image.hpp>
 #include <ipts/control.hpp>
 #include <ipts/parser.hpp>
 
@@ -23,10 +23,9 @@ namespace iptsd::debug::rt {
 
 class MainContext {
 public:
-	MainContext(contacts::index2_t img_size);
+	MainContext(index2_t img_size);
 
-	void submit(contacts::container::Image<f32> const &img,
-		    std::vector<contacts::TouchPoint> const &tps);
+	void submit(container::Image<f32> const &img, std::vector<contacts::TouchPoint> const &tps);
 
 	auto draw_event(cairo::Cairo &cr) -> bool;
 
@@ -36,29 +35,29 @@ public:
 private:
 	iptsd::Visualization m_vis;
 
-	contacts::container::Image<f32> m_img1;
-	contacts::container::Image<f32> m_img2;
+	container::Image<f32> m_img1;
+	container::Image<f32> m_img2;
 
 	std::vector<contacts::TouchPoint> m_tps1;
 	std::vector<contacts::TouchPoint> m_tps2;
 
 	std::mutex m_lock;
 
-	contacts::container::Image<f32> *m_img_frnt;
-	contacts::container::Image<f32> *m_img_back;
+	container::Image<f32> *m_img_frnt;
+	container::Image<f32> *m_img_back;
 
 	std::vector<contacts::TouchPoint> *m_tps_frnt;
 	std::vector<contacts::TouchPoint> *m_tps_back;
 	bool m_swap = false;
 };
 
-MainContext::MainContext(contacts::index2_t img_size)
+MainContext::MainContext(index2_t img_size)
 	: m_widget {nullptr}, m_vis {img_size}, m_img1 {img_size}, m_img2 {img_size}, m_tps1 {},
 	  m_tps2 {}, m_img_frnt {&m_img1}, m_img_back {&m_img2}, m_tps_frnt {&m_tps1},
 	  m_tps_back {&m_tps2}
 {}
 
-void MainContext::submit(contacts::container::Image<f32> const &img,
+void MainContext::submit(container::Image<f32> const &img,
 			 std::vector<contacts::TouchPoint> const &tps)
 {
 	{
@@ -104,7 +103,7 @@ auto MainContext::draw_event(cairo::Cairo &cr) -> bool
 
 static int main(int argc, char *argv[])
 {
-	const contacts::index2_t size {72, 48};
+	const index2_t size {72, 48};
 	MainContext ctx {size};
 	contacts::TouchProcessor prc {size};
 
@@ -142,7 +141,7 @@ static int main(int argc, char *argv[])
 
 		ipts::Parser parser(ctrl.info.buffer_size);
 		parser.on_heatmap = [&](const auto &data) {
-			contacts::container::Image<f32> hm {size};
+			container::Image<f32> hm {size};
 
 			std::transform(data.data.begin(), data.data.end(), hm.begin(), [&](auto v) {
 				f32 val = static_cast<f32>(v - data.z_min) /

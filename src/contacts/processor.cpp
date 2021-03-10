@@ -1,6 +1,6 @@
 #include "processor.hpp"
 
-#include "types.hpp"
+#include <common/types.hpp>
 
 #include "algorithm/convolution.hpp"
 #include "algorithm/distance_transform.hpp"
@@ -10,21 +10,24 @@
 #include "algorithm/local_maxima.hpp"
 #include "algorithm/structure_tensor.hpp"
 
-#include "container/image.hpp"
-#include "container/kernel.hpp"
-#include "container/ops.hpp"
+#include <container/image.hpp>
+#include <container/kernel.hpp>
+#include <container/ops.hpp>
 
 #include "eval/perf.hpp"
 
-#include "math/num.hpp"
-#include "math/vec2.hpp"
-#include "math/mat2.hpp"
+#include <math/num.hpp>
+#include <math/vec2.hpp>
+#include <math/mat2.hpp>
 
 #include <spdlog/spdlog.h>
 
 #include <array>
 #include <vector>
 #include <queue>
+
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 
 namespace iptsd::contacts {

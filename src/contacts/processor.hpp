@@ -1,21 +1,24 @@
 #pragma once
 
-#include "types.hpp"
+#include <common/types.hpp>
 
 #include "algorithm/distance_transform.hpp"
 #include "algorithm/gaussian_fitting.hpp"
 
-#include "container/image.hpp"
-#include "container/kernel.hpp"
+#include <container/image.hpp>
+#include <container/kernel.hpp>
 
 #include "eval/perf.hpp"
 
-#include "math/vec2.hpp"
-#include "math/mat2.hpp"
+#include <math/vec2.hpp>
+#include <math/mat2.hpp>
 
 #include <array>
 #include <vector>
 #include <queue>
+
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 
 namespace iptsd::contacts {

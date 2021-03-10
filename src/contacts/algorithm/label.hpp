@@ -15,10 +15,12 @@
  *    http://repositories.cdlib.org/lbnl/LBNL-56864
  */
 
-#include "types.hpp"
-#include "container/image.hpp"
+#include <common/types.hpp>
+#include <container/image.hpp>
 
 #include <numeric>
+
+using namespace iptsd::container;
 
 
 namespace iptsd::contacts::alg {

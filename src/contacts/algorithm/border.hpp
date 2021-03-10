@@ -1,10 +1,13 @@
 #pragma once
 
-#include "types.hpp"
-#include "container/image.hpp"
-#include "math/num.hpp"
+#include <common/types.hpp>
+#include <container/image.hpp>
+#include <math/num.hpp>
 
 #include <algorithm>
+
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 
 namespace iptsd::contacts::alg::border {

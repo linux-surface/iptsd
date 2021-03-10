@@ -1,19 +1,22 @@
 #pragma once
 
-#include "types.hpp"
+#include <common/types.hpp>
 
 #include "algorithm/border.hpp"
 #include "algorithm/convolution.hpp"
 
-#include "container/image.hpp"
-#include "container/kernel.hpp"
+#include <container/image.hpp>
+#include <container/kernel.hpp>
 
-#include "math/num.hpp"
-#include "math/mat2.hpp"
+#include <math/num.hpp>
+#include <math/mat2.hpp>
 
 #include <cassert>
 
 #include "algorithm/opt/structure_tensor.3x3-zero.hpp"
+
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 
 namespace iptsd::contacts::alg {

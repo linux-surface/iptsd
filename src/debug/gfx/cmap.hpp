@@ -2,17 +2,18 @@
 
 #include "color.hpp"
 
-#include <contacts/container/image.hpp>
-#include <contacts/container/ops.hpp>
-#include <contacts/math/num.hpp>
-#include <contacts/types.hpp>
+#include <common/types.hpp>
+#include <container/image.hpp>
+#include <container/ops.hpp>
+#include <math/num.hpp>
 
 #include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <optional>
 
-using namespace iptsd::contacts;
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 namespace iptsd::gfx::cmap {
 

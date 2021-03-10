@@ -1,6 +1,6 @@
 #pragma once
 
-#include <contacts/types.hpp>
+#include <common/types.hpp>
 
 #include <functional>
 #include <gtk/gtk.h>

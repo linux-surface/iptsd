@@ -1,10 +1,12 @@
 #pragma once
 
-#include "types.hpp"
-#include "container/image.hpp"
+#include <common/types.hpp>
+#include <container/image.hpp>
 
 #include <queue>
 #include <numeric>
+
+using namespace iptsd::container;
 
 
 namespace iptsd::contacts::alg {

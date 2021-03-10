@@ -3,8 +3,8 @@
 #include "cmap.hpp"
 #include "color.hpp"
 
-#include <contacts/container/image.hpp>
-#include <contacts/math/vec2.hpp>
+#include <container/image.hpp>
+#include <math/vec2.hpp>
 
 #include <cairo/cairo.h>
 #include <exception>
@@ -12,7 +12,8 @@
 #include <gsl/pointers>
 #include <utility>
 
-using namespace iptsd::contacts;
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 namespace iptsd::gfx::cairo {
 

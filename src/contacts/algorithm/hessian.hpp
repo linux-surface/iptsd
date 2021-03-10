@@ -1,19 +1,22 @@
 #pragma once
 
-#include "types.hpp"
+#include <common/types.hpp>
 
-#include "container/image.hpp"
-#include "container/kernel.hpp"
+#include <container/image.hpp>
+#include <container/kernel.hpp>
 
 #include "algorithm/border.hpp"
 #include "algorithm/convolution.hpp"
 
-#include "math/num.hpp"
-#include "math/mat2.hpp"
+#include <math/num.hpp>
+#include <math/mat2.hpp>
 
 #include "algorithm/opt/hessian.zero.hpp"
 
 #include <cassert>
+
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 
 namespace iptsd::contacts::alg {

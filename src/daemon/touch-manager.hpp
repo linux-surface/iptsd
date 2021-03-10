@@ -6,8 +6,8 @@
 #include "config.hpp"
 
 #include <common/types.hpp>
-#include <contacts/container/image.hpp>
 #include <contacts/processor.hpp>
+#include <container/image.hpp>
 #include <ipts/parser.hpp>
 
 #include <memory>
@@ -29,7 +29,7 @@ public:
 class TouchManager {
 public:
 	i32 diagonal = 0;
-	std::unique_ptr<contacts::container::Image<f32>> hm;
+	std::unique_ptr<container::Image<f32>> hm;
 	std::unique_ptr<contacts::TouchProcessor> processor;
 
 	Config conf;

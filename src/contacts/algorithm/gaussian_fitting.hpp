@@ -1,20 +1,23 @@
 #pragma once
 
-#include "types.hpp"
-#include "container/image.hpp"
+#include <common/types.hpp>
+#include <container/image.hpp>
 
-#include "math/num.hpp"
+#include <math/num.hpp>
 
-#include "math/vec2.hpp"
-#include "math/mat2.hpp"
+#include <math/vec2.hpp>
+#include <math/mat2.hpp>
 
-#include "math/vec6.hpp"
-#include "math/mat6.hpp"
-#include "math/sle6.hpp"
+#include <math/vec6.hpp>
+#include <math/mat6.hpp>
+#include <math/sle6.hpp>
 
 #include <spdlog/spdlog.h>
 
 #include <array>
+
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 
 namespace iptsd::contacts::alg::gfit {
