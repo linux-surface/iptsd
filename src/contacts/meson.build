@@ -1,21 +1,17 @@
-sources = [
-	'processor.cpp',
-]
-
 deps = [
-	libcommon,
-	libcontainer,
-	libmath,
-	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
-	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
+	fmt,
+	iptsd_common,
+	iptsd_container,
+	iptsd_math,
+	spdlog,
 ]
 
 our_includes = [
 	include_directories('.'),
 ]
 
-lib = static_library('contacts', sources, dependencies: deps,
-		     include_directories: includes)
+libcontacts = static_library('contacts', 'processor.cpp', dependencies: deps,
+			     include_directories: includes)
 
-libcontacts = declare_dependency(dependencies: deps, link_with: lib,
-				 include_directories: our_includes)
+iptsd_contacts = declare_dependency(dependencies: deps, link_with: libcontacts,
+				    include_directories: our_includes)

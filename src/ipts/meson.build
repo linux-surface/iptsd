@@ -4,10 +4,10 @@ sources = [
 ]
 
 deps = [
-	libcommon,
+	iptsd_common,
 ]
 
-lib = static_library('ipts', sources, dependencies: deps,
-		     include_directories: includes)
+libipts = static_library('ipts', sources, dependencies: deps,
+			 include_directories: includes)
 
-libipts = declare_dependency(dependencies: deps, link_with: lib)
+iptsd_ipts = declare_dependency(dependencies: deps, link_with: libipts)

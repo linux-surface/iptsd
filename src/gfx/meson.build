@@ -1,15 +1,11 @@
-sources = [
-	'visualization.cpp',
-]
-
 deps = [
-	libcommon,
-	libcontainer,
-	libmath,
-	dependency('cairomm-1.0'),
+	cairomm,
+	iptsd_common,
+	iptsd_container,
+	iptsd_math,
 ]
 
-lib = static_library('gfx', sources, dependencies: deps,
-		     include_directories: includes)
+libgfx = static_library('gfx', 'visualization.cpp', dependencies: deps,
+			include_directories: includes)
 
-libgfx = declare_dependency(dependencies: deps, link_with: lib)
+iptsd_gfx = declare_dependency(dependencies: deps, link_with: libgfx)

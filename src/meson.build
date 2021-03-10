@@ -60,15 +60,28 @@ endif
 
 add_project_arguments('-DSPDLOG_FMT_EXTERNAL', language: 'cpp')
 
+# Dependencies
+fmt = dependency('fmt', fallback: ['fmt', 'fmt_dep'])
+inih = dependency('inih', fallback: ['inih', 'inih_dep'])
+gsl = dependency('Microsoft.GSL', modules: ['Microsoft.GSL::GSL'],
+		 fallback: ['microsoft_gsl', 'microsoft_gsl_dep'])
+spdlog = dependency('spdlog', fallback: ['spdlog', 'spdlog_dep'])
+
 subdir('common')
 subdir('math')
-subdir('container')
-subdir('contacts')
-subdir('ipts')
-subdir('gfx')
 
+subdir('container')
+subdir('ipts')
+
+subdir('contacts')
 subdir('daemon')
 
 if get_option('debug_tool')
+	cli11 = dependency('CLI11', fallback: ['CLI11', 'CLI11_dep'])
+	cairomm = dependency('cairomm-1.0')
+	cairommpng = dependency('cairomm-png-1.0')
+	gtkmm = dependency('gtkmm-3.0')
+
+	subdir('gfx')
 	subdir('debug')
 endif

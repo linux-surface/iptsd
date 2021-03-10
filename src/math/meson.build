@@ -1,5 +1,1 @@
-deps = [
-	libcommon,
-]
-
-libmath = declare_dependency(dependencies: deps)
+iptsd_math = declare_dependency(dependencies: [iptsd_common])

@@ -1,6 +1,6 @@
 deps = [
-	libcommon,
-	libmath,
+	iptsd_common,
+	iptsd_math,
 ]
 
-libcontainer = declare_dependency(dependencies: deps)
+iptsd_container = declare_dependency(dependencies: deps)
