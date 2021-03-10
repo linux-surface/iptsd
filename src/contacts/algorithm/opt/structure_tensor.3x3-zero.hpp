@@ -2,7 +2,7 @@
  * Optimized version of structure_tensor.hpp. Do not include directly.
  */
 
-#include "algorithm/structure_tensor.hpp"
+#include "../structure_tensor.hpp"
 
 
 namespace iptsd::contacts::alg::stensor::impl {

@@ -2,7 +2,7 @@
  * Optimized version of hessian.hpp. Do not include directly.
  */
 
-#include "algorithm/hessian.hpp"
+#include "../hessian.hpp"
 
 
 namespace iptsd::contacts::alg::hess::impl {

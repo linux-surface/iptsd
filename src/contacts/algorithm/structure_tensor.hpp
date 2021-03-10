@@ -2,8 +2,8 @@
 
 #include <common/types.hpp>
 
-#include "algorithm/border.hpp"
-#include "algorithm/convolution.hpp"
+#include "border.hpp"
+#include "convolution.hpp"
 
 #include <container/image.hpp>
 #include <container/kernel.hpp>
@@ -13,7 +13,7 @@
 
 #include <cassert>
 
-#include "algorithm/opt/structure_tensor.3x3-zero.hpp"
+#include "opt/structure_tensor.3x3-zero.hpp"
 
 using namespace iptsd::container;
 using namespace iptsd::math;

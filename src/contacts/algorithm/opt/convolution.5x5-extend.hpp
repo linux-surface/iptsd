@@ -2,7 +2,7 @@
  * Optimized version of convolution.hpp. Do not include directly.
  */
 
-#include "algorithm/convolution.hpp"
+#include "../convolution.hpp"
 
 
 namespace iptsd::contacts::alg::conv::impl {

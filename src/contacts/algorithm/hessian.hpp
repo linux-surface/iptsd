@@ -5,13 +5,13 @@
 #include <container/image.hpp>
 #include <container/kernel.hpp>
 
-#include "algorithm/border.hpp"
-#include "algorithm/convolution.hpp"
+#include "border.hpp"
+#include "convolution.hpp"
 
 #include <math/num.hpp>
 #include <math/mat2.hpp>
 
-#include "algorithm/opt/hessian.zero.hpp"
+#include "opt/hessian.zero.hpp"
 
 #include <cassert>
 

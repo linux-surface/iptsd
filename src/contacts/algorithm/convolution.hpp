@@ -2,7 +2,7 @@
 
 #include <common/types.hpp>
 
-#include "algorithm/border.hpp"
+#include "border.hpp"
 
 #include <container/image.hpp>
 #include <container/kernel.hpp>
@@ -11,8 +11,8 @@
 #include <math/num.hpp>
 #include <math/vec2.hpp>
 
-#include "algorithm/opt/convolution.3x3-extend.hpp"
-#include "algorithm/opt/convolution.5x5-extend.hpp"
+#include "opt/convolution.3x3-extend.hpp"
+#include "opt/convolution.5x5-extend.hpp"
 
 using namespace iptsd::container;
 using namespace iptsd::math;
