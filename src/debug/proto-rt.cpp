@@ -2,14 +2,21 @@
 #include <contacts/eval/perf.hpp>
 #include <contacts/processor.hpp>
 #include <container/image.hpp>
+#include <gfx/visualization.hpp>
 #include <ipts/control.hpp>
 #include <ipts/parser.hpp>
 
 #include <atomic>
+#include <cairomm/context.h>
+#include <cairomm/enums.h>
+#include <cairomm/refptr.h>
 #include <fstream>
-#include <gfx/cairo.hpp>
-#include <gfx/gtk.hpp>
-#include <gfx/visualization.hpp>
+#include <gtkmm/application.h>
+#include <gtkmm/applicationwindow.h>
+#include <gtkmm/drawingarea.h>
+#include <gtkmm/enums.h>
+#include <gtkmm/object.h>
+#include <gtkmm/widget.h>
 #include <iostream>
 #include <mutex>
 #include <spdlog/spdlog.h>
@@ -26,10 +33,10 @@ public:
 
 	void submit(container::Image<f32> const &img, std::vector<contacts::TouchPoint> const &tps);
 
-	auto draw_event(cairo::Cairo &cr) -> bool;
+	auto draw_event(const Cairo::RefPtr<Cairo::Context> &cr) -> bool;
 
 public:
-	gtk::Widget m_widget;
+	Gtk::DrawingArea *m_widget;
 
 private:
 	gfx::Visualization m_vis;
@@ -76,14 +83,13 @@ void MainContext::submit(container::Image<f32> const &img,
 	}
 
 	// request update
-	if (m_widget)
-		m_widget.queue_draw();
+	m_widget->queue_draw();
 }
 
-auto MainContext::draw_event(cairo::Cairo &cr) -> bool
+auto MainContext::draw_event(const Cairo::RefPtr<Cairo::Context> &cr) -> bool
 {
-	auto const width = m_widget.get_allocated_width();
-	auto const height = m_widget.get_allocated_height();
+	auto const width = m_widget->get_allocated_width();
+	auto const height = m_widget->get_allocated_height();
 
 	{
 		// check and swap buffers, if necessary
@@ -108,27 +114,23 @@ static int main(int argc, char *argv[])
 
 	ipts::Control ctrl;
 
-	auto app = gtk::Application::create("com.github.qzed.digitizer-prototype.rt");
+	auto app = Gtk::Application::create("com.github.qzed.digitizer-prototype.rt");
 
-	app.connect("activate", [&](gtk::Application app) -> void {
-		auto window = gtk::ApplicationWindow::create(app);
+	app->signal_activate().connect([&]() {
+		auto window = Gtk::ApplicationWindow(app);
 
-		// fix aspect to 3-to-2
-		auto geom =
-			gdk::Geometry {0, 0, 0, 0, 0, 0, 0, 0, 1.5f, 1.5f, gdk::Gravity::Center};
-
-		window.set_position(gtk::WindowPosition::Center);
+		window.set_position(Gtk::WIN_POS_CENTER);
 		window.set_default_size(900, 600);
 		window.set_title("IPTS Processor Prototype");
-		window.set_geometry_hints(geom, gdk::WindowHints::Aspect);
+		window.set_resizable(false);
 
-		auto darea = gtk::DrawingArea::create();
-		window.add(darea);
+		ctx.m_widget = Gtk::make_managed<Gtk::DrawingArea>();
+		window.add(*ctx.m_widget);
 
-		ctx.m_widget = darea;
-		darea.connect("draw", [&](gtk::Widget widget, cairo::Cairo cr) -> bool {
-			return ctx.draw_event(cr);
-		});
+		ctx.m_widget->signal_draw().connect(
+			[&](const Cairo::RefPtr<Cairo::Context> &cr) -> bool {
+				return ctx.draw_event(cr);
+			});
 
 		window.show_all();
 	});
@@ -165,7 +167,7 @@ static int main(int argc, char *argv[])
 		}
 	});
 
-	int status = app.run(argc, argv);
+	int status = app->run(argc, argv);
 
 	// TODO: should probably hook into destroy event to stop thread before gtk_main() returns
 

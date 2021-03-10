@@ -2,14 +2,16 @@
 #include <contacts/eval/perf.hpp>
 #include <contacts/processor.hpp>
 #include <container/image.hpp>
+#include <gfx/visualization.hpp>
 #include <ipts/parser.hpp>
 
 #include <CLI/CLI.hpp>
+#include <cairomm/context.h>
+#include <cairomm/enums.h>
+#include <cairomm/surface.h>
 #include <filesystem>
 #include <fmt/core.h>
 #include <fstream>
-#include <gfx/cairo.hpp>
-#include <gfx/visualization.hpp>
 #include <iomanip>
 #include <ios>
 #include <iostream>
@@ -132,8 +134,8 @@ static int main(int argc, char *argv[])
 	auto const dir_out = std::filesystem::path {path_out};
 	std::filesystem::create_directories(dir_out);
 
-	auto surface = cairo::image_surface_create(cairo::Format::Argb32, {width, height});
-	auto cr = cairo::Cairo::create(surface);
+	auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width, height);
+	auto cr = Cairo::Context::create(surface);
 
 	gfx::Visualization vis {heatmaps[0].size()};
 
@@ -141,10 +143,7 @@ static int main(int argc, char *argv[])
 		vis.draw(cr, out[i], out_tp[i], width, height);
 
 		// write file
-		auto fname = std::array<char, 32> {};
-		fmt::format_to_n(fname.begin(), fname.size(), "out-{:04d}.png", i);
-
-		surface.write_to_png(dir_out / fname.data());
+		surface->write_to_png(dir_out / fmt::format("out-{:04d}.png", i));
 	}
 
 	return 0;

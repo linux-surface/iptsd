@@ -6,8 +6,7 @@ deps = [
 	libcommon,
 	libcontainer,
 	libmath,
-	dependency('cairo'),
-	dependency('gtk+-3.0'),
+	dependency('cairomm-1.0'),
 ]
 
 lib = static_library('gfx', sources, dependencies: deps,

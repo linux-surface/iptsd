@@ -3,9 +3,10 @@
 #ifndef IPTSD_CONTAINER_OPS_HPP
 #define IPTSD_CONTAINER_OPS_HPP
 
+#include <math/num.hpp>
+
 #include <algorithm>
 #include <cassert>
-#include <math/num.hpp>
 #include <numeric>
 #include <utility>
 

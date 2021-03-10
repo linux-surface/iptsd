@@ -22,6 +22,8 @@ deps = [
 	libipts,
 	libcontacts,
 	libgfx,
+	dependency('cairomm-1.0'),
+	dependency('cairomm-png-1.0'),
 	dependency('CLI11', fallback: ['CLI11', 'CLI11_dep']),
 	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
 	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
@@ -40,6 +42,7 @@ deps = [
 	libcontacts,
 	libgfx,
 	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
+	dependency('gtkmm-3.0'),
 	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
 ]
 
