@@ -33,7 +33,7 @@ public:
 
 	DeviceManager(IptsdConfig conf);
 
-	void switch_stylus(u32 serial);
+	StylusDevice &get_stylus(u32 serial);
 };
 
 #endif /* IPTSD_DAEMON_DEVICES_HPP */
