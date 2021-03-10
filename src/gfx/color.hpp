@@ -1,4 +1,7 @@
-#pragma once
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+#ifndef IPTSD_GFX_COLOR_HPP
+#define IPTSD_GFX_COLOR_HPP
 
 #include <common/types.hpp>
 
@@ -42,3 +45,5 @@ constexpr auto Srgba::from(f32 r, f32 g, f32 b) -> Srgba
 }
 
 } /* namespace iptsd::gfx */
+
+#endif /* IPTSD_GFX_COLOR_HPP */

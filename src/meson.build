@@ -65,6 +65,7 @@ subdir('math')
 subdir('container')
 subdir('contacts')
 subdir('ipts')
+subdir('gfx')
 
 subdir('daemon')
 

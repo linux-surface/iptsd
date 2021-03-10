@@ -1,4 +1,7 @@
-#pragma once
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+#ifndef IPTSD_GFX_GTK_HPP
+#define IPTSD_GFX_GTK_HPP
 
 #include "gdk.hpp"
 
@@ -480,3 +483,5 @@ inline DrawingArea::DrawingArea(GtkWidget *raw) : Widget {raw}
 {}
 
 } /* namespace iptsd::gfx::gtk */
+
+#endif /* IPTSD_GFX_GTK_HPP */

@@ -1,7 +1,3 @@
-#include "gfx/cairo.hpp"
-#include "gfx/gtk.hpp"
-#include "visualization.hpp"
-
 #include <common/types.hpp>
 #include <contacts/eval/perf.hpp>
 #include <contacts/processor.hpp>
@@ -11,6 +7,9 @@
 
 #include <atomic>
 #include <fstream>
+#include <gfx/cairo.hpp>
+#include <gfx/gtk.hpp>
+#include <gfx/visualization.hpp>
 #include <iostream>
 #include <mutex>
 #include <spdlog/spdlog.h>
@@ -33,7 +32,7 @@ public:
 	gtk::Widget m_widget;
 
 private:
-	iptsd::Visualization m_vis;
+	gfx::Visualization m_vis;
 
 	container::Image<f32> m_img1;
 	container::Image<f32> m_img2;

@@ -1,4 +1,7 @@
-#pragma once
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+#ifndef IPTSD_GFX_GDK_HPP
+#define IPTSD_GFX_GDK_HPP
 
 #include <common/types.hpp>
 
@@ -81,3 +84,5 @@ inline auto Geometry::c_struct() const -> GdkGeometry
 }
 
 } /* namespace iptsd::gfx::gdk */
+
+#endif /* IPTSD_GFX_GDK_HPP */

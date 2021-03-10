@@ -1,4 +1,7 @@
-#pragma once
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+#ifndef IPTSD_GFX_CAIRO_HPP
+#define IPTSD_GFX_CAIRO_HPP
 
 #include "cmap.hpp"
 #include "color.hpp"
@@ -9,15 +12,10 @@
 #include <cairo/cairo.h>
 #include <exception>
 #include <filesystem>
-#include <gsl/pointers>
+#include <gsl/gsl>
 #include <utility>
 
-using namespace iptsd::container;
-using namespace iptsd::math;
-
 namespace iptsd::gfx::cairo {
-
-using math::Vec2;
 
 using status_t = cairo_status_t;
 
@@ -93,7 +91,7 @@ public:
 	void set_source(Pattern &p);
 	void set_source(Srgb rgb);
 	void set_source(Srgba rgba);
-	void set_source(Surface &src, Vec2<f64> origin);
+	void set_source(Surface &src, math::Vec2<f64> origin);
 	auto get_source() -> Pattern;
 
 	void set_source_filter(Filter f);
@@ -105,14 +103,14 @@ public:
 	void save();
 	void restore();
 
-	void translate(Vec2<f64> s);
-	void scale(Vec2<f64> s);
+	void translate(math::Vec2<f64> s);
+	void scale(math::Vec2<f64> s);
 	void rotate(f64 angle);
 
-	void move_to(Vec2<f64> pos);
-	void line_to(Vec2<f64> pos);
-	void rectangle(Vec2<f64> origin, Vec2<f64> size);
-	void arc(Vec2<f64> center, f64 radius, f64 angle1, f64 angle2);
+	void move_to(math::Vec2<f64> pos);
+	void line_to(math::Vec2<f64> pos);
+	void rectangle(math::Vec2<f64> origin, math::Vec2<f64> size);
+	void arc(math::Vec2<f64> center, f64 radius, f64 angle1, f64 angle2);
 
 	void select_font_face(char const *family, FontSlant slant, FontWeight weight);
 	void set_font_size(f64 size);
@@ -180,8 +178,8 @@ public:
 	auto raw() -> cairo_matrix_t *;
 	auto operator*() -> cairo_matrix_t *;
 
-	void translate(Vec2<f64> v);
-	void scale(Vec2<f64> v);
+	void translate(math::Vec2<f64> v);
+	void scale(math::Vec2<f64> v);
 
 private:
 	cairo_matrix_t m_raw;
@@ -276,7 +274,7 @@ inline void Cairo::set_source(Srgba c)
 	cairo_set_source_rgba(m_raw, c.r, c.g, c.b, c.a);
 }
 
-inline void Cairo::set_source(Surface &src, Vec2<f64> origin)
+inline void Cairo::set_source(Surface &src, math::Vec2<f64> origin)
 {
 	cairo_set_source_surface(m_raw, *src, origin.x, origin.y);
 }
@@ -316,12 +314,12 @@ inline void Cairo::restore()
 	cairo_restore(m_raw);
 }
 
-inline void Cairo::translate(Vec2<f64> v)
+inline void Cairo::translate(math::Vec2<f64> v)
 {
 	cairo_translate(m_raw, v.x, v.y);
 }
 
-inline void Cairo::scale(Vec2<f64> s)
+inline void Cairo::scale(math::Vec2<f64> s)
 {
 	cairo_scale(m_raw, s.x, s.y);
 }
@@ -331,22 +329,22 @@ inline void Cairo::rotate(f64 angle)
 	cairo_rotate(m_raw, angle);
 }
 
-inline void Cairo::move_to(Vec2<f64> pos)
+inline void Cairo::move_to(math::Vec2<f64> pos)
 {
 	cairo_move_to(m_raw, pos.x, pos.y);
 }
 
-inline void Cairo::line_to(Vec2<f64> pos)
+inline void Cairo::line_to(math::Vec2<f64> pos)
 {
 	cairo_line_to(m_raw, pos.x, pos.y);
 }
 
-inline void Cairo::rectangle(Vec2<f64> origin, Vec2<f64> size)
+inline void Cairo::rectangle(math::Vec2<f64> origin, math::Vec2<f64> size)
 {
 	cairo_rectangle(m_raw, origin.x, origin.y, size.x, size.y);
 }
 
-inline void Cairo::arc(Vec2<f64> center, f64 radius, f64 angle1, f64 angle2)
+inline void Cairo::arc(math::Vec2<f64> center, f64 radius, f64 angle1, f64 angle2)
 {
 	cairo_arc(m_raw, center.x, center.y, radius, angle1, angle2);
 }
@@ -512,12 +510,12 @@ inline auto Matrix::operator*() -> cairo_matrix_t *
 	return &m_raw;
 }
 
-inline void Matrix::translate(Vec2<f64> v)
+inline void Matrix::translate(math::Vec2<f64> v)
 {
 	cairo_matrix_translate(&m_raw, v.x, v.y);
 }
 
-inline void Matrix::scale(Vec2<f64> s)
+inline void Matrix::scale(math::Vec2<f64> s)
 {
 	cairo_matrix_scale(&m_raw, s.x, s.y);
 }
@@ -534,7 +532,7 @@ template <> inline constexpr auto pixel_format<Srgb>() -> Format
 	return Format::Rgb96f;
 }
 
-inline auto image_surface_create(Format fmt, Vec2<i32> size) -> Surface
+inline auto image_surface_create(Format fmt, math::Vec2<i32> size) -> Surface
 {
 	Surface s {cairo_image_surface_create(static_cast<cairo_format_t>(fmt), size.x, size.y)};
 
@@ -556,7 +554,7 @@ inline auto format_stride_for_width(Format fmt, int width) -> int
 	return stride;
 }
 
-template <class T> inline auto image_surface_create(Image<T> &image) -> Surface
+template <class T> inline auto image_surface_create(container::Image<T> &image) -> Surface
 {
 	auto const format = pixel_format<T>();
 	auto const size = image.size();
@@ -575,3 +573,5 @@ template <class T> inline auto image_surface_create(Image<T> &image) -> Surface
 }
 
 } /* namespace iptsd::gfx::cairo */
+
+#endif /* IPTSD_GFX_CAIRO_HPP */

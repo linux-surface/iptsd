@@ -1,4 +1,7 @@
-#pragma once
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+#ifndef IPTSD_GFX_CMAP_HPP
+#define IPTSD_GFX_CMAP_HPP
 
 #include "color.hpp"
 
@@ -11,9 +14,6 @@
 #include <cassert>
 #include <cmath>
 #include <optional>
-
-using namespace iptsd::container;
-using namespace iptsd::math;
 
 namespace iptsd::gfx::cmap {
 
@@ -38,11 +38,11 @@ public:
 	template <class T, class P> auto map(T const &value, std::pair<T, T> range) const -> P;
 
 	template <class T, class P>
-	auto map(Image<T> const &img, std::optional<std::pair<T, T>> range = std::nullopt) const
-		-> Image<P>;
+	auto map(container::Image<T> const &img,
+		 std::optional<std::pair<T, T>> range = std::nullopt) const -> container::Image<P>;
 
 	template <class T, class P>
-	void map_into(Image<P> &dest, Image<T> const &img,
+	void map_into(container::Image<P> &dest, container::Image<T> const &img,
 		      std::optional<std::pair<T, T>> range = std::nullopt) const;
 };
 
@@ -54,16 +54,18 @@ template <class T, class P> auto Cmap::map(T const &value, std::pair<T, T> range
 }
 
 template <class T, class P>
-auto Cmap::map(Image<T> const &img, std::optional<std::pair<T, T>> range) const -> Image<P>
+auto Cmap::map(container::Image<T> const &img, std::optional<std::pair<T, T>> range) const
+	-> container::Image<P>
 {
-	auto out = Image<P> {img.size()};
+	auto out = container::Image<P> {img.size()};
 
 	this->map_into(out, img, range);
 	return out;
 }
 
 template <class T, class P>
-void Cmap::map_into(Image<P> &dest, Image<T> const &img, std::optional<std::pair<T, T>> range) const
+void Cmap::map_into(container::Image<P> &dest, container::Image<T> const &img,
+		    std::optional<std::pair<T, T>> range) const
 {
 	assert(dest.size() == img.size());
 
@@ -725,3 +727,5 @@ inline const Lut<256> viridis {
 };
 
 } /* namespace iptsd::gfx::cmap */
+
+#endif /* IPTSD_GFX_CMAP_HPP */

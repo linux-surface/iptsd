@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 #include "visualization.hpp"
 
 #include "gfx/cairo.hpp"
@@ -5,9 +7,9 @@
 #include <contacts/processor.hpp>
 #include <container/image.hpp>
 
-namespace iptsd {
+namespace iptsd::gfx {
 
-void Visualization::draw(gfx::cairo::Cairo &cr, container::Image<f32> const &img,
+void Visualization::draw(cairo::Cairo &cr, container::Image<f32> const &img,
 			 std::vector<contacts::TouchPoint> const &tps, int width, int height)
 {
 	auto const img_w = static_cast<f64>(img.size().x);
@@ -21,24 +23,23 @@ void Visualization::draw(gfx::cairo::Cairo &cr, container::Image<f32> const &img
 	};
 
 	// plot
-	gfx::cmap::cubehelix(0.1, -0.6, 1.0, 2.0).map_into(m_data, img, {{0.1f, 0.7f}});
+	cmap::cubehelix(0.1, -0.6, 1.0, 2.0).map_into(m_data, img, {{0.1f, 0.7f}});
 
 	// create source surface based on data
-	auto src = gfx::cairo::image_surface_create(m_data);
+	auto src = cairo::image_surface_create(m_data);
 
 	// select font
-	cr.select_font_face("monospace", gfx::cairo::FontSlant::Normal,
-			    gfx::cairo::FontWeight::Normal);
+	cr.select_font_face("monospace", cairo::FontSlant::Normal, cairo::FontWeight::Normal);
 	cr.set_font_size(12.0);
 
 	// plot heatmap
-	auto m = gfx::cairo::Matrix::identity();
+	auto m = cairo::Matrix::identity();
 	m.translate({0.0, img_h});
 	m.scale({img_w / win_w, -img_h / win_h});
 
-	auto p = gfx::cairo::Pattern::create_for_surface(src);
+	auto p = cairo::Pattern::create_for_surface(src);
 	p.set_matrix(m);
-	p.set_filter(gfx::cairo::Filter::Nearest);
+	p.set_filter(cairo::Filter::Nearest);
 
 	cr.set_source(p);
 	cr.rectangle({0, 0}, {win_w, win_h});
@@ -60,7 +61,7 @@ void Visualization::draw(gfx::cairo::Cairo &cr, container::Image<f32> const &img
 		auto const v2 = eigen.v[1].cast<f64>() * s2;
 
 		// standard deviation
-		cr.set_source(gfx::Srgba {0.0, 0.0, 0.0, 0.33});
+		cr.set_source(Srgba {0.0, 0.0, 0.0, 0.33});
 
 		cr.move_to(t({tp.mean.x + 0.5, tp.mean.y + 0.5}));
 		cr.line_to(t({tp.mean.x + 0.5 + v1.x, tp.mean.y + 0.5 + v1.y}));
@@ -71,7 +72,7 @@ void Visualization::draw(gfx::cairo::Cairo &cr, container::Image<f32> const &img
 		cr.stroke();
 
 		// mean
-		cr.set_source(gfx::Srgb {1.0, 0.0, 0.0});
+		cr.set_source(Srgb {1.0, 0.0, 0.0});
 
 		cr.move_to(t({tp.mean.x + 0.1, tp.mean.y + 0.5}));
 		cr.line_to(t({tp.mean.x + 0.9, tp.mean.y + 0.5}));
@@ -82,7 +83,7 @@ void Visualization::draw(gfx::cairo::Cairo &cr, container::Image<f32> const &img
 		cr.stroke();
 
 		// standard deviation ellipse
-		cr.set_source(gfx::Srgb {1.0, 0.0, 0.0});
+		cr.set_source(Srgb {1.0, 0.0, 0.0});
 
 		cr.save();
 
@@ -95,7 +96,7 @@ void Visualization::draw(gfx::cairo::Cairo &cr, container::Image<f32> const &img
 		cr.stroke();
 
 		// stats
-		cr.set_source(gfx::Srgb {1.0, 1.0, 1.0});
+		cr.set_source(Srgb {1.0, 1.0, 1.0});
 
 		std::snprintf(txtbuf.data(), txtbuf.size(), "c:%.02f", tp.confidence);
 		cr.move_to(t({tp.mean.x - 3.5, tp.mean.y + 3.0}));
@@ -112,4 +113,4 @@ void Visualization::draw(gfx::cairo::Cairo &cr, container::Image<f32> const &img
 	}
 }
 
-} /* namespace iptsd */
+} // namespace iptsd::gfx

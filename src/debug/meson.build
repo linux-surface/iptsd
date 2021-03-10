@@ -15,17 +15,16 @@ executable('ipts-dbg', sources, dependencies: deps,
 
 sources = [
 	'proto-plot.cpp',
-	'visualization.cpp',
 ]
 
 deps = [
 	libcommon,
 	libipts,
 	libcontacts,
+	libgfx,
 	dependency('CLI11', fallback: ['CLI11', 'CLI11_dep']),
 	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
 	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
-	dependency('cairo'),
 ]
 
 executable('ipts-proto-plot', sources, dependencies: deps,
@@ -33,16 +32,15 @@ executable('ipts-proto-plot', sources, dependencies: deps,
 
 sources = [
 	'proto-rt.cpp',
-	'visualization.cpp',
 ]
 
 deps = [
 	libcommon,
 	libipts,
 	libcontacts,
+	libgfx,
 	dependency('fmt', fallback: ['fmt', 'fmt_dep']),
 	dependency('spdlog', fallback: ['spdlog', 'spdlog_dep']),
-	dependency('gtk+-3.0'),
 ]
 
 executable('ipts-proto-rt', sources, dependencies: deps,

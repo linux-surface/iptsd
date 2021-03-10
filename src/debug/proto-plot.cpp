@@ -1,6 +1,3 @@
-#include "gfx/cairo.hpp"
-#include "visualization.hpp"
-
 #include <common/types.hpp>
 #include <contacts/eval/perf.hpp>
 #include <contacts/processor.hpp>
@@ -11,6 +8,8 @@
 #include <filesystem>
 #include <fmt/core.h>
 #include <fstream>
+#include <gfx/cairo.hpp>
+#include <gfx/visualization.hpp>
 #include <iomanip>
 #include <ios>
 #include <iostream>
@@ -136,7 +135,7 @@ static int main(int argc, char *argv[])
 	auto surface = cairo::image_surface_create(cairo::Format::Argb32, {width, height});
 	auto cr = cairo::Cairo::create(surface);
 
-	iptsd::Visualization vis {heatmaps[0].size()};
+	gfx::Visualization vis {heatmaps[0].size()};
 
 	for (std::size_t i = 0; i < out.size(); ++i) {
 		vis.draw(cr, out[i], out_tp[i], width, height);
