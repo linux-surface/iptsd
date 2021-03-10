@@ -13,9 +13,9 @@
 
 class StylusDevice : public UinputDevice {
 public:
-	u32 serial = 0;
+	u32 serial;
 
-	StylusDevice(IptsdConfig conf);
+	StylusDevice(IptsdConfig conf, u32 serial);
 };
 
 class TouchDevice : public UinputDevice {

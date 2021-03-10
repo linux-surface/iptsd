@@ -26,7 +26,7 @@ static i32 res(i32 virt, i32 phys)
 	return gsl::narrow_cast<i32>(std::round(res));
 }
 
-StylusDevice::StylusDevice(IptsdConfig conf) : UinputDevice()
+StylusDevice::StylusDevice(IptsdConfig conf, u32 serial) : UinputDevice(), serial(serial)
 {
 	this->name = "IPTS Stylus";
 	this->vendor = conf.info.vendor;
@@ -96,7 +96,7 @@ DeviceManager::DeviceManager(IptsdConfig conf) : conf(conf), touch(conf)
 	if (conf.width == 0 || conf.height == 0)
 		throw std::runtime_error("Display size is 0");
 
-	this->switch_stylus(0);
+	this->styli.emplace_back(conf, 0);
 }
 
 void DeviceManager::switch_stylus(u32 serial)
@@ -114,8 +114,5 @@ void DeviceManager::switch_stylus(u32 serial)
 		return;
 	}
 
-	StylusDevice stylus(this->conf);
-	stylus.serial = serial;
-
-	this->styli.push_back(std::move(stylus));
+	this->styli.emplace_back(this->conf, serial);
 }
