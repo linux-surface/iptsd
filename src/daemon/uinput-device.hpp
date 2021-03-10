@@ -19,12 +19,12 @@ public:
 	UinputDevice();
 	~UinputDevice();
 
-	void set_evbit(i32 ev);
-	void set_propbit(i32 prop);
-	void set_keybit(i32 key);
-	void set_absinfo(u16 code, i32 min, i32 max, i32 res);
-	void create();
-	void emit(u16 type, u16 key, i32 value);
+	void set_evbit(i32 ev) const;
+	void set_propbit(i32 prop) const;
+	void set_keybit(i32 key) const;
+	void set_absinfo(u16 code, i32 min, i32 max, i32 res) const;
+	void create() const;
+	void emit(u16 type, u16 key, i32 value) const;
 };
 
 #endif /* IPTSD_DAEMON_UINPUT_DEVICE_HPP */

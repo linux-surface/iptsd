@@ -28,28 +28,28 @@ UinputDevice::~UinputDevice()
 	close(this->fd);
 }
 
-void UinputDevice::set_evbit(i32 ev)
+void UinputDevice::set_evbit(i32 ev) const
 {
 	int ret = iptsd::common::ioctl(this->fd, UI_SET_EVBIT, (int)ev);
 	if (ret == -1)
 		throw iptsd::common::cerror("UI_SET_EVBIT failed");
 }
 
-void UinputDevice::set_keybit(i32 key)
+void UinputDevice::set_keybit(i32 key) const
 {
 	int ret = iptsd::common::ioctl(this->fd, UI_SET_KEYBIT, (int)key);
 	if (ret == -1)
 		throw iptsd::common::cerror("UI_SET_KEYBIT failed");
 }
 
-void UinputDevice::set_propbit(i32 prop)
+void UinputDevice::set_propbit(i32 prop) const
 {
 	int ret = iptsd::common::ioctl(this->fd, UI_SET_PROPBIT, (int)prop);
 	if (ret == -1)
 		throw iptsd::common::cerror("UI_SET_PROPBIT failed");
 }
 
-void UinputDevice::set_absinfo(u16 code, i32 min, i32 max, i32 res)
+void UinputDevice::set_absinfo(u16 code, i32 min, i32 max, i32 res) const
 {
 	struct uinput_abs_setup abs {};
 
@@ -63,7 +63,7 @@ void UinputDevice::set_absinfo(u16 code, i32 min, i32 max, i32 res)
 		throw iptsd::common::cerror("UI_ABS_SETUP failed");
 }
 
-void UinputDevice::create()
+void UinputDevice::create() const
 {
 	struct uinput_setup setup {};
 
@@ -84,7 +84,7 @@ void UinputDevice::create()
 		throw iptsd::common::cerror("UI_DEV_CREATE failed");
 }
 
-void UinputDevice::emit(u16 type, u16 key, i32 value)
+void UinputDevice::emit(u16 type, u16 key, i32 value) const
 {
 	struct input_event ie {};
 
