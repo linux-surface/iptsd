@@ -13,6 +13,8 @@
 #include <memory>
 #include <vector>
 
+namespace iptsd::daemon {
+
 class TouchInput {
 public:
 	i32 x = 0;
@@ -27,18 +29,20 @@ public:
 class TouchManager {
 public:
 	i32 diagonal = 0;
-	std::unique_ptr<iptsd::container::Image<f32>> hm;
-	std::unique_ptr<iptsd::TouchProcessor> processor;
+	std::unique_ptr<contacts::container::Image<f32>> hm;
+	std::unique_ptr<contacts::TouchProcessor> processor;
 
-	IptsdConfig conf;
+	Config conf;
 	std::vector<TouchInput> inputs;
 
-	TouchManager(IptsdConfig conf) : conf(conf), inputs(conf.info.max_contacts) {};
+	TouchManager(Config conf) : conf(conf), inputs(conf.info.max_contacts) {};
 
-	std::vector<TouchInput> &process(const IptsHeatmap &data);
+	std::vector<TouchInput> &process(const ipts::Heatmap &data);
 
 private:
 	void resize(u8 width, u8 height);
 };
+
+} /* namespace iptsd::daemon */
 
 #endif /* IPTSD_DAEMON_TOUCH_MANAGER_HPP */

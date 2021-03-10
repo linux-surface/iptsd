@@ -5,7 +5,7 @@
 
 #include <common/types.hpp>
 
-namespace iptsd {
+namespace iptsd::contacts {
 
 using index_t = int;
 
@@ -89,4 +89,4 @@ inline constexpr auto operator- (index2_t const& a, index2_t const& b) -> index2
     return { a.x - b.x, a.y - b.y };
 }
 
-} /* namespace iptsd */
+} /* namespace iptsd::contacts */

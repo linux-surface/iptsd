@@ -8,7 +8,7 @@
 #include <fmt/ostream.h>
 #include <stdexcept>
 
-namespace iptsd::common::access {
+namespace iptsd::common {
 
 enum class AccessMode {
 	Checked,
@@ -74,6 +74,23 @@ template <class V, class I, class T>
 	return data[i];
 }
 
-} /* namespace iptsd::common::access */
+template <class V, class I, class T, class F>
+[[gnu::always_inline]] inline constexpr auto access(T const &data, F ravel, I shape, I i)
+	-> V const &
+{
+	ensure(i, shape);
+
+	return data[ravel(shape, i)];
+}
+
+template <class V, class I, class T, class F>
+[[gnu::always_inline]] inline constexpr auto access(T &data, F ravel, I shape, I i) -> V &
+{
+	ensure(i, shape);
+
+	return data[ravel(shape, i)];
+}
+
+} /* namespace iptsd::common */
 
 #endif /* IPTSD_COMMON_ACCESS_HPP */

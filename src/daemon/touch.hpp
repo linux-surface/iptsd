@@ -7,6 +7,10 @@
 
 #include <ipts/parser.hpp>
 
-void iptsd_touch_input(IptsdContext &ctx, const IptsHeatmap &data);
+namespace iptsd::daemon {
+
+void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data);
+
+} /* namespace iptsd::daemon */
 
 #endif /* IPTSD_DAEMON_TOUCH_HPP */

@@ -15,14 +15,16 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-IptsControl::IptsControl() : files()
+namespace iptsd::ipts {
+
+Control::Control() : files()
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++) {
 		std::string name = "/dev/ipts/" + std::to_string(i);
 
-		int ret = iptsd::common::open(name, O_RDONLY);
+		int ret = common::open(name, O_RDONLY);
 		if (ret == -1)
-			throw iptsd::common::cerror("Failed to open " + name);
+			throw common::cerror("Failed to open " + name);
 
 		this->files.at(i) = ret;
 	}
@@ -32,29 +34,29 @@ IptsControl::IptsControl() : files()
 	this->current_doorbell = this->doorbell();
 }
 
-IptsControl::~IptsControl()
+Control::~Control()
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++)
 		close(this->files.at(i));
 }
 
-int IptsControl::current()
+int Control::current()
 {
 	return this->files.at(this->current_doorbell % IPTS_BUFFERS);
 }
 
-bool IptsControl::ready()
+bool Control::ready()
 {
 	u8 ready = 0;
 
-	int ret = iptsd::common::ioctl(this->current(), IPTS_IOCTL_GET_DEVICE_READY, &ready);
+	int ret = common::ioctl(this->current(), IPTS_IOCTL_GET_DEVICE_READY, &ready);
 	if (ret == -1)
 		return false;
 
 	return ready > 0;
 }
 
-void IptsControl::wait_for_device()
+void Control::wait_for_device()
 {
 	for (int i = 0; i < 5; i++) {
 		if (this->ready())
@@ -64,25 +66,25 @@ void IptsControl::wait_for_device()
 	}
 }
 
-void IptsControl::get_device_info()
+void Control::get_device_info()
 {
 	this->wait_for_device();
 
-	int ret = iptsd::common::ioctl(this->current(), IPTS_IOCTL_GET_DEVICE_INFO, &this->info);
+	int ret = common::ioctl(this->current(), IPTS_IOCTL_GET_DEVICE_INFO, &this->info);
 	if (ret == -1)
-		throw iptsd::common::cerror("Failed to get device info");
+		throw common::cerror("Failed to get device info");
 }
 
-void IptsControl::send_feedback(int file)
+void Control::send_feedback(int file)
 {
 	this->wait_for_device();
 
-	int ret = iptsd::common::ioctl(file, IPTS_IOCTL_SEND_FEEDBACK);
+	int ret = common::ioctl(file, IPTS_IOCTL_SEND_FEEDBACK);
 	if (ret == -1)
-		throw iptsd::common::cerror("Failed to send feedback");
+		throw common::cerror("Failed to send feedback");
 }
 
-void IptsControl::send_feedback()
+void Control::send_feedback()
 {
 	int file = this->current();
 	this->send_feedback(file);
@@ -90,21 +92,21 @@ void IptsControl::send_feedback()
 	this->current_doorbell++;
 }
 
-void IptsControl::flush()
+void Control::flush()
 {
 	for (int i = 0; i < IPTS_BUFFERS; i++)
 		this->send_feedback(this->files.at(i));
 }
 
-u32 IptsControl::doorbell()
+u32 Control::doorbell()
 {
 	this->wait_for_device();
 
 	u32 doorbell = 0;
 
-	int ret = iptsd::common::ioctl(this->current(), IPTS_IOCTL_GET_DOORBELL, &doorbell);
+	int ret = common::ioctl(this->current(), IPTS_IOCTL_GET_DOORBELL, &doorbell);
 	if (ret == -1)
-		throw iptsd::common::cerror("Failed to get doorbell");
+		throw common::cerror("Failed to get doorbell");
 
 	/*
 	 * If the new doorbell is lower than the value we have stored,
@@ -120,22 +122,24 @@ u32 IptsControl::doorbell()
 	return doorbell;
 }
 
-ssize_t IptsControl::read(std::span<u8> dest)
+ssize_t Control::read(std::span<u8> dest)
 {
 	this->wait_for_device();
 
-	ssize_t ret = iptsd::common::read(this->current(), dest);
+	ssize_t ret = common::read(this->current(), dest);
 	if (ret == -1)
-		throw iptsd::common::cerror("Failed to read from buffer");
+		throw common::cerror("Failed to read from buffer");
 
 	return ret;
 }
 
-void IptsControl::reset()
+void Control::reset()
 {
 	this->wait_for_device();
 
-	int ret = iptsd::common::ioctl(this->current(), IPTS_IOCTL_SEND_RESET);
+	int ret = common::ioctl(this->current(), IPTS_IOCTL_SEND_RESET);
 	if (ret == -1)
-		throw iptsd::common::cerror("Failed to reset IPTS");
+		throw common::cerror("Failed to reset IPTS");
 }
+
+} // namespace iptsd::ipts

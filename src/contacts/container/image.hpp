@@ -1,14 +1,14 @@
 #pragma once
 
 #include "types.hpp"
-#include "utils/access.hpp"
+#include <common/access.hpp>
 
 #include <algorithm>
 #include <memory>
 #include <utility>
 
 
-namespace iptsd::container {
+namespace iptsd::contacts::container {
 
 template<class T>
 class Image {
@@ -147,25 +147,25 @@ inline auto Image<T>::data() const -> const_pointer
 template<class T>
 inline auto Image<T>::operator[] (index2_t const& i) const -> const_reference
 {
-    return common::access::access<T>(m_data, ravel, m_size, i);
+    return common::access<T>(m_data, ravel, m_size, i);
 }
 
 template<class T>
 inline auto Image<T>::operator[] (index2_t const& i) -> reference
 {
-    return common::access::access<T>(m_data, ravel, m_size, i);
+    return common::access<T>(m_data, ravel, m_size, i);
 }
 
 template<class T>
 inline auto Image<T>::operator[] (index_t const& i) const -> const_reference
 {
-    return common::access::access<T>(m_data, m_size.span(), i);
+    return common::access<T>(m_data, m_size.span(), i);
 }
 
 template<class T>
 inline auto Image<T>::operator[] (index_t const& i) -> reference
 {
-    return common::access::access<T>(m_data, m_size.span(), i);
+    return common::access<T>(m_data, m_size.span(), i);
 }
 
 template<class T>
@@ -217,12 +217,12 @@ inline constexpr auto Image<T>::unravel(index2_t size, index_t i) -> index2_t
     return { i % size.x, i / size.x };
 }
 
-} /* namespace iptsd::container */
+} /* namespace iptsd::contacts::container */
 
 
 /* imports */
-namespace iptsd {
+namespace iptsd::contacts {
 
 using container::Image;
 
-} /* namespace iptsd */
+} /* namespace iptsd::contacts */

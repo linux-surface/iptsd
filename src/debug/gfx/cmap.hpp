@@ -12,6 +12,8 @@
 #include <cmath>
 #include <optional>
 
+using namespace iptsd::contacts;
+
 namespace iptsd::gfx::cmap {
 
 namespace impl {

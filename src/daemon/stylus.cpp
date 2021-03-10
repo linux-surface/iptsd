@@ -15,6 +15,8 @@
 #include <linux/input-event-codes.h>
 #include <tuple>
 
+namespace iptsd::daemon {
+
 static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 {
 	if (altitude <= 0)
@@ -38,7 +40,7 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 	return std::tuple<i32, i32>(tx, ty);
 }
 
-void iptsd_stylus_input(IptsdContext &ctx, const IptsStylusData &data)
+void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
 {
 	const StylusDevice &stylus = ctx.devices.get_stylus(data.serial);
 
@@ -67,3 +69,5 @@ void iptsd_stylus_input(IptsdContext &ctx, const IptsStylusData &data)
 
 	stylus.emit(EV_SYN, SYN_REPORT, 0);
 }
+
+} // namespace iptsd::daemon

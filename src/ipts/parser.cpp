@@ -13,9 +13,11 @@
 #include <stdexcept>
 #include <utility>
 
-void IptsParser::read(const std::span<u8> dest)
+namespace iptsd::ipts {
+
+void Parser::read(const std::span<u8> dest)
 {
-	iptsd::common::access::ensure(this->index + dest.size(), this->data.size());
+	common::ensure(this->index + dest.size(), this->data.size());
 
 	auto begin = this->data.begin();
 	std::advance(begin, this->index);
@@ -27,18 +29,18 @@ void IptsParser::read(const std::span<u8> dest)
 	this->index += dest.size();
 }
 
-void IptsParser::skip(const size_t size)
+void Parser::skip(const size_t size)
 {
 	this->index += size;
 }
 
-void IptsParser::reset()
+void Parser::reset()
 {
 	this->index = 0;
 	std::fill(this->data.begin(), this->data.end(), 0);
 }
 
-void IptsParser::parse(bool reset)
+void Parser::parse(bool reset)
 {
 	const auto header = this->read<struct ipts_data>();
 
@@ -57,7 +59,7 @@ void IptsParser::parse(bool reset)
 		this->reset();
 }
 
-void IptsParser::parse_loop()
+void Parser::parse_loop()
 {
 	while (this->index < this->data.size())
 		this->parse(false);
@@ -65,7 +67,7 @@ void IptsParser::parse_loop()
 	this->reset();
 }
 
-void IptsParser::parse_payload()
+void Parser::parse_payload()
 {
 	const auto payload = this->read<struct ipts_payload>();
 
@@ -86,7 +88,7 @@ void IptsParser::parse_payload()
 	}
 }
 
-void IptsParser::parse_hid(const struct ipts_data &header)
+void Parser::parse_hid(const struct ipts_data &header)
 {
 	const auto report = this->read<u8>();
 
@@ -103,11 +105,11 @@ void IptsParser::parse_hid(const struct ipts_data &header)
 	}
 }
 
-void IptsParser::parse_singletouch()
+void Parser::parse_singletouch()
 {
 	const auto singletouch = this->read<struct ipts_singletouch_data>();
 
-	IptsSingletouchData data;
+	SingletouchData data;
 	data.touch = singletouch.touch;
 	data.x = singletouch.x;
 	data.y = singletouch.y;
@@ -116,7 +118,7 @@ void IptsParser::parse_singletouch()
 		this->on_singletouch(data);
 }
 
-void IptsParser::parse_stylus(const struct ipts_payload_frame &frame)
+void Parser::parse_stylus(const struct ipts_payload_frame &frame)
 {
 	u32 size = 0;
 
@@ -146,9 +148,9 @@ void IptsParser::parse_stylus(const struct ipts_payload_frame &frame)
 	this->skip(frame.size - size);
 }
 
-void IptsParser::parse_stylus_report(const struct ipts_report &report)
+void Parser::parse_stylus_report(const struct ipts_report &report)
 {
-	IptsStylusData stylus;
+	StylusData stylus;
 
 	const auto stylus_report = this->read<struct ipts_stylus_report>();
 	stylus.serial = stylus_report.serial;
@@ -183,7 +185,7 @@ void IptsParser::parse_stylus_report(const struct ipts_report &report)
 	}
 }
 
-void IptsParser::parse_heatmap(const struct ipts_payload_frame &frame)
+void Parser::parse_heatmap(const struct ipts_payload_frame &frame)
 {
 	u32 size = 0;
 	bool has_hm = false;
@@ -239,8 +241,8 @@ void IptsParser::parse_heatmap(const struct ipts_payload_frame &frame)
 		this->on_heatmap(*this->heatmap);
 }
 
-void IptsParser::parse_heatmap_data(const struct ipts_heatmap_dim &dim,
-				    const struct ipts_heatmap_timestamp &time)
+void Parser::parse_heatmap_data(const struct ipts_heatmap_dim &dim,
+				const struct ipts_heatmap_timestamp &time)
 {
 	if (this->heatmap) {
 		if (this->heatmap->width != dim.width || this->heatmap->height != dim.height)
@@ -248,7 +250,7 @@ void IptsParser::parse_heatmap_data(const struct ipts_heatmap_dim &dim,
 	}
 
 	if (!this->heatmap)
-		this->heatmap = std::make_unique<IptsHeatmap>(dim.width, dim.height);
+		this->heatmap = std::make_unique<Heatmap>(dim.width, dim.height);
 
 	this->read(std::span(this->heatmap->data));
 
@@ -263,7 +265,7 @@ void IptsParser::parse_heatmap_data(const struct ipts_heatmap_dim &dim,
 	this->heatmap->timestamp = time.timestamp;
 }
 
-void IptsParser::parse_hid_heatmap(const struct ipts_data &header)
+void Parser::parse_hid_heatmap(const struct ipts_data &header)
 {
 	const auto hid_header = this->read<struct ipts_hid_heatmap_header>();
 
@@ -273,7 +275,7 @@ void IptsParser::parse_hid_heatmap(const struct ipts_data &header)
 	}
 
 	if (!this->heatmap)
-		this->heatmap = std::make_unique<IptsHeatmap>(hid_header.hm_size);
+		this->heatmap = std::make_unique<Heatmap>(hid_header.hm_size);
 
 	this->read(std::span(this->heatmap->data));
 
@@ -281,7 +283,7 @@ void IptsParser::parse_hid_heatmap(const struct ipts_data &header)
 	this->skip(header.size - hid_header.size - 7);
 }
 
-void IptsParser::parse_hid_heatmap_data()
+void Parser::parse_hid_heatmap_data()
 {
 	const auto frame_size = this->read<u32>();
 
@@ -346,3 +348,5 @@ void IptsParser::parse_hid_heatmap_data()
 	if (this->on_heatmap)
 		this->on_heatmap(*this->heatmap);
 }
+
+} // namespace iptsd::ipts

@@ -13,14 +13,16 @@
 #include <span>
 #include <vector>
 
-class IptsSingletouchData {
+namespace iptsd::ipts {
+
+class SingletouchData {
 public:
 	bool touch = false;
 	u16 x = 0;
 	u16 y = 0;
 };
 
-class IptsStylusData {
+class StylusData {
 public:
 	u16 timestamp = 0;
 	u16 mode = 0;
@@ -32,7 +34,7 @@ public:
 	u32 serial = 0;
 };
 
-class IptsHeatmap {
+class Heatmap {
 public:
 	u8 width;
 	u8 height;
@@ -49,16 +51,16 @@ public:
 
 	std::vector<u8> data;
 
-	IptsHeatmap(u8 w, u8 h) : width(w), height(h), size(w * h), data(size) {};
-	IptsHeatmap(u16 size) : width(0), height(0), size(size), data(size) {};
+	Heatmap(u8 w, u8 h) : width(w), height(h), size(w * h), data(size) {};
+	Heatmap(u16 size) : width(0), height(0), size(size), data(size) {};
 };
 
-class IptsParser {
+class Parser {
 private:
 	std::vector<u8> data;
 	size_t index = 0;
 
-	std::unique_ptr<IptsHeatmap> heatmap;
+	std::unique_ptr<Heatmap> heatmap;
 
 	void read(const std::span<u8> dest);
 	void skip(const size_t size);
@@ -90,20 +92,22 @@ private:
 				const struct ipts_heatmap_timestamp &time);
 
 public:
-	std::function<void(const IptsSingletouchData &)> on_singletouch;
-	std::function<void(const IptsStylusData &)> on_stylus;
-	std::function<void(const IptsHeatmap &)> on_heatmap;
+	std::function<void(const SingletouchData &)> on_singletouch;
+	std::function<void(const StylusData &)> on_stylus;
+	std::function<void(const Heatmap &)> on_heatmap;
 
-	IptsParser(size_t size) : data(size) {};
+	Parser(size_t size) : data(size) {};
 
 	const std::span<u8> buffer();
 	void parse(bool reset = true);
 	void parse_loop();
 };
 
-inline const std::span<u8> IptsParser::buffer()
+inline const std::span<u8> Parser::buffer()
 {
 	return std::span(this->data);
 }
+
+} /* namespace iptsd::ipts */
 
 #endif /* IPTSD_IPTS_PARSER_HPP */

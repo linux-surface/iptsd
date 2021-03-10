@@ -11,13 +11,15 @@
 #include <cstddef>
 #include <span>
 
-class IptsControl {
+namespace iptsd::ipts {
+
+class Control {
 public:
 	struct ipts_device_info info {};
 	u32 current_doorbell = 0;
 
-	IptsControl();
-	~IptsControl();
+	Control();
+	~Control();
 
 	void send_feedback();
 	u32 doorbell();
@@ -34,5 +36,7 @@ private:
 	void send_feedback(int file);
 	void flush();
 };
+
+} /* namespace iptsd::ipts */
 
 #endif /* IPTSD_IPTS_CONTROL_HPP */

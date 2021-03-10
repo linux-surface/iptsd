@@ -12,6 +12,8 @@
 #include <gsl/pointers>
 #include <utility>
 
+using namespace iptsd::contacts;
+
 namespace iptsd::gfx::cairo {
 
 using math::Vec2;

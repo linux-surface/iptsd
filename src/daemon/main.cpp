@@ -28,7 +28,9 @@
 
 using namespace std::chrono;
 
-static bool iptsd_loop(IptsdContext &ctx)
+namespace iptsd::daemon {
+
+static bool iptsd_loop(Context &ctx)
 {
 	u32 doorbell = ctx.control.doorbell();
 	u32 diff = doorbell - ctx.control.current_doorbell;
@@ -48,16 +50,16 @@ static bool iptsd_loop(IptsdContext &ctx)
 	return diff > 0;
 }
 
-static int iptsd_main()
+static int main()
 {
-	IptsdContext ctx {};
+	Context ctx {};
 
 	std::atomic_bool should_exit {false};
 	std::atomic_bool should_reset {false};
 
-	auto const _sigusr1 = iptsd::common::signal<SIGUSR1>([&](int) { should_reset = true; });
-	auto const _sigterm = iptsd::common::signal<SIGTERM>([&](int) { should_exit = true; });
-	auto const _sigint = iptsd::common::signal<SIGINT>([&](int) { should_exit = true; });
+	auto const _sigusr1 = common::signal<SIGUSR1>([&](int) { should_reset = true; });
+	auto const _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
+	auto const _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
 
 	struct ipts_device_info info = ctx.control.info;
 	system_clock::time_point timeout = system_clock::now() + 5s;
@@ -91,12 +93,14 @@ static int iptsd_main()
 	return 0;
 }
 
+} // namespace iptsd::daemon
+
 int main()
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return iptsd_main();
+		return iptsd::daemon::main();
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

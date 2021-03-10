@@ -20,13 +20,15 @@
 #include <string>
 #include <utility>
 
+namespace iptsd::daemon {
+
 static i32 res(i32 virt, i32 phys)
 {
 	f64 res = static_cast<f64>(virt * 10) / static_cast<f64>(phys);
 	return gsl::narrow_cast<i32>(std::round(res));
 }
 
-StylusDevice::StylusDevice(IptsdConfig conf, u32 serial) : UinputDevice(), serial(serial)
+StylusDevice::StylusDevice(Config conf, u32 serial) : UinputDevice(), serial(serial)
 {
 	this->name = "IPTS Stylus";
 	this->vendor = conf.info.vendor;
@@ -57,7 +59,7 @@ StylusDevice::StylusDevice(IptsdConfig conf, u32 serial) : UinputDevice(), seria
 	this->create();
 }
 
-TouchDevice::TouchDevice(IptsdConfig conf) : UinputDevice(), manager(conf)
+TouchDevice::TouchDevice(Config conf) : UinputDevice(), manager(conf)
 {
 	this->name = "IPTS Touch";
 	this->vendor = conf.info.vendor;
@@ -91,7 +93,7 @@ TouchDevice::TouchDevice(IptsdConfig conf) : UinputDevice(), manager(conf)
 	this->create();
 }
 
-DeviceManager::DeviceManager(IptsdConfig conf) : conf(conf), touch(conf)
+DeviceManager::DeviceManager(Config conf) : conf(conf), touch(conf)
 {
 	if (conf.width == 0 || conf.height == 0)
 		throw std::runtime_error("Display size is 0");
@@ -121,3 +123,5 @@ StylusDevice &DeviceManager::get_stylus(u32 serial)
 
 	return this->styli.emplace_back(this->conf, serial);
 }
+
+} // namespace iptsd::daemon

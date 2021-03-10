@@ -21,12 +21,14 @@
 
 using namespace iptsd::gfx;
 
+namespace iptsd::debug::plot {
+
 enum class mode_type {
 	plot,
 	perf,
 };
 
-static int plot_main(int argc, char *argv[])
+static int main(int argc, char *argv[])
 {
 	auto mode = mode_type::plot;
 	auto path_in = std::string {};
@@ -55,17 +57,17 @@ static int plot_main(int argc, char *argv[])
 	std::streamsize size = ifs.tellg();
 	ifs.seekg(0, std::ios::beg);
 
-	IptsParser parser(size);
+	ipts::Parser parser(size);
 
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 	ifs.read(reinterpret_cast<char *>(parser.buffer().data()), size);
 
-	std::vector<iptsd::container::Image<f32>> heatmaps;
+	std::vector<contacts::container::Image<f32>> heatmaps;
 
 	parser.on_heatmap = [&](const auto &data) {
-		iptsd::index2_t size = {data.width, data.height};
+		contacts::index2_t size = {data.width, data.height};
 
-		iptsd::container::Image<f32> hm {size};
+		contacts::container::Image<f32> hm {size};
 		std::transform(data.data.begin(), data.data.end(), hm.begin(), [&](auto v) {
 			f32 val = static_cast<f32>(v - data.z_min) /
 				  static_cast<f32>(data.z_max - data.z_min);
@@ -83,12 +85,12 @@ static int plot_main(int argc, char *argv[])
 		return 0;
 	}
 
-	iptsd::TouchProcessor proc {heatmaps[0].size()};
+	contacts::TouchProcessor proc {heatmaps[0].size()};
 
-	std::vector<iptsd::container::Image<f32>> out;
+	std::vector<contacts::container::Image<f32>> out;
 	out.reserve(heatmaps.size());
 
-	std::vector<std::vector<iptsd::TouchPoint>> out_tp;
+	std::vector<std::vector<contacts::TouchPoint>> out_tp;
 	out_tp.reserve(heatmaps.size());
 
 	spdlog::info("Processing...");
@@ -149,12 +151,14 @@ static int plot_main(int argc, char *argv[])
 	return 0;
 }
 
+} // namespace iptsd::debug::plot
+
 int main(int argc, char *argv[])
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return plot_main(argc, argv);
+		return iptsd::debug::plot::main(argc, argv);
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

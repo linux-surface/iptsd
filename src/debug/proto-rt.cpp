@@ -19,12 +19,14 @@
 
 using namespace iptsd::gfx;
 
+namespace iptsd::debug::rt {
+
 class MainContext {
 public:
-	MainContext(iptsd::index2_t img_size);
+	MainContext(contacts::index2_t img_size);
 
-	void submit(iptsd::container::Image<f32> const &img,
-		    std::vector<iptsd::TouchPoint> const &tps);
+	void submit(contacts::container::Image<f32> const &img,
+		    std::vector<contacts::TouchPoint> const &tps);
 
 	auto draw_event(cairo::Cairo &cr) -> bool;
 
@@ -34,29 +36,30 @@ public:
 private:
 	iptsd::Visualization m_vis;
 
-	iptsd::container::Image<f32> m_img1;
-	iptsd::container::Image<f32> m_img2;
+	contacts::container::Image<f32> m_img1;
+	contacts::container::Image<f32> m_img2;
 
-	std::vector<iptsd::TouchPoint> m_tps1;
-	std::vector<iptsd::TouchPoint> m_tps2;
+	std::vector<contacts::TouchPoint> m_tps1;
+	std::vector<contacts::TouchPoint> m_tps2;
 
 	std::mutex m_lock;
 
-	iptsd::container::Image<f32> *m_img_frnt;
-	iptsd::container::Image<f32> *m_img_back;
+	contacts::container::Image<f32> *m_img_frnt;
+	contacts::container::Image<f32> *m_img_back;
 
-	std::vector<iptsd::TouchPoint> *m_tps_frnt;
-	std::vector<iptsd::TouchPoint> *m_tps_back;
+	std::vector<contacts::TouchPoint> *m_tps_frnt;
+	std::vector<contacts::TouchPoint> *m_tps_back;
 	bool m_swap = false;
 };
 
-MainContext::MainContext(iptsd::index2_t img_size)
+MainContext::MainContext(contacts::index2_t img_size)
 	: m_widget {nullptr}, m_vis {img_size}, m_img1 {img_size}, m_img2 {img_size}, m_tps1 {},
 	  m_tps2 {}, m_img_frnt {&m_img1}, m_img_back {&m_img2}, m_tps_frnt {&m_tps1},
 	  m_tps_back {&m_tps2}
 {}
 
-void MainContext::submit(iptsd::Image<f32> const &img, std::vector<iptsd::TouchPoint> const &tps)
+void MainContext::submit(contacts::container::Image<f32> const &img,
+			 std::vector<contacts::TouchPoint> const &tps)
 {
 	{
 		// set swap to false to prevent read-access in draw
@@ -99,13 +102,13 @@ auto MainContext::draw_event(cairo::Cairo &cr) -> bool
 	return false;
 }
 
-static int rt_main(int argc, char *argv[])
+static int main(int argc, char *argv[])
 {
-	const iptsd::index2_t size {72, 48};
+	const contacts::index2_t size {72, 48};
 	MainContext ctx {size};
-	iptsd::TouchProcessor prc {size};
+	contacts::TouchProcessor prc {size};
 
-	IptsControl ctrl;
+	ipts::Control ctrl;
 
 	auto app = gtk::Application::create("com.github.qzed.digitizer-prototype.rt");
 
@@ -137,9 +140,9 @@ static int rt_main(int argc, char *argv[])
 	std::thread updt([&]() -> void {
 		using namespace std::chrono_literals;
 
-		IptsParser parser(ctrl.info.buffer_size);
+		ipts::Parser parser(ctrl.info.buffer_size);
 		parser.on_heatmap = [&](const auto &data) {
-			iptsd::container::Image<f32> hm {size};
+			contacts::container::Image<f32> hm {size};
 
 			std::transform(data.data.begin(), data.data.end(), hm.begin(), [&](auto v) {
 				f32 val = static_cast<f32>(v - data.z_min) /
@@ -174,12 +177,14 @@ static int rt_main(int argc, char *argv[])
 	return status;
 }
 
+} // namespace iptsd::debug::rt
+
 int main(int argc, char *argv[])
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return rt_main(argc, argv);
+		return iptsd::debug::rt::main(argc, argv);
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

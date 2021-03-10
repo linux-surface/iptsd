@@ -8,7 +8,9 @@
 
 #include <string>
 
-class IptsdConfig {
+namespace iptsd::daemon {
+
+class Config {
 public:
 	bool invert_x = false;
 	bool invert_y = false;
@@ -18,10 +20,12 @@ public:
 
 	struct ipts_device_info info;
 
-	IptsdConfig(struct ipts_device_info info);
+	Config(struct ipts_device_info info);
 
 private:
 	void load_dir(const std::string &name);
 };
+
+} /* namespace iptsd::daemon */
 
 #endif /* IPTSD_DAEMON_CONFIG_HPP */

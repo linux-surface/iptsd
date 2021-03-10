@@ -11,16 +11,21 @@
 
 #include <utility>
 
-class IptsdContext {
-public:
-	IptsControl control;
-	IptsdConfig config;
-	DeviceManager devices;
-	IptsParser parser;
+namespace iptsd::daemon {
 
-	IptsdContext()
-		: control(), config(control.info), devices(config),
-		  parser(control.info.buffer_size) {};
+class Context {
+public:
+	ipts::Control control;
+	ipts::Parser parser;
+
+	Config config;
+	DeviceManager devices;
+
+	Context()
+		: control(), parser(control.info.buffer_size), config(control.info),
+		  devices(config) {};
 };
+
+} /* namespace iptsd::daemon */
 
 #endif /* IPTSD_DAEMON_CONTEXT_HPP */

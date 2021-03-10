@@ -11,29 +11,33 @@
 
 #include <vector>
 
+namespace iptsd::daemon {
+
 class StylusDevice : public UinputDevice {
 public:
 	u32 serial;
 
-	StylusDevice(IptsdConfig conf, u32 serial);
+	StylusDevice(Config conf, u32 serial);
 };
 
 class TouchDevice : public UinputDevice {
 public:
 	TouchManager manager;
 
-	TouchDevice(IptsdConfig conf);
+	TouchDevice(Config conf);
 };
 
 class DeviceManager {
 public:
-	IptsdConfig conf;
+	Config conf;
 	TouchDevice touch;
 	std::vector<StylusDevice> styli;
 
-	DeviceManager(IptsdConfig conf);
+	DeviceManager(Config conf);
 
 	StylusDevice &get_stylus(u32 serial);
 };
+
+} /* namespace iptsd::daemon */
 
 #endif /* IPTSD_DAEMON_DEVICES_HPP */

@@ -18,7 +18,7 @@
 #include <queue>
 
 
-namespace iptsd {
+namespace iptsd::contacts {
 
 struct TouchPoint {
     f32        confidence;
@@ -99,4 +99,4 @@ inline auto TouchProcessor::perf() const -> eval::perf::Registry const&
     return m_perf_reg;
 }
 
-} /* namespace iptsd */
+} /* namespace iptsd::contacts */

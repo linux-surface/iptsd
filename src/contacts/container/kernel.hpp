@@ -1,13 +1,13 @@
 #pragma once
 
 #include "types.hpp"
-#include "utils/access.hpp"
+#include <common/access.hpp>
 
 #include <array>
 #include <iostream>
 
 
-namespace iptsd::container {
+namespace iptsd::contacts::container {
 
 template<class T, index_t Nx, index_t Ny>
 struct Kernel {
@@ -103,23 +103,23 @@ auto Kernel<T, Nx, Ny>::data() const -> const_pointer
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[] (index2_t const& i) const -> const_reference
 {
-    return common::access::access<T>(this->buf, ravel, { Nx, Ny }, i);
+    return common::access<T>(this->buf, ravel, { Nx, Ny }, i);
 }
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[] (index2_t const& i) -> reference
 {
-    return common::access::access<T>(this->buf, ravel, { Nx, Ny }, i);
+    return common::access<T>(this->buf, ravel, { Nx, Ny }, i);
 }
 
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[] (index_t const& i) const -> const_reference
 {
-    return common::access::access<T>(this->buf, Nx * Ny, i);
+    return common::access<T>(this->buf, Nx * Ny, i);
 }
 template<class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[] (index_t const& i) -> reference
 {
-    return common::access::access<T>(this->buf, Nx * Ny, i);
+    return common::access<T>(this->buf, Nx * Ny, i);
 }
 
 template<class T, index_t Nx, index_t Ny>
@@ -190,12 +190,12 @@ inline constexpr auto Kernel<T, Nx, Ny>::unravel(index2_t size, index_t i) -> in
     return { i % size.x, i / size.x };
 }
 
-} /* namespace iptsd::container */
+} /* namespace iptsd::contacts::container */
 
 
 /* imports */
-namespace iptsd {
+namespace iptsd::contacts {
 
 using container::Kernel;
 
-} /* namespace iptsd */
+} /* namespace iptsd::contacts */

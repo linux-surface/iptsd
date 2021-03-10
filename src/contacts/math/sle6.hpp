@@ -5,7 +5,7 @@
 #include "math/mat6.hpp"
 
 
-namespace iptsd::math {
+namespace iptsd::contacts::math {
 
 /**
  * lu_decom() - Perform an LU-decomposition with partial pivoting.
@@ -215,4 +215,4 @@ auto ge_solve(Mat6<T> a, Vec6<T> b, Vec6<T>& x, T eps=num<T>::eps) -> bool
     return true;
 }
 
-} /* namespace iptsd::math */
+} /* namespace iptsd::contacts::math */

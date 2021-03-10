@@ -15,7 +15,7 @@
 #include "algorithm/opt/convolution.5x5-extend.hpp"
 
 
-namespace iptsd::alg {
+namespace iptsd::contacts::alg {
 namespace conv {
 namespace kernels {
 
@@ -127,4 +127,4 @@ void convolve(Image<T>& out, Image<T> const& in, Kernel<S, Nx, Ny> const& k)
     }
 }
 
-} /* namespace iptsd::alg */
+} /* namespace iptsd::contacts::alg */

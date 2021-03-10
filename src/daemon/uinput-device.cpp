@@ -13,40 +13,42 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+namespace iptsd::daemon {
+
 UinputDevice::UinputDevice()
 {
-	int ret = iptsd::common::open("/dev/uinput", O_WRONLY | O_NONBLOCK);
+	int ret = common::open("/dev/uinput", O_WRONLY | O_NONBLOCK);
 	if (ret == -1)
-		throw iptsd::common::cerror("Failed to open uinput device");
+		throw common::cerror("Failed to open uinput device");
 
 	this->fd = ret;
 }
 
 UinputDevice::~UinputDevice()
 {
-	iptsd::common::ioctl(this->fd, UI_DEV_DESTROY);
+	common::ioctl(this->fd, UI_DEV_DESTROY);
 	close(this->fd);
 }
 
 void UinputDevice::set_evbit(i32 ev) const
 {
-	int ret = iptsd::common::ioctl(this->fd, UI_SET_EVBIT, (int)ev);
+	int ret = common::ioctl(this->fd, UI_SET_EVBIT, (int)ev);
 	if (ret == -1)
-		throw iptsd::common::cerror("UI_SET_EVBIT failed");
+		throw common::cerror("UI_SET_EVBIT failed");
 }
 
 void UinputDevice::set_keybit(i32 key) const
 {
-	int ret = iptsd::common::ioctl(this->fd, UI_SET_KEYBIT, (int)key);
+	int ret = common::ioctl(this->fd, UI_SET_KEYBIT, (int)key);
 	if (ret == -1)
-		throw iptsd::common::cerror("UI_SET_KEYBIT failed");
+		throw common::cerror("UI_SET_KEYBIT failed");
 }
 
 void UinputDevice::set_propbit(i32 prop) const
 {
-	int ret = iptsd::common::ioctl(this->fd, UI_SET_PROPBIT, (int)prop);
+	int ret = common::ioctl(this->fd, UI_SET_PROPBIT, (int)prop);
 	if (ret == -1)
-		throw iptsd::common::cerror("UI_SET_PROPBIT failed");
+		throw common::cerror("UI_SET_PROPBIT failed");
 }
 
 void UinputDevice::set_absinfo(u16 code, i32 min, i32 max, i32 res) const
@@ -60,7 +62,7 @@ void UinputDevice::set_absinfo(u16 code, i32 min, i32 max, i32 res) const
 
 	int ret = iptsd::common::ioctl(this->fd, UI_ABS_SETUP, &abs);
 	if (ret == -1)
-		throw iptsd::common::cerror("UI_ABS_SETUP failed");
+		throw common::cerror("UI_ABS_SETUP failed");
 }
 
 void UinputDevice::create() const
@@ -75,13 +77,13 @@ void UinputDevice::create() const
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 	this->name.copy(setup.name, this->name.length(), 0);
 
-	int ret = iptsd::common::ioctl(this->fd, UI_DEV_SETUP, &setup);
+	int ret = common::ioctl(this->fd, UI_DEV_SETUP, &setup);
 	if (ret == -1)
-		throw iptsd::common::cerror("UI_DEV_SETUP failed");
+		throw common::cerror("UI_DEV_SETUP failed");
 
 	ret = iptsd::common::ioctl(this->fd, UI_DEV_CREATE);
 	if (ret == -1)
-		throw iptsd::common::cerror("UI_DEV_CREATE failed");
+		throw common::cerror("UI_DEV_CREATE failed");
 }
 
 void UinputDevice::emit(u16 type, u16 key, i32 value) const
@@ -94,5 +96,7 @@ void UinputDevice::emit(u16 type, u16 key, i32 value) const
 
 	ssize_t ret = write(this->fd, &ie, sizeof(ie));
 	if (ret == -1)
-		throw iptsd::common::cerror("Failed to write input event");
+		throw common::cerror("Failed to write input event");
 }
+
+} // namespace iptsd::daemon

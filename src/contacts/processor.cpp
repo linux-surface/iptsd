@@ -27,7 +27,7 @@
 #include <queue>
 
 
-namespace iptsd {
+namespace iptsd::contacts {
 
 TouchProcessor::TouchProcessor(index2_t size)
     : m_perf_reg{}
@@ -356,4 +356,4 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
     return m_touchpoints;
 }
 
-} /* namespace iptsd */
+} /* namespace iptsd::contacts */

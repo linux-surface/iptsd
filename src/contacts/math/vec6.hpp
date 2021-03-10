@@ -2,10 +2,10 @@
 
 #include "types.hpp"
 #include "math/num.hpp"
-#include "utils/access.hpp"
+#include <common/access.hpp>
 
 
-namespace iptsd::math {
+namespace iptsd::contacts::math {
 
 template<class T>
 struct Vec6 {
@@ -24,13 +24,13 @@ public:
 template<class T>
 inline constexpr auto Vec6<T>::operator[] (index_t i) -> T&
 {
-    return common::access::access<T, index_t>(data, data.size(), i);
+    return common::access<T, index_t>(data, data.size(), i);
 }
 
 template<class T>
 inline constexpr auto Vec6<T>::operator[] (index_t i) const -> T const&
 {
-    return common::access::access<T, index_t>(data, data.size(), i);
+    return common::access<T, index_t>(data, data.size(), i);
 }
 
 
@@ -41,12 +41,12 @@ struct num<Vec6<T>> {
             num<T>::zero, num<T>::zero, num<T>::zero };
 };
 
-} /* namespace iptsd::math */
+} /* namespace iptsd::contacts::math */
 
 
 /* imports */
-namespace iptsd {
+namespace iptsd::contacts {
 
 using math::Vec6;
 
-} /* namespace iptsd */
+} /* namespace iptsd::contacts */

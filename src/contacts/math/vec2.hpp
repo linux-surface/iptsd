@@ -6,7 +6,7 @@
 #include <iostream>
 
 
-namespace iptsd::math {
+namespace iptsd::contacts::math {
 
 template<class T>
 struct Vec2 {
@@ -191,12 +191,12 @@ struct num<Vec2<T>> {
     static inline constexpr Vec2<T> zero = { num<T>::zero, num<T>::zero };
 };
 
-} /* namespace iptsd::math */
+} /* namespace iptsd::contacts::math */
 
 
 /* imports */
-namespace iptsd {
+namespace iptsd::contacts {
 
 using math::Vec2;
 
-} /* namespace iptsd */
+} /* namespace iptsd::contacts */

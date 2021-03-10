@@ -12,6 +12,8 @@
 #include <linux/input.h>
 #include <vector>
 
+namespace iptsd::daemon {
+
 static void lift_mt(const TouchDevice &dev)
 {
 	dev.emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
@@ -71,7 +73,7 @@ static void handle_multi(const TouchDevice &touch, const std::vector<TouchInput>
 	}
 }
 
-void iptsd_touch_input(IptsdContext &ctx, const IptsHeatmap &data)
+void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data)
 {
 	TouchDevice &touch = ctx.devices.touch;
 
@@ -82,3 +84,5 @@ void iptsd_touch_input(IptsdContext &ctx, const IptsHeatmap &data)
 
 	touch.emit(EV_SYN, SYN_REPORT, 0);
 }
+
+} // namespace iptsd::daemon

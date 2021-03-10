@@ -3,7 +3,7 @@
 #include "types.hpp"
 
 
-namespace iptsd::math {
+namespace iptsd::contacts::math {
 
 template<typename>
 struct num {};
@@ -24,4 +24,4 @@ struct num<f64> {
     static inline constexpr f64 eps  = 1e-40;
 };
 
-} /* namespace iptsd::math */
+} /* namespace iptsd::contacts::math */

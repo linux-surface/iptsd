@@ -12,6 +12,8 @@
 #include <linux/input-event-codes.h>
 #include <linux/input.h>
 
+namespace iptsd::daemon {
+
 static void lift(const TouchDevice &dev)
 {
 	dev.emit(EV_ABS, ABS_MT_SLOT, 0);
@@ -19,7 +21,7 @@ static void lift(const TouchDevice &dev)
 	dev.emit(EV_KEY, BTN_TOUCH, 0);
 }
 
-static void emit(const TouchDevice &dev, const IptsSingletouchData &data)
+static void emit(const TouchDevice &dev, const ipts::SingletouchData &data)
 {
 	f64 rX = (f64)data.x / IPTS_SINGLETOUCH_MAX_VALUE;
 	f64 rY = (f64)data.y / IPTS_SINGLETOUCH_MAX_VALUE;
@@ -42,7 +44,7 @@ static void emit(const TouchDevice &dev, const IptsSingletouchData &data)
 	dev.emit(EV_ABS, ABS_Y, y);
 }
 
-void iptsd_singletouch_input(IptsdContext &ctx, const IptsSingletouchData &data)
+void iptsd_singletouch_input(Context &ctx, const ipts::SingletouchData &data)
 {
 	if (data.touch)
 		emit(ctx.devices.touch, data);
@@ -51,3 +53,5 @@ void iptsd_singletouch_input(IptsdContext &ctx, const IptsSingletouchData &data)
 
 	ctx.devices.touch.emit(EV_SYN, SYN_REPORT, 0);
 }
+
+} // namespace iptsd::daemon

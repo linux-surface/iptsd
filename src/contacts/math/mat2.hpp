@@ -8,7 +8,7 @@
 #include <optional>
 
 
-namespace iptsd::math {
+namespace iptsd::contacts::math {
 
 template<class T>
 struct Eigen2 {
@@ -263,12 +263,12 @@ struct num<Mat2s<T>> {
     static inline constexpr Mat2s<T> zero = { num<T>::zero, num<T>::zero, num<T>::zero };
 };
 
-} /* namespace iptsd::math */
+} /* namespace iptsd::contacts::math */
 
 
 /* imports */
-namespace iptsd {
+namespace iptsd::contacts {
 
 using math::Mat2s;
 
-} /* namespace iptsd */
+} /* namespace iptsd::contacts */

@@ -8,7 +8,7 @@
 #include <utility>
 
 
-namespace iptsd::container::ops {
+namespace iptsd::contacts::container::ops {
 
 template<class C>
 inline auto minmax_element(C& container) -> std::pair<typename C::pointer, typename C::pointer>
@@ -53,4 +53,4 @@ inline auto sum(C const& container) -> typename C::value_type
     return std::accumulate(container.begin(), container.end(), math::num<T>::zero);
 }
 
-} /* namespace iptsd::container::ops */
+} /* namespace iptsd::contacts::container::ops */

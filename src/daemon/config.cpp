@@ -12,6 +12,8 @@
 #include <ini.h>
 #include <string>
 
+namespace iptsd::daemon {
+
 struct iptsd_config_device {
 	u16 vendor;
 	u16 product;
@@ -47,7 +49,7 @@ static int parse_dev(void *user, const char *c_section, const char *c_name, cons
 static int parse_conf(void *user, const char *c_section, const char *c_name, const char *c_value)
 {
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-	auto *config = reinterpret_cast<IptsdConfig *>(user);
+	auto *config = reinterpret_cast<Config *>(user);
 
 	std::string section(c_section);
 	std::string name(c_name);
@@ -71,7 +73,7 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	return 1;
 }
 
-void IptsdConfig::load_dir(const std::string &name)
+void Config::load_dir(const std::string &name)
 {
 	if (!std::filesystem::exists(name))
 		return;
@@ -90,7 +92,7 @@ void IptsdConfig::load_dir(const std::string &name)
 	}
 }
 
-IptsdConfig::IptsdConfig(struct ipts_device_info info) : info(info)
+Config::Config(struct ipts_device_info info) : info(info)
 {
 	this->load_dir(IPTSD_CONFIG_DIR);
 	this->load_dir("./etc/config");
@@ -98,3 +100,5 @@ IptsdConfig::IptsdConfig(struct ipts_device_info info) : info(info)
 	if (std::filesystem::exists(IPTSD_CONFIG_FILE))
 		ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
 }
+
+} // namespace iptsd::daemon

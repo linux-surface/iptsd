@@ -7,6 +7,8 @@
 
 #include <string>
 
+namespace iptsd::daemon {
+
 class UinputDevice {
 public:
 	int fd;
@@ -26,5 +28,7 @@ public:
 	void create() const;
 	void emit(u16 type, u16 key, i32 value) const;
 };
+
+} /* namespace iptsd::daemon */
 
 #endif /* IPTSD_DAEMON_UINPUT_DEVICE_HPP */

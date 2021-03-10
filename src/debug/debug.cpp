@@ -90,7 +90,9 @@ template <> struct fmt::formatter<PrettyBuf> {
 	}
 };
 
-static int dbg_main(int argc, char *argv[])
+namespace iptsd::debug::dbg {
+
+static int main(int argc, char *argv[])
 {
 	auto filename = std::filesystem::path {};
 
@@ -106,7 +108,7 @@ static int dbg_main(int argc, char *argv[])
 		file.open(filename, std::ios::out | std::ios::binary);
 	}
 
-	IptsControl ctrl;
+	ipts::Control ctrl;
 
 	fmt::print("Vendor:       {:04X}\n", ctrl.info.vendor);
 	fmt::print("Product:      {:04X}\n", ctrl.info.product);
@@ -146,12 +148,14 @@ static int dbg_main(int argc, char *argv[])
 	return 0;
 }
 
+} // namespace iptsd::debug::dbg
+
 int main(int argc, char *argv[])
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return dbg_main(argc, argv);
+		return iptsd::debug::dbg::main(argc, argv);
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

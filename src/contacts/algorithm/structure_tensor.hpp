@@ -16,7 +16,7 @@
 #include "algorithm/opt/structure_tensor.3x3-zero.hpp"
 
 
-namespace iptsd::alg {
+namespace iptsd::contacts::alg {
 namespace stensor::impl {
 
 template<typename Bx, typename By, typename T, index_t Nx, index_t Ny>
@@ -63,4 +63,4 @@ void structure_tensor(Image<Mat2s<T>>& out, Image<T> const& in,
     }
 }
 
-} /* namespace iptsd::alg */
+} /* namespace iptsd::contacts::alg */
