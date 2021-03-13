@@ -3,6 +3,8 @@
 #ifndef IPTSD_COMMON_ACCESS_HPP
 #define IPTSD_COMMON_ACCESS_HPP
 
+#include "compiler.hpp"
+
 #include <array>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
@@ -47,7 +49,7 @@ template <class I> [[gnu::always_inline]] inline void ensure(I i, I begin, I end
 	if constexpr (mode == AccessMode::Unchecked)
 		return;
 
-	if (begin <= i && i < end) [[likely]]
+	if (likely(begin <= i && i < end))
 		return;
 
 	impl::blow_up(i, begin, end);
