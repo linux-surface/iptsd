@@ -122,17 +122,6 @@ u32 Control::doorbell()
 	return doorbell;
 }
 
-ssize_t Control::read(std::span<u8> dest)
-{
-	this->wait_for_device();
-
-	ssize_t ret = common::read(this->current(), dest);
-	if (ret == -1)
-		throw common::cerror("Failed to read from buffer");
-
-	return ret;
-}
-
 void Control::reset()
 {
 	this->wait_for_device();

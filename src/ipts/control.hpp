@@ -5,6 +5,8 @@
 
 #include "ipts.h"
 
+#include <common/cerror.hpp>
+#include <common/cwrap.hpp>
 #include <common/types.hpp>
 
 #include <array>
@@ -23,7 +25,7 @@ public:
 
 	void send_feedback();
 	u32 doorbell();
-	ssize_t read(std::span<u8> dest);
+	template <class T> ssize_t read(std::span<T> dest);
 	void reset();
 
 private:
@@ -36,6 +38,17 @@ private:
 	void send_feedback(int file);
 	void flush();
 };
+
+template <class T> ssize_t Control::read(std::span<T> dest)
+{
+	this->wait_for_device();
+
+	ssize_t ret = common::read(this->current(), dest);
+	if (ret == -1)
+		throw common::cerror("Failed to read from buffer");
+
+	return ret;
+}
 
 } /* namespace iptsd::ipts */
 
