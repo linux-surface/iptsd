@@ -66,16 +66,7 @@ private:
 	void skip(const size_t size);
 	void reset();
 
-	template <typename T> T read()
-	{
-		T value {};
-
-		// We have to break type safety here, since all we have is a bytestream.
-		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-		this->read(std::span(reinterpret_cast<u8 *>(&value), sizeof(value)));
-
-		return value;
-	}
+	template <class T> T read();
 
 	void parse_payload();
 	void parse_hid(const struct ipts_data &header);
@@ -106,6 +97,17 @@ public:
 inline const std::span<u8> Parser::buffer()
 {
 	return std::span(this->data);
+}
+
+template <class T> inline T Parser::read()
+{
+	T value {};
+
+	// We have to break type safety here, since all we have is a bytestream.
+	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+	this->read(std::span(reinterpret_cast<u8 *>(&value), sizeof(value)));
+
+	return value;
 }
 
 } /* namespace iptsd::ipts */
