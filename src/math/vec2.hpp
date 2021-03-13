@@ -29,8 +29,8 @@ public:
 	constexpr auto operator*=(T const &s) -> Vec2<T> &;
 	constexpr auto operator/=(T const &s) -> Vec2<T> &;
 
-	constexpr auto dot(Vec2<T> const &v) const -> T;
-	constexpr auto norm_l2() const -> T;
+	[[nodiscard]] constexpr auto dot(Vec2<T> const &v) const -> T;
+	[[nodiscard]] constexpr auto norm_l2() const -> T;
 
 	template <class S> constexpr auto cast() const -> Vec2<S>;
 };
@@ -89,7 +89,9 @@ template <class T> inline constexpr auto Vec2<T>::norm_l2() const -> T
 	return sqrt(this->x * this->x + this->y * this->y);
 }
 
-template <class T> template <class S> inline constexpr auto Vec2<T>::cast() const -> Vec2<S>
+template <class T>
+template <class S>
+[[nodiscard]] inline constexpr auto Vec2<T>::cast() const -> Vec2<S>
 {
 	return {static_cast<S>(this->x), static_cast<S>(this->y)};
 }

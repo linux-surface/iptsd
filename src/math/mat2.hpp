@@ -36,16 +36,16 @@ public:
 	constexpr auto operator*=(T const &s) -> Mat2s<T> &;
 	constexpr auto operator/=(T const &s) -> Mat2s<T> &;
 
-	constexpr auto vtmv(Vec2<T> const &v) const -> T;
+	[[nodiscard]] constexpr auto vtmv(Vec2<T> const &v) const -> T;
 
-	constexpr auto inverse(T eps = num<T>::eps) const -> std::optional<Mat2s<T>>;
+	[[nodiscard]] constexpr auto inverse(T eps = num<T>::eps) const -> std::optional<Mat2s<T>>;
 
-	constexpr auto det() const -> T;
-	constexpr auto trace() const -> T;
+	[[nodiscard]] constexpr auto det() const -> T;
+	[[nodiscard]] constexpr auto trace() const -> T;
 
-	constexpr auto eigen(T eps = num<T>::eps) const -> Eigen2<T>;
-	constexpr auto eigenvalues(T eps = num<T>::eps) const -> std::array<T, 2>;
-	constexpr auto eigenvector(T eigenvalue) const -> Vec2<T>;
+	[[nodiscard]] constexpr auto eigen(T eps = num<T>::eps) const -> Eigen2<T>;
+	[[nodiscard]] constexpr auto eigenvalues(T eps = num<T>::eps) const -> std::array<T, 2>;
+	[[nodiscard]] constexpr auto eigenvector(T eigenvalue) const -> Vec2<T>;
 
 	template <class S> constexpr auto cast() const -> Mat2s<S>;
 };
@@ -159,7 +159,9 @@ template <class T> inline constexpr auto Mat2s<T>::eigenvector(T eigenvalue) con
 	return ev / ev.norm_l2();
 }
 
-template <class T> template <class S> inline constexpr auto Mat2s<T>::cast() const -> Mat2s<S>
+template <class T>
+template <class S>
+[[nodiscard]] inline constexpr auto Mat2s<T>::cast() const -> Mat2s<S>
 {
 	return {static_cast<S>(this->xx), static_cast<S>(this->xy), static_cast<S>(this->yy)};
 }

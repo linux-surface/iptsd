@@ -84,9 +84,9 @@ public:
     auto create_entry(std::string name) -> Token;
 
     auto record(Token const& t) -> measurement;
-    auto get_entry(Token const& t) const -> Entry const&;
+    [[nodiscard]] auto get_entry(Token const& t) const -> Entry const&;
 
-    auto entries() const -> std::vector<Entry> const&;
+    [[nodiscard]] auto entries() const -> std::vector<Entry> const&;
 
 private:
     std::vector<Entry> m_entries;

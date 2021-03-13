@@ -44,7 +44,7 @@ public:
     TouchProcessor(index2_t size);
 
     auto process(Image<f32> const& hm) -> std::vector<TouchPoint> const&;
-    auto perf() const -> eval::perf::Registry const&;
+    [[nodiscard]] auto perf() const -> eval::perf::Registry const&;
 
 private:
     // performance measurements

@@ -33,11 +33,11 @@ public:
 
 	constexpr auto operator=(Kernel<T, Nx, Ny> const &rhs) -> Kernel<T, Nx, Ny> &;
 
-	auto size() const -> index2_t;
-	auto stride() const -> index_t;
+	[[nodiscard]] auto size() const -> index2_t;
+	[[nodiscard]] auto stride() const -> index_t;
 
 	auto data() -> pointer;
-	auto data() const -> const_pointer;
+	[[nodiscard]] auto data() const -> const_pointer;
 
 	auto operator[](index2_t const &i) const -> const_reference;
 	auto operator[](index2_t const &i) -> reference;
@@ -48,11 +48,11 @@ public:
 	auto begin() -> iterator;
 	auto end() -> iterator;
 
-	auto begin() const -> const_iterator;
-	auto end() const -> const_iterator;
+	[[nodiscard]] auto begin() const -> const_iterator;
+	[[nodiscard]] auto end() const -> const_iterator;
 
-	auto cbegin() const -> const_iterator;
-	auto cend() const -> const_iterator;
+	[[nodiscard]] auto cbegin() const -> const_iterator;
+	[[nodiscard]] auto cend() const -> const_iterator;
 
 	static constexpr auto ravel(index2_t size, index2_t i) -> index_t;
 	static constexpr auto unravel(index2_t size, index_t i) -> index2_t;

@@ -33,7 +33,7 @@ class Cmap {
 public:
 	inline virtual ~Cmap() = default;
 
-	virtual auto map_value(f32 value) const -> Srgb = 0;
+	[[nodiscard]] virtual auto map_value(f32 value) const -> Srgb = 0;
 
 	template <class T, class P> auto map(T const &value, std::pair<T, T> range) const -> P;
 
@@ -80,7 +80,7 @@ void Cmap::map_into(container::Image<P> &dest, container::Image<T> const &img,
 
 class Grayscale : public Cmap {
 public:
-	auto map_value(f32 value) const -> Srgb;
+	[[nodiscard]] auto map_value(f32 value) const -> Srgb override;
 };
 
 inline auto Grayscale::map_value(f32 value) const -> Srgb
@@ -97,7 +97,7 @@ inline auto Grayscale::map_value(f32 value) const -> Srgb
 class Cubehelix : public Cmap {
 public:
 	Cubehelix(f32 start = 0.5f, f32 rotations = -1.5f, f32 hue = 1.2f, f32 gamma = 1.0f);
-	auto map_value(f32 value) const -> Srgb;
+	[[nodiscard]] auto map_value(f32 value) const -> Srgb override;
 
 private:
 	f32 m_start;
@@ -148,7 +148,7 @@ template <std::size_t N> class Lut : public Cmap {
 public:
 	template <class... Args> Lut(Args &&...t);
 
-	auto map_value(f32 value) const -> Srgb;
+	[[nodiscard]] auto map_value(f32 value) const -> Srgb override;
 
 private:
 	std::array<Srgb, N> m_table;
