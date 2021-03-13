@@ -94,15 +94,15 @@ namespace iptsd::debug::dbg {
 
 static int main(int argc, char *argv[])
 {
-	auto filename = std::filesystem::path {};
+	std::filesystem::path filename;
 
-	auto app = CLI::App {"Read raw IPTS data"};
+	CLI::App app {"Read raw IPTS data"};
 	app.add_option("-b,--binary", filename, "Write data to binary file instead of stdout")
 		->type_name("FILE");
 
 	CLI11_PARSE(app, argc, argv);
 
-	auto file = std::ofstream {};
+	std::ofstream file;
 	if (!filename.empty()) {
 		file.exceptions(std::ios::badbit | std::ios::failbit);
 		file.open(filename, std::ios::out | std::ios::binary);
@@ -134,7 +134,7 @@ static int main(int argc, char *argv[])
 			auto const header_buffer = header->buffer;
 			auto const header_size = header->size;
 
-			auto const buf = PrettyBuf {&data[sizeof(struct ipts_data)], header->size};
+			const PrettyBuf buf {&data[sizeof(struct ipts_data)], header->size};
 
 			fmt::print("====== Buffer: {} == Type: {} == Size: {} =====\n", header_type,
 				   header_buffer, header_size);
