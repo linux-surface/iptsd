@@ -117,18 +117,18 @@ static int main(int argc, char *argv[])
 	fmt::print("Max Contacts: {}\n", ctrl.info.max_contacts);
 	fmt::print("\n");
 
-	char *data = new char[ctrl.info.buffer_size];
+	std::vector<char> data(ctrl.info.buffer_size);
 
 	while (true) {
 		uint32_t doorbell = ctrl.doorbell();
 		if (doorbell <= ctrl.current_doorbell)
 			continue;
 
-		ctrl.read(std::span<u8>(reinterpret_cast<u8 *>(data), ctrl.info.buffer_size));
-		struct ipts_data *header = (struct ipts_data *)data;
+		ctrl.read(std::span(data));
+		auto *header = reinterpret_cast<struct ipts_data *>(data.data());
 
 		if (file) {
-			file.write(data, sizeof(struct ipts_data) + header->size);
+			file.write(data.data(), sizeof(struct ipts_data) + header->size);
 		} else {
 			auto const header_type = header->type;
 			auto const header_buffer = header->buffer;
