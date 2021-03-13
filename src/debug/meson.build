@@ -1,6 +1,7 @@
 deps = [
 	cli11,
 	fmt,
+	gsl,
 	iptsd_common,
 	iptsd_ipts,
 	spdlog,

@@ -1,1 +1,1 @@
-iptsd_common = declare_dependency(dependencies: [fmt])
+iptsd_common = declare_dependency(dependencies: [fmt, gsl])

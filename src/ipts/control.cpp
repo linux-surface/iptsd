@@ -10,7 +10,6 @@
 
 #include <cstddef>
 #include <fcntl.h>
-#include <span>
 #include <string>
 #include <sys/ioctl.h>
 #include <unistd.h>

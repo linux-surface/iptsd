@@ -4,6 +4,7 @@ sources = [
 ]
 
 deps = [
+	gsl,
 	iptsd_common,
 ]
 

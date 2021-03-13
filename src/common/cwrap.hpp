@@ -7,7 +7,7 @@
 
 #include <cstddef>
 #include <fcntl.h>
-#include <span>
+#include <gsl/gsl>
 #include <string>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -20,7 +20,7 @@ inline int open(const std::string &file, int args)
 	return ::open(file.c_str(), args);
 }
 
-template <class T> inline ssize_t read(int fd, std::span<T> dest)
+template <class T> inline ssize_t read(int fd, gsl::span<T> dest)
 {
 	return ::read(fd, dest.data(), dest.size_bytes());
 }

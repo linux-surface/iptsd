@@ -11,9 +11,9 @@
 #include <filesystem>
 #include <fmt/format.h>
 #include <fstream>
+#include <gsl/gsl>
 #include <iostream>
 #include <iterator>
-#include <span>
 #include <spdlog/spdlog.h>
 #include <string>
 #include <vector>
@@ -124,7 +124,7 @@ static int main(int argc, char *argv[])
 		if (doorbell <= ctrl.current_doorbell)
 			continue;
 
-		ctrl.read(std::span(data));
+		ctrl.read(gsl::span(data));
 		auto *header = reinterpret_cast<struct ipts_data *>(data.data());
 
 		if (file) {

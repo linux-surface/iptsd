@@ -11,6 +11,7 @@
 
 #include <array>
 #include <cstddef>
+#include <gsl/gsl>
 #include <span>
 
 namespace iptsd::ipts {
@@ -25,7 +26,7 @@ public:
 
 	void send_feedback();
 	u32 doorbell();
-	template <class T> ssize_t read(std::span<T> dest);
+	template <class T> ssize_t read(gsl::span<T> dest);
 	void reset();
 
 private:
@@ -39,7 +40,7 @@ private:
 	void flush();
 };
 
-template <class T> ssize_t Control::read(std::span<T> dest)
+template <class T> ssize_t Control::read(gsl::span<T> dest)
 {
 	this->wait_for_device();
 

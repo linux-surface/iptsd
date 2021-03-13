@@ -8,14 +8,14 @@
 #include <common/types.hpp>
 
 #include <cstring>
+#include <gsl/gsl>
 #include <memory>
-#include <span>
 #include <stdexcept>
 #include <utility>
 
 namespace iptsd::ipts {
 
-void Parser::read(const std::span<u8> dest)
+void Parser::read(const gsl::span<u8> dest)
 {
 	common::ensure(this->index + dest.size(), this->data.size());
 
@@ -252,7 +252,7 @@ void Parser::parse_heatmap_data(const struct ipts_heatmap_dim &dim,
 	if (!this->heatmap)
 		this->heatmap = std::make_unique<Heatmap>(dim.width, dim.height);
 
-	this->read(std::span(this->heatmap->data));
+	this->read(gsl::span(this->heatmap->data));
 
 	this->heatmap->y_min = dim.y_min;
 	this->heatmap->y_max = dim.y_max;
@@ -277,7 +277,7 @@ void Parser::parse_hid_heatmap(const struct ipts_data &header)
 	if (!this->heatmap)
 		this->heatmap = std::make_unique<Heatmap>(hid_header.hm_size);
 
-	this->read(std::span(this->heatmap->data));
+	this->read(gsl::span(this->heatmap->data));
 
 	this->parse_hid_heatmap_data();
 	this->skip(header.size - hid_header.size - 7);

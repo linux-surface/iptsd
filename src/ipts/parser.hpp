@@ -9,8 +9,8 @@
 
 #include <cstddef>
 #include <functional>
+#include <gsl/gsl>
 #include <memory>
-#include <span>
 #include <vector>
 
 namespace iptsd::ipts {
@@ -62,7 +62,7 @@ private:
 
 	std::unique_ptr<Heatmap> heatmap;
 
-	void read(const std::span<u8> dest);
+	void read(const gsl::span<u8> dest);
 	void skip(const size_t size);
 	void reset();
 
@@ -89,14 +89,14 @@ public:
 
 	Parser(size_t size) : data(size) {};
 
-	const std::span<u8> buffer();
+	const gsl::span<u8> buffer();
 	void parse(bool reset = true);
 	void parse_loop();
 };
 
-inline const std::span<u8> Parser::buffer()
+inline const gsl::span<u8> Parser::buffer()
 {
-	return std::span(this->data);
+	return gsl::span(this->data);
 }
 
 template <class T> inline T Parser::read()
@@ -105,7 +105,7 @@ template <class T> inline T Parser::read()
 
 	// We have to break type safety here, since all we have is a bytestream.
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-	this->read(std::span(reinterpret_cast<u8 *>(&value), sizeof(value)));
+	this->read(gsl::span(reinterpret_cast<u8 *>(&value), sizeof(value)));
 
 	return value;
 }
