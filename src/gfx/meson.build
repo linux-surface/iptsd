@@ -1,6 +1,7 @@
 deps = [
 	cairomm,
 	iptsd_common,
+	iptsd_contacts,
 	iptsd_container,
 	iptsd_math,
 ]
