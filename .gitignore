@@ -4,9 +4,6 @@ out/
 subprojects/*
 !subprojects/*.wrap
 
-.cache
-compile_commands.json
-
 rpm/
 pkg/
 debian/.debhelper/
@@ -26,4 +23,11 @@ x86_64-redhat-linux-gnu/
 *.dsc
 *.rpm
 
-.vscode/
+.*
+compile_commands.json
+
+!.clang-format
+!.clang-tidy
+!.editorconfig
+!.gitignore
+!.github/*
