@@ -1,9 +1,5 @@
 %global debug_package %{nil}
 
-# Need to put these macros somewhere to make git_dir_pack work.
-# {{{ git_dir_name }}}
-# {{{ git_dir_version }}}
-
 Name: iptsd
 Version: 0.4
 Release: 1%{?dist}
@@ -11,7 +7,7 @@ Summary: Userspace daemon for Intel Precise Touch & Stylus
 License: GPLv2+
 
 URL: https://github.com/linux-surface/iptsd
-Source: {{{ git_dir_pack }}}
+Source: {{{ git_dir_pack dir_name="iptsd" source_name="iptsd.tar.gz"  }}}
 
 BuildRequires: meson
 BuildRequires: gcc
