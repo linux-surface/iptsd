@@ -5,7 +5,7 @@
 # {{{ git_dir_version }}}
 
 Name: iptsd
-Version: 0.3.1
+Version: 0.4
 Release: 1%{?dist}
 Summary: Userspace daemon for Intel Precise Touch & Stylus
 License: GPLv2+
