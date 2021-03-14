@@ -1,5 +1,5 @@
 project('iptsd', 'cpp',
-	version: '0.3.1',
+	version: '0.4',
 	license: 'GPL-2.0-or-later',
 	default_options: [
 		'cpp_std=c++17',
