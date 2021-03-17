@@ -64,7 +64,7 @@ add_project_arguments('-DSPDLOG_FMT_EXTERNAL', language: 'cpp')
 fmt = dependency('fmt', fallback: ['fmt', 'fmt_dep'])
 inih = dependency('inih', fallback: ['inih', 'inih_dep'])
 gsl = dependency('Microsoft.GSL', modules: ['Microsoft.GSL::GSL'],
-		 fallback: ['microsoft_gsl', 'microsoft_gsl_dep'])
+		 fallback: ['microsoft-gsl', 'microsoft_gsl_dep'])
 spdlog = dependency('spdlog', fallback: ['spdlog', 'spdlog_dep'])
 
 subdir('common')
