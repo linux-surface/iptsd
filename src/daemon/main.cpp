@@ -64,7 +64,7 @@ static int main()
 	struct ipts_device_info info = ctx.control.info;
 	system_clock::time_point timeout = system_clock::now() + 5s;
 
-	spdlog::info("Connected to device {:04X}:{:04X}\n", info.vendor, info.product);
+	spdlog::info("Connected to device {:04X}:{:04X}", info.vendor, info.product);
 
 	ctx.parser.on_singletouch = [&](const auto &data) { iptsd_singletouch_input(ctx, data); };
 	ctx.parser.on_stylus = [&](const auto &data) { iptsd_stylus_input(ctx, data); };
