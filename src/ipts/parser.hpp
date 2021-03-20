@@ -7,7 +7,6 @@
 
 #include <common/types.hpp>
 
-#include <bitset>
 #include <cstddef>
 #include <functional>
 #include <gsl/gsl>

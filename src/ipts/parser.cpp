@@ -7,6 +7,7 @@
 #include <common/access.hpp>
 #include <common/types.hpp>
 
+#include <bitset>
 #include <cstring>
 #include <gsl/gsl>
 #include <memory>
