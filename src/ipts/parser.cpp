@@ -159,7 +159,12 @@ void Parser::parse_stylus_report(const struct ipts_report &report)
 		if (report.type == IPTS_REPORT_TYPE_STYLUS_V1) {
 			const auto data = this->read<struct ipts_stylus_data_v1>();
 
-			stylus.mode = data.mode;
+			const std::bitset<8> mode(data.mode);
+			stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
+			stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
+			stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
+			stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
+
 			stylus.x = data.x;
 			stylus.y = data.y;
 			stylus.pressure = data.pressure * 4;
@@ -171,7 +176,12 @@ void Parser::parse_stylus_report(const struct ipts_report &report)
 		if (report.type == IPTS_REPORT_TYPE_STYLUS_V2) {
 			const auto data = this->read<struct ipts_stylus_data_v2>();
 
-			stylus.mode = data.mode;
+			const std::bitset<16> mode(data.mode);
+			stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
+			stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
+			stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
+			stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
+
 			stylus.x = data.x;
 			stylus.y = data.y;
 			stylus.pressure = data.pressure;

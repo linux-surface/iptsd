@@ -7,6 +7,7 @@
 
 #include <common/types.hpp>
 
+#include <bitset>
 #include <cstddef>
 #include <functional>
 #include <gsl/gsl>
@@ -24,8 +25,12 @@ public:
 
 class StylusData {
 public:
+	bool proximity = false;
+	bool contact = false;
+	bool button = false;
+	bool rubber = false;
+
 	u16 timestamp = 0;
-	u16 mode = 0;
 	u16 x = 0;
 	u16 y = 0;
 	u16 pressure = 0;

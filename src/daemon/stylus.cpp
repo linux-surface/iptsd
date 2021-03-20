@@ -44,20 +44,15 @@ void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
 {
 	const StylusDevice &stylus = ctx.devices.get_stylus(data.serial);
 
-	bool prox = (data.mode & IPTS_STYLUS_REPORT_MODE_PROX) >> 0;
-	bool touch = (data.mode & IPTS_STYLUS_REPORT_MODE_TOUCH) >> 1;
-	bool button = (data.mode & IPTS_STYLUS_REPORT_MODE_BUTTON) >> 2;
-	bool rubber = (data.mode & IPTS_STYLUS_REPORT_MODE_RUBBER) >> 3;
+	bool btn_pen = data.proximity && !data.rubber;
+	bool btn_rubber = data.proximity && data.rubber;
 
-	bool btn_pen = prox && !rubber;
-	bool btn_rubber = prox && rubber;
+	const std::tuple<i32, i32> tilt = get_tilt(data.altitude, data.azimuth);
 
-	std::tuple<i32, i32> tilt = get_tilt(data.altitude, data.azimuth);
-
-	stylus.emit(EV_KEY, BTN_TOUCH, touch);
+	stylus.emit(EV_KEY, BTN_TOUCH, data.contact);
 	stylus.emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
 	stylus.emit(EV_KEY, BTN_TOOL_RUBBER, btn_rubber);
-	stylus.emit(EV_KEY, BTN_STYLUS, button);
+	stylus.emit(EV_KEY, BTN_STYLUS, data.button);
 
 	stylus.emit(EV_ABS, ABS_X, data.x);
 	stylus.emit(EV_ABS, ABS_Y, data.y);
