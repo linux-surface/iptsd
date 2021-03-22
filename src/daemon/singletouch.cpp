@@ -23,11 +23,11 @@ static void lift(const TouchDevice &dev)
 
 static void emit(const TouchDevice &dev, const ipts::SingletouchData &data)
 {
-	f64 rX = (f64)data.x / IPTS_SINGLETOUCH_MAX_VALUE;
-	f64 rY = (f64)data.y / IPTS_SINGLETOUCH_MAX_VALUE;
+	const f64 rX = static_cast<f64>(data.x) / IPTS_SINGLETOUCH_MAX_VALUE;
+	const f64 rY = static_cast<f64>(data.y) / IPTS_SINGLETOUCH_MAX_VALUE;
 
-	i32 x = (i32)(rX * IPTS_MAX_X);
-	i32 y = (i32)(rY * IPTS_MAX_Y);
+	const i32 x = static_cast<i32>(rX * IPTS_MAX_X);
+	const i32 y = static_cast<i32>(rY * IPTS_MAX_Y);
 
 	dev.emit(EV_ABS, ABS_MT_SLOT, 0);
 
