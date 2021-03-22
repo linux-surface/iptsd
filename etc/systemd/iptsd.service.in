@@ -1,8 +1,8 @@
 [Unit]
 Description=Intel Precise Touch & Stylus Daemon
 Documentation=https://github.com/linux-surface/iptsd
-After=dev-ipts-0.device
-Wants=dev-ipts-0.device
+After=dev-ipts-15.device
+Wants=dev-ipts-15.device
 
 [Service]
 Type=simple
