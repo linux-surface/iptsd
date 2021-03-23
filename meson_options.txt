@@ -4,7 +4,7 @@ option('service_manager',
        value: ['systemd'])
 
 option('sample_config', type: 'boolean', value: true)
-option('debug_tool', type: 'boolean', value: true)
+option('debug_tools', type: 'boolean', value: true)
 
 option('access_checks', type: 'feature', value: 'auto')
 option('fast_math', type: 'feature', value: 'auto')

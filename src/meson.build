@@ -76,7 +76,7 @@ subdir('ipts')
 subdir('contacts')
 subdir('daemon')
 
-if get_option('debug_tool')
+if get_option('debug_tools')
 	gtkmm = dependency('gtkmm-3.0', required: false)
 	cairomm = dependency('cairomm-1.0', required: false)
 	cli11 = dependency('CLI11', required: false, fallback: ['CLI11', 'CLI11_dep'])
