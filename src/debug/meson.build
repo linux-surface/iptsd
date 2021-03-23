@@ -12,7 +12,6 @@ executable('ipts-dbg', 'debug.cpp', dependencies: deps,
 
 deps = [
 	cairomm,
-	cairommpng,
 	cli11,
 	fmt,
 	iptsd_common,
