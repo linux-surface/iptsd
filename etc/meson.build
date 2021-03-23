@@ -11,21 +11,25 @@ configure_file(input: 'openrc/iptsd.initd.in',
 
 service_manager = get_option('service_manager')
 if service_manager.contains('systemd')
-	systemd = dependency('systemd')
-	unitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
+	systemd = dependency('systemd', required: false)
 
-	udev = dependency('udev')
-	udevdir = udev.get_pkgconfig_variable('udevdir')
-	rulesdir = join_paths(udevdir, 'rules.d')
+	if systemd.found()
+		unitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
 
-	install_data(join_paths(meson.current_build_dir(), 'iptsd.service'),
-		     install_dir: unitdir)
+		udev = dependency('udev')
+		udevdir = udev.get_pkgconfig_variable('udevdir')
+		rulesdir = join_paths(udevdir, 'rules.d')
 
-	install_data('udev/50-ipts.rules', install_dir: rulesdir)
+		install_data(join_paths(meson.current_build_dir(), 'iptsd.service'),
+			     install_dir: unitdir)
+
+		install_data('udev/50-ipts.rules', install_dir: rulesdir)
+	else
+		warning('systemd integration was enabled, but systemd was not found')
+	endif
 endif
 
 if service_manager.contains('openrc')
-	dependency('openrc')
 	openrcdir = join_paths(sysconfdir, 'init.d')
 
 	install_data(join_paths(meson.current_build_dir(), 'iptsd.initd'),
