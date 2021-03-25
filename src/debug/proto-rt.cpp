@@ -113,28 +113,6 @@ static int main(int argc, char *argv[])
 	contacts::TouchProcessor prc {size};
 
 	ipts::Control ctrl;
-
-	auto app = Gtk::Application::create("com.github.qzed.digitizer-prototype.rt");
-
-	app->signal_activate().connect([&]() {
-		auto window = Gtk::ApplicationWindow(app);
-
-		window.set_position(Gtk::WIN_POS_CENTER);
-		window.set_default_size(900, 600);
-		window.set_title("IPTS Processor Prototype");
-		window.set_resizable(false);
-
-		ctx.m_widget = Gtk::make_managed<Gtk::DrawingArea>();
-		window.add(*ctx.m_widget);
-
-		ctx.m_widget->signal_draw().connect(
-			[&](const Cairo::RefPtr<Cairo::Context> &cr) -> bool {
-				return ctx.draw_event(cr);
-			});
-
-		window.show_all();
-	});
-
 	std::atomic_bool run(true);
 
 	std::thread updt([&]() -> void {
@@ -167,7 +145,25 @@ static int main(int argc, char *argv[])
 		}
 	});
 
-	int status = app->run(argc, argv);
+	auto app = Gtk::Application::create(argc, argv);
+	Gtk::Window window;
+
+	window.set_position(Gtk::WIN_POS_CENTER);
+	window.set_default_size(900, 600);
+	window.set_title("IPTS Processor Prototype");
+	window.set_resizable(false);
+
+	ctx.m_widget = Gtk::make_managed<Gtk::DrawingArea>();
+	window.add(*ctx.m_widget);
+
+	ctx.m_widget->signal_draw().connect(
+		[&](const Cairo::RefPtr<Cairo::Context> &cr) -> bool {
+			return ctx.draw_event(cr);
+		});
+
+	window.show_all();
+
+	int status = app->run(window);
 
 	// TODO: should probably hook into destroy event to stop thread before gtk_main() returns
 
