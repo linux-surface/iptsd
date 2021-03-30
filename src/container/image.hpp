@@ -130,52 +130,56 @@ template <class T> inline auto Image<T>::data() const -> const_pointer
 
 template <class T> inline auto Image<T>::operator[](index2_t const &i) const -> const_reference
 {
-	return common::access<T>(m_data, ravel, m_size, i);
+	common::ensure(i, m_size);
+	return data()[ravel(m_size, i)];
 }
 
 template <class T> inline auto Image<T>::operator[](index2_t const &i) -> reference
 {
-	return common::access<T>(m_data, ravel, m_size, i);
+	common::ensure(i, m_size);
+	return data()[ravel(m_size, i)];
 }
 
 template <class T> inline auto Image<T>::operator[](index_t const &i) const -> const_reference
 {
-	return common::access<T>(m_data, m_size.span(), i);
+	common::ensure(i, m_size.span());
+	return data()[i];
 }
 
 template <class T> inline auto Image<T>::operator[](index_t const &i) -> reference
 {
-	return common::access<T>(m_data, m_size.span(), i);
+	common::ensure(i, m_size.span());
+	return data()[i];
 }
 
 template <class T> inline auto Image<T>::begin() -> iterator
 {
-	return &m_data[0];
+	return m_data.get();
 }
 
 template <class T> inline auto Image<T>::end() -> iterator
 {
-	return &m_data[m_size.span()];
+	return &(m_data.get())[m_size.span()];
 }
 
 template <class T> inline auto Image<T>::begin() const -> const_iterator
 {
-	return &m_data[0];
+	return m_data.get();
 }
 
 template <class T> inline auto Image<T>::end() const -> const_iterator
 {
-	return &m_data[m_size.span()];
+	return &(m_data.get())[m_size.span()];
 }
 
 template <class T> inline auto Image<T>::cbegin() const -> const_iterator
 {
-	return &m_data[0];
+	return &(m_data.get())[0];
 }
 
 template <class T> inline auto Image<T>::cend() const -> const_iterator
 {
-	return &m_data[m_size.span()];
+	return &(m_data.get())[m_size.span()];
 }
 
 template <class T> inline constexpr auto Image<T>::ravel(index2_t size, index2_t i) -> index_t
