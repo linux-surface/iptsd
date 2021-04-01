@@ -18,7 +18,8 @@ public:
 	i32 width = 0;
 	i32 height = 0;
 
-	bool disable_touch_on_stylus = false;
+	// TODO: Default to false, when palm rejection has been tuned
+	bool disable_touch_on_stylus = true;
 
 	struct ipts_device_info info;
 
