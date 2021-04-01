@@ -77,10 +77,20 @@ void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data)
 {
 	TouchDevice &touch = ctx.devices.touch;
 
-	const std::vector<TouchInput> &inputs = touch.manager.process(data);
+	// Dont process any touches and lift existing ones if a stylus is in proximity
+	if (ctx.devices.active_styli > 0 && ctx.config.disable_touch_on_stylus) {
+		lift_st(touch);
 
-	handle_multi(touch, inputs);
-	handle_single(touch, inputs);
+		for (u8 i = 0; i < ctx.control.info.max_contacts; i++) {
+			touch.emit(EV_ABS, ABS_MT_SLOT, i);
+			lift_mt(touch);
+		}
+	} else {
+		const std::vector<TouchInput> &inputs = touch.manager.process(data);
+
+		handle_multi(touch, inputs);
+		handle_single(touch, inputs);
+	}
 
 	touch.emit(EV_SYN, SYN_REPORT, 0);
 }

@@ -70,6 +70,9 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	if (name == "Height")
 		config->height = std::stoi(value);
 
+	if (name == "DisableTouchOnStylus")
+		config->disable_touch_on_stylus = to_bool(value);
+
 	return 1;
 }
 

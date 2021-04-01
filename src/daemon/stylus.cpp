@@ -42,7 +42,15 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 
 void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
 {
-	const StylusDevice &stylus = ctx.devices.get_stylus(data.serial);
+	StylusDevice &stylus = ctx.devices.get_stylus(data.serial);
+
+	if (!stylus.active && data.proximity) {
+		stylus.active = true;
+		ctx.devices.active_styli++;
+	} else if (stylus.active && !data.proximity) {
+		stylus.active = false;
+		ctx.devices.active_styli--;
+	}
 
 	bool btn_pen = data.proximity && !data.rubber;
 	bool btn_rubber = data.proximity && data.rubber;

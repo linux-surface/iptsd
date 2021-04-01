@@ -16,6 +16,7 @@ namespace iptsd::daemon {
 class StylusDevice : public UinputDevice {
 public:
 	u32 serial;
+	bool active = false;
 
 	StylusDevice(Config conf, u32 serial);
 };
@@ -31,7 +32,9 @@ class DeviceManager {
 public:
 	Config conf;
 	TouchDevice touch;
+
 	std::vector<StylusDevice> styli;
+	u32 active_styli = 0;
 
 	DeviceManager(Config conf);
 
