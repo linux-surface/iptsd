@@ -33,14 +33,20 @@ public:
 	std::unique_ptr<contacts::TouchProcessor> processor;
 
 	Config conf;
+	u8 max_contacts;
+
 	std::vector<TouchInput> inputs;
 
-	TouchManager(Config conf) : conf(conf), inputs(conf.info.max_contacts) {};
+	std::vector<TouchInput> last;
+	std::vector<f64> distances;
+
+	TouchManager(Config conf);
 
 	std::vector<TouchInput> &process(const ipts::Heatmap &data);
 
 private:
 	void resize(u8 width, u8 height);
+	void track();
 };
 
 } /* namespace iptsd::daemon */

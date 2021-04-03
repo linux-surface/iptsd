@@ -23,6 +23,16 @@
 
 namespace iptsd::daemon {
 
+TouchManager::TouchManager(Config conf)
+	: conf(conf), max_contacts(conf.info.max_contacts), inputs(max_contacts),
+	  last(max_contacts), distances(max_contacts * max_contacts)
+{
+	for (i32 i = 0; i < this->max_contacts; i++) {
+		this->last[i].index = i;
+		this->last[i].active = false;
+	}
+}
+
 void TouchManager::resize(u8 width, u8 height)
 {
 	if (this->hm) {
@@ -107,9 +117,61 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		this->inputs[i].active = false;
 	}
 
-	// TODO: Finger Tracking
-
+	this->track();
 	return this->inputs;
+}
+
+void TouchManager::track()
+{
+	// Calculate the distances between current and previous inputs
+	for (u32 i = 0; i < this->max_contacts; i++) {
+		for (u32 j = 0; j < this->max_contacts; j++) {
+			const TouchInput &in = this->inputs[i];
+			const TouchInput &last = this->last[j];
+
+			u32 idx = i * this->max_contacts + j;
+
+			// If one of the two inputs is / was not active, generate
+			// a very high distance, so that the pair will only get chosen
+			// if no "proper" pairs are left.
+			if (!in.active || !last.active) {
+				this->distances[idx] = (1 << 20) + idx;
+				continue;
+			}
+
+			f64 dx = static_cast<f64>(in.x) - static_cast<f64>(last.x);
+			f64 dy = static_cast<f64>(in.y) - static_cast<f64>(last.y);
+
+			this->distances[idx] = std::sqrt(dx * dx + dy * dy);
+		}
+	}
+
+	// Select the smallest calculated distance to find the closest two inputs.
+	// Copy the index from the previous to the current input. Then invalidate
+	// all distance entries that contain the two inputs, and repeat until we
+	// found an index for all inputs.
+	for (u32 k = 0; k < this->max_contacts; k++) {
+		auto it = std::min_element(this->distances.begin(), this->distances.end());
+		u32 idx = std::distance(this->distances.begin(), it);
+
+		u32 i = idx / max_contacts;
+		u32 j = idx % max_contacts;
+
+		this->inputs[i].index = this->last[j].index;
+
+		// Set the distance of all pairs that contain one of i and j
+		// to something even higher than the distance chosen above.
+		// This prevents i and j from getting selected again.
+		for (u32 x = 0; x < this->max_contacts; x++) {
+			u32 idx1 = i * this->max_contacts + x;
+			u32 idx2 = x * this->max_contacts + j;
+
+			this->distances[idx1] = (1 << 30) + idx1;
+			this->distances[idx2] = (1 << 30) + idx2;
+		}
+	}
+
+	std::copy(this->inputs.begin(), this->inputs.end(), this->last.begin());
 }
 
 } // namespace iptsd::daemon
