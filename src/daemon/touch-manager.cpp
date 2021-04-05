@@ -24,7 +24,7 @@
 namespace iptsd::daemon {
 
 TouchManager::TouchManager(Config conf)
-	: conf(conf), max_contacts(conf.info.max_contacts), inputs(max_contacts),
+	: size(), conf(conf), max_contacts(conf.info.max_contacts), inputs(max_contacts),
 	  last(max_contacts), distances(max_contacts * max_contacts)
 {
 	for (i32 i = 0; i < this->max_contacts; i++) {
@@ -33,40 +33,36 @@ TouchManager::TouchManager(Config conf)
 	}
 }
 
-void TouchManager::resize(u8 width, u8 height)
+contacts::TouchProcessor &TouchManager::resize(u8 width, u8 height)
 {
-	if (this->hm) {
-		index2_t size = this->hm->size();
+	if (this->processor) {
+		if (this->size.x == width && this->size.y == height)
+			return *this->processor;
 
-		if (size.x != width || size.y != height) {
-			this->hm.reset(nullptr);
-			this->processor.reset(nullptr);
-		}
+		this->processor.reset(nullptr);
 	}
 
-	if (!this->hm) {
-		index2_t size {width, height};
+	this->size = index2_t {width, height};
+	this->processor = std::make_unique<contacts::TouchProcessor>(this->size);
 
-		f64 diag = std::sqrt(width * width + height * height);
-		this->diagonal = gsl::narrow_cast<i32>(diag);
+	f64 diag = std::sqrt(width * width + height * height);
+	this->diagonal = gsl::narrow_cast<i32>(diag);
 
-		this->hm = std::make_unique<container::Image<f32>>(size);
-		this->processor = std::make_unique<contacts::TouchProcessor>(size);
-	}
+	return *this->processor;
 }
 
 std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 {
-	this->resize(data.width, data.height);
+	contacts::TouchProcessor &proc = this->resize(data.width, data.height);
 
-	std::transform(data.data.begin(), data.data.end(), this->hm->begin(), [&](auto v) {
+	std::transform(data.data.begin(), data.data.end(), proc.hm().begin(), [&](auto v) {
 		f32 val = static_cast<f32>(v - data.z_min) /
 			  static_cast<f32>(data.z_max - data.z_min);
 
 		return 1.0f - val;
 	});
 
-	const std::vector<contacts::TouchPoint> &contacts = this->processor->process(*this->hm);
+	const std::vector<contacts::TouchPoint> &contacts = proc.process();
 
 	i32 max_contacts = this->conf.info.max_contacts;
 	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()), max_contacts);

@@ -43,8 +43,10 @@ class TouchProcessor {
 public:
     TouchProcessor(index2_t size);
 
+    auto process() -> std::vector<TouchPoint> const&;
     auto process(Image<f32> const& hm) -> std::vector<TouchPoint> const&;
     [[nodiscard]] auto perf() const -> eval::perf::Registry const&;
+    auto hm() -> Image<f32> &;
 
 private:
     // performance measurements
@@ -65,6 +67,7 @@ private:
     eval::perf::Token m_perf_t_gfit;
 
     // temporary storage
+    Image<f32> m_hm;
     Image<f32> m_img_pp;
     Image<Mat2s<f32>> m_img_m2_1;
     Image<Mat2s<f32>> m_img_m2_2;
@@ -100,6 +103,16 @@ private:
 inline auto TouchProcessor::perf() const -> eval::perf::Registry const&
 {
     return m_perf_reg;
+}
+
+inline auto TouchProcessor::hm() -> Image<f32> &
+{
+    return m_hm;
+}
+
+inline auto TouchProcessor::process() -> std::vector<TouchPoint> const&
+{
+    return process(m_hm);
 }
 
 } /* namespace iptsd::contacts */

@@ -48,6 +48,7 @@ TouchProcessor::TouchProcessor(index2_t size)
     , m_perf_t_flt{m_perf_reg.create_entry("filter")}
     , m_perf_t_lmaxf{m_perf_reg.create_entry("filter.maximas")}
     , m_perf_t_gfit{m_perf_reg.create_entry("gaussian-fitting")}
+    , m_hm{size}
     , m_img_pp{size}
     , m_img_m2_1{size}
     , m_img_m2_2{size}

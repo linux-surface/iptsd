@@ -29,7 +29,7 @@ public:
 class TouchManager {
 public:
 	i32 diagonal = 0;
-	std::unique_ptr<container::Image<f32>> hm;
+	index2_t size;
 	std::unique_ptr<contacts::TouchProcessor> processor;
 
 	Config conf;
@@ -45,7 +45,7 @@ public:
 	std::vector<TouchInput> &process(const ipts::Heatmap &data);
 
 private:
-	void resize(u8 width, u8 height);
+	contacts::TouchProcessor &resize(u8 width, u8 height);
 	void track();
 };
 
