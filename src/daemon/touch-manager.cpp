@@ -118,7 +118,9 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 	}
 
 	this->track();
-	return this->inputs;
+
+	std::swap(this->inputs, this->last);
+	return this->last;
 }
 
 void TouchManager::track()
@@ -170,8 +172,6 @@ void TouchManager::track()
 			this->distances[idx2] = (1 << 30) + idx2;
 		}
 	}
-
-	std::copy(this->inputs.begin(), this->inputs.end(), this->last.begin());
 }
 
 } // namespace iptsd::daemon
