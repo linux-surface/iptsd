@@ -43,7 +43,7 @@ jobs:
   build-deb:
     name: Build Debian Package
     runs-on: ubuntu-latest
-    container: debian:sid
+    container: debian:buster
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -220,7 +220,7 @@ jobs:
     name: Update Debian package repository
     needs: [release]
     runs-on: ubuntu-latest
-    container: debian:sid
+    container: debian:buster
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
