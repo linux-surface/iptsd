@@ -4,8 +4,7 @@ Priority: optional
 Maintainer: Dorian Stoll <dorian.stoll@tmsp.io>
 Build-Depends:
  build-essential,
- debhelper (>= 10),
- libinih-dev,
+ debhelper-compat (= 12),
  meson,
  pkg-config,
  systemd,
@@ -13,5 +12,5 @@ Build-Depends:
 
 Package: iptsd
 Architecture: amd64
-Depends: systemd, udev, libinih1
+Depends: systemd, udev, ${shlibs:Depends}, ${misc:Depends}
 Description: Userspace daemon for Intel Precise Touch & Stylus
