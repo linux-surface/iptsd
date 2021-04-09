@@ -67,6 +67,9 @@ gsl = dependency('Microsoft.GSL', modules: ['Microsoft.GSL::GSL'],
 		 fallback: ['microsoft-gsl', 'microsoft_gsl_dep'])
 spdlog = dependency('spdlog', fallback: ['spdlog', 'spdlog_dep'])
 
+# Find libstdc++fs for older GCC
+stdcppfs = cpp.find_library('stdc++fs', required: false)
+
 subdir('common')
 subdir('math')
 

@@ -12,6 +12,7 @@ if dbg_dump and cli11.found()
 		iptsd_common,
 		iptsd_ipts,
 		spdlog,
+		stdcppfs,
 	]
 
 	executable('ipts-dump', 'dump.cpp', dependencies: deps,

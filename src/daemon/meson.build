@@ -19,6 +19,7 @@ deps = [
 	iptsd_math,
 	iptsd_container,
 	spdlog,
+	stdcppfs,
 ]
 
 executable('iptsd', sources, dependencies: deps,
