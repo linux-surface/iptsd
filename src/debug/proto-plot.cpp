@@ -16,7 +16,6 @@
 #include <ios>
 #include <iostream>
 #include <memory>
-#include <span>
 #include <spdlog/spdlog.h>
 #include <vector>
 

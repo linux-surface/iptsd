@@ -12,7 +12,6 @@
 #include <array>
 #include <cstddef>
 #include <gsl/gsl>
-#include <span>
 
 namespace iptsd::ipts {
 
