@@ -76,15 +76,11 @@ subdir('ipts')
 subdir('contacts')
 subdir('daemon')
 
-if get_option('debug_tools')
+if get_option('debug_tools').length() > 0
 	gtkmm = dependency('gtkmm-3.0', required: false)
 	cairomm = dependency('cairomm-1.0', required: false)
 	cli11 = dependency('CLI11', required: false, fallback: ['CLI11', 'CLI11_dep'])
 
-	if cli11.found() and cairomm.found() and gtkmm.found()
-		subdir('gfx')
-		subdir('debug')
-	else
-		warning('Debug Tools were enabled, but have missing dependencies')
-	endif
+	subdir('gfx')
+	subdir('debug')
 endif
