@@ -7,7 +7,7 @@ deps = [
 	spdlog,
 ]
 
-executable('ipts-dbg', 'debug.cpp', dependencies: deps,
+executable('ipts-dump', 'dump.cpp', dependencies: deps,
 	   include_directories: includes, install: true)
 
 deps = [

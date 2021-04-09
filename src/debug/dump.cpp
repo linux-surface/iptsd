@@ -90,7 +90,7 @@ template <> struct fmt::formatter<PrettyBuf> {
 	}
 };
 
-namespace iptsd::debug::dbg {
+namespace iptsd::debug::dump {
 
 static int main(int argc, char *argv[])
 {
@@ -148,14 +148,14 @@ static int main(int argc, char *argv[])
 	return 0;
 }
 
-} // namespace iptsd::debug::dbg
+} // namespace iptsd::debug::dump
 
 int main(int argc, char *argv[])
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return iptsd::debug::dbg::main(argc, argv);
+		return iptsd::debug::dump::main(argc, argv);
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

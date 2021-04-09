@@ -62,7 +62,7 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %config(noreplace) %{_sysconfdir}/ipts.conf
 %{_bindir}/iptsd
 %{_bindir}/iptsd-reset-sensor
-%{_bindir}/ipts-dbg
+%{_bindir}/ipts-dump
 %{_bindir}/ipts-proto-plot
 %{_bindir}/ipts-proto-rt
 %{_unitdir}/iptsd.service
