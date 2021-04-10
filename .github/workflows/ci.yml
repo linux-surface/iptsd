@@ -1,8 +1,10 @@
-name: Release
+name: CI
 
 on:
   push:
     tags:
+      - '**'
+    branches:
       - '**'
 
 env:
@@ -159,6 +161,7 @@ jobs:
 
   release:
     name: Publish release
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
     needs: [build-deb, build-arch, build-f34, build-f33, build-f32]
     runs-on: ubuntu-latest
     steps:
