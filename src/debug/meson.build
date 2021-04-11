@@ -33,6 +33,7 @@ if dbg_plot and cli11.found() and cairomm.found()
 		iptsd_ipts,
 		iptsd_math,
 		spdlog,
+		stdcppfs,
 	]
 
 	executable('ipts-proto-plot', 'proto-plot.cpp', dependencies: deps,
