@@ -1,5 +1,6 @@
 deps = [
 	cairomm,
+	gsl,
 	iptsd_common,
 	iptsd_contacts,
 	iptsd_container,

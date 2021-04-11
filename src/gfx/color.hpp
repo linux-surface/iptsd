@@ -5,6 +5,8 @@
 
 #include <common/types.hpp>
 
+#include <gsl/gsl>
+
 namespace iptsd::gfx {
 
 struct Srgb {
@@ -17,6 +19,12 @@ struct Srgba {
 	f32 r, g, b, a;
 
 	static constexpr auto from(f32 r, f32 g, f32 b) -> Srgba;
+};
+
+struct Argb {
+	u32 color;
+
+	static constexpr auto from(f32 r, f32 g, f32 b) -> Argb;
 };
 
 constexpr auto Srgb::from(f32 r, f32 g, f32 b) -> Srgb
@@ -42,6 +50,16 @@ constexpr auto operator*(Srgb c, f32 s) -> Srgb
 constexpr auto Srgba::from(f32 r, f32 g, f32 b) -> Srgba
 {
 	return {r, g, b, 1.0};
+}
+
+constexpr auto Argb::from(f32 r, f32 g, f32 b) -> Argb
+{
+	u32 color = 255 << 24;
+	color += gsl::narrow_cast<u8>(r * 255) << 16;
+	color += gsl::narrow_cast<u8>(g * 255) << 8;
+	color += gsl::narrow_cast<u8>(b * 255);
+
+	return Argb{color};
 }
 
 } /* namespace iptsd::gfx */

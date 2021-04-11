@@ -23,7 +23,7 @@ public:
 		  std::vector<contacts::TouchPoint> const &tps, int width, int height);
 
 private:
-	container::Image<gfx::Srgb> m_data;
+	container::Image<gfx::Argb> m_data;
 };
 
 } /* namespace iptsd::gfx */

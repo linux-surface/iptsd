@@ -18,9 +18,9 @@
 
 namespace iptsd::gfx {
 
-Cairo::RefPtr<Cairo::ImageSurface> image_surface_create(container::Image<Srgb> &image)
+Cairo::RefPtr<Cairo::ImageSurface> image_surface_create(container::Image<Argb> &image)
 {
-	auto const format = static_cast<Cairo::Format>(CAIRO_FORMAT_RGB96F);
+	auto const format = Cairo::FORMAT_ARGB32;
 	auto const size = image.size();
 	auto const data = reinterpret_cast<u8 *>(image.data());
 
