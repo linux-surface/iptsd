@@ -4,11 +4,7 @@ export DH_VERBOSE=1
 
 MFLAGS := -Daccess_checks=disabled
 
-# Because Debian is Debian, we create a giant statically linked blob that
-# contains all of our dependencies. We are also going to disable the plot and rt
-# debug tools because Debian doesnt have a recent enough cairo, and we cant
-# really link cairo / gtk statically.
-MFLAGS += -Ddebug_tools=dump
+# Create a giant statically linked blob that contains all of our dependencies.
 MFLAGS += -Ddefault_library=static
 MFLAGS += --wrap-mode=forcefallback
 
