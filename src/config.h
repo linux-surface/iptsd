@@ -17,6 +17,8 @@ struct iptsd_config {
 	bool block_on_palm;
 	int touch_threshold;
 	float stability_threshold;
+	float position_stability_threshold;
+	float sq_position_stability_threshold; // Always the square of position_stability_threshold
 };
 
 void iptsd_config_load(struct iptsd_config *config, struct ipts_device_info info);
