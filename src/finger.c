@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <stdbool.h>
+#include <math.h>
 
 #include "finger.h"
 #include "touch-processing.h"
@@ -11,8 +12,8 @@ static void iptsd_finger_update_from_last(struct iptsd_touch_processor *tp,
 {
 	struct contact *contact = input->contact;
 
-	float dev1 = input->ev1 - last.ev1;
-	float dev2 = input->ev2 - last.ev2;
+	float dev1 = fabs(input->ev1 - last.ev1);
+	float dev2 = fabs(input->ev2 - last.ev2);
 
 	bool is_stable =
 		dev1 < tp->config.stability_threshold && dev2 < tp->config.stability_threshold;
