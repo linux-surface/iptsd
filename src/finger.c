@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <stdbool.h>
+#include <math.h>
 
 #include "finger.h"
 #include "touch-processing.h"
@@ -11,15 +12,32 @@ static void iptsd_finger_update_from_last(struct iptsd_touch_processor *tp,
 {
 	struct contact *contact = input->contact;
 
-	float dev1 = input->ev1 - last.ev1;
-	float dev2 = input->ev2 - last.ev2;
+	float dev1 = fabs(input->ev1 - last.ev1);
+	float dev2 = fabs(input->ev2 - last.ev2);
 
-	bool is_stable =
+	bool ev_stable =
 		dev1 < tp->config.stability_threshold && dev2 < tp->config.stability_threshold;
 
 	input->index = last.index;
 	input->is_palm = contact->is_palm || last.is_palm;
-	input->is_stable = is_stable;
+	input->is_stable = ev_stable;
+
+	float dx = input->x - last.x; // This should probably be abs?
+	float dy = input->y - last.y;
+
+     // FIXME: Is the geometry even quadratic? Or is it stretched?
+	float sqdist = dx*dx + dy*dy;
+	bool pos_stable = sqdist < tp->config.sq_position_stability_threshold;
+
+	if (pos_stable) {
+		input->x = last.x;
+		input->y = last.y;
+	} else {
+		// Move in the direction, but just as much as necessary
+		float dist = sqrt(sqdist);
+		input->x = input->x - tp->config.position_stability_threshold*(dx/dist);
+		input->y = input->y - tp->config.position_stability_threshold*(dy/dist);
+	}
 }
 
 static bool iptsd_finger_find_duplicates(struct iptsd_touch_processor *tp, int count, int itr)

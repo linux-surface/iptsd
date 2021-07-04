@@ -73,6 +73,11 @@ static int iptsd_config_handler_conf(void *user, const char *section, const char
 	if (strcmp(name, "StabilityThreshold") == 0)
 		config->stability_threshold = strtof(value, NULL);
 
+	if (strcmp(name, "PositionStabilityThreshold") == 0) {
+		config->position_stability_threshold = strtof(value, NULL);
+		config->sq_position_stability_threshold = config->position_stability_threshold * config->position_stability_threshold;
+	}
+
 	return 1;
 }
 
@@ -110,6 +115,8 @@ void iptsd_config_load(struct iptsd_config *config, struct ipts_device_info info
 
 	config->touch_threshold = CONTACT_TOUCH_THRESHOLD;
 	config->stability_threshold = CONTACT_STABILITY_THRESHOLD;
+    config->position_stability_threshold = POSITION_STABILITY_THRESHOLD;
+	config->sq_position_stability_threshold = POSITION_STABILITY_THRESHOLD * POSITION_STABILITY_THRESHOLD;
 
 	iptsd_config_load_dir(config, info, IPTSD_CONFIG_DIR);
 	iptsd_config_load_dir(config, info, "./config");
