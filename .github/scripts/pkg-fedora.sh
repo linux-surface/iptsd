@@ -23,6 +23,7 @@ build)
 	# Make sure that we have a git repository
 	if [ ! -d ".git" ]; then
 		git init
+		git add .
 	fi
 
 	rpkg local --outdir $PWD/rpm
