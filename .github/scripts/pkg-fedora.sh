@@ -12,7 +12,7 @@ case "$1" in
 install)
 	# Setup build environment
 	dnf distro-sync -y
-	dnf install -y rpmdevtools rpm-sign rpkg 'dnf-command(builddep)'
+	dnf install -y rpmdevtools rpm-sign rpkg python3-setuptools 'dnf-command(builddep)'
 
 	# Install package dependencies
 	dnf builddep -y *.spec
