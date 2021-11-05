@@ -27,8 +27,6 @@ public:
 	index_t x, y;
 
 public:
-	inline constexpr auto operator=(index2_t const &rhs) -> index2_t & = default;
-
 	constexpr auto operator+=(index2_t const &v) -> index2_t &;
 	constexpr auto operator-=(index2_t const &v) -> index2_t &;
 

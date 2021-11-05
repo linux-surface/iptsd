@@ -18,8 +18,6 @@ public:
 	using value_type = T;
 
 public:
-	inline constexpr auto operator=(Vec2<T> const &rhs) -> Vec2<T> & = default;
-
 	constexpr auto operator+=(Vec2<T> const &v) -> Vec2<T> &;
 	constexpr auto operator+=(T const &s) -> Vec2<T> &;
 
