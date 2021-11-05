@@ -16,6 +16,7 @@ public:
 	index2_t size;
 	f64 threshold;
 	f64 diagonal;
+	f32 average = 0;
 
 	container::Image<f32> data;
 	container::Image<bool> visited;
@@ -25,7 +26,6 @@ public:
 		  diagonal(std::sqrt(size.x * size.x + size.y * size.y)), data(size),
 		  visited(size) {};
 
-	f32 average();
 	f32 value(index2_t x);
 	bool is_touch(index2_t x);
 	bool compare(index2_t x, index2_t y);

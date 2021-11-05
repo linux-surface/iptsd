@@ -9,26 +9,14 @@
 
 namespace iptsd::contacts::basic {
 
-f32 Heatmap::average()
-{
-	f32 value = 0;
-
-	for (auto i : this->data)
-		value += i;
-
-	return value / gsl::narrow_cast<f32>(this->size.span());
-}
-
 f32 Heatmap::value(index2_t x)
 {
-	f32 avg = this->average();
-
 	if (x < index2_t {0, 0} || x >= this->size)
 		return 0;
 
 	f32 val = this->data[x];
-	if (val > avg)
-		return val - avg;
+	if (val > this->average)
+		return val - this->average;
 	else
 		return 0;
 }
@@ -86,6 +74,13 @@ void Heatmap::reset()
 		for (index_t y = 0; y < this->size.y; y++)
 			this->set_visited(index2_t {x, y}, false);
 	}
+
+	f32 value = 0;
+
+	for (auto i : this->data)
+		value += i;
+
+	this->average =  value / gsl::narrow_cast<f32>(this->size.span());
 }
 
 } // namespace iptsd::contacts::basic
