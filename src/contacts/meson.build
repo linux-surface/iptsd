@@ -6,7 +6,14 @@ deps = [
 	spdlog,
 ]
 
-libcontacts = static_library('contacts', 'advanced/processor.cpp', dependencies: deps,
+src = [
+	'advanced/processor.cpp',
+	'basic/cluster.cpp',
+	'basic/heatmap.cpp',
+	'basic/processor.cpp',
+]
+
+libcontacts = static_library('contacts', src, dependencies: deps,
 			     include_directories: includes)
 
 iptsd_contacts = declare_dependency(dependencies: deps, link_with: libcontacts)

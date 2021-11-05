@@ -36,11 +36,14 @@ class TouchProcessor : public ITouchProcessor {
 public:
     TouchProcessor(index2_t size);
 
-    auto process(Image<f32> const& hm) -> std::vector<TouchPoint> const& override;
-    [[nodiscard]] auto perf() const -> eval::perf::Registry const& override;
     auto hm() -> Image<f32> & override;
+    auto process() -> std::vector<TouchPoint> const& override;
+
+    [[nodiscard]] auto perf() const -> eval::perf::Registry const& override;
 
 private:
+    auto process(Image<f32> const& hm) -> std::vector<TouchPoint> const&;
+
     // performance measurements
     eval::perf::Registry m_perf_reg;
     eval::perf::Token m_perf_t_total;
@@ -100,6 +103,11 @@ inline auto TouchProcessor::perf() const -> eval::perf::Registry const&
 inline auto TouchProcessor::hm() -> Image<f32> &
 {
     return m_hm;
+}
+
+inline auto TouchProcessor::process() -> std::vector<TouchPoint> const&
+{
+	return this->process(this->m_hm);
 }
 
 } /* namespace iptsd::contacts::advanced */

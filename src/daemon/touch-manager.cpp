@@ -3,6 +3,8 @@
 #include "touch-manager.hpp"
 
 #include "config.hpp"
+#include "contacts/basic/processor.hpp"
+#include "contacts/processor.hpp"
 
 #include <common/types.hpp>
 #include <contacts/advanced/processor.hpp>
@@ -18,6 +20,7 @@
 #include <gsl/gsl>
 #include <iterator>
 #include <memory>
+#include <spdlog/spdlog.h>
 #include <utility>
 #include <vector>
 
@@ -43,7 +46,16 @@ contacts::ITouchProcessor &TouchManager::resize(u8 width, u8 height)
 	}
 
 	this->size = index2_t {width, height};
-	this->processor = std::make_unique<contacts::advanced::TouchProcessor>(this->size);
+
+	if (true) {
+		contacts::basic::TouchProcessor::Config cfg {};
+		cfg.size = this->size;
+		cfg.touch_thresh = 0.04f;
+
+		this->processor = std::make_unique<contacts::basic::TouchProcessor>(cfg);
+	} else {
+		this->processor = std::make_unique<contacts::advanced::TouchProcessor>(this->size);
+	}
 
 	f64 diag = std::sqrt(width * width + height * height);
 	this->diagonal = gsl::narrow_cast<i32>(diag);
@@ -68,8 +80,8 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()), max_contacts);
 
 	for (i32 i = 0; i < count; i++) {
-		f64 x = (contacts[i].mean.x + 0.5) / data.width;
-		f64 y = (contacts[i].mean.y + 0.5) / data.height;
+		f64 x = contacts[i].mean.x;
+		f64 y = contacts[i].mean.y;
 
 		if (this->conf.invert_x)
 			x = 1 - x;

@@ -6,6 +6,7 @@
 #include <ipts/parser.hpp>
 
 #include <CLI/CLI.hpp>
+#include <algorithm>
 #include <cairomm/context.h>
 #include <cairomm/enums.h>
 #include <cairomm/surface.h>
@@ -98,7 +99,8 @@ static int main(int argc, char *argv[])
 	int i = 0;
 	do {
 		for (auto const &hm : heatmaps) {
-			auto const &tp = proc.process(hm);
+			std::copy(hm.begin(), hm.end(), proc.hm().begin());
+			auto const &tp = proc.process();
 
 			out.push_back(hm);
 			out_tp.push_back(tp);

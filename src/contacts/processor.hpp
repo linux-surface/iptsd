@@ -26,16 +26,10 @@ public:
 	virtual ~ITouchProcessor() = default;
 
 	virtual container::Image<f32> &hm() = 0;
+	virtual const std::vector<TouchPoint> &process() = 0;
+
 	[[nodiscard]] virtual const eval::perf::Registry &perf() const = 0;
-
-	virtual const std::vector<TouchPoint> &process();
-	virtual const std::vector<TouchPoint> &process(container::Image<f32> const &hm) = 0;
 };
-
-inline const std::vector<TouchPoint> &ITouchProcessor::process()
-{
-	return this->process(this->hm());
-}
 
 }; /* namespace iptsd::contacts */
 

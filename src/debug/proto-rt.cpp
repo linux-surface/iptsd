@@ -129,7 +129,8 @@ static int main(int argc, char *argv[])
 				return 1.0f - val;
 			});
 
-			ctx.submit(hm, prc.process(hm));
+			std::copy(hm.begin(), hm.end(), prc.hm().begin());
+			ctx.submit(hm, prc.process());
 		};
 
 		while (run.load()) {
