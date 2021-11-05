@@ -33,7 +33,7 @@ TouchManager::TouchManager(Config conf)
 	}
 }
 
-contacts::advanced::TouchProcessor &TouchManager::resize(u8 width, u8 height)
+contacts::ITouchProcessor &TouchManager::resize(u8 width, u8 height)
 {
 	if (this->processor) {
 		if (this->size.x == width && this->size.y == height)
@@ -53,7 +53,7 @@ contacts::advanced::TouchProcessor &TouchManager::resize(u8 width, u8 height)
 
 std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 {
-	contacts::advanced::TouchProcessor &proc = this->resize(data.width, data.height);
+	contacts::ITouchProcessor &proc = this->resize(data.width, data.height);
 
 	std::transform(data.data.begin(), data.data.end(), proc.hm().begin(), [&](auto v) {
 		f32 val = static_cast<f32>(v - data.z_min) /
@@ -62,7 +62,7 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		return 1.0f - val;
 	});
 
-	const std::vector<contacts::advanced::TouchPoint> &contacts = proc.process();
+	const std::vector<contacts::TouchPoint> &contacts = proc.process();
 
 	i32 max_contacts = this->conf.info.max_contacts;
 	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()), max_contacts);

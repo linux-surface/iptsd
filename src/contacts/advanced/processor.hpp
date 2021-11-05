@@ -9,6 +9,7 @@
 #include <container/kernel.hpp>
 
 #include <contacts/eval/perf.hpp>
+#include <contacts/processor.hpp>
 
 #include <math/vec2.hpp>
 #include <math/mat2.hpp>
@@ -23,14 +24,6 @@ using namespace iptsd::math;
 
 namespace iptsd::contacts::advanced {
 
-struct TouchPoint {
-    f32        confidence;
-    f32        scale;
-    Vec2<f32>  mean;
-    Mat2s<f32> cov;
-};
-
-
 struct ComponentStats {
     u32 size;
     f32 volume;
@@ -39,14 +32,13 @@ struct ComponentStats {
 };
 
 
-class TouchProcessor {
+class TouchProcessor : public ITouchProcessor {
 public:
     TouchProcessor(index2_t size);
 
-    auto process() -> std::vector<TouchPoint> const&;
-    auto process(Image<f32> const& hm) -> std::vector<TouchPoint> const&;
-    [[nodiscard]] auto perf() const -> eval::perf::Registry const&;
-    auto hm() -> Image<f32> &;
+    auto process(Image<f32> const& hm) -> std::vector<TouchPoint> const& override;
+    [[nodiscard]] auto perf() const -> eval::perf::Registry const& override;
+    auto hm() -> Image<f32> & override;
 
 private:
     // performance measurements
@@ -108,11 +100,6 @@ inline auto TouchProcessor::perf() const -> eval::perf::Registry const&
 inline auto TouchProcessor::hm() -> Image<f32> &
 {
     return m_hm;
-}
-
-inline auto TouchProcessor::process() -> std::vector<TouchPoint> const&
-{
-    return process(m_hm);
 }
 
 } /* namespace iptsd::contacts::advanced */

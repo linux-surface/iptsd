@@ -30,7 +30,7 @@ class TouchManager {
 public:
 	i32 diagonal = 0;
 	index2_t size;
-	std::unique_ptr<contacts::advanced::TouchProcessor> processor;
+	std::unique_ptr<contacts::ITouchProcessor> processor;
 
 	Config conf;
 	u8 max_contacts;
@@ -45,7 +45,7 @@ public:
 	std::vector<TouchInput> &process(const ipts::Heatmap &data);
 
 private:
-	contacts::advanced::TouchProcessor &resize(u8 width, u8 height);
+	contacts::ITouchProcessor &resize(u8 width, u8 height);
 	void track();
 };
 

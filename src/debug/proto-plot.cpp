@@ -90,7 +90,7 @@ static int main(int argc, char *argv[])
 	std::vector<container::Image<f32>> out;
 	out.reserve(heatmaps.size());
 
-	std::vector<std::vector<contacts::advanced::TouchPoint>> out_tp;
+	std::vector<std::vector<contacts::TouchPoint>> out_tp;
 	out_tp.reserve(heatmaps.size());
 
 	spdlog::info("Processing...");

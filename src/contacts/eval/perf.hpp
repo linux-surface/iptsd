@@ -6,7 +6,7 @@
 #include <cmath>
 
 
-namespace iptsd::contacts::advanced::eval::perf {
+namespace iptsd::contacts::eval::perf {
 
 using clock = std::chrono::high_resolution_clock;
 
