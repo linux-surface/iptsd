@@ -1,6 +1,6 @@
 #include <common/types.hpp>
 #include <contacts/eval/perf.hpp>
-#include <contacts/processor.hpp>
+#include <contacts/advanced/processor.hpp>
 #include <container/image.hpp>
 #include <gfx/visualization.hpp>
 #include <ipts/parser.hpp>
@@ -85,12 +85,12 @@ static int main(int argc, char *argv[])
 		return 0;
 	}
 
-	contacts::TouchProcessor proc {heatmaps[0].size()};
+	contacts::advanced::TouchProcessor proc {heatmaps[0].size()};
 
 	std::vector<container::Image<f32>> out;
 	out.reserve(heatmaps.size());
 
-	std::vector<std::vector<contacts::TouchPoint>> out_tp;
+	std::vector<std::vector<contacts::advanced::TouchPoint>> out_tp;
 	out_tp.reserve(heatmaps.size());
 
 	spdlog::info("Processing...");

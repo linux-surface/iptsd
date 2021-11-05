@@ -18,7 +18,7 @@ using namespace iptsd::container;
 using namespace iptsd::math;
 
 
-namespace iptsd::contacts::alg {
+namespace iptsd::contacts::advanced::alg {
 namespace conv {
 namespace kernels {
 
@@ -130,4 +130,4 @@ void convolve(Image<T>& out, Image<T> const& in, Kernel<S, Nx, Ny> const& k)
     }
 }
 
-} /* namespace iptsd::contacts::alg */
+} /* namespace iptsd::contacts::advanced::alg */

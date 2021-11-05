@@ -20,7 +20,7 @@ using namespace iptsd::container;
 using namespace iptsd::math;
 
 
-namespace iptsd::contacts::alg::gfit {
+namespace iptsd::contacts::advanced::alg::gfit {
 
 template<class T>
 inline constexpr auto const range = Vec2<T> { static_cast<T>(1), static_cast<T>(1) };
@@ -315,4 +315,4 @@ void fit(std::vector<Parameters<S>>& params, Image<T> const& data,
     }
 }
 
-} /* namespace iptsd::contacts::alg::gfit */
+} /* namespace iptsd::contacts::advanced::alg::gfit */

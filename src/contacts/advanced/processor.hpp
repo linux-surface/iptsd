@@ -8,7 +8,7 @@
 #include <container/image.hpp>
 #include <container/kernel.hpp>
 
-#include "eval/perf.hpp"
+#include <contacts/eval/perf.hpp>
 
 #include <math/vec2.hpp>
 #include <math/mat2.hpp>
@@ -21,7 +21,7 @@ using namespace iptsd::container;
 using namespace iptsd::math;
 
 
-namespace iptsd::contacts {
+namespace iptsd::contacts::advanced {
 
 struct TouchPoint {
     f32        confidence;
@@ -115,4 +115,4 @@ inline auto TouchProcessor::process() -> std::vector<TouchPoint> const&
     return process(m_hm);
 }
 
-} /* namespace iptsd::contacts */
+} /* namespace iptsd::contacts::advanced */

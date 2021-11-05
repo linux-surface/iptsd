@@ -19,7 +19,7 @@ using namespace iptsd::container;
 using namespace iptsd::math;
 
 
-namespace iptsd::contacts::alg {
+namespace iptsd::contacts::advanced::alg {
 namespace hess::impl {
 
 template<typename B=border::Zero, typename T>
@@ -71,4 +71,4 @@ void hessian(Image<Mat2s<T>>& out, Image<T> const& in)
     }
 }
 
-} /* namespace iptsd::contacts::alg */
+} /* namespace iptsd::contacts::advanced::alg */

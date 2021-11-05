@@ -5,7 +5,7 @@
 #include "config.hpp"
 
 #include <common/types.hpp>
-#include <contacts/processor.hpp>
+#include <contacts/advanced/processor.hpp>
 #include <container/image.hpp>
 #include <ipts/parser.hpp>
 #include <ipts/protocol.h>
@@ -33,7 +33,7 @@ TouchManager::TouchManager(Config conf)
 	}
 }
 
-contacts::TouchProcessor &TouchManager::resize(u8 width, u8 height)
+contacts::advanced::TouchProcessor &TouchManager::resize(u8 width, u8 height)
 {
 	if (this->processor) {
 		if (this->size.x == width && this->size.y == height)
@@ -43,7 +43,7 @@ contacts::TouchProcessor &TouchManager::resize(u8 width, u8 height)
 	}
 
 	this->size = index2_t {width, height};
-	this->processor = std::make_unique<contacts::TouchProcessor>(this->size);
+	this->processor = std::make_unique<contacts::advanced::TouchProcessor>(this->size);
 
 	f64 diag = std::sqrt(width * width + height * height);
 	this->diagonal = gsl::narrow_cast<i32>(diag);
@@ -53,7 +53,7 @@ contacts::TouchProcessor &TouchManager::resize(u8 width, u8 height)
 
 std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 {
-	contacts::TouchProcessor &proc = this->resize(data.width, data.height);
+	contacts::advanced::TouchProcessor &proc = this->resize(data.width, data.height);
 
 	std::transform(data.data.begin(), data.data.end(), proc.hm().begin(), [&](auto v) {
 		f32 val = static_cast<f32>(v - data.z_min) /
@@ -62,7 +62,7 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		return 1.0f - val;
 	});
 
-	const std::vector<contacts::TouchPoint> &contacts = proc.process();
+	const std::vector<contacts::advanced::TouchPoint> &contacts = proc.process();
 
 	i32 max_contacts = this->conf.info.max_contacts;
 	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()), max_contacts);

@@ -4,7 +4,7 @@
 
 #include "cmap.hpp"
 
-#include <contacts/processor.hpp>
+#include <contacts/advanced/processor.hpp>
 #include <container/image.hpp>
 
 #include <cairo.h>
@@ -44,7 +44,7 @@ inline void translate(const Cairo::RefPtr<Cairo::Context> &cr, math::Vec2<f64> v
 }
 
 void Visualization::draw(const Cairo::RefPtr<Cairo::Context> &cr, container::Image<f32> const &img,
-			 std::vector<contacts::TouchPoint> const &tps, int width, int height)
+			 std::vector<contacts::advanced::TouchPoint> const &tps, int width, int height)
 {
 	auto const img_w = static_cast<f64>(img.size().x);
 	auto const img_h = static_cast<f64>(img.size().y);

@@ -23,7 +23,7 @@
 using namespace iptsd::container;
 
 
-namespace iptsd::contacts::alg {
+namespace iptsd::contacts::advanced::alg {
 namespace impl {
 
 inline auto is_root(Image<u16> const& forest, u16 idx) -> bool
@@ -207,4 +207,4 @@ auto label(Image<u16>& out, Image<T> const& data, T threshold) -> u16
     return impl::resolve(out, background);
 }
 
-} /* namespace iptsd::contacts::alg */
+} /* namespace iptsd::contacts::advanced::alg */

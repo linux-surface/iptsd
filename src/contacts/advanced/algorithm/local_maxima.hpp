@@ -6,7 +6,7 @@
 using namespace iptsd::container;
 
 
-namespace iptsd::contacts::alg {
+namespace iptsd::contacts::advanced::alg {
 
 template<int C=8, typename T, typename O>
 void find_local_maximas(Image<T> const& data, T threshold, O output_iter)
@@ -238,4 +238,4 @@ void find_local_maximas(Image<T> const& data, T threshold, O output_iter)
     }
 }
 
-} /* namespace iptsd::contacts::alg */
+} /* namespace iptsd::contacts::advanced::alg */

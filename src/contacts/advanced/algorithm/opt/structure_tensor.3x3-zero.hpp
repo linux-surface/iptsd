@@ -5,7 +5,7 @@
 #include "../structure_tensor.hpp"
 
 
-namespace iptsd::contacts::alg::stensor::impl {
+namespace iptsd::contacts::advanced::alg::stensor::impl {
 
 template<typename T>
 void structure_tensor_3x3_zero(Image<Mat2s<T>>& out, Image<T> const& in,
@@ -259,4 +259,4 @@ void structure_tensor_3x3_zero(Image<Mat2s<T>>& out, Image<T> const& in,
     }
 }
 
-} /* namespace iptsd::contacts::alg::stensor::impl */
+} /* namespace iptsd::contacts::advanced::alg::stensor::impl */

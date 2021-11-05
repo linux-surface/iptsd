@@ -5,7 +5,7 @@
 #include "../convolution.hpp"
 
 
-namespace iptsd::contacts::alg::conv::impl {
+namespace iptsd::contacts::advanced::alg::conv::impl {
 
 template<typename T, typename S>
 void conv_5x5_extend(Image<T>& out, Image<T> const& data, Kernel<S, 5, 5> const& kern)
@@ -972,4 +972,4 @@ void conv_5x5_extend(Image<T>& out, Image<T> const& data, Kernel<S, 5, 5> const&
     }
 }
 
-} /* namespace iptsd::contacts::alg::conv::impl */
+} /* namespace iptsd::contacts::advanced::alg::conv::impl */

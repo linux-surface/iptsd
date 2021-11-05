@@ -9,7 +9,7 @@
 using namespace iptsd::container;
 
 
-namespace iptsd::contacts::alg {
+namespace iptsd::contacts::advanced::alg {
 namespace wdt {
 
 template<typename T>
@@ -494,4 +494,4 @@ void weighted_distance_transform(Image<T>& out, F& bin, M& mask, C& cost, Q& q,
     }
 }
 
-} /* namespace iptsd::contacts::alg */
+} /* namespace iptsd::contacts::advanced::alg */

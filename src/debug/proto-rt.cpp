@@ -1,6 +1,6 @@
 #include <common/types.hpp>
 #include <contacts/eval/perf.hpp>
-#include <contacts/processor.hpp>
+#include <contacts/advanced/processor.hpp>
 #include <container/image.hpp>
 #include <gfx/visualization.hpp>
 #include <ipts/control.hpp>
@@ -31,7 +31,7 @@ class MainContext {
 public:
 	MainContext(index2_t img_size);
 
-	void submit(container::Image<f32> const &img, std::vector<contacts::TouchPoint> const &tps);
+	void submit(container::Image<f32> const &img, std::vector<contacts::advanced::TouchPoint> const &tps);
 
 	auto draw_event(const Cairo::RefPtr<Cairo::Context> &cr) -> bool;
 
@@ -44,16 +44,16 @@ private:
 	container::Image<f32> m_img1;
 	container::Image<f32> m_img2;
 
-	std::vector<contacts::TouchPoint> m_tps1;
-	std::vector<contacts::TouchPoint> m_tps2;
+	std::vector<contacts::advanced::TouchPoint> m_tps1;
+	std::vector<contacts::advanced::TouchPoint> m_tps2;
 
 	std::mutex m_lock;
 
 	container::Image<f32> *m_img_frnt;
 	container::Image<f32> *m_img_back;
 
-	std::vector<contacts::TouchPoint> *m_tps_frnt;
-	std::vector<contacts::TouchPoint> *m_tps_back;
+	std::vector<contacts::advanced::TouchPoint> *m_tps_frnt;
+	std::vector<contacts::advanced::TouchPoint> *m_tps_back;
 	bool m_swap = false;
 };
 
@@ -64,7 +64,7 @@ MainContext::MainContext(index2_t img_size)
 {}
 
 void MainContext::submit(container::Image<f32> const &img,
-			 std::vector<contacts::TouchPoint> const &tps)
+			 std::vector<contacts::advanced::TouchPoint> const &tps)
 {
 	{
 		// set swap to false to prevent read-access in draw
@@ -110,7 +110,7 @@ static int main(int argc, char *argv[])
 {
 	const index2_t size {72, 48};
 	MainContext ctx {size};
-	contacts::TouchProcessor prc {size};
+	contacts::advanced::TouchProcessor prc {size};
 
 	ipts::Control ctrl;
 	std::atomic_bool run(true);

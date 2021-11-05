@@ -5,7 +5,7 @@
 #include "../hessian.hpp"
 
 
-namespace iptsd::contacts::alg::hess::impl {
+namespace iptsd::contacts::advanced::alg::hess::impl {
 
 template<typename T>
 void hessian_zero(Image<Mat2s<T>>& out, Image<T> const& in)
@@ -300,4 +300,4 @@ void hessian_zero(Image<Mat2s<T>>& out, Image<T> const& in)
     }
 }
 
-} /* namespace iptsd::contacts::alg::hess::impl */
+} /* namespace iptsd::contacts::advanced::alg::hess::impl */

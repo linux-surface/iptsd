@@ -30,7 +30,7 @@ using namespace iptsd::container;
 using namespace iptsd::math;
 
 
-namespace iptsd::contacts {
+namespace iptsd::contacts::advanced {
 
 TouchProcessor::TouchProcessor(index2_t size)
     : m_perf_reg{}
@@ -360,4 +360,4 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
     return m_touchpoints;
 }
 
-} /* namespace iptsd::contacts */
+} /* namespace iptsd::contacts::advanced */
