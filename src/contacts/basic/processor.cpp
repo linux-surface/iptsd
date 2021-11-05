@@ -2,16 +2,15 @@
 
 #include "processor.hpp"
 
-#include "basic/cluster.hpp"
-#include "common/types.hpp"
-#include "container/image.hpp"
-#include "math/mat2.hpp"
-#include "math/vec2.hpp"
+#include "cluster.hpp"
 
+#include <common/types.hpp>
 #include <contacts/processor.hpp>
+#include <container/image.hpp>
+#include <math/mat2.hpp>
+#include <math/vec2.hpp>
 
 #include <gsl/gsl_util>
-#include <spdlog/spdlog.h>
 #include <vector>
 
 namespace iptsd::contacts::basic {

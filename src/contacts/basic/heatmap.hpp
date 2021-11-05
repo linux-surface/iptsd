@@ -3,9 +3,8 @@
 #ifndef IPTSD_CONTACTS_BASIC_HEATMAP_HPP
 #define IPTSD_CONTACTS_BASIC_HEATMAP_HPP
 
-#include "container/image.hpp"
-
 #include <common/types.hpp>
+#include <container/image.hpp>
 
 #include <cstddef>
 #include <vector>

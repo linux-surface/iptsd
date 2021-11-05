@@ -31,6 +31,6 @@ public:
 	[[nodiscard]] virtual const eval::perf::Registry &perf() const = 0;
 };
 
-}; /* namespace iptsd::contacts */
+} /* namespace iptsd::contacts */
 
 #endif /* IPTSD_CONTACTS_PROCESSOR_HPP */

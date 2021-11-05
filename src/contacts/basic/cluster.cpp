@@ -4,7 +4,6 @@
 #include "cluster.hpp"
 
 #include "heatmap.hpp"
-#include <spdlog/spdlog.h>
 
 #include <common/types.hpp>
 
@@ -44,7 +43,7 @@ math::Vec2<f32> Cluster::mean()
 	f32 fy = (f32)this->y;
 	f32 fw = (f32)this->w;
 
-	return math::Vec2<f32>{fx / fw, fy / fw};
+	return math::Vec2<f32> {fx / fw, fy / fw};
 }
 
 math::Mat2s<f32> Cluster::cov()
@@ -53,7 +52,7 @@ math::Mat2s<f32> Cluster::cov()
 	f32 r2 = (this->yy - (this->y * this->y / this->w)) / this->w;
 	f32 r3 = (this->xy - (this->x * this->y / this->w)) / this->w;
 
-	return math::Mat2s<f32>{r1, r3, r2};
+	return math::Mat2s<f32> {r1, r3, r2};
 }
 
 void Cluster::check(Heatmap &hm, index2_t pos)
@@ -69,10 +68,10 @@ void Cluster::check(Heatmap &hm, index2_t pos)
 	this->add(pos, v);
 	hm.set_visited(pos, true);
 
-	this->check(hm, index2_t{pos.x + 1, pos.y});
-	this->check(hm, index2_t{pos.x - 1, pos.y});
-	this->check(hm, index2_t{pos.x, pos.y + 1});
-	this->check(hm, index2_t{pos.x, pos.y - 1});
+	this->check(hm, index2_t {pos.x + 1, pos.y});
+	this->check(hm, index2_t {pos.x - 1, pos.y});
+	this->check(hm, index2_t {pos.x, pos.y + 1});
+	this->check(hm, index2_t {pos.x, pos.y - 1});
 }
 
 } // namespace iptsd::contacts::basic

@@ -6,7 +6,6 @@
 
 #include <cstddef>
 #include <gsl/gsl>
-#include <spdlog/spdlog.h>
 
 namespace iptsd::contacts::basic {
 
@@ -85,7 +84,7 @@ void Heatmap::reset()
 {
 	for (index_t x = 0; x < this->size.x; x++) {
 		for (index_t y = 0; y < this->size.y; y++)
-			this->set_visited(index2_t{x, y}, false);
+			this->set_visited(index2_t {x, y}, false);
 	}
 }
 
