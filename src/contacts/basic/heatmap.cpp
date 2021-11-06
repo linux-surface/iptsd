@@ -11,7 +11,10 @@ namespace iptsd::contacts::basic {
 
 f32 Heatmap::value(index2_t x)
 {
-	if (x < index2_t {0, 0} || x >= this->size)
+	if (x.x < 0 || x.x >= this->size.x)
+		return 0;
+
+	if (x.y < 0 || x.y >= this->size.y)
 		return 0;
 
 	f32 val = this->data[x];
@@ -49,15 +52,21 @@ bool Heatmap::compare(index2_t x, index2_t y)
 
 bool Heatmap::get_visited(index2_t x)
 {
-	if (x < index2_t {0, 0} || x >= this->size)
-		return false;
+	if (x.x < 0 || x.x >= this->size.x)
+		return true;
+
+	if (x.y < 0 || x.y >= this->size.y)
+		return true;
 
 	return this->visited[x];
 }
 
 void Heatmap::set_visited(index2_t x, bool value)
 {
-	if (x < index2_t {0, 0} || x >= this->size)
+	if (x.x < 0 || x.x >= this->size.x)
+		return;
+
+	if (x.y < 0 || x.y >= this->size.y)
 		return;
 
 	this->visited[x] = value;
