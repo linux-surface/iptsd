@@ -5,7 +5,7 @@
 #include "cluster.hpp"
 
 #include <common/types.hpp>
-#include <contacts/processor.hpp>
+#include <contacts/interface.hpp>
 #include <container/image.hpp>
 #include <math/mat2.hpp>
 #include <math/vec2.hpp>

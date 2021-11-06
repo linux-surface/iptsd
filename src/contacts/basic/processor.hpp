@@ -7,7 +7,7 @@
 
 #include <common/types.hpp>
 #include <contacts/eval/perf.hpp>
-#include <contacts/processor.hpp>
+#include <contacts/interface.hpp>
 #include <container/image.hpp>
 
 namespace iptsd::contacts::basic {

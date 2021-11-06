@@ -9,7 +9,7 @@
 #include <container/kernel.hpp>
 
 #include <contacts/eval/perf.hpp>
-#include <contacts/processor.hpp>
+#include <contacts/interface.hpp>
 
 #include <math/vec2.hpp>
 #include <math/mat2.hpp>

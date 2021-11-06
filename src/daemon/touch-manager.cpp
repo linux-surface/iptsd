@@ -7,7 +7,7 @@
 #include <common/types.hpp>
 #include <contacts/advanced/processor.hpp>
 #include <contacts/basic/processor.hpp>
-#include <contacts/processor.hpp>
+#include <contacts/interface.hpp>
 #include <container/image.hpp>
 #include <ipts/parser.hpp>
 #include <ipts/protocol.h>
