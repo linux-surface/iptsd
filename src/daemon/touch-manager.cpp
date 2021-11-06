@@ -102,6 +102,9 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 	for (i32 i = count; i < max_contacts; i++) {
 		this->inputs[i].index = i;
 		this->inputs[i].active = false;
+		this->inputs[i].palm = false;
+		this->inputs[i].ev1 = 0;
+		this->inputs[i].ev2 = 0;
 	}
 
 	this->track();
@@ -147,7 +150,8 @@ void TouchManager::track()
 		u32 j = idx % max_contacts;
 
 		this->inputs[i].index = this->last[j].index;
-		this->inputs[i].palm |= this->last[j].palm;
+		if (this->inputs[i].active)
+			this->inputs[i].palm |= this->last[j].palm;
 
 		f32 dev1 = this->inputs[i].ev1 - this->last[j].ev1;
 		f32 dev2 = this->inputs[i].ev2 - this->last[j].ev2;
