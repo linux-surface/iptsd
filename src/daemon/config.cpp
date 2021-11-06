@@ -73,6 +73,9 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	if (name == "TouchThreshold")
 		config->touch_threshold = std::stof(value);
 
+	if (name == "StabilityThreshold")
+		config->stability_threshold = std::stof(value);
+
 	if (name == "AdvancedTouchProcessing")
 		config->advanced_processing = to_bool(value);
 

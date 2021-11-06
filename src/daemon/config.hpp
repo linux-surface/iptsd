@@ -20,6 +20,7 @@ public:
 	i32 height = 0;
 
 	std::optional<f32> touch_threshold;
+	f32 stability_threshold = 0.1;
 
 	// TODO: Default to false, when palm rejection has been tuned
 	bool disable_touch_on_stylus = true;

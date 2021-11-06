@@ -24,7 +24,11 @@ public:
 	i32 orientation = 0;
 	i32 index = 0;
 	bool palm = false;
+	bool stable = false;
 	bool active = false;
+
+	f32 ev1 = 0;
+	f32 ev2 = 0;
 };
 
 class TouchManager {

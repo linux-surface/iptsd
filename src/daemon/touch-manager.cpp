@@ -92,6 +92,9 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		this->inputs[i].orientation = gsl::narrow_cast<i32>(angle / M_PI * 180);
 		this->inputs[i].palm = contacts[i].palm;
 
+		this->inputs[i].ev1 = eigen.w[0];
+		this->inputs[i].ev2 = eigen.w[1];
+
 		this->inputs[i].index = i;
 		this->inputs[i].active = true;
 	}
@@ -145,6 +148,12 @@ void TouchManager::track()
 
 		this->inputs[i].index = this->last[j].index;
 		this->inputs[i].palm |= this->last[j].palm;
+
+		f32 dev1 = this->inputs[i].ev1 - this->last[j].ev1;
+		f32 dev2 = this->inputs[i].ev2 - this->last[j].ev2;
+
+		this->inputs[i].stable = dev1 < this->conf.stability_threshold &&
+					 dev2 < this->conf.stability_threshold;
 
 		// Set the distance of all pairs that contain one of i and j
 		// to something even higher than the distance chosen above.
