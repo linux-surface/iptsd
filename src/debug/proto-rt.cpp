@@ -1,6 +1,6 @@
 #include <common/types.hpp>
-#include <contacts/eval/perf.hpp>
 #include <contacts/advanced/processor.hpp>
+#include <contacts/eval/perf.hpp>
 #include <container/image.hpp>
 #include <gfx/visualization.hpp>
 #include <ipts/control.hpp>
@@ -157,10 +157,9 @@ static int main(int argc, char *argv[])
 	ctx.m_widget = Gtk::make_managed<Gtk::DrawingArea>();
 	window.add(*ctx.m_widget);
 
-	ctx.m_widget->signal_draw().connect(
-		[&](const Cairo::RefPtr<Cairo::Context> &cr) -> bool {
-			return ctx.draw_event(cr);
-		});
+	ctx.m_widget->signal_draw().connect([&](const Cairo::RefPtr<Cairo::Context> &cr) -> bool {
+		return ctx.draw_event(cr);
+	});
 
 	window.show_all();
 

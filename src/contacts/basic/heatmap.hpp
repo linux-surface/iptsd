@@ -21,8 +21,7 @@ public:
 	container::Image<bool> visited;
 
 	Heatmap(index2_t size)
-		: size(size),
-		  diagonal(std::sqrt(size.x * size.x + size.y * size.y)), data(size),
+		: size(size), diagonal(std::sqrt(size.x * size.x + size.y * size.y)), data(size),
 		  visited(size) {};
 
 	f32 value(index2_t x);

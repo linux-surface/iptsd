@@ -59,7 +59,7 @@ constexpr auto Argb::from(f32 r, f32 g, f32 b) -> Argb
 	color += gsl::narrow_cast<u8>(g * 255) << 8;
 	color += gsl::narrow_cast<u8>(b * 255);
 
-	return Argb{color};
+	return Argb {color};
 }
 
 } /* namespace iptsd::gfx */

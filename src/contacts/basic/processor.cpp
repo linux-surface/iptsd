@@ -16,7 +16,7 @@
 namespace iptsd::contacts::basic {
 
 TouchProcessor::TouchProcessor(Config cfg)
-	: heatmap {cfg.size}, touchpoints {}, cfg{cfg}, perfreg {}
+	: heatmap {cfg.size}, touchpoints {}, cfg {cfg}, perfreg {}
 {
 	this->touchpoints.reserve(32);
 }

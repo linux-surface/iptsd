@@ -75,7 +75,7 @@ void Heatmap::reset()
 	for (auto i : this->data)
 		value += i;
 
-	this->average =  value / gsl::narrow_cast<f32>(this->size.span());
+	this->average = value / gsl::narrow_cast<f32>(this->size.span());
 }
 
 } // namespace iptsd::contacts::basic

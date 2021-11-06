@@ -41,12 +41,13 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 {
 	this->processor.resize(index2_t {data.width, data.height});
 
-	std::transform(data.data.begin(), data.data.end(), this->processor.hm().begin(), [&](auto v) {
-		f32 val = static_cast<f32>(v - data.z_min) /
-			  static_cast<f32>(data.z_max - data.z_min);
+	std::transform(data.data.begin(), data.data.end(), this->processor.hm().begin(),
+		       [&](auto v) {
+			       f32 val = static_cast<f32>(v - data.z_min) /
+					 static_cast<f32>(data.z_max - data.z_min);
 
-		return 1.0f - val;
-	});
+			       return 1.0f - val;
+		       });
 
 	const std::vector<contacts::TouchPoint> &contacts = this->processor.process();
 
