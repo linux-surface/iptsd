@@ -20,6 +20,8 @@ public:
 
 	f32 touch_threshold = 0.05;
 
+	bool advanced_processing = false;
+
 	// TODO: Default to false, when palm rejection has been tuned
 	bool disable_touch_on_stylus = true;
 
