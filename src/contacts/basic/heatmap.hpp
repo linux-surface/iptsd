@@ -14,20 +14,18 @@ namespace iptsd::contacts::basic {
 class Heatmap {
 public:
 	index2_t size;
-	f64 threshold;
 	f64 diagonal;
 	f32 average = 0;
 
 	container::Image<f32> data;
 	container::Image<bool> visited;
 
-	Heatmap(index2_t size, f64 threshold)
-		: size(size), threshold(threshold),
+	Heatmap(index2_t size)
+		: size(size),
 		  diagonal(std::sqrt(size.x * size.x + size.y * size.y)), data(size),
 		  visited(size) {};
 
 	f32 value(index2_t x);
-	bool is_touch(index2_t x);
 	bool compare(index2_t x, index2_t y);
 	bool get_visited(index2_t x);
 	void set_visited(index2_t x, bool value);

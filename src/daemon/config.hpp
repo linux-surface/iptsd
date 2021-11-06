@@ -6,6 +6,7 @@
 #include <common/types.hpp>
 #include <ipts/ipts.h>
 
+#include <optional>
 #include <string>
 
 namespace iptsd::daemon {
@@ -18,12 +19,11 @@ public:
 	i32 width = 0;
 	i32 height = 0;
 
-	f32 touch_threshold = 0.04;
-
-	bool advanced_processing = false;
+	std::optional<f32> touch_threshold;
 
 	// TODO: Default to false, when palm rejection has been tuned
 	bool disable_touch_on_stylus = true;
+	bool advanced_processing = false;
 
 	struct ipts_device_info info;
 

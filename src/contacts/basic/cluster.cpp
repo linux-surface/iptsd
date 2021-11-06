@@ -59,9 +59,6 @@ void Cluster::check(Heatmap &hm, index2_t pos)
 {
 	f32 v = hm.value(pos);
 
-	if (!hm.is_touch(pos))
-		return;
-
 	if (hm.get_visited(pos))
 		return;
 

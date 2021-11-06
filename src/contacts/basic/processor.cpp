@@ -16,7 +16,7 @@
 namespace iptsd::contacts::basic {
 
 TouchProcessor::TouchProcessor(Config cfg)
-	: heatmap {cfg.size, cfg.touch_thresh}, touchpoints {}, perfreg {}
+	: heatmap {cfg.size}, touchpoints {}, cfg{cfg}, perfreg {}
 {
 	this->touchpoints.reserve(32);
 }
@@ -26,17 +26,28 @@ const std::vector<TouchPoint> &TouchProcessor::process()
 	this->heatmap.reset();
 	this->touchpoints.clear();
 
-	for (index_t x = 0; x < this->heatmap.size.x; x++) {
-		for (index_t y = 0; y < this->heatmap.size.y; y++) {
+	index2_t size = this->heatmap.size;
+	f32 thresh = this->cfg.touch_thresh.value_or(DEFAULT_TOUCH_THRESHOLD);
+
+	for (index_t x = 0; x < size.x; x++) {
+		for (index_t y = 0; y < size.y; y++) {
 			index2_t pos {x, y};
 
-			if (!this->heatmap.is_touch(pos))
+			if (this->heatmap.value(pos) >= thresh)
 				continue;
+
+			this->heatmap.set_visited(pos, true);
+		}
+	}
+
+	for (index_t x = 0; x < size.x; x++) {
+		for (index_t y = 0; y < size.y; y++) {
+			index2_t pos {x, y};
 
 			if (this->heatmap.get_visited(pos))
 				continue;
 
-			Cluster cluster(this->heatmap, pos);
+			Cluster cluster {this->heatmap, pos};
 
 			math::Mat2s<f32> cov = cluster.cov();
 			math::Vec2<f32> mean = cluster.mean();

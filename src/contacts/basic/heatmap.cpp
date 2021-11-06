@@ -21,11 +21,6 @@ f32 Heatmap::value(index2_t x)
 		return 0;
 }
 
-bool Heatmap::is_touch(index2_t x)
-{
-	return this->value(x) >= this->threshold;
-}
-
 bool Heatmap::compare(index2_t x, index2_t y)
 {
 	f64 v1 = this->value(x);
