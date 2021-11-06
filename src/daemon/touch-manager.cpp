@@ -5,9 +5,7 @@
 #include "config.hpp"
 
 #include <common/types.hpp>
-#include <contacts/advanced/processor.hpp>
-#include <contacts/basic/processor.hpp>
-#include <contacts/interface.hpp>
+#include <contacts/processor.hpp>
 #include <container/image.hpp>
 #include <ipts/parser.hpp>
 #include <ipts/protocol.h>
@@ -34,47 +32,23 @@ TouchManager::TouchManager(Config conf)
 		this->last[i].index = i;
 		this->last[i].active = false;
 	}
-}
 
-contacts::ITouchProcessor &TouchManager::resize(u8 width, u8 height)
-{
-	if (this->processor) {
-		if (this->size.x == width && this->size.y == height)
-			return *this->processor;
-
-		this->processor.reset(nullptr);
-	}
-
-	this->size = index2_t {width, height};
-
-	if (!this->conf.advanced_processing) {
-		contacts::basic::TouchProcessor::Config cfg {};
-		cfg.size = this->size;
-		cfg.touch_thresh = this->conf.touch_threshold;
-
-		this->processor = std::make_unique<contacts::basic::TouchProcessor>(cfg);
-	} else {
-		this->processor = std::make_unique<contacts::advanced::TouchProcessor>(this->size);
-	}
-
-	f64 diag = std::sqrt(width * width + height * height);
-	this->diagonal = gsl::narrow_cast<i32>(diag);
-
-	return *this->processor;
+	this->processor.advanced = this->conf.advanced_processing;
+	this->processor.conf.touch_thresh = this->conf.touch_threshold;
 }
 
 std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 {
-	contacts::ITouchProcessor &proc = this->resize(data.width, data.height);
+	this->processor.resize(index2_t {data.width, data.height});
 
-	std::transform(data.data.begin(), data.data.end(), proc.hm().begin(), [&](auto v) {
+	std::transform(data.data.begin(), data.data.end(), this->processor.hm().begin(), [&](auto v) {
 		f32 val = static_cast<f32>(v - data.z_min) /
 			  static_cast<f32>(data.z_max - data.z_min);
 
 		return 1.0f - val;
 	});
 
-	const std::vector<contacts::TouchPoint> &contacts = proc.process();
+	const std::vector<contacts::TouchPoint> &contacts = this->processor.process();
 
 	i32 max_contacts = this->conf.info.max_contacts;
 	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()), max_contacts);

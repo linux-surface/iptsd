@@ -6,7 +6,7 @@
 #include "config.hpp"
 
 #include <common/types.hpp>
-#include <contacts/advanced/processor.hpp>
+#include <contacts/processor.hpp>
 #include <container/image.hpp>
 #include <ipts/parser.hpp>
 
@@ -30,7 +30,7 @@ class TouchManager {
 public:
 	i32 diagonal = 0;
 	index2_t size;
-	std::unique_ptr<contacts::ITouchProcessor> processor;
+	contacts::TouchProcessor processor;
 
 	Config conf;
 	u8 max_contacts;
@@ -45,7 +45,6 @@ public:
 	std::vector<TouchInput> &process(const ipts::Heatmap &data);
 
 private:
-	contacts::ITouchProcessor &resize(u8 width, u8 height);
 	void track();
 };
 

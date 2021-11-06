@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef IPTSD_CONTACTS_PROCESSOR_HPP
-#define IPTSD_CONTACTS_PROCESSOR_HPP
+#ifndef IPTSD_CONTACTS_INTERFACE_HPP
+#define IPTSD_CONTACTS_INTERFACE_HPP
 
 #include "eval/perf.hpp"
 
@@ -21,6 +21,11 @@ struct TouchPoint {
 	math::Mat2s<f32> cov;
 };
 
+struct Config {
+	index2_t size;
+	f32 touch_thresh;
+};
+
 class ITouchProcessor {
 public:
 	virtual ~ITouchProcessor() = default;
@@ -33,4 +38,4 @@ public:
 
 } /* namespace iptsd::contacts */
 
-#endif /* IPTSD_CONTACTS_PROCESSOR_HPP */
+#endif /* IPTSD_CONTACTS_INTERFACE_HPP */

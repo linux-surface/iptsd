@@ -7,6 +7,7 @@ deps = [
 ]
 
 src = [
+	'processor.cpp',
 	'advanced/processor.cpp',
 	'basic/cluster.cpp',
 	'basic/heatmap.cpp',

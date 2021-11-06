@@ -18,7 +18,7 @@ public:
 	i32 width = 0;
 	i32 height = 0;
 
-	f32 touch_threshold = 0.05;
+	f32 touch_threshold = 0.04;
 
 	bool advanced_processing = false;
 

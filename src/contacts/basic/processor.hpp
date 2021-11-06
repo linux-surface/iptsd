@@ -14,11 +14,6 @@ namespace iptsd::contacts::basic {
 
 class TouchProcessor : public ITouchProcessor {
 public:
-	struct Config {
-		index2_t size;
-		f64 touch_thresh;
-	};
-
 	TouchProcessor(Config cfg);
 
 	container::Image<f32> &hm() override;
