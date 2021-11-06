@@ -50,7 +50,7 @@ contacts::ITouchProcessor &TouchManager::resize(u8 width, u8 height)
 	if (true) {
 		contacts::basic::TouchProcessor::Config cfg {};
 		cfg.size = this->size;
-		cfg.touch_thresh = 0.04f;
+		cfg.touch_thresh = this->conf.touch_threshold;
 
 		this->processor = std::make_unique<contacts::basic::TouchProcessor>(cfg);
 	} else {

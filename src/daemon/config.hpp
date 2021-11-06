@@ -18,6 +18,8 @@ public:
 	i32 width = 0;
 	i32 height = 0;
 
+	f32 touch_threshold = 0.05;
+
 	// TODO: Default to false, when palm rejection has been tuned
 	bool disable_touch_on_stylus = true;
 
