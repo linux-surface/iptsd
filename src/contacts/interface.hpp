@@ -17,6 +17,7 @@ namespace iptsd::contacts {
 struct TouchPoint {
 	f32 confidence;
 	f32 scale;
+	bool palm;
 	math::Vec2<f32> mean;
 	math::Mat2s<f32> cov;
 };

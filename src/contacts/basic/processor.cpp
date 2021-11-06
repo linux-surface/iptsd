@@ -62,6 +62,7 @@ const std::vector<TouchPoint> &TouchProcessor::process()
 			TouchPoint point {};
 			point.cov = cov;
 			point.mean = mean;
+			point.palm = false;
 			point.confidence = 0; // TODO: Whats this?
 			point.scale = 0;      // see above
 

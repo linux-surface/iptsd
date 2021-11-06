@@ -359,7 +359,7 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
         mean.x = (mean.x + 0.5f) / gsl::narrow_cast<f32>(m_hm.size().x);
         mean.y = (mean.y + 0.5f) / gsl::narrow_cast<f32>(m_hm.size().y);
 
-        m_touchpoints.push_back(TouchPoint { cs, static_cast<f32>(p.scale), mean, cov->cast<f32>() });
+        m_touchpoints.push_back(TouchPoint { cs, static_cast<f32>(p.scale), false, mean, cov->cast<f32>() });
     }
 
     return m_touchpoints;
