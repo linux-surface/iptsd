@@ -90,6 +90,7 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 			angle -= M_PI;
 
 		this->inputs[i].orientation = gsl::narrow_cast<i32>(angle / M_PI * 180);
+		this->inputs[i].palm = contacts[i].palm;
 
 		this->inputs[i].index = i;
 		this->inputs[i].active = true;
@@ -143,6 +144,7 @@ void TouchManager::track()
 		u32 j = idx % max_contacts;
 
 		this->inputs[i].index = this->last[j].index;
+		this->inputs[i].palm |= this->last[j].palm;
 
 		// Set the distance of all pairs that contain one of i and j
 		// to something even higher than the distance chosen above.

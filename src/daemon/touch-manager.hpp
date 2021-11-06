@@ -23,6 +23,7 @@ public:
 	i32 minor = 0;
 	i32 orientation = 0;
 	i32 index = 0;
+	bool palm = false;
 	bool active = false;
 };
 
