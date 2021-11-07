@@ -3,6 +3,7 @@
 #ifndef IPTSD_DAEMON_TOUCH_MANAGER_HPP
 #define IPTSD_DAEMON_TOUCH_MANAGER_HPP
 
+#include "cone.hpp"
 #include "config.hpp"
 
 #include <common/types.hpp>
@@ -45,12 +46,16 @@ public:
 	std::vector<TouchInput> last;
 	std::vector<f64> distances;
 
+	std::vector<std::shared_ptr<Cone>> cones;
+
 	TouchManager(Config conf);
 
 	std::vector<TouchInput> &process(const ipts::Heatmap &data);
 
 private:
 	void track();
+	void update_cones(const TouchInput &palm);
+	bool check_cones(const TouchInput &input);
 };
 
 } /* namespace iptsd::daemon */

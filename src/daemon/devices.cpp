@@ -16,6 +16,7 @@
 #include <iterator>
 #include <linux/input-event-codes.h>
 #include <linux/input.h>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -28,7 +29,8 @@ static i32 res(i32 virt, i32 phys)
 	return gsl::narrow_cast<i32>(std::round(res));
 }
 
-StylusDevice::StylusDevice(Config conf, u32 serial) : UinputDevice(), serial(serial)
+StylusDevice::StylusDevice(Config conf, u32 serial, std::shared_ptr<Cone> cone)
+	: UinputDevice(), serial(serial), cone(std::move(cone))
 {
 	this->name = "IPTS Stylus";
 	this->vendor = conf.info.vendor;
@@ -98,7 +100,14 @@ DeviceManager::DeviceManager(Config conf) : conf(conf), touch(conf)
 	if (conf.width == 0 || conf.height == 0)
 		throw std::runtime_error("Display size is 0");
 
-	this->styli.emplace_back(conf, 0);
+	this->create_stylus(0);
+}
+
+StylusDevice &DeviceManager::create_stylus(u32 serial)
+{
+	std::shared_ptr<Cone> cone = std::make_shared<Cone>(conf.cone_angle, conf.cone_distance);
+	this->touch.manager.cones.push_back(cone);
+	return this->styli.emplace_back(this->conf, serial, std::move(cone));
 }
 
 StylusDevice &DeviceManager::get_stylus(u32 serial)
@@ -121,7 +130,7 @@ StylusDevice &DeviceManager::get_stylus(u32 serial)
 		return s;
 	}
 
-	return this->styli.emplace_back(this->conf, serial);
+	return this->create_stylus(serial);
 }
 
 } // namespace iptsd::daemon

@@ -3,12 +3,14 @@
 #ifndef IPTSD_DAEMON_DEVICES_HPP
 #define IPTSD_DAEMON_DEVICES_HPP
 
+#include "cone.hpp"
 #include "config.hpp"
 #include "touch-manager.hpp"
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
 
+#include <memory>
 #include <vector>
 
 namespace iptsd::daemon {
@@ -17,8 +19,9 @@ class StylusDevice : public UinputDevice {
 public:
 	u32 serial;
 	bool active = false;
+	std::shared_ptr<Cone> cone;
 
-	StylusDevice(Config conf, u32 serial);
+	StylusDevice(Config conf, u32 serial, std::shared_ptr<Cone> cone);
 };
 
 class TouchDevice : public UinputDevice {
@@ -38,6 +41,7 @@ public:
 
 	DeviceManager(Config conf);
 
+	StylusDevice &create_stylus(u32 serial);
 	StylusDevice &get_stylus(u32 serial);
 };
 

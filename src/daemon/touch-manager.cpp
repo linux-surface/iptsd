@@ -109,6 +109,24 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 
 	this->track();
 
+	if (this->conf.stylus_cone) {
+		// Update touch rejection cones
+		for (i32 i = 0; i < count; i++) {
+			if (!this->inputs[i].palm)
+				continue;
+
+			this->update_cones(this->inputs[i]);
+		}
+
+		// Check if any contacts fall into the cones
+		for (i32 i = 0; i < count; i++) {
+			if (this->inputs[i].palm)
+				continue;
+
+			this->inputs[i].palm = this->check_cones(this->inputs[i]);
+		}
+	}
+
 	std::swap(this->inputs, this->last);
 	return this->last;
 }
@@ -171,6 +189,43 @@ void TouchManager::track()
 			this->distances[idx2] = (1 << 30) + idx2;
 		}
 	}
+}
+
+void TouchManager::update_cones(const TouchInput &palm)
+{
+	std::shared_ptr<Cone> cone {nullptr};
+	f64 d = INFINITY;
+
+	// find closest cone (by center)
+	for (auto &current : this->cones) {
+		// This cone has never seen a position update, so its inactive
+		if (!current->alive())
+			continue;
+
+		if (!current->active())
+			continue;
+
+		f64 current_d = std::hypot(current->x - palm.x, current->y - palm.y);
+		if (current_d < d) {
+			d = current_d;
+			cone = current;
+		}
+	}
+
+	if (!cone)
+		return;
+
+	cone->update_direction(palm.x, palm.y);
+}
+
+bool TouchManager::check_cones(const TouchInput &input)
+{
+	for (const auto &cone : this->cones) {
+		if (cone->check(input.x, input.y))
+			return true;
+	}
+
+	return false;
 }
 
 } // namespace iptsd::daemon

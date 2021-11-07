@@ -19,6 +19,7 @@ public:
 	i32 width = 0;
 	i32 height = 0;
 
+	bool stylus_cone = true;
 	bool stylus_disable_touch = true;
 
 	bool touch_stability = true;
@@ -26,6 +27,9 @@ public:
 	bool touch_disable_on_palm = false;
 
 	f32 basic_pressure = 0.04;
+
+	f32 cone_angle = 30;
+	f32 cone_distance = 1600;
 
 	f32 stability_threshold = 0.1;
 

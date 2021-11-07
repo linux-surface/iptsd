@@ -52,6 +52,9 @@ void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
 		ctx.devices.active_styli--;
 	}
 
+	if (data.proximity && ctx.config.stylus_cone)
+		stylus.cone->update_position(data.x, data.y);
+
 	bool btn_pen = data.proximity && !data.rubber;
 	bool btn_rubber = data.proximity && data.rubber;
 
