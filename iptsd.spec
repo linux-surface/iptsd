@@ -38,7 +38,7 @@ kernel driver, and sends them back to the kernel using uinput devices.
 {{{ git_dir_setup_macro dir_name="iptsd" }}}
 
 %build
-%meson -Daccess_checks=disabled
+%meson
 %meson_build
 
 %install

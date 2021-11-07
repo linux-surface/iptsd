@@ -2,14 +2,9 @@
 
 export DH_VERBOSE=1
 
-MFLAGS := -Daccess_checks=disabled
-
 # Create a giant statically linked blob that contains all of our dependencies.
-MFLAGS += -Ddefault_library=static
-MFLAGS += --wrap-mode=forcefallback
-
 override_dh_auto_configure:
-	dh_auto_configure -- $(MFLAGS)
+	dh_auto_configure -- -Ddefault_library=static --wrap-mode=forcefallback
 
 override_dh_strip:
 	dh_strip --no-automatic-dbgsym

@@ -9,7 +9,9 @@ option('debug_tools',
        choices: ['dump', 'plot', 'rt'],
        value: ['dump', 'plot', 'rt'])
 
-option('access_checks', type: 'feature', value: 'auto')
+option('access_checks', type: 'boolean', value: true)
+option('force_access_checks', type: 'boolean', value: false)
+
 option('fast_math', type: 'feature', value: 'auto')
 option('cpu_type', type: 'string', value: 'core-avx2')
 option('simd_type', type: 'string', value: 'avx2')

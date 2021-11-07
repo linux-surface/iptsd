@@ -24,7 +24,7 @@ makedepends=(
 build() {
 	cd $startdir
 
-	arch-meson build --wrap-mode=default -Daccess_checks=disabled
+	arch-meson build --wrap-mode=default
 	ninja -C build
 }
 
