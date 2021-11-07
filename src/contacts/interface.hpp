@@ -24,7 +24,7 @@ struct TouchPoint {
 
 struct Config {
 	index2_t size {};
-	std::optional<f32> touch_thresh;
+	f32 basic_pressure = 0;
 };
 
 class ITouchProcessor {

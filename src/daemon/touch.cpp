@@ -84,7 +84,7 @@ void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data)
 	TouchDevice &touch = ctx.devices.touch;
 
 	// Dont process any touches and lift existing ones if a stylus is in proximity
-	if (ctx.devices.active_styli > 0 && ctx.config.disable_touch_on_stylus) {
+	if (ctx.devices.active_styli > 0 && ctx.config.stylus_disable_touch) {
 		lift_st(touch);
 
 		for (u8 i = 0; i < ctx.control.info.max_contacts; i++) {

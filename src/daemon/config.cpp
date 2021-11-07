@@ -55,32 +55,34 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	std::string name(c_name);
 	std::string value(c_value);
 
-	if (section != "Config")
-		return 1;
-
-	if (name == "InvertX")
+	if (section == "Config" && name == "InvertX")
 		config->invert_x = to_bool(value);
 
-	if (name == "InvertY")
+	if (section == "Config" && name == "InvertY")
 		config->invert_y = to_bool(value);
 
-	if (name == "Width")
+	if (section == "Config" && name == "Width")
 		config->width = std::stoi(value);
 
-	if (name == "Height")
+	if (section == "Config" && name == "Height")
 		config->height = std::stoi(value);
 
-	if (name == "TouchThreshold")
-		config->touch_threshold = std::stof(value);
+	if (section == "Stylus" && name == "DisableTouch")
+		config->stylus_disable_touch = to_bool(value);
 
-	if (name == "StabilityThreshold")
+	if (section == "Touch" && name == "Stability")
+		config->touch_stability = to_bool(value);
+
+	if (section == "Touch" && name == "Processing") {
+		std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+		config->touch_advanced = value == "advanced";
+	}
+
+	if (section == "Basic" && name == "Pressure")
+		config->basic_pressure = std::stof(value);
+
+	if (section == "Stability" && name == "Threshold")
 		config->stability_threshold = std::stof(value);
-
-	if (name == "AdvancedTouchProcessing")
-		config->advanced_processing = to_bool(value);
-
-	if (name == "DisableTouchOnStylus")
-		config->disable_touch_on_stylus = to_bool(value);
 
 	return 1;
 }

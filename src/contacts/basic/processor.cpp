@@ -54,13 +54,11 @@ const std::vector<TouchPoint> &TouchProcessor::process()
 	this->touchpoints.clear();
 
 	index2_t size = this->heatmap.size;
-	f32 thresh = this->cfg.touch_thresh.value_or(DEFAULT_TOUCH_THRESHOLD);
-
 	for (index_t x = 0; x < size.x; x++) {
 		for (index_t y = 0; y < size.y; y++) {
 			index2_t pos {x, y};
 
-			if (this->heatmap.value(pos) >= thresh)
+			if (this->heatmap.value(pos) >= this->cfg.basic_pressure)
 				continue;
 
 			this->heatmap.set_visited(pos, true);

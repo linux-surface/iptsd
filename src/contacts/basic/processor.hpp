@@ -12,8 +12,6 @@
 
 namespace iptsd::contacts::basic {
 
-constexpr f32 DEFAULT_TOUCH_THRESHOLD = 0.04;
-
 class TouchProcessor : public ITouchProcessor {
 public:
 	TouchProcessor(Config cfg);

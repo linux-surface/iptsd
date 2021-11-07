@@ -19,12 +19,14 @@ public:
 	i32 width = 0;
 	i32 height = 0;
 
-	std::optional<f32> touch_threshold;
-	f32 stability_threshold = 0.1;
+	bool stylus_disable_touch = true;
 
-	// TODO: Default to false, when palm rejection has been tuned
-	bool disable_touch_on_stylus = true;
-	bool advanced_processing = false;
+	bool touch_stability = true;
+	bool touch_advanced = false;
+
+	f32 basic_pressure = 0.04;
+
+	f32 stability_threshold = 0.1;
 
 	struct ipts_device_info info;
 

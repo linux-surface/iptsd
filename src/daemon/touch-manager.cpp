@@ -33,8 +33,8 @@ TouchManager::TouchManager(Config conf)
 		this->last[i].active = false;
 	}
 
-	this->processor.advanced = this->conf.advanced_processing;
-	this->processor.conf.touch_thresh = this->conf.touch_threshold;
+	this->processor.advanced = this->conf.touch_advanced;
+	this->processor.conf.basic_pressure = this->conf.basic_pressure;
 }
 
 std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
@@ -156,8 +156,9 @@ void TouchManager::track()
 		f32 dev1 = this->inputs[i].ev1 - this->last[j].ev1;
 		f32 dev2 = this->inputs[i].ev2 - this->last[j].ev2;
 
-		this->inputs[i].stable = dev1 < this->conf.stability_threshold &&
-					 dev2 < this->conf.stability_threshold;
+		this->inputs[i].stable = (dev1 < this->conf.stability_threshold &&
+					  dev2 < this->conf.stability_threshold) ||
+					 !this->conf.touch_stability;
 
 		// Set the distance of all pairs that contain one of i and j
 		// to something even higher than the distance chosen above.
