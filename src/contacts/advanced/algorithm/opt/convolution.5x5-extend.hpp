@@ -16,11 +16,11 @@ void conv_5x5_extend(Image<T>& out, Image<T> const& data, Kernel<S, 5, 5> const&
 
     // access helpers
     auto const k = [&](index_t dx, index_t dy) constexpr -> S {
-        return kern[12 + dy * stride_k + dx];
+        return common::unchecked<S>(kern, 12 + dy * stride_k + dx);
     };
 
     auto const d = [&](index_t i, index_t dx, index_t dy) constexpr -> T {
-        return data[i + dy * stride_d + dx];
+        return common::unchecked<T>(data, i + dy * stride_d + dx);
     };
 
     // processing...

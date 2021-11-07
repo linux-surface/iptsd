@@ -20,11 +20,11 @@ void structure_tensor_3x3_zero(Image<Mat2s<T>>& out, Image<T> const& in,
 
     // access helpers
     auto const k = [&](auto const& kern, index_t dx, index_t dy) constexpr -> T {
-        return kern[4 + dy * stride_k + dx];
+        return common::unchecked<T>(kern, 4 + dy * stride_k + dx);
     };
 
     auto const d = [&](index_t i, index_t dx, index_t dy) constexpr -> T {
-        return in[i + dy * stride_d + dx];
+        return common::unchecked<T>(in, i + dy * stride_d + dx);
     };
 
     // processing...
