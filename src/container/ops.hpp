@@ -13,14 +13,14 @@
 namespace iptsd::container::ops {
 
 template <class C>
-inline auto minmax_element(C &container) -> std::pair<typename C::pointer, typename C::pointer>
+inline auto minmax_element(C &container) -> std::pair<typename C::iterator, typename C::iterator>
 {
 	return std::minmax_element(container.begin(), container.end());
 }
 
 template <class C>
 inline auto minmax_element(C const &container)
-	-> std::pair<typename C::const_pointer, typename C::const_pointer>
+	-> std::pair<typename C::const_iterator, typename C::const_iterator>
 {
 	return std::minmax_element(container.begin(), container.end());
 }

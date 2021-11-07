@@ -13,16 +13,17 @@ namespace iptsd::container {
 
 template <class T, index_t Nx, index_t Ny> struct Kernel {
 public:
-	using value_type = T;
-	using reference = value_type &;
-	using const_reference = value_type const &;
-	using pointer = value_type *;
-	using const_pointer = value_type const *;
 	using array_type = std::array<T, static_cast<std::size_t>(Nx) * Ny>;
 	using iterator = typename array_type::iterator;
 	using const_iterator = typename array_type::const_iterator;
 	using reverse_iterator = typename array_type::reverse_iterator;
 	using const_reverse_iterator = typename array_type::const_reverse_iterator;
+
+	using value_type = typename array_type::value_type;
+	using reference = typename array_type::reference;
+	using const_reference = typename array_type::const_reference;
+	using pointer = typename array_type::pointer;
+	using const_pointer = typename array_type::const_pointer;
 
 public:
 	array_type buf;

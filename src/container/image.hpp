@@ -9,29 +9,27 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include <vector>
 
 namespace iptsd::container {
 
 template <class T> class Image {
 public:
-	using value_type = T;
-	using reference = value_type &;
-	using const_reference = value_type const &;
-	using pointer = value_type *;
-	using const_pointer = value_type const *;
-	using iterator = T *;
-	using const_iterator = T const *;
-	using reverse_iterator = T *;
-	using const_reverse_iterator = T const *;
+	using array_type = std::vector<T>;
+	using iterator = typename array_type::iterator;
+	using const_iterator = typename array_type::const_iterator;
+	using reverse_iterator = typename array_type::reverse_iterator;
+	using const_reverse_iterator = typename array_type::const_reverse_iterator;
+
+	using value_type = typename array_type::value_type;
+	using reference = typename array_type::reference;
+	using const_reference = typename array_type::const_reference;
+	using pointer = typename array_type::pointer;
+	using const_pointer = typename array_type::const_pointer;
 
 public:
 	Image();
 	Image(index2_t size);
-	Image(Image const &other);
-	Image(Image &&other) noexcept;
-
-	auto operator=(Image<T> const &rhs) -> Image<T> &;
-	auto operator=(Image<T> &&rhs) noexcept -> Image<T> &;
 
 	[[nodiscard]] auto size() const -> index2_t;
 	[[nodiscard]] auto stride() const -> index_t;
@@ -59,51 +57,14 @@ public:
 
 private:
 	index2_t m_size;
-	std::unique_ptr<T[]> m_data;
+	array_type m_data {};
 };
 
-template <class T> Image<T>::Image() : m_size {0, 0}, m_data {nullptr}
+template <class T> Image<T>::Image() : m_size {0, 0}
 {}
 
-template <class T> Image<T>::Image(index2_t size) : m_size {size}, m_data {new T[size.span()]}
+template <class T> Image<T>::Image(index2_t size) : m_size {size}, m_data(size.span())
 {}
-
-template <class T> Image<T>::Image(Image const &other) : m_size {0, 0}, m_data {nullptr}
-{
-	// implement in terms of copy assignment operator to not leak any memory if copy throws...
-	auto tmp = Image<T> {};
-	tmp = other;
-
-	std::swap(m_size, tmp.m_size);
-	std::swap(m_data, tmp.m_data);
-}
-
-template <class T>
-Image<T>::Image(Image &&other) noexcept
-	: m_size {std::exchange(other.m_size, {0, 0})}, m_data {std::exchange(other.m_data,
-									      nullptr)}
-{}
-
-template <class T> auto Image<T>::operator=(Image<T> const &rhs) -> Image<T> &
-{
-	if (m_size != rhs.m_size) {
-		m_data = nullptr; // free old data first and set to nullptr
-		m_data = std::unique_ptr<T[]> {new T[rhs.m_size.span()]};
-		m_size = rhs.m_size;
-	}
-
-	std::copy(rhs.begin(), rhs.end(), this->begin());
-
-	return *this;
-}
-
-template <class T> auto Image<T>::operator=(Image<T> &&rhs) noexcept -> Image<T> &
-{
-	m_data = std::exchange(rhs.m_data, nullptr);
-	m_size = std::exchange(rhs.m_size, {0, 0});
-
-	return *this;
-}
 
 template <class T> inline auto Image<T>::size() const -> index2_t
 {
@@ -117,66 +78,62 @@ template <class T> inline auto Image<T>::stride() const -> index_t
 
 template <class T> inline auto Image<T>::data() -> pointer
 {
-	return m_data.get();
+	return m_data.data();
 }
 
 template <class T> inline auto Image<T>::data() const -> const_pointer
 {
-	return m_data.get();
+	return m_data.data();
 }
 
 template <class T> inline auto Image<T>::operator[](index2_t const &i) const -> const_reference
 {
-	common::ensure(i, m_size);
-	return data()[ravel(m_size, i)];
+	return m_data[ravel(m_size, i)];
 }
 
 template <class T> inline auto Image<T>::operator[](index2_t const &i) -> reference
 {
-	common::ensure(i, m_size);
-	return data()[ravel(m_size, i)];
+	return m_data[ravel(m_size, i)];
 }
 
 template <class T> inline auto Image<T>::operator[](index_t const &i) const -> const_reference
 {
-	common::ensure(i, m_size.span());
-	return data()[i];
+	return m_data[i];
 }
 
 template <class T> inline auto Image<T>::operator[](index_t const &i) -> reference
 {
-	common::ensure(i, m_size.span());
-	return data()[i];
+	return m_data[i];
 }
 
 template <class T> inline auto Image<T>::begin() -> iterator
 {
-	return m_data.get();
+	return m_data.begin();
 }
 
 template <class T> inline auto Image<T>::end() -> iterator
 {
-	return &(m_data.get())[m_size.span()];
+	return m_data.end();
 }
 
 template <class T> inline auto Image<T>::begin() const -> const_iterator
 {
-	return m_data.get();
+	return m_data.cbegin();
 }
 
 template <class T> inline auto Image<T>::end() const -> const_iterator
 {
-	return &(m_data.get())[m_size.span()];
+	return m_data.cend();
 }
 
 template <class T> inline auto Image<T>::cbegin() const -> const_iterator
 {
-	return &(m_data.get())[0];
+	return m_data.cbegin();
 }
 
 template <class T> inline auto Image<T>::cend() const -> const_iterator
 {
-	return &(m_data.get())[m_size.span()];
+	return m_data.cend();
 }
 
 template <class T> inline constexpr auto Image<T>::ravel(index2_t size, index2_t i) -> index_t
