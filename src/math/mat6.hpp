@@ -36,16 +36,12 @@ template <class T> inline constexpr auto Mat6<T>::identity() -> Mat6<T>
 
 template <class T> inline constexpr auto Mat6<T>::operator[](index2_t i) -> T &
 {
-	auto const ravel = [](index2_t shape, index2_t i) { return i.x * shape.y + i.y; };
-
-	return common::access<T>(data, ravel, {6, 6}, i);
+	return this->data[i.x * 6 + i.y];
 }
 
 template <class T> inline constexpr auto Mat6<T>::operator[](index2_t i) const -> T const &
 {
-	auto const ravel = [](index2_t shape, index2_t i) { return i.x * shape.y + i.y; };
-
-	return common::access<T>(data, ravel, {6, 6}, i);
+	return this->data[i.x * 6 + i.y];
 }
 
 } /* namespace iptsd::math */

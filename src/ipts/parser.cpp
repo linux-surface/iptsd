@@ -18,8 +18,6 @@ namespace iptsd::ipts {
 
 void Parser::read(const gsl::span<u8> dest)
 {
-	common::ensure(this->index + dest.size(), this->data.size());
-
 	auto begin = this->data.begin();
 	std::advance(begin, this->index);
 
