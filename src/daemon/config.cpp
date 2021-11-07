@@ -78,6 +78,9 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 		config->touch_advanced = value == "advanced";
 	}
 
+	if (section == "Touch" && name == "DisableOnPalm")
+		config->touch_disable_on_palm = to_bool(value);
+
 	if (section == "Basic" && name == "Pressure")
 		config->basic_pressure = std::stof(value);
 

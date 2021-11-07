@@ -82,20 +82,27 @@ static void handle_multi(const TouchDevice &touch, const std::vector<TouchInput>
 void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data)
 {
 	TouchDevice &touch = ctx.devices.touch;
+	const std::vector<TouchInput> &inputs = touch.manager.process(data);
 
-	// Dont process any touches and lift existing ones if a stylus is in proximity
-	if (ctx.devices.active_styli > 0 && ctx.config.stylus_disable_touch) {
+	bool blocked = false;
+
+	for (const auto &p : inputs)
+		blocked |= p.palm && ctx.config.touch_disable_on_palm;
+
+	if (ctx.devices.active_styli > 0 && ctx.config.stylus_disable_touch)
+		blocked = true;
+
+	// Dont process any touches and lift existing ones if input is blocked
+	if (!blocked) {
+		handle_multi(touch, inputs);
+		handle_single(touch, inputs);
+	} else {
 		lift_st(touch);
 
 		for (u8 i = 0; i < ctx.control.info.max_contacts; i++) {
 			touch.emit(EV_ABS, ABS_MT_SLOT, i);
 			lift_mt(touch);
 		}
-	} else {
-		const std::vector<TouchInput> &inputs = touch.manager.process(data);
-
-		handle_multi(touch, inputs);
-		handle_single(touch, inputs);
 	}
 
 	touch.emit(EV_SYN, SYN_REPORT, 0);

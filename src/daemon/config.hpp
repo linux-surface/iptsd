@@ -23,6 +23,7 @@ public:
 
 	bool touch_stability = true;
 	bool touch_advanced = false;
+	bool touch_disable_on_palm = false;
 
 	f32 basic_pressure = 0.04;
 
