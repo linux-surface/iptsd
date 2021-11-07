@@ -13,18 +13,19 @@ namespace iptsd::container {
 
 template <class T, index_t Nx, index_t Ny> struct Kernel {
 public:
-	std::array<T, Nx * Ny> buf;
-
-public:
 	using value_type = T;
 	using reference = value_type &;
 	using const_reference = value_type const &;
 	using pointer = value_type *;
 	using const_pointer = value_type const *;
-	using iterator = typename std::array<T, Nx * Ny>::iterator;
-	using const_iterator = typename std::array<T, Nx * Ny>::const_iterator;
-	using reverse_iterator = typename std::array<T, Nx * Ny>::reverse_iterator;
-	using const_reverse_iterator = typename std::array<T, Nx * Ny>::const_reverse_iterator;
+	using array_type = std::array<T, static_cast<std::size_t>(Nx) * Ny>;
+	using iterator = typename array_type::iterator;
+	using const_iterator = typename array_type::const_iterator;
+	using reverse_iterator = typename array_type::reverse_iterator;
+	using const_reverse_iterator = typename array_type::const_reverse_iterator;
+
+public:
+	array_type buf;
 
 public:
 	template <class... Args> constexpr Kernel(Args... args);
@@ -71,7 +72,9 @@ template <class T, index_t Nx, index_t Ny>
 inline constexpr auto Kernel<T, Nx, Ny>::operator=(Kernel<T, Nx, Ny> const &rhs)
 	-> Kernel<T, Nx, Ny> &
 {
-	this->buf = rhs.buf;
+	if (this != &rhs)
+		this->buf = rhs.buf;
+
 	return *this;
 }
 
@@ -99,6 +102,7 @@ auto Kernel<T, Nx, Ny>::operator[](index2_t const &i) const -> const_reference
 {
 	return common::access<T>(this->buf, ravel, {Nx, Ny}, i);
 }
+
 template <class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[](index2_t const &i) -> reference
 {
@@ -110,6 +114,7 @@ auto Kernel<T, Nx, Ny>::operator[](index_t const &i) const -> const_reference
 {
 	return common::access<T>(this->buf, Nx * Ny, i);
 }
+
 template <class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[](index_t const &i) -> reference
 {
@@ -120,6 +125,7 @@ template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::begin() -> it
 {
 	return this->buf.begin();
 }
+
 template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::end() -> iterator
 {
 	return this->buf.end();
@@ -129,6 +135,7 @@ template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::begin() const
 {
 	return this->buf.begin();
 }
+
 template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::end() const -> const_iterator
 {
 	return this->buf.end();

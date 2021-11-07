@@ -65,11 +65,8 @@ private:
 template <class T> Image<T>::Image() : m_size {0, 0}, m_data {nullptr}
 {}
 
-template <class T> Image<T>::Image(index2_t size) : m_size {0, 0}, m_data {nullptr}
-{
-	m_data = std::unique_ptr<T[]> {new T[size.span()]};
-	m_size = size;
-}
+template <class T> Image<T>::Image(index2_t size) : m_size {size}, m_data {new T[size.span()]}
+{}
 
 template <class T> Image<T>::Image(Image const &other) : m_size {0, 0}, m_data {nullptr}
 {

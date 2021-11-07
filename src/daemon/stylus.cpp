@@ -20,7 +20,7 @@ namespace iptsd::daemon {
 static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 {
 	if (altitude <= 0)
-		return std::tuple<i32, i32>(0, 0);
+		return {0, 0};
 
 	f64 alt = static_cast<f64>(altitude) / 18000 * M_PI;
 	f64 azm = static_cast<f64>(azimuth) / 18000 * M_PI;
@@ -37,7 +37,7 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 	i32 tx = 9000 - gsl::narrow_cast<i32>(atan_x * 4500 / M_PI_4);
 	i32 ty = gsl::narrow_cast<i32>(atan_y * 4500 / M_PI_4) - 9000;
 
-	return std::tuple<i32, i32>(tx, ty);
+	return {tx, ty};
 }
 
 void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
@@ -55,7 +55,7 @@ void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
 	bool btn_pen = data.proximity && !data.rubber;
 	bool btn_rubber = data.proximity && data.rubber;
 
-	const std::tuple<i32, i32> tilt = get_tilt(data.altitude, data.azimuth);
+	const auto [tx, ty] = get_tilt(data.altitude, data.azimuth);
 
 	stylus.emit(EV_KEY, BTN_TOUCH, data.contact);
 	stylus.emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
@@ -67,8 +67,8 @@ void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
 	stylus.emit(EV_ABS, ABS_PRESSURE, data.pressure);
 	stylus.emit(EV_ABS, ABS_MISC, data.timestamp);
 
-	stylus.emit(EV_ABS, ABS_TILT_X, std::get<0>(tilt));
-	stylus.emit(EV_ABS, ABS_TILT_Y, std::get<1>(tilt));
+	stylus.emit(EV_ABS, ABS_TILT_X, tx);
+	stylus.emit(EV_ABS, ABS_TILT_Y, ty);
 
 	stylus.emit(EV_SYN, SYN_REPORT, 0);
 }
