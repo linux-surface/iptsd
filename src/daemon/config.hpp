@@ -20,7 +20,7 @@ public:
 	i32 height = 0;
 
 	bool stylus_cone = true;
-	bool stylus_disable_touch = true;
+	bool stylus_disable_touch = false;
 
 	bool touch_stability = true;
 	bool touch_advanced = false;
