@@ -101,25 +101,25 @@ template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::data() const 
 template <class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[](index2_t const &i) const -> const_reference
 {
-	return common::access<T>(this->buf, ravel, {Nx, Ny}, i);
+	return this->buf[ravel({Nx, Ny}, i)];
 }
 
 template <class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[](index2_t const &i) -> reference
 {
-	return common::access<T>(this->buf, ravel, {Nx, Ny}, i);
+	return this->buf[ravel({Nx, Ny}, i)];
 }
 
 template <class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[](index_t const &i) const -> const_reference
 {
-	return common::access<T>(this->buf, Nx * Ny, i);
+	return this->buf[i];
 }
 
 template <class T, index_t Nx, index_t Ny>
 auto Kernel<T, Nx, Ny>::operator[](index_t const &i) -> reference
 {
-	return common::access<T>(this->buf, Nx * Ny, i);
+	return this->buf[i];
 }
 
 template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::begin() -> iterator
