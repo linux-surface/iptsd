@@ -8,7 +8,7 @@ Build-Depends:
  libinih-dev,
  meson,
  pkg-config,
- systemd,
+ systemd | openrc,
  udev
 
 Package: iptsd
