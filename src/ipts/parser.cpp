@@ -89,17 +89,18 @@ void Parser::parse_payload()
 
 void Parser::parse_hid(const struct ipts_data &header)
 {
-	const auto report = this->read<u8>();
+	const auto report_code = this->read<u8>();
 
-	switch (report) {
+	switch (report_code) {
 	case IPTS_HID_REPORT_SINGLETOUCH:
 		this->parse_singletouch();
 		break;
 	case IPTS_HID_REPORT_HEATMAP:
+	case IPTS_HID_REPORT_HEATMAP_V2:
 		this->parse_hid_heatmap(header);
 		break;
 	default:
-		this->skip(header.size - sizeof(report));
+		this->skip(header.size - sizeof(report_code));
 		break;
 	}
 }
