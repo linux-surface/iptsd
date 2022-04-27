@@ -16,7 +16,7 @@ jobs:
   build-arch:
     name: Build Arch Linux Package
     runs-on: ubuntu-latest
-    container: qzed/archlinux
+    container: archlinux
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -206,7 +206,7 @@ jobs:
     name: Update Arch Linux package repository
     needs: [release]
     runs-on: ubuntu-latest
-    container: qzed/archlinux
+    container: archlinux
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
