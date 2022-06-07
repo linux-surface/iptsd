@@ -9,7 +9,7 @@
 
 #include <cmath>
 #include <cstddef>
-#include <gsl/gsl_util>
+#include <gsl/gsl>
 #include <iterator>
 #include <memory>
 #include <tuple>

@@ -7,7 +7,6 @@
 #include <chrono>
 #include <cmath>
 #include <gsl/gsl>
-#include <gsl/gsl_util>
 
 namespace iptsd::daemon {
 

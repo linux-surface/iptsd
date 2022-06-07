@@ -16,7 +16,7 @@
 
 #include "eval/perf.hpp"
 
-#include <gsl/gsl_util>
+#include <gsl/gsl>
 #include <math/num.hpp>
 #include <math/vec2.hpp>
 #include <math/mat2.hpp>
