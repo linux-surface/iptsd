@@ -203,6 +203,10 @@ void Parser::parse_heatmap_dim(Reader &reader)
 	this->heatmap->z_min = dim.z_min;
 	this->heatmap->z_max = dim.z_max;
 
+	// On newer devices, z_max may be 0, lets use a sane value instead.
+	if (this->heatmap->z_max == 0)
+		this->heatmap->z_max = 255;
+
 	this->heatmap->has_dim = true;
 	this->heatmap->has_size = true;
 	this->try_submit_heatmap();
