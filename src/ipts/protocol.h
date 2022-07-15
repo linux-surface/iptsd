@@ -5,6 +5,9 @@
 
 #include <stdint.h>
 
+#define IPTS_HID_REPORT_USAGE_SCAN_TIME    0x56
+#define IPTS_HID_REPORT_USAGE_GESTURE_DATA 0x61
+
 #define IPTS_DATA_TYPE_PAYLOAD	    0x0
 #define IPTS_DATA_TYPE_ERROR	    0x1
 #define IPTS_DATA_TYPE_VENDOR_DATA  0x2

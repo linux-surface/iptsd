@@ -20,6 +20,7 @@ class Device : public hid::Device {
 public:
 	Device(const std::string &path) : hid::Device(path) {};
 
+	bool is_touch_data(u8 report);
 	std::size_t buffer_size();
 	void set_mode(bool multitouch);
 };

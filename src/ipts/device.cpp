@@ -2,11 +2,31 @@
 
 #include "device.hpp"
 
+#include "protocol.h"
+
 #include <cstddef>
+#include <hidrd/usage/page.h>
 #include <iterator>
 #include <vector>
 
 namespace iptsd::ipts {
+
+bool Device::is_touch_data(u8 report)
+{
+	auto &desc = this->descriptor();
+	auto usage = desc.usage(report);
+
+	if (usage.size() != 2)
+		return false;
+
+	if (usage[0] != IPTS_HID_REPORT_USAGE_SCAN_TIME)
+		return false;
+
+	if (usage[1] != IPTS_HID_REPORT_USAGE_GESTURE_DATA)
+		return false;
+
+	return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
+}
 
 std::size_t Device::buffer_size()
 {
@@ -14,12 +34,7 @@ std::size_t Device::buffer_size()
 	auto &desc = this->descriptor();
 
 	for (auto report : desc.reports(HIDRD_ITEM_MAIN_TAG_INPUT)) {
-		auto usage = desc.usage(report);
-
-		if (usage.size() != 2)
-			continue;
-
-		if (usage[0] != 0x56 || usage[1] != 0x61)
+		if (!this->is_touch_data(report))
 			continue;
 
 		size = std::max(size, desc.size(report));
