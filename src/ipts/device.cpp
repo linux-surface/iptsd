@@ -47,7 +47,7 @@ void Device::set_mode(bool multitouch)
 {
 	std::vector<u8> report;
 
-	report.push_back(0x5);
+	report.push_back(IPTS_HID_FEATURE_REPORT_MODE);
 
 	if (multitouch)
 		report.push_back(0x1);
