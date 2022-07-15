@@ -4,6 +4,7 @@
 #include <container/image.hpp>
 #include <gfx/visualization.hpp>
 #include <ipts/control.hpp>
+#include <ipts/device.hpp>
 #include <ipts/parser.hpp>
 
 #include <atomic>
@@ -11,6 +12,7 @@
 #include <cairomm/enums.h>
 #include <cairomm/refptr.h>
 #include <fstream>
+#include <gsl/span>
 #include <gtkmm/application.h>
 #include <gtkmm/applicationwindow.h>
 #include <gtkmm/drawingarea.h>
@@ -61,7 +63,8 @@ MainContext::MainContext(index2_t img_size)
 	: m_widget {nullptr}, m_vis {img_size}, m_img1 {img_size}, m_img2 {img_size}, m_tps1 {},
 	  m_tps2 {}, m_img_frnt {&m_img1}, m_img_back {&m_img2}, m_tps_frnt {&m_tps1},
 	  m_tps_back {&m_tps2}
-{}
+{
+}
 
 void MainContext::submit(container::Image<f32> const &img,
 			 std::vector<contacts::TouchPoint> const &tps)
@@ -112,13 +115,21 @@ static int main(int argc, char *argv[])
 	MainContext ctx {size};
 	contacts::advanced::TouchProcessor prc {size};
 
-	ipts::Control ctrl;
 	std::atomic_bool run(true);
 
 	std::thread updt([&]() -> void {
 		using namespace std::chrono_literals;
 
-		ipts::Parser parser(ctrl.info.buffer_size);
+		ipts::Parser parser {};
+		ipts::Device dev("/dev/hidraw2");
+
+		// Read the buffer size
+		std::size_t buffer_size = dev.buffer_size();
+		std::vector<u8> buffer(buffer_size);
+
+		// Enable multitouch mode
+		dev.set_mode(true);
+
 		parser.on_heatmap = [&](const auto &data) {
 			container::Image<f32> hm {size};
 
@@ -134,16 +145,14 @@ static int main(int argc, char *argv[])
 		};
 
 		while (run.load()) {
-			u32 doorbell = ctrl.doorbell();
-
-			while (doorbell > ctrl.current_doorbell && run.load()) {
-				ctrl.read(parser.buffer());
-				parser.parse();
-				ctrl.send_feedback();
-			}
+			ssize_t rsize = dev.read(buffer);
+			parser.parse(gsl::span<u8>(buffer.data(), rsize));
 
 			std::this_thread::sleep_for(10ms);
 		}
+
+		// Disable multitouch mode
+		dev.set_mode(false);
 	});
 
 	auto app = Gtk::Application::create(argc, argv);
