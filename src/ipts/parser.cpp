@@ -3,6 +3,7 @@
 #include "parser.hpp"
 
 #include "protocol.h"
+#include "reader.hpp"
 
 #include <common/access.hpp>
 #include <common/types.hpp>
@@ -10,259 +11,190 @@
 #include <bitset>
 #include <cstring>
 #include <gsl/gsl>
+#include <gsl/span>
 #include <memory>
 #include <stdexcept>
 #include <utility>
 
 namespace iptsd::ipts {
 
-void Parser::read(const gsl::span<u8> dest)
+void Heatmap::resize(u16 size)
 {
-	auto begin = this->data.begin();
-	std::advance(begin, this->index);
+	this->width = 0;
+	this->height = 0;
+	this->size = size;
 
-	auto end = begin;
-	std::advance(end, dest.size());
-
-	std::copy(begin, end, dest.begin());
-	this->index += dest.size();
+	if (this->data.size() != this->size)
+		this->data.resize(this->size);
 }
 
-void Parser::skip(const size_t size)
+void Heatmap::resize(u8 w, u8 h)
 {
-	this->index += size;
+	this->resize(w * h);
+	this->width = w;
+	this->height = h;
 }
 
-void Parser::reset()
+void Parser::parse(const gsl::span<u8> data)
 {
-	this->index = 0;
-	std::fill(this->data.begin(), this->data.end(), 0);
+	Reader reader(data);
+
+	// Read the report header
+	const auto header = reader.read<struct ipts_header>();
+
+	// Check if we are dealing with GuC based or HID based IPTS
+	if (header.timestamp == 0xFFFF)
+		this->parse_raw(reader);
+	else
+		this->parse_hid(reader);
 }
 
-void Parser::parse(bool reset)
+void Parser::parse_raw(Reader &reader)
 {
-	const auto header = this->read<struct ipts_data>();
+	const auto header = reader.read<struct ipts_raw_header>();
 
-	switch (header.type) {
-	case IPTS_DATA_TYPE_PAYLOAD:
-		this->parse_payload();
-		break;
-	case IPTS_DATA_TYPE_HID_REPORT:
-		this->parse_hid(header);
-		break;
-	default:
-		this->skip(header.size);
-	}
-
-	if (reset)
-		this->reset();
-}
-
-void Parser::parse_loop()
-{
-	while (this->index < this->data.size())
-		this->parse(false);
-
-	this->reset();
-}
-
-void Parser::parse_payload()
-{
-	const auto payload = this->read<struct ipts_payload>();
-
-	for (u32 i = 0; i < payload.frames; i++) {
-		const auto frame = this->read<struct ipts_payload_frame>();
+	for (u32 i = 0; i < header.frames; i++) {
+		const auto frame = reader.read<struct ipts_raw_frame>();
 
 		switch (frame.type) {
-		case IPTS_PAYLOAD_FRAME_TYPE_STYLUS:
-			this->parse_stylus(frame);
-			break;
-		case IPTS_PAYLOAD_FRAME_TYPE_HEATMAP:
-			this->parse_heatmap(frame);
+		case IPTS_RAW_FRAME_TYPE_STYLUS:
+		case IPTS_RAW_FRAME_TYPE_HEATMAP:
+			this->parse_reports(reader, frame.size);
 			break;
 		default:
-			this->skip(frame.size);
+			reader.skip(frame.size);
 			break;
 		}
 	}
 }
 
-void Parser::parse_hid(const struct ipts_data &header)
+void Parser::parse_hid(Reader &reader)
 {
-	const auto report_code = this->read<u8>();
+	u32 size = 0;
+	const auto header = reader.read<struct ipts_hid_frame>();
 
-	switch (report_code) {
-	case IPTS_HID_REPORT_SINGLETOUCH:
-		this->parse_singletouch();
-		break;
-	case IPTS_HID_REPORT_HEATMAP:
-	case IPTS_HID_REPORT_HEATMAP_V2:
-		this->parse_hid_heatmap(header);
-		break;
-	default:
-		this->skip(header.size - sizeof(report_code));
-		break;
+	while (size < header.size) {
+		const auto frame = reader.read<struct ipts_hid_frame>();
+		size += frame.size;
+
+		switch (frame.type) {
+		case IPTS_HID_FRAME_TYPE_HEATMAP:
+			break;
+		case IPTS_HID_FRAME_TYPE_REPORTS:
+			this->parse_reports(reader, frame.size - sizeof(frame));
+			break;
+		default:
+			reader.skip(frame.size - sizeof(frame));
+			break;
+		}
 	}
 }
 
-void Parser::parse_singletouch()
-{
-	const auto singletouch = this->read<struct ipts_singletouch_data>();
-
-	SingletouchData data;
-	data.touch = singletouch.touch;
-	data.x = singletouch.x;
-	data.y = singletouch.y;
-
-	if (this->on_singletouch)
-		this->on_singletouch(data);
-}
-
-void Parser::parse_stylus(const struct ipts_payload_frame &frame)
+void Parser::parse_reports(Reader &reader, u32 framesize)
 {
 	u32 size = 0;
 
-	while (size < frame.size) {
-		if (size + sizeof(struct ipts_report) > frame.size)
+	while (size < framesize) {
+		if (size + sizeof(struct ipts_report) > framesize)
 			break;
 
-		const auto report = this->read<struct ipts_report>();
+		const auto report = reader.read<struct ipts_report>();
 		size += sizeof(struct ipts_report);
 
-		if (size + report.size > frame.size)
+		if (size + report.size > framesize)
 			break;
 
 		switch (report.type) {
 		case IPTS_REPORT_TYPE_STYLUS_V1:
+			this->parse_stylus_v1(reader);
+			break;
 		case IPTS_REPORT_TYPE_STYLUS_V2:
-			this->parse_stylus_report(report);
+			this->parse_stylus_v2(reader);
+			break;
+		case IPTS_REPORT_TYPE_HEATMAP_DIM:
+			this->parse_heatmap_dim(reader);
+			break;
+		case IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP:
+			this->parse_heatmap_timestamp(reader);
+			break;
+		case IPTS_REPORT_TYPE_HEATMAP:
+			this->parse_heatmap_data(reader);
 			break;
 		default:
-			this->skip(report.size);
+			reader.skip(report.size);
 			break;
 		}
 
 		size += report.size;
 	}
 
-	this->skip(frame.size - size);
+	reader.skip(framesize - size);
 }
 
-void Parser::parse_stylus_report(const struct ipts_report &report)
+void Parser::parse_stylus_v1(Reader &reader)
 {
 	StylusData stylus;
 
-	const auto stylus_report = this->read<struct ipts_stylus_report>();
+	const auto stylus_report = reader.read<struct ipts_stylus_report>();
 	stylus.serial = stylus_report.serial;
 
 	for (u8 i = 0; i < stylus_report.elements; i++) {
-		if (report.type == IPTS_REPORT_TYPE_STYLUS_V1) {
-			const auto data = this->read<struct ipts_stylus_data_v1>();
+		const auto data = reader.read<struct ipts_stylus_data_v1>();
 
-			const std::bitset<8> mode(data.mode);
-			stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
-			stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
-			stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
-			stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
+		const std::bitset<8> mode(data.mode);
+		stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
+		stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
+		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
+		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
-			stylus.x = data.x;
-			stylus.y = data.y;
-			stylus.pressure = data.pressure * 4;
-			stylus.azimuth = 0;
-			stylus.altitude = 0;
-			stylus.timestamp = 0;
-		}
-
-		if (report.type == IPTS_REPORT_TYPE_STYLUS_V2) {
-			const auto data = this->read<struct ipts_stylus_data_v2>();
-
-			const std::bitset<16> mode(data.mode);
-			stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
-			stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
-			stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
-			stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
-
-			stylus.x = data.x;
-			stylus.y = data.y;
-			stylus.pressure = data.pressure;
-			stylus.azimuth = data.azimuth;
-			stylus.altitude = data.altitude;
-			stylus.timestamp = data.timestamp;
-		}
+		stylus.x = data.x;
+		stylus.y = data.y;
+		stylus.pressure = data.pressure * 4;
+		stylus.azimuth = 0;
+		stylus.altitude = 0;
+		stylus.timestamp = 0;
 
 		if (this->on_stylus)
 			this->on_stylus(stylus);
 	}
 }
 
-void Parser::parse_heatmap(const struct ipts_payload_frame &frame)
+void Parser::parse_stylus_v2(Reader &reader)
 {
-	u32 size = 0;
-	bool has_hm = false;
-	bool has_dim = false;
-	bool has_timestamp = false;
+	StylusData stylus;
 
-	struct ipts_heatmap_dim dim {};
-	struct ipts_heatmap_timestamp time {};
+	const auto stylus_report = reader.read<struct ipts_stylus_report>();
+	stylus.serial = stylus_report.serial;
 
-	while (size < frame.size) {
-		if (size + sizeof(struct ipts_report) > frame.size)
-			break;
+	for (u8 i = 0; i < stylus_report.elements; i++) {
+		const auto data = reader.read<struct ipts_stylus_data_v2>();
 
-		const auto report = this->read<struct ipts_report>();
-		size += sizeof(struct ipts_report);
+		const std::bitset<16> mode(data.mode);
+		stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
+		stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
+		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
+		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
-		if (size + report.size > frame.size)
-			break;
+		stylus.x = data.x;
+		stylus.y = data.y;
+		stylus.pressure = data.pressure;
+		stylus.azimuth = data.azimuth;
+		stylus.altitude = data.altitude;
+		stylus.timestamp = data.timestamp;
 
-		switch (report.type) {
-		case IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP: {
-			time = this->read<struct ipts_heatmap_timestamp>();
-			has_timestamp = true;
-			break;
-		}
-		case IPTS_REPORT_TYPE_HEATMAP_DIM: {
-			dim = this->read<struct ipts_heatmap_dim>();
-			has_dim = true;
-			break;
-		}
-		case IPTS_REPORT_TYPE_HEATMAP: {
-			if (!has_dim || !has_timestamp)
-				break;
-
-			this->parse_heatmap_data(dim, time);
-			has_hm = true;
-			break;
-		}
-		default:
-			this->skip(report.size);
-			break;
-		}
-
-		size += report.size;
+		if (this->on_stylus)
+			this->on_stylus(stylus);
 	}
-
-	this->skip(frame.size - size);
-
-	if (!has_hm)
-		return;
-
-	if (this->on_heatmap)
-		this->on_heatmap(*this->heatmap);
 }
 
-void Parser::parse_heatmap_data(const struct ipts_heatmap_dim &dim,
-				const struct ipts_heatmap_timestamp &time)
+void Parser::parse_heatmap_dim(Reader &reader)
 {
-	if (this->heatmap) {
-		if (this->heatmap->width != dim.width || this->heatmap->height != dim.height)
-			this->heatmap.reset(nullptr);
-	}
+	auto const dim = reader.read<struct ipts_heatmap_dim>();
 
 	if (!this->heatmap)
-		this->heatmap = std::make_unique<Heatmap>(dim.width, dim.height);
+		this->heatmap = std::make_unique<Heatmap>();
 
-	this->read(gsl::span(this->heatmap->data));
+	this->heatmap->resize(dim.width, dim.height);
 
 	this->heatmap->y_min = dim.y_min;
 	this->heatmap->y_max = dim.y_max;
@@ -271,92 +203,71 @@ void Parser::parse_heatmap_data(const struct ipts_heatmap_dim &dim,
 	this->heatmap->z_min = dim.z_min;
 	this->heatmap->z_max = dim.z_max;
 
-	this->heatmap->count = time.count;
-	this->heatmap->timestamp = time.timestamp;
+	this->heatmap->has_dim = true;
+	this->heatmap->has_size = true;
+	this->try_submit_heatmap();
 }
 
-void Parser::parse_hid_heatmap(const struct ipts_data &header)
+void Parser::parse_heatmap_timestamp(Reader &reader)
 {
-	const auto hid_header = this->read<struct ipts_hid_heatmap_header>();
-
-	if (this->heatmap) {
-		if (this->heatmap->size != hid_header.hm_size)
-			this->heatmap.reset(nullptr);
-	}
+	auto const timestamp = reader.read<struct ipts_heatmap_timestamp>();
 
 	if (!this->heatmap)
-		this->heatmap = std::make_unique<Heatmap>(hid_header.hm_size);
+		this->heatmap = std::make_unique<Heatmap>();
 
-	this->read(gsl::span(this->heatmap->data));
+	this->heatmap->count = timestamp.count;
+	this->heatmap->timestamp = timestamp.timestamp;
 
-	this->parse_hid_heatmap_data();
-	this->skip(header.size - hid_header.size - 7);
+	this->heatmap->has_time = true;
+	this->try_submit_heatmap();
 }
 
-void Parser::parse_hid_heatmap_data()
+void Parser::parse_heatmap_data(Reader &reader)
 {
-	const auto frame_size = this->read<u32>();
+	if (!this->heatmap)
+		return;
 
-	// The first three bytes contain bogus data, skip them.
-	this->skip(3);
-	u32 size = 3;
+	if (!this->heatmap->has_size)
+		return;
 
-	bool has_dim = false;
-	bool has_timestamp = false;
+	reader.read(gsl::span(this->heatmap->data));
 
-	while (size < frame_size) {
-		if (size + sizeof(struct ipts_report) > frame_size)
-			break;
+	this->heatmap->has_data = true;
+	this->try_submit_heatmap();
+}
 
-		const auto report = this->read<struct ipts_report>();
-		size += sizeof(struct ipts_report);
+void Parser::parse_heatmap_frame(Reader &reader)
+{
+	const auto header = reader.read<struct ipts_heatmap_header>();
 
-		if (size + report.size > frame_size)
-			break;
+	if (!this->heatmap)
+		this->heatmap = std::make_unique<Heatmap>();
 
-		switch (report.type) {
-		case IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP: {
-			const auto time = this->read<struct ipts_heatmap_timestamp>();
+	this->heatmap->resize(header.size);
+	this->parse_heatmap_data(reader);
+}
 
-			this->heatmap->count = time.count;
-			this->heatmap->timestamp = time.timestamp;
+void Parser::try_submit_heatmap()
+{
+	if (!this->heatmap->has_dim)
+		return;
 
-			has_timestamp = true;
-			break;
-		}
-		case IPTS_REPORT_TYPE_HEATMAP_DIM: {
-			const auto dim = this->read<struct ipts_heatmap_dim>();
+	if (!this->heatmap->has_time)
+		return;
 
-			this->heatmap->height = dim.height;
-			this->heatmap->width = dim.width;
-			this->heatmap->y_min = dim.y_min;
-			this->heatmap->y_max = dim.y_max;
-			this->heatmap->x_min = dim.x_min;
-			this->heatmap->x_max = dim.x_max;
+	if (!this->heatmap->has_size)
+		return;
 
-			// These values are both 0 in the binary data, which
-			// doesnt make sense. Lets use sane ones instead.
-			this->heatmap->z_min = 0;
-			this->heatmap->z_max = 255;
-
-			has_dim = true;
-			break;
-		}
-		default:
-			this->skip(report.size);
-			break;
-		}
-
-		size += report.size;
-	}
-
-	this->skip(frame_size - size);
-
-	if (!has_dim || !has_timestamp)
+	if (!this->heatmap->has_data)
 		return;
 
 	if (this->on_heatmap)
 		this->on_heatmap(*this->heatmap);
+
+	this->heatmap->has_dim = false;
+	this->heatmap->has_time = false;
+	this->heatmap->has_data = false;
+	this->heatmap->has_size = false;
 }
 
 } // namespace iptsd::ipts

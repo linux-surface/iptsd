@@ -22,6 +22,7 @@ void Descriptor::load(gsl::span<u8> raw)
 	std::copy(raw.begin(), raw.end(), this->descriptor.begin());
 
 	while (size < this->descriptor.size()) {
+		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 		auto item = reinterpret_cast<const hidrd_item *>(&this->descriptor[size]);
 		size += hidrd_item_get_size(item);
 

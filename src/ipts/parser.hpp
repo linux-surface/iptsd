@@ -4,6 +4,7 @@
 #define IPTSD_IPTS_PARSER_HPP
 
 #include "protocol.h"
+#include "reader.hpp"
 
 #include <common/types.hpp>
 
@@ -11,6 +12,7 @@
 #include <functional>
 #include <gsl/gsl>
 #include <memory>
+#include <optional>
 #include <vector>
 
 namespace iptsd::ipts {
@@ -55,64 +57,39 @@ public:
 
 	std::vector<u8> data;
 
-	Heatmap(u8 w, u8 h) : width(w), height(h), size(w * h), data(size) {};
-	Heatmap(u16 size) : width(0), height(0), size(size), data(size) {};
+	bool has_dim = false;
+	bool has_time = false;
+	bool has_data = false;
+	bool has_size = false;
+
+	void resize(u16 size);
+	void resize(u8 w, u8 h);
 };
 
 class Parser {
 private:
-	std::vector<u8> data;
-	size_t index = 0;
-
 	std::unique_ptr<Heatmap> heatmap;
 
-	void read(const gsl::span<u8> dest);
-	void skip(const size_t size);
-	void reset();
+	void parse_raw(Reader &reader);
+	void parse_hid(Reader &reader);
+	void parse_reports(Reader &reader, u32 framesize);
 
-	template <class T> T read();
+	void parse_stylus_v1(Reader &reader);
+	void parse_stylus_v2(Reader &reader);
 
-	void parse_payload();
-	void parse_hid(const struct ipts_data &header);
+	void parse_heatmap_dim(Reader &reader);
+	void parse_heatmap_timestamp(Reader &reader);
+	void parse_heatmap_data(Reader &reader);
+	void parse_heatmap_frame(Reader &reader);
 
-	void parse_singletouch();
-	void parse_hid_heatmap(const struct ipts_data &header);
-	void parse_hid_heatmap_data();
-
-	void parse_stylus(const struct ipts_payload_frame &frame);
-	void parse_stylus_report(const struct ipts_report &report);
-
-	void parse_heatmap(const struct ipts_payload_frame &frame);
-	void parse_heatmap_data(const struct ipts_heatmap_dim &dim,
-				const struct ipts_heatmap_timestamp &time);
+	void try_submit_heatmap();
 
 public:
-	std::function<void(const SingletouchData &)> on_singletouch;
 	std::function<void(const StylusData &)> on_stylus;
 	std::function<void(const Heatmap &)> on_heatmap;
 
-	Parser(size_t size) : data(size) {};
-
-	const gsl::span<u8> buffer();
-	void parse(bool reset = true);
-	void parse_loop();
+	void parse(gsl::span<u8> data);
 };
-
-inline const gsl::span<u8> Parser::buffer()
-{
-	return gsl::span(this->data);
-}
-
-template <class T> inline T Parser::read()
-{
-	T value {};
-
-	// We have to break type safety here, since all we have is a bytestream.
-	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-	this->read(gsl::span(reinterpret_cast<u8 *>(&value), sizeof(value)));
-
-	return value;
-}
 
 } /* namespace iptsd::ipts */
 
