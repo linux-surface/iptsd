@@ -1,11 +1,13 @@
 sources = [
 	'control.cpp',
+	'device.cpp',
 	'parser.cpp',
 ]
 
 deps = [
 	gsl,
 	iptsd_common,
+	iptsd_hid,
 ]
 
 libipts = static_library('ipts', sources, dependencies: deps,

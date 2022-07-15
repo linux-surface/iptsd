@@ -68,6 +68,10 @@ gsl = dependency('Microsoft.GSL', modules: ['Microsoft.GSL::GSL'],
 		 fallback: ['microsoft-gsl', 'microsoft_gsl_dep'])
 spdlog = dependency('spdlog', fallback: ['spdlog', 'spdlog_dep'])
 
+# hidrd does not ship pkg-config files
+hidrd_item = cpp.find_library('hidrd_item')
+hidrd_usage = cpp.find_library('hidrd_usage')
+
 # Find libstdc++fs for older GCC
 stdcppfs = cpp.find_library('stdc++fs')
 
@@ -75,6 +79,7 @@ subdir('common')
 subdir('math')
 
 subdir('container')
+subdir('hid')
 subdir('ipts')
 
 subdir('contacts')

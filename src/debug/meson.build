@@ -30,6 +30,7 @@ if dbg_plot and cli11.found() and cairomm.found()
 		iptsd_contacts,
 		iptsd_container,
 		iptsd_gfx,
+		iptsd_hid,
 		iptsd_ipts,
 		iptsd_math,
 		spdlog,

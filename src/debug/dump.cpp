@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <common/signal.hpp>
 #include <ipts/control.hpp>
+#include <ipts/device.hpp>
 #include <ipts/ipts.h>
 #include <ipts/protocol.h>
 
 #include <CLI/CLI.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -12,6 +15,7 @@
 #include <fmt/format.h>
 #include <fstream>
 #include <gsl/gsl>
+#include <hid/device.hpp>
 #include <iostream>
 #include <iterator>
 #include <spdlog/spdlog.h>
@@ -19,7 +23,7 @@
 #include <vector>
 
 struct PrettyBuf {
-	char const *data;
+	u8 const *data;
 	size_t size;
 };
 
@@ -94,9 +98,13 @@ namespace iptsd::debug::dump {
 
 static int main(int argc, char *argv[])
 {
+	std::filesystem::path device;
 	std::filesystem::path filename;
 
 	CLI::App app {"Read raw IPTS data"};
+	app.add_option("-d,--device", device, "The hidraw device to open")
+		->type_name("FILE")
+		->required();
 	app.add_option("-b,--binary", filename, "Write data to binary file instead of stdout")
 		->type_name("FILE");
 
@@ -108,10 +116,37 @@ static int main(int argc, char *argv[])
 		file.open(filename, std::ios::out | std::ios::binary);
 	}
 
-	ipts::Control ctrl;
+	ipts::Device dev(device);
 
-	fmt::print("Vendor:       {:04X}\n", ctrl.info.vendor);
-	fmt::print("Product:      {:04X}\n", ctrl.info.product);
+	std::atomic_bool should_exit {false};
+
+	auto const _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
+	auto const _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
+
+	// Get the buffer size from the HID descriptor
+	std::size_t buffer_size = dev.buffer_size();
+	std::vector<u8> buffer(buffer_size);
+
+	fmt::print("Vendor:       {:04X}\n", dev.vendor());
+	fmt::print("Product:      {:04X}\n", dev.product());
+	fmt::print("Buffer Size:  {}\n", buffer_size);
+	fmt::print("\n");
+
+	// Enable multitouch mode
+	dev.set_mode(true);
+
+	while (!should_exit) {
+		ssize_t rsize = dev.read(buffer);
+
+		const PrettyBuf buf {buffer.data(), (size_t)rsize};
+		fmt::print("== Size: {} ==\n", rsize);
+		fmt::print("{:ox}\n", buf);
+	}
+
+	dev.set_mode(false);
+
+	/*
+
 	fmt::print("Version:      {}\n", ctrl.info.version);
 	fmt::print("Buffer Size:  {}\n", ctrl.info.buffer_size);
 	fmt::print("Max Contacts: {}\n", ctrl.info.max_contacts);
@@ -144,6 +179,8 @@ static int main(int argc, char *argv[])
 
 		ctrl.send_feedback();
 	}
+
+	*/
 
 	return 0;
 }
