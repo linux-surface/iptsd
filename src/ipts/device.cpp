@@ -33,12 +33,8 @@ std::size_t Device::buffer_size()
 	std::size_t size = 0;
 	auto &desc = this->descriptor();
 
-	for (auto report : desc.reports(HIDRD_ITEM_MAIN_TAG_INPUT)) {
-		if (!this->is_touch_data(report))
-			continue;
-
+	for (auto report : desc.reports(HIDRD_ITEM_MAIN_TAG_INPUT))
 		size = std::max(size, desc.size(report));
-	}
 
 	return size;
 }
