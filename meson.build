@@ -6,6 +6,7 @@ project('iptsd', 'cpp',
 		'warning_level=3',
 		'werror=true',
 		'sysconfdir=/etc',
+		'buildtype=debugoptimized',
 	])
 
 prefix = get_option('prefix')
