@@ -3,7 +3,6 @@
 #include "config.hpp"
 #include "context.hpp"
 #include "devices.hpp"
-#include "singletouch.hpp"
 #include "stylus.hpp"
 #include "touch.hpp"
 
@@ -64,7 +63,6 @@ static int main()
 
 	spdlog::info("Connected to device {:04X}:{:04X}", info.vendor, info.product);
 
-	ctx.parser.on_singletouch = [&](const auto &data) { iptsd_singletouch_input(ctx, data); };
 	ctx.parser.on_stylus = [&](const auto &data) { iptsd_stylus_input(ctx, data); };
 	ctx.parser.on_heatmap = [&](const auto &data) { iptsd_touch_input(ctx, data); };
 

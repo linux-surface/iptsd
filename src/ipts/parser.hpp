@@ -17,13 +17,6 @@
 
 namespace iptsd::ipts {
 
-class SingletouchData {
-public:
-	bool touch = false;
-	u16 x = 0;
-	u16 y = 0;
-};
-
 class StylusData {
 public:
 	bool proximity = false;

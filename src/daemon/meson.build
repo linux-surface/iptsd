@@ -3,7 +3,6 @@ sources = [
 	'config.cpp',
 	'devices.cpp',
 	'main.cpp',
-	'singletouch.cpp',
 	'stylus.cpp',
 	'touch-manager.cpp',
 	'touch.cpp',
