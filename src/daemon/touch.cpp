@@ -99,7 +99,7 @@ void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data)
 	} else {
 		lift_st(touch);
 
-		for (u8 i = 0; i < ctx.control.info.max_contacts; i++) {
+		for (u8 i = 0; i < IPTS_MAX_CONTACTS; i++) {
 			touch.emit(EV_ABS, ABS_MT_SLOT, i);
 			lift_mt(touch);
 		}

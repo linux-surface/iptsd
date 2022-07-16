@@ -111,14 +111,14 @@ void Config::load_dir(const std::string &name)
 		struct iptsd_config_device dev {};
 		ini_parse(p.path().c_str(), parse_dev, &dev);
 
-		if (dev.vendor != this->info.vendor || dev.product != this->info.product)
+		if (dev.vendor != this->vendor || dev.product != this->product)
 			continue;
 
 		ini_parse(p.path().c_str(), parse_conf, this);
 	}
 }
 
-Config::Config(struct ipts_device_info info) : info(info)
+Config::Config(i16 vendor, i16 product) : vendor(vendor), product(product)
 {
 	this->load_dir(IPTSD_CONFIG_DIR);
 	this->load_dir("./etc/config");

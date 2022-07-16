@@ -33,6 +33,8 @@
 #define IPTS_MAX_Y    7200
 #define IPTS_DIAGONAL 12000
 
+#define IPTS_MAX_CONTACTS 16
+
 struct ipts_header {
 	uint8_t report;
 	uint16_t timestamp;

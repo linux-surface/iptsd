@@ -39,7 +39,6 @@ public:
 	contacts::TouchProcessor processor;
 
 	Config conf;
-	u8 max_contacts;
 
 	std::vector<TouchInput> inputs;
 

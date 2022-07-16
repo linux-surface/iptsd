@@ -31,7 +31,7 @@ enum class mode_type {
 
 static int main(int argc, char *argv[])
 {
-	auto mode = mode_type::plot;
+/*	auto mode = mode_type::plot;
 	auto path_in = std::string {};
 	auto path_out = std::string {};
 
@@ -146,7 +146,7 @@ static int main(int argc, char *argv[])
 		// write file
 		surface->write_to_png(dir_out / fmt::format("out-{:04d}.png", i));
 	}
-
+*/
 	return 0;
 }
 

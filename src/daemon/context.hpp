@@ -15,15 +15,10 @@ namespace iptsd::daemon {
 
 class Context {
 public:
-	ipts::Control control;
-	ipts::Parser parser;
-
 	Config config;
 	DeviceManager devices;
 
-	Context()
-		: control(), parser(control.info.buffer_size), config(control.info),
-		  devices(config) {};
+	Context(i16 vendor, i16 product) : config(vendor, product), devices(config) {};
 };
 
 } /* namespace iptsd::daemon */

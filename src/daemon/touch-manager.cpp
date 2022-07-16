@@ -25,10 +25,10 @@
 namespace iptsd::daemon {
 
 TouchManager::TouchManager(Config conf)
-	: size(), conf(conf), max_contacts(conf.info.max_contacts), inputs(max_contacts),
-	  last(max_contacts), distances(max_contacts * max_contacts)
+	: size(), conf(conf), inputs(IPTS_MAX_CONTACTS),
+	  last(IPTS_MAX_CONTACTS), distances(IPTS_MAX_CONTACTS * IPTS_MAX_CONTACTS)
 {
-	for (i32 i = 0; i < this->max_contacts; i++) {
+	for (i32 i = 0; i < IPTS_MAX_CONTACTS; i++) {
 		this->last[i].index = i;
 		this->last[i].active = false;
 	}
@@ -51,8 +51,7 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 
 	const std::vector<contacts::TouchPoint> &contacts = this->processor.process();
 
-	i32 max_contacts = this->conf.info.max_contacts;
-	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()), max_contacts);
+	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()), IPTS_MAX_CONTACTS);
 
 	for (i32 i = 0; i < count; i++) {
 		f64 x = contacts[i].mean.x;
@@ -99,7 +98,7 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		this->inputs[i].active = true;
 	}
 
-	for (i32 i = count; i < max_contacts; i++) {
+	for (i32 i = count; i < IPTS_MAX_CONTACTS; i++) {
 		this->inputs[i].index = i;
 		this->inputs[i].active = false;
 		this->inputs[i].palm = false;
@@ -134,12 +133,12 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 void TouchManager::track()
 {
 	// Calculate the distances between current and previous inputs
-	for (u32 i = 0; i < this->max_contacts; i++) {
-		for (u32 j = 0; j < this->max_contacts; j++) {
+	for (u32 i = 0; i < IPTS_MAX_CONTACTS; i++) {
+		for (u32 j = 0; j < IPTS_MAX_CONTACTS; j++) {
 			const TouchInput &in = this->inputs[i];
 			const TouchInput &last = this->last[j];
 
-			u32 idx = i * this->max_contacts + j;
+			u32 idx = i * IPTS_MAX_CONTACTS + j;
 
 			// If one of the two inputs is / was not active, generate
 			// a very high distance, so that the pair will only get chosen
@@ -160,12 +159,12 @@ void TouchManager::track()
 	// Copy the index from the previous to the current input. Then invalidate
 	// all distance entries that contain the two inputs, and repeat until we
 	// found an index for all inputs.
-	for (u32 k = 0; k < this->max_contacts; k++) {
+	for (u32 k = 0; k < IPTS_MAX_CONTACTS; k++) {
 		auto it = std::min_element(this->distances.begin(), this->distances.end());
 		u32 idx = std::distance(this->distances.begin(), it);
 
-		u32 i = idx / max_contacts;
-		u32 j = idx % max_contacts;
+		u32 i = idx / IPTS_MAX_CONTACTS;
+		u32 j = idx % IPTS_MAX_CONTACTS;
 
 		this->inputs[i].index = this->last[j].index;
 		if (this->inputs[i].active)
@@ -181,9 +180,9 @@ void TouchManager::track()
 		// Set the distance of all pairs that contain one of i and j
 		// to something even higher than the distance chosen above.
 		// This prevents i and j from getting selected again.
-		for (u32 x = 0; x < this->max_contacts; x++) {
-			u32 idx1 = i * this->max_contacts + x;
-			u32 idx2 = x * this->max_contacts + j;
+		for (u32 x = 0; x < IPTS_MAX_CONTACTS; x++) {
+			u32 idx1 = i * IPTS_MAX_CONTACTS + x;
+			u32 idx2 = x * IPTS_MAX_CONTACTS + j;
 
 			this->distances[idx1] = (1 << 30) + idx1;
 			this->distances[idx2] = (1 << 30) + idx2;

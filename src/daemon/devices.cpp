@@ -33,9 +33,8 @@ StylusDevice::StylusDevice(Config conf, u32 serial, std::shared_ptr<Cone> cone)
 	: UinputDevice(), serial(serial), cone(std::move(cone))
 {
 	this->name = "IPTS Stylus";
-	this->vendor = conf.info.vendor;
-	this->product = conf.info.product;
-	this->version = conf.info.version;
+	this->vendor = conf.vendor;
+	this->product = conf.product;
 
 	this->set_evbit(EV_KEY);
 	this->set_evbit(EV_ABS);
@@ -64,9 +63,8 @@ StylusDevice::StylusDevice(Config conf, u32 serial, std::shared_ptr<Cone> cone)
 TouchDevice::TouchDevice(Config conf) : UinputDevice(), manager(conf)
 {
 	this->name = "IPTS Touch";
-	this->vendor = conf.info.vendor;
-	this->product = conf.info.product;
-	this->version = conf.info.version;
+	this->vendor = conf.vendor;
+	this->product = conf.product;
 
 	this->set_evbit(EV_ABS);
 	this->set_evbit(EV_KEY);
@@ -79,8 +77,8 @@ TouchDevice::TouchDevice(Config conf) : UinputDevice(), manager(conf)
 	i32 res_y = res(IPTS_MAX_Y, conf.height);
 	i32 res_d = res(IPTS_DIAGONAL, gsl::narrow_cast<i32>(diag));
 
-	this->set_absinfo(ABS_MT_SLOT, 0, conf.info.max_contacts, 0);
-	this->set_absinfo(ABS_MT_TRACKING_ID, 0, conf.info.max_contacts, 0);
+	this->set_absinfo(ABS_MT_SLOT, 0, IPTS_MAX_CONTACTS, 0);
+	this->set_absinfo(ABS_MT_TRACKING_ID, 0, IPTS_MAX_CONTACTS, 0);
 	this->set_absinfo(ABS_MT_POSITION_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_MT_POSITION_Y, 0, IPTS_MAX_Y, res_y);
 	this->set_absinfo(ABS_MT_TOOL_TYPE, 0, MT_TOOL_MAX, 0);

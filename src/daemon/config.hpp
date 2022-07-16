@@ -33,9 +33,10 @@ public:
 
 	f32 stability_threshold = 0.1;
 
-	struct ipts_device_info info;
+	i16 vendor;
+	i16 product;
 
-	Config(struct ipts_device_info info);
+	Config(i16 vendor, i16 product);
 
 private:
 	void load_dir(const std::string &name);
