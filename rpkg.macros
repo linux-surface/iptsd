@@ -1,0 +1,18 @@
+#/usr/bin/env bash
+
+function create_tarball {
+	NAME="$(grep -E "Name:" "$INPUT_PATH" | cut -d':' -f2 | sed 's|^ *||g')"
+	VERSION="$(grep -E "Version:" "$INPUT_PATH" | cut -d':' -f2 | sed 's|^ *||g')"
+
+	NAME="$NAME-$VERSION"
+	TARBALL="$NAME.tar.gz"
+
+	pack_sources "$INPUT_DIR_PATH" "$NAME" "$OUTDIR/$TARBALL"
+	ret="$?"
+
+	if [ ! "$ret" -eq 0 ]; then
+		return "$ret"
+	fi
+
+	echo -n "$TARBALL"
+}

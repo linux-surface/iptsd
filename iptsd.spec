@@ -7,7 +7,7 @@ Summary: Userspace daemon for Intel Precise Touch & Stylus
 License: GPLv2+
 
 URL: https://github.com/linux-surface/iptsd
-Source: {{{ git_dir_pack dir_name="iptsd" source_name="iptsd.tar.gz"  }}}
+Source: {{{ create_tarball }}}
 
 BuildRequires: meson
 BuildRequires: gcc-g++
@@ -36,7 +36,7 @@ iptsd is a userspace daemon that processes touch events from the IPTS
 kernel driver, and sends them back to the kernel using uinput devices.
 
 %prep
-{{{ git_dir_setup_macro dir_name="iptsd" }}}
+%autosetup
 
 %build
 %meson

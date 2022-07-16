@@ -18,14 +18,11 @@ install)
 	dnf builddep -y *.spec
 	;;
 build)
+	# Restore git repo
+	git config --global --add safe.directory "$PWD"
+	git restore .
+
 	mkdir rpm
-
-	# Make sure that we have a git repository
-	if [ ! -d ".git" ]; then
-		git init
-		git add .
-	fi
-
 	rpkg local --outdir $PWD/rpm
 	;;
 sign)
