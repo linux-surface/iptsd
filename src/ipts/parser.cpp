@@ -39,14 +39,21 @@ void Parser::parse(const gsl::span<u8> data)
 {
 	Reader reader(data);
 
-	// Read the report header
-	const auto header = reader.read<struct ipts_header>();
+	reader.skip(sizeof(struct ipts_header));
+	const auto header = reader.read<struct ipts_hid_frame>();
 
 	// Check if we are dealing with GuC based or HID based IPTS
-	if (header.timestamp == 0xFFFF)
+	switch (header.type) {
+	case IPTS_HID_FRAME_TYPE_RAW:
 		this->parse_raw(reader);
-	else
-		this->parse_hid(reader);
+		break;
+	case IPTS_HID_FRAME_TYPE_ROOT:
+		this->parse_hid(reader, header.size);
+		break;
+	default:
+		reader.skip(header.size);
+		break;
+	}
 }
 
 void Parser::parse_raw(Reader &reader)
@@ -68,12 +75,11 @@ void Parser::parse_raw(Reader &reader)
 	}
 }
 
-void Parser::parse_hid(Reader &reader)
+void Parser::parse_hid(Reader &reader, u32 headersize)
 {
 	u32 size = 0;
-	const auto header = reader.read<struct ipts_hid_frame>();
 
-	while (size < header.size) {
+	while (size < headersize) {
 		const auto frame = reader.read<struct ipts_hid_frame>();
 		size += frame.size;
 

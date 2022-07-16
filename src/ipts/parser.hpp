@@ -71,7 +71,7 @@ private:
 	std::unique_ptr<Heatmap> heatmap;
 
 	void parse_raw(Reader &reader);
-	void parse_hid(Reader &reader);
+	void parse_hid(Reader &reader, u32 headersize);
 	void parse_reports(Reader &reader, u32 framesize);
 
 	void parse_stylus_v1(Reader &reader);
