@@ -1,1 +1,2 @@
-KERNEL=="ipts/*", TAG+="systemd"
+SUBSYSTEM=="hidraw", DRIVERS=="ipts", TAG+="systemd", ENV{SYSTEMD_WANTS}+="iptsd@$env{DEVNAME}.service"
+SUBSYSTEM=="hidraw", DRIVERS=="ithc", TAG+="systemd", ENV{SYSTEMD_WANTS}+="iptsd@$env{DEVNAME}.service"

@@ -45,15 +45,6 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %install
 %meson_install
 
-%post
-%systemd_post iptsd.service
-
-%preun
-%systemd_preun iptsd.service
-
-%postun
-%systemd_postun_with_restart iptsd.service
-
 %check
 %meson_test
 
@@ -65,6 +56,6 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %{_bindir}/ipts-dump
 %{_bindir}/ipts-proto-plot
 %{_bindir}/ipts-proto-rt
-%{_unitdir}/iptsd.service
+%{_unitdir}/iptsd@.service
 %{_udevrulesdir}/50-ipts.rules
 %{_datadir}/ipts/*

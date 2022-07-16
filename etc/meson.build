@@ -1,7 +1,7 @@
 install_subdir('config', install_dir: configdir, strip_directory: true)
 
-configure_file(input: 'systemd/iptsd.service.in',
-	       output: 'iptsd.service',
+configure_file(input: 'systemd/iptsd@.service.in',
+	       output: 'iptsd@.service',
 	       configuration: conf)
 
 configure_file(input: 'openrc/iptsd.initd.in',
@@ -19,7 +19,7 @@ if service_manager.contains('systemd')
 		udevdir = udev.get_pkgconfig_variable('udevdir')
 		rulesdir = join_paths(udevdir, 'rules.d')
 
-		install_data(join_paths(meson.current_build_dir(), 'iptsd.service'),
+		install_data(join_paths(meson.current_build_dir(), 'iptsd@.service'),
 			     install_dir: unitdir)
 
 		install_data('udev/50-ipts.rules', install_dir: rulesdir)
