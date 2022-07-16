@@ -23,6 +23,7 @@ cxxflags = [
 	'-Wno-missing-braces',
 	'-Wno-missing-field-initializers',
 	'-Wno-unused-parameter',
+	'-fpermissive',
 ]
 
 optflags = []
