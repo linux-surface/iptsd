@@ -1,4 +1,3 @@
-install_data('iptsd-reset-sensor', install_dir: bindir)
 install_subdir('config', install_dir: configdir, strip_directory: true)
 
 configure_file(input: 'systemd/iptsd.service.in',

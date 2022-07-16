@@ -55,9 +55,7 @@ static int main()
 	Context ctx {};
 
 	std::atomic_bool should_exit {false};
-	std::atomic_bool should_reset {false};
 
-	auto const _sigusr1 = common::signal<SIGUSR1>([&](int) { should_reset = true; });
 	auto const _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
 	auto const _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
 
@@ -75,13 +73,6 @@ static int main()
 			timeout = system_clock::now() + 5s;
 
 		std::this_thread::sleep_for(timeout > system_clock::now() ? 10ms : 200ms);
-
-		if (should_reset) {
-			spdlog::info("Resetting touch sensor");
-
-			ctx.control.reset();
-			should_reset = false;
-		}
 
 		if (should_exit) {
 			spdlog::info("Stopping");
