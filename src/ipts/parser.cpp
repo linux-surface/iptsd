@@ -79,6 +79,7 @@ void Parser::parse_hid(Reader &reader)
 
 		switch (frame.type) {
 		case IPTS_HID_FRAME_TYPE_HEATMAP:
+			this->parse_heatmap_frame(reader);
 			break;
 		case IPTS_HID_FRAME_TYPE_REPORTS:
 			this->parse_reports(reader, frame.size - sizeof(frame));
