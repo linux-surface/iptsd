@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <exception>
 #include <filesystem>
 #include <fmt/format.h>
 #include <fstream>
@@ -96,7 +97,7 @@ template <> struct fmt::formatter<PrettyBuf> {
 
 namespace iptsd::debug::dump {
 
-static int main(int argc, char *argv[])
+static int main(gsl::span<char *> args)
 {
 	std::filesystem::path device;
 	std::filesystem::path filename;
@@ -108,7 +109,7 @@ static int main(int argc, char *argv[])
 	app.add_option("-b,--binary", filename, "Write data to binary file instead of stdout")
 		->type_name("FILE");
 
-	CLI11_PARSE(app, argc, argv);
+	CLI11_PARSE(app, args.size(), args.data());
 
 	std::ofstream file;
 	if (!filename.empty()) {
@@ -136,11 +137,16 @@ static int main(int argc, char *argv[])
 	dev.set_mode(true);
 
 	while (!should_exit) {
-		ssize_t rsize = dev.read(buffer);
+		try {
+			ssize_t rsize = dev.read(buffer);
 
-		const PrettyBuf buf {buffer.data(), (size_t)rsize};
-		fmt::print("== Size: {} ==\n", rsize);
-		fmt::print("{:ox}\n", buf);
+			const PrettyBuf buf {buffer.data(), (size_t)rsize};
+			fmt::print("== Size: {} ==\n", rsize);
+			fmt::print("{:ox}\n", buf);
+		} catch (std::exception &e) {
+			spdlog::error(e.what());
+			break;
+		}
 	}
 
 	dev.set_mode(false);
@@ -192,7 +198,7 @@ int main(int argc, char *argv[])
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return iptsd::debug::dump::main(argc, argv);
+		return iptsd::debug::dump::main(gsl::span<char *>(argv, argc));
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;
