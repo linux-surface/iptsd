@@ -47,7 +47,7 @@ void Parser::parse(const gsl::span<u8> data)
 	case IPTS_HID_FRAME_TYPE_RAW:
 		this->parse_raw(reader);
 		break;
-	case IPTS_HID_FRAME_TYPE_ROOT:
+	case IPTS_HID_FRAME_TYPE_HID:
 		this->parse_hid(reader, header.size);
 		break;
 	default:
