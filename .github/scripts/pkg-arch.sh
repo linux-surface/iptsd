@@ -12,7 +12,7 @@ case "$1" in
 install)
 	# Setup build environment
 	pacman -Syu --noconfirm
-	pacman -S --noconfirm sudo binutils fakeroot base-devel
+	pacman -S --noconfirm sudo binutils fakeroot base-devel git
 	;;
 build)
 	# Fix permissions (can't makepkg as
