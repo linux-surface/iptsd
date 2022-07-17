@@ -9,7 +9,6 @@ Build-Depends:
  pkg-config,
  libcairomm-1.0-dev,
  libgtkmm-3.0-dev,
- libhidrd0-dev,
  systemd,
  udev
 

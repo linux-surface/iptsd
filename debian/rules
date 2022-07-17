@@ -4,7 +4,7 @@ export DH_VERBOSE=1
 
 # Create a giant statically linked blob that contains all of our dependencies.
 override_dh_auto_configure:
-	dh_auto_configure -- -Ddefault_library=static --wrap-mode=forcefallback
+	dh_auto_configure -- --default-library=static --wrap-mode=forcefallback
 
 override_dh_strip:
 	dh_strip --no-automatic-dbgsym
