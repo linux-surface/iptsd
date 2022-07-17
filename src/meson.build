@@ -66,9 +66,17 @@ inih = dependency('inih', fallback: ['inih', 'inih_dep'])
 spdlog = dependency('spdlog', fallback: ['spdlog', 'spdlog_dep'])
 gsl = dependency('Microsoft.GSL', modules: ['Microsoft.GSL::GSL'], fallback: ['microsoft-gsl', 'microsoft_gsl_dep'])
 
-# hidrd does not ship pkg-config files
-hidrd_item = cpp.find_library('hidrd_item')
-hidrd_usage = cpp.find_library('hidrd_usage')
+forcefallback = get_option('wrap_mode') == 'forcefallback'
+
+hidrd_item = cpp.find_library('hidrd_item', required: false)
+if forcefallback or not hidrd_item.found()
+  hidrd_item = dependency('hidrd_item', default_options: ['default_library=static'])
+endif
+
+hidrd_usage = cpp.find_library('hidrd_usage', required: false)
+if forcefallback or not hidrd_usage.found()
+  hidrd_usage = dependency('hidrd_usage', default_options: ['default_library=static'])
+endif
 
 # Find libstdc++fs for older GCC
 stdcppfs = cpp.find_library('stdc++fs')
