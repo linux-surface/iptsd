@@ -61,10 +61,12 @@ endif
 add_project_arguments('-DSPDLOG_FMT_EXTERNAL', language: 'cpp')
 
 # Dependencies
-fmt = dependency('fmt', fallback: ['fmt', 'fmt_dep'])
-inih = dependency('inih', fallback: ['inih', 'inih_dep'])
-spdlog = dependency('spdlog', fallback: ['spdlog', 'spdlog_dep'])
-gsl = dependency('Microsoft.GSL', modules: ['Microsoft.GSL::GSL'], fallback: ['microsoft-gsl', 'microsoft_gsl_dep'])
+fmt = dependency('fmt', fallback: ['fmt', 'fmt_dep'], default_options: ['default_library=static'])
+inih = dependency('inih', fallback: ['inih', 'inih_dep'], default_options: ['default_library=static'])
+spdlog = dependency('spdlog', fallback: ['spdlog', 'spdlog_dep'], default_options: ['default_library=static'])
+gsl = dependency('Microsoft.GSL', modules: ['Microsoft.GSL::GSL'],
+                 fallback: ['microsoft-gsl', 'microsoft_gsl_dep'],
+                 default_options: ['default_library=static'])
 
 forcefallback = get_option('wrap_mode') == 'forcefallback'
 
@@ -94,7 +96,7 @@ subdir('daemon')
 if get_option('debug_tools').length() > 0
   gtkmm = dependency('gtkmm-3.0', required: false)
   cairomm = dependency('cairomm-1.0', required: false)
-  cli11 = dependency('CLI11', required: false, fallback: ['cli11', 'CLI11_dep'])
+  cli11 = dependency('CLI11', required: false, fallback: ['cli11', 'CLI11_dep'], default_options: ['default_library=static'])
 
   subdir('gfx')
   subdir('debug')
