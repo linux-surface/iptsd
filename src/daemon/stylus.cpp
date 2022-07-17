@@ -8,7 +8,7 @@
 
 #include <common/types.hpp>
 #include <ipts/parser.hpp>
-#include <ipts/protocol.h>
+#include <ipts/protocol.hpp>
 
 #include <cmath>
 #include <gsl/gsl>

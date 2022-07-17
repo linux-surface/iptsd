@@ -2,7 +2,7 @@
 
 #include "device.hpp"
 
-#include "protocol.h"
+#include "protocol.hpp"
 
 #include <cstddef>
 #include <hidrd/usage/page.h>

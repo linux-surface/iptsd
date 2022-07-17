@@ -8,7 +8,7 @@
 #include <contacts/processor.hpp>
 #include <container/image.hpp>
 #include <ipts/parser.hpp>
-#include <ipts/protocol.h>
+#include <ipts/protocol.hpp>
 #include <math/mat2.hpp>
 #include <math/vec2.hpp>
 

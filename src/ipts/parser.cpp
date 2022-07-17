@@ -2,7 +2,7 @@
 
 #include "parser.hpp"
 
-#include "protocol.h"
+#include "protocol.hpp"
 #include "reader.hpp"
 
 #include <common/access.hpp>

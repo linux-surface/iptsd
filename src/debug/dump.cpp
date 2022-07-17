@@ -4,7 +4,7 @@
 #include <ipts/control.hpp>
 #include <ipts/device.hpp>
 #include <ipts/ipts.h>
-#include <ipts/protocol.h>
+#include <ipts/protocol.hpp>
 
 #include <CLI/CLI.hpp>
 #include <cstddef>

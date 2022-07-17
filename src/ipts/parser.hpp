@@ -3,7 +3,7 @@
 #ifndef IPTSD_IPTS_PARSER_HPP
 #define IPTSD_IPTS_PARSER_HPP
 
-#include "protocol.h"
+#include "protocol.hpp"
 #include "reader.hpp"
 
 #include <common/types.hpp>

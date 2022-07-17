@@ -7,7 +7,7 @@
 
 #include <common/types.hpp>
 #include <ipts/ipts.h>
-#include <ipts/protocol.h>
+#include <ipts/protocol.hpp>
 
 #include <climits>
 #include <cmath>
