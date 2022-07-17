@@ -52,7 +52,7 @@ StylusDevice::StylusDevice(Config conf, u32 serial, std::shared_ptr<Cone> cone)
 
 	this->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
-	this->set_absinfo(ABS_PRESSURE, 0, 4096, 0);
+	this->set_absinfo(ABS_PRESSURE, 0, IPTS_MAX_PRESSURE, 0);
 	this->set_absinfo(ABS_TILT_X, -9000, 9000, gsl::narrow_cast<i32>(18000 / M_PI));
 	this->set_absinfo(ABS_TILT_Y, -9000, 9000, gsl::narrow_cast<i32>(18000 / M_PI));
 	this->set_absinfo(ABS_MISC, 0, USHRT_MAX, 0);

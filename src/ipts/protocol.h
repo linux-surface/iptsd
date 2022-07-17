@@ -29,11 +29,12 @@
 #define IPTS_STYLUS_REPORT_MODE_BIT_BUTTON    2
 #define IPTS_STYLUS_REPORT_MODE_BIT_RUBBER    3
 
-#define IPTS_MAX_X    9600
-#define IPTS_MAX_Y    7200
-#define IPTS_DIAGONAL 12000
-
+#define IPTS_MAX_X	  9600
+#define IPTS_MAX_Y	  7200
+#define IPTS_MAX_PRESSURE 4096
 #define IPTS_MAX_CONTACTS 16
+
+#define IPTS_DIAGONAL 12000
 
 struct ipts_header {
 	uint8_t report;
