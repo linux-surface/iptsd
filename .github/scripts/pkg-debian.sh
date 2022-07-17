@@ -10,14 +10,20 @@ fi
 
 case "$1" in
 install)
+	. /etc/os-release
+
 	# Setup build environment
 	sed 's/^deb /deb-src /' /etc/apt/sources.list >> /etc/apt/sources.list
+	if [ ! "$VERSION_CODENAME" = "" ]; then
+		echo "deb http://deb.debian.org/debian $VERSION_CODENAME-backports main" >> /etc/apt/sources.list
+	fi
+
 	apt-get -y update
 	apt-get -y install build-essential fakeroot debhelper \
 		dpkg-sig git devscripts
 
 	# Install package dependencies
-	mk-build-deps -ir -t 'apt-get -y'
+	mk-build-deps -ir -t "apt-get -y -t $VERSION_CODENAME-backports"
 	;;
 build)
 	dpkg-buildpackage -b -us -uc

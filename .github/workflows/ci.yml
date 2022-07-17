@@ -62,7 +62,7 @@ jobs:
 
   build-deb:
     name: Build Debian Package
-    container: debian:buster
+    container: debian:bullseye
     runs-on: ubuntu-latest
     needs: [checkout]
     steps:
@@ -215,7 +215,7 @@ jobs:
 
   repo-deb:
     name: Update Debian package repository
-    container: debian:buster
+    container: debian:bullseye
     runs-on: ubuntu-latest
     needs: [release]
     steps:

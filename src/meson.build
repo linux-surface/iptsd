@@ -7,7 +7,6 @@ includes = [
 ]
 
 cxxflags = [
-  '-Wundef',
   '-Wuninitialized',
   '-Wno-unused-result',
   '-Wlogical-op',
