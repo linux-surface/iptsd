@@ -61,10 +61,12 @@ private:
 };
 
 template <class T> Image<T>::Image() : m_size {0, 0}
-{}
+{
+}
 
 template <class T> Image<T>::Image(index2_t size) : m_size {size}, m_data(size.span())
-{}
+{
+}
 
 template <class T> inline auto Image<T>::size() const -> index2_t
 {

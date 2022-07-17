@@ -25,8 +25,8 @@
 namespace iptsd::daemon {
 
 TouchManager::TouchManager(Config conf)
-	: size(), conf(conf), inputs(IPTS_MAX_CONTACTS),
-	  last(IPTS_MAX_CONTACTS), distances(IPTS_MAX_CONTACTS * IPTS_MAX_CONTACTS)
+	: size(), conf(conf), inputs(IPTS_MAX_CONTACTS), last(IPTS_MAX_CONTACTS),
+	  distances(IPTS_MAX_CONTACTS * IPTS_MAX_CONTACTS)
 {
 	for (i32 i = 0; i < IPTS_MAX_CONTACTS; i++) {
 		this->last[i].index = i;

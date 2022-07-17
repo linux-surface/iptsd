@@ -63,11 +63,13 @@ public:
 template <class T, index_t Nx, index_t Ny>
 template <class... Args>
 inline constexpr Kernel<T, Nx, Ny>::Kernel(Args... args) : buf {std::forward<Args>(args)...}
-{}
+{
+}
 
 template <class T, index_t Nx, index_t Ny>
 inline constexpr Kernel<T, Nx, Ny>::Kernel(Kernel<T, Nx, Ny> const &other) : buf {other.buf}
-{}
+{
+}
 
 template <class T, index_t Nx, index_t Ny>
 inline constexpr auto Kernel<T, Nx, Ny>::operator=(Kernel<T, Nx, Ny> const &rhs)

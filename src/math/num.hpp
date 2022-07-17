@@ -7,7 +7,8 @@
 
 namespace iptsd::math {
 
-template <typename> struct num {};
+template <typename> struct num {
+};
 
 template <> struct num<f32> {
 	static inline constexpr f32 zero = 0.0f;

@@ -108,7 +108,8 @@ private:
 
 inline Cubehelix::Cubehelix(f32 start, f32 rotations, f32 hue, f32 gamma)
 	: m_start {start}, m_rotations {rotations}, m_hue {hue}, m_gamma {gamma}
-{}
+{
+}
 
 inline auto Cubehelix::map_value(f32 value) const -> Srgb
 {
@@ -157,7 +158,8 @@ private:
 template <std::size_t N>
 template <class... Args>
 Lut<N>::Lut(Args &&...args) : m_table {std::forward<Args>(args)...}
-{}
+{
+}
 
 template <std::size_t N> auto Lut<N>::map_value(f32 value) const -> Srgb
 {
