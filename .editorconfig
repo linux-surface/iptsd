@@ -10,3 +10,7 @@ trim_trailing_whitespace = true
 
 [*.{c,h,cpp,hpp}]
 max_line_length = 100
+
+[meson.build]
+indent_size = 2
+indent_style = space

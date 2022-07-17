@@ -11,7 +11,5 @@ deps = [
 	iptsd_hid,
 ]
 
-libipts = static_library('ipts', sources, dependencies: deps,
-			 include_directories: includes)
-
+libipts = static_library('ipts', sources, dependencies: deps, include_directories: includes)
 iptsd_ipts = declare_dependency(dependencies: deps, link_with: libipts)
