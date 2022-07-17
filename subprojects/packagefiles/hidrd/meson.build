@@ -4,7 +4,7 @@ project('hidrd', 'c', meson_version: '>=0.56.0')
 autotools = import('unstable_external_project')
 
 # Bootstrap configure
-run_command('bootstrap')
+run_command('bootstrap', check: true)
 
 configure_options = [
   '--prefix=@PREFIX@',
