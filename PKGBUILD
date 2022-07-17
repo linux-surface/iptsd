@@ -24,18 +24,18 @@ makedepends=(
 build() {
 	cd $startdir
 
-	arch-meson build --wrap-mode=default
-	ninja -C build
+	arch-meson build --wrap-mode=default --force-fallback-for=hidrd_usage,hidrd_item,cli11
+	meson compile -C build
 }
 
 check() {
 	cd $startdir
 
-	ninja -C build test
+	meson test -C build
 }
 
 package() {
 	cd $startdir
 
-	DESTDIR="$pkgdir" ninja -C build install
+	DESTDIR="$pkgdir" meson install -C build --skip-subprojects
 }
