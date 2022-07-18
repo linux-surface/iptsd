@@ -8,10 +8,10 @@ if service_manager.contains('systemd')
   systemd = dependency('systemd', required: false)
 
   if systemd.found()
-    unitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
+    unitdir = systemd.get_variable(pkgconfig: 'systemdsystemunitdir')
 
     udev = dependency('udev')
-    udevdir = udev.get_pkgconfig_variable('udevdir')
+    udevdir = udev.get_variable(pkgconfig: 'udevdir')
     rulesdir = join_paths(udevdir, 'rules.d')
 
     unit = join_paths(meson.current_build_dir(), 'iptsd@.service')
