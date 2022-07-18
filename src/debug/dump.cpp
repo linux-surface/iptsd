@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <common/signal.hpp>
-#include <ipts/control.hpp>
 #include <ipts/device.hpp>
 #include <ipts/ipts.h>
 #include <ipts/protocol.hpp>

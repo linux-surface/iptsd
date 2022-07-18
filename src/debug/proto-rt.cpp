@@ -3,7 +3,6 @@
 #include <contacts/eval/perf.hpp>
 #include <container/image.hpp>
 #include <gfx/visualization.hpp>
-#include <ipts/control.hpp>
 #include <ipts/device.hpp>
 #include <ipts/parser.hpp>
 
@@ -115,7 +114,7 @@ static int main(int argc, char *argv[])
 	MainContext ctx {size};
 	contacts::advanced::TouchProcessor prc {size};
 
-	std::atomic_bool run(true);
+	std::atomic_bool run = true;
 
 	std::thread updt([&]() -> void {
 		using namespace std::chrono_literals;

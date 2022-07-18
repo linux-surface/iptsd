@@ -1,5 +1,4 @@
 sources = [
-	'control.cpp',
 	'device.cpp',
 	'parser.cpp',
 	'reader.cpp',

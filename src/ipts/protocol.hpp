@@ -4,6 +4,7 @@
 #define IPTSD_IPTS_PROTOCOL_HPP
 
 #include <common/types.hpp>
+
 #include <array>
 
 /*

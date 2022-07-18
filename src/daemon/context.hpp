@@ -6,10 +6,7 @@
 #include "config.hpp"
 #include "devices.hpp"
 
-#include <ipts/control.hpp>
-#include <ipts/parser.hpp>
-
-#include <utility>
+#include <common/types.hpp>
 
 namespace iptsd::daemon {
 

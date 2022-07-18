@@ -3,13 +3,12 @@
 #include "config.hpp"
 #include "context.hpp"
 #include "devices.hpp"
-#include "ipts/device.hpp"
 #include "stylus.hpp"
 #include "touch.hpp"
 
 #include <common/signal.hpp>
 #include <common/types.hpp>
-#include <ipts/control.hpp>
+#include <ipts/device.hpp>
 #include <ipts/ipts.h>
 #include <ipts/parser.hpp>
 
