@@ -25,8 +25,13 @@ cxxflags = [
 
 optflags = [
   '-ffast-math',
-  '-march=x86-64-v3',
 ]
+
+target_cpu = target_machine.cpu_family()
+
+if target_cpu == 'x86_64'
+  optflags += '-march=x86-64-v3'
+endif
 
 cxxflags = cpp.get_supported_arguments(cxxflags)
 add_project_arguments(cxxflags, language: 'cpp')
