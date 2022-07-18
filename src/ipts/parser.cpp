@@ -255,6 +255,8 @@ void Parser::parse_heatmap_frame(Reader &reader)
 		this->heatmap = std::make_unique<Heatmap>();
 
 	this->heatmap->resize(header.size);
+
+	this->heatmap->has_size = true;
 	this->parse_heatmap_data(reader);
 }
 
