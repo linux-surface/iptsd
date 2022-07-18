@@ -10,45 +10,45 @@
 /*
  * If a report contains both of these usages, the report is used to send touch data
  */
-#define IPTS_HID_REPORT_USAGE_SCAN_TIME	   0x56
-#define IPTS_HID_REPORT_USAGE_GESTURE_DATA 0x61
+constexpr u8 IPTS_HID_REPORT_USAGE_SCAN_TIME = 0x56;
+constexpr u8 IPTS_HID_REPORT_USAGE_GESTURE_DATA = 0x61;
 
 /*
  * The feature report that is used for switching into multitouch mode and back
  */
-#define IPTS_HID_FEATURE_REPORT_MODE 0x5
+constexpr u8 IPTS_HID_FEATURE_REPORT_MODE = 0x5;
 
-#define IPTS_RAW_FRAME_TYPE_STYLUS  0x6
-#define IPTS_RAW_FRAME_TYPE_HEATMAP 0x8
+constexpr u8 IPTS_RAW_FRAME_TYPE_STYLUS = 0x6;
+constexpr u8 IPTS_RAW_FRAME_TYPE_HEATMAP = 0x8;
 
-#define IPTS_HID_FRAME_TYPE_HID	    0x0
-#define IPTS_HID_FRAME_TYPE_HEATMAP 0x1
-#define IPTS_HID_FRAME_TYPE_RAW	    0xEE
-#define IPTS_HID_FRAME_TYPE_REPORTS 0xFF
+constexpr u8 IPTS_HID_FRAME_TYPE_HID = 0x0;
+constexpr u8 IPTS_HID_FRAME_TYPE_HEATMAP = 0x1;
+constexpr u8 IPTS_HID_FRAME_TYPE_RAW = 0xEE;
+constexpr u8 IPTS_HID_FRAME_TYPE_REPORTS = 0xFF;
 
-#define IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP 0x400
-#define IPTS_REPORT_TYPE_HEATMAP_DIM	   0x403
-#define IPTS_REPORT_TYPE_HEATMAP	   0x425
-#define IPTS_REPORT_TYPE_STYLUS_V1	   0x410
-#define IPTS_REPORT_TYPE_STYLUS_V2	   0x460
+constexpr u16 IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP = 0x400;
+constexpr u16 IPTS_REPORT_TYPE_HEATMAP_DIM = 0x403;
+constexpr u16 IPTS_REPORT_TYPE_HEATMAP = 0x425;
+constexpr u16 IPTS_REPORT_TYPE_STYLUS_V1 = 0x410;
+constexpr u16 IPTS_REPORT_TYPE_STYLUS_V2 = 0x460;
 
-#define IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY 0
-#define IPTS_STYLUS_REPORT_MODE_BIT_CONTACT   1
-#define IPTS_STYLUS_REPORT_MODE_BIT_BUTTON    2
-#define IPTS_STYLUS_REPORT_MODE_BIT_RUBBER    3
+constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY = 0;
+constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_CONTACT = 1;
+constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_BUTTON = 2;
+constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_RUBBER = 3;
 
 /*
  * Static limits for the data that is returned by IPTS
  */
-#define IPTS_MAX_X	  9600
-#define IPTS_MAX_Y	  7200
-#define IPTS_MAX_PRESSURE 4096
-#define IPTS_MAX_CONTACTS 16
+constexpr u16 IPTS_MAX_X = 9600;
+constexpr u16 IPTS_MAX_Y = 7200;
+constexpr u16 IPTS_MAX_PRESSURE = 4096;
+constexpr u8 IPTS_MAX_CONTACTS = 16;
 
 /*
  * sqrt(IPTS_MAX_X² + IPTS_MAX_Y²)
  */
-#define IPTS_DIAGONAL 12000
+constexpr u32 IPTS_DIAGONAL = 12000;
 
 struct [[gnu::packed]] ipts_header {
 	u8 report;
