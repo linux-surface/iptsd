@@ -1,2 +1,3 @@
 SUBSYSTEM=="hidraw", DRIVERS=="ipts", TAG+="systemd", ENV{SYSTEMD_WANTS}+="iptsd@$env{DEVNAME}.service"
 SUBSYSTEM=="hidraw", DRIVERS=="ithc", TAG+="systemd", ENV{SYSTEMD_WANTS}+="iptsd@$env{DEVNAME}.service"
+SUBSYSTEM=="hidraw", DRIVERS=="spi_hid", TAG+="systemd", ENV{SYSTEMD_WANTS}+="iptsd@$env{DEVNAME}.service"
