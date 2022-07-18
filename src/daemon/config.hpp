@@ -32,6 +32,8 @@ public:
 	f32 cone_distance = 1600;
 
 	f32 stability_threshold = 0.1;
+	f32 position_stability_threshold = 8;
+	f64 position_stability_threshold_square = 8 * 8;
 
 	i16 vendor;
 	i16 product;

@@ -177,6 +177,25 @@ void TouchManager::track()
 					  dev2 < this->conf.stability_threshold) ||
 					 !this->conf.touch_stability;
 
+		f64 dx = this->inputs[i].x - this->last[j].x;
+		f64 dy = this->inputs[i].y - this->last[j].y;
+		f64 sqdist = dx * dx + dy * dy;
+
+		// Is the position stable?
+		if (sqdist < this->conf.position_stability_threshold_square) {
+			this->inputs[i].x = this->last[j].x;
+			this->inputs[i].y = this->last[j].y;
+		} else {
+			f64 dist = std::sqrt(sqdist);
+			f64 x = this->inputs[i].x -
+				this->conf.position_stability_threshold * (dx / dist);
+			f64 y = this->inputs[i].y -
+				this->conf.position_stability_threshold * (dy / dist);
+
+			this->inputs[i].x = gsl::narrow_cast<i32>(x);
+			this->inputs[i].y = gsl::narrow_cast<i32>(y);
+		}
+
 		// Set the distance of all pairs that contain one of i and j
 		// to something even higher than the distance chosen above.
 		// This prevents i and j from getting selected again.

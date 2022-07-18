@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cmath>
 #include <configure.h>
 #include <filesystem>
 #include <ini.h>
@@ -95,6 +96,12 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 
 	if (section == "Stability" && name == "Threshold")
 		config->stability_threshold = std::stof(value);
+
+	if (section == "Stability" && name == "PositionThreshold") {
+		config->position_stability_threshold = std::stof(value);
+		config->position_stability_threshold_square =
+			std::pow(config->position_stability_threshold, 2);
+	}
 
 	return 1;
 }
