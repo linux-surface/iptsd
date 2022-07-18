@@ -28,16 +28,36 @@ constexpr u8 IPTS_HID_FRAME_TYPE_HEATMAP = 0x1;
 constexpr u8 IPTS_HID_FRAME_TYPE_RAW     = 0xEE;
 constexpr u8 IPTS_HID_FRAME_TYPE_REPORTS = 0xFF;
 
-constexpr u8 IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP = 0x00;
-constexpr u8 IPTS_REPORT_TYPE_HEATMAP_DIM       = 0x03;
-constexpr u8 IPTS_REPORT_TYPE_HEATMAP           = 0x25;
-constexpr u8 IPTS_REPORT_TYPE_STYLUS_V1         = 0x10;
-constexpr u8 IPTS_REPORT_TYPE_STYLUS_V2         = 0x60;
+constexpr u8 IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP        = 0x00;
+constexpr u8 IPTS_REPORT_TYPE_HEATMAP_DIM              = 0x03;
+constexpr u8 IPTS_REPORT_TYPE_HEATMAP                  = 0x25;
+constexpr u8 IPTS_REPORT_TYPE_STYLUS_V1                = 0x10;
+constexpr u8 IPTS_REPORT_TYPE_STYLUS_V2                = 0x60;
+constexpr u8 IPTS_REPORT_TYPE_FREQUENCY_NOISE          = 0x04;
+constexpr u8 IPTS_REPORT_TYPE_PEN_GENERAL              = 0x57;
+constexpr u8 IPTS_REPORT_TYPE_PEN_JNR_OUTPUT           = 0x58;
+constexpr u8 IPTS_REPORT_TYPE_PEN_NOISE_METRICS_OUTPUT = 0x59;
+constexpr u8 IPTS_REPORT_TYPE_PEN_DATA_SELECTION       = 0x5a;
+constexpr u8 IPTS_REPORT_TYPE_PEN_MAGNITUDE            = 0x5b;
+constexpr u8 IPTS_REPORT_TYPE_PEN_DFT_WINDOW           = 0x5c;
+constexpr u8 IPTS_REPORT_TYPE_PEN_MULTIPLE_REGION      = 0x5d;
+constexpr u8 IPTS_REPORT_TYPE_PEN_TOUCHED_ANTENNAS     = 0x5e;
+constexpr u8 IPTS_REPORT_TYPE_PEN_METADATA             = 0x5f;
+constexpr u8 IPTS_REPORT_TYPE_PEN_DETECTION            = 0x62;
+constexpr u8 IPTS_REPORT_TYPE_PEN_LIFT                 = 0x63;
 
 constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY = 0;
 constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_CONTACT   = 1;
 constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_BUTTON    = 2;
 constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_RUBBER    = 3;
+
+constexpr u8 IPTS_DFT_NUM_COMPONENTS = 9;
+constexpr u8 IPTS_DFT_MAX_ROWS       = 16;
+constexpr u8 IPTS_DFT_PRESSURE_ROWS  = 6;
+
+constexpr u8 IPTS_DFT_ID_POSITION = 6;
+constexpr u8 IPTS_DFT_ID_BUTTON   = 9;
+constexpr u8 IPTS_DFT_ID_PRESSURE = 11;
 
 /*
  * Static limits for the data that is returned by IPTS
@@ -131,6 +151,26 @@ struct [[gnu::packed]] ipts_heatmap_timestamp {
 struct [[gnu::packed]] ipts_heatmap_header {
 	u8 reserved[5]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 	u32 size;
+};
+
+struct [[gnu::packed]] ipts_pen_dft_window {
+	u32 timestamp; // counting at approx 8MHz
+	u8 num_rows;
+	u8 seq_num;
+	u8 reserved[3]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+	u8 data_type;
+	u8 reserved2[2]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+};
+
+struct [[gnu::packed]] ipts_pen_dft_window_row {
+	u32 frequency;
+	u32 magnitude;
+	i16 real[IPTS_DFT_NUM_COMPONENTS]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+	i16 imag[IPTS_DFT_NUM_COMPONENTS]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+	i8 first;
+	i8 last;
+	i8 mid;
+	i8 zero;
 };
 
 #endif /* IPTSD_IPTS_PROTOCOL_HPP */
