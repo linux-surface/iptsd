@@ -9,7 +9,6 @@
 #include <common/signal.hpp>
 #include <common/types.hpp>
 #include <ipts/device.hpp>
-#include <ipts/ipts.h>
 #include <ipts/parser.hpp>
 
 #include <atomic>

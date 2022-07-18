@@ -2,7 +2,6 @@
 
 #include <common/signal.hpp>
 #include <ipts/device.hpp>
-#include <ipts/ipts.h>
 #include <ipts/protocol.hpp>
 
 #include <CLI/CLI.hpp>

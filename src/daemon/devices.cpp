@@ -6,7 +6,6 @@
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
-#include <ipts/ipts.h>
 #include <ipts/protocol.hpp>
 
 #include <climits>

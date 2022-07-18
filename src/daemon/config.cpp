@@ -3,7 +3,6 @@
 #include "config.hpp"
 
 #include <common/types.hpp>
-#include <ipts/ipts.h>
 
 #include <algorithm>
 #include <cctype>

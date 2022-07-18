@@ -4,7 +4,6 @@
 #define IPTSD_DAEMON_CONFIG_HPP
 
 #include <common/types.hpp>
-#include <ipts/ipts.h>
 
 #include <optional>
 #include <string>
