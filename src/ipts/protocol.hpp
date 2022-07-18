@@ -7,6 +7,8 @@
 
 #include <array>
 
+/* clang-format off */
+
 /*
  * If a report contains both of these usages, the report is used to send touch data
  */
@@ -18,37 +20,39 @@ constexpr u8 IPTS_HID_REPORT_USAGE_GESTURE_DATA = 0x61;
  */
 constexpr u8 IPTS_HID_FEATURE_REPORT_MODE = 0x5;
 
-constexpr u8 IPTS_RAW_FRAME_TYPE_STYLUS = 0x6;
+constexpr u8 IPTS_RAW_FRAME_TYPE_STYLUS  = 0x6;
 constexpr u8 IPTS_RAW_FRAME_TYPE_HEATMAP = 0x8;
 
-constexpr u8 IPTS_HID_FRAME_TYPE_HID = 0x0;
+constexpr u8 IPTS_HID_FRAME_TYPE_HID     = 0x0;
 constexpr u8 IPTS_HID_FRAME_TYPE_HEATMAP = 0x1;
-constexpr u8 IPTS_HID_FRAME_TYPE_RAW = 0xEE;
+constexpr u8 IPTS_HID_FRAME_TYPE_RAW     = 0xEE;
 constexpr u8 IPTS_HID_FRAME_TYPE_REPORTS = 0xFF;
 
 constexpr u16 IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP = 0x400;
-constexpr u16 IPTS_REPORT_TYPE_HEATMAP_DIM = 0x403;
-constexpr u16 IPTS_REPORT_TYPE_HEATMAP = 0x425;
-constexpr u16 IPTS_REPORT_TYPE_STYLUS_V1 = 0x410;
-constexpr u16 IPTS_REPORT_TYPE_STYLUS_V2 = 0x460;
+constexpr u16 IPTS_REPORT_TYPE_HEATMAP_DIM       = 0x403;
+constexpr u16 IPTS_REPORT_TYPE_HEATMAP           = 0x425;
+constexpr u16 IPTS_REPORT_TYPE_STYLUS_V1         = 0x410;
+constexpr u16 IPTS_REPORT_TYPE_STYLUS_V2         = 0x460;
 
 constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY = 0;
-constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_CONTACT = 1;
-constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_BUTTON = 2;
-constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_RUBBER = 3;
+constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_CONTACT   = 1;
+constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_BUTTON    = 2;
+constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_RUBBER    = 3;
 
 /*
  * Static limits for the data that is returned by IPTS
  */
-constexpr u16 IPTS_MAX_X = 9600;
-constexpr u16 IPTS_MAX_Y = 7200;
+constexpr u16 IPTS_MAX_X        = 9600;
+constexpr u16 IPTS_MAX_Y        = 7200;
 constexpr u16 IPTS_MAX_PRESSURE = 4096;
-constexpr u8 IPTS_MAX_CONTACTS = 16;
+constexpr u8  IPTS_MAX_CONTACTS = 16;
 
 /*
  * sqrt(IPTS_MAX_X² + IPTS_MAX_Y²)
  */
 constexpr u32 IPTS_DIAGONAL = 12000;
+
+/* clang-format on */
 
 struct [[gnu::packed]] ipts_header {
 	u8 report;

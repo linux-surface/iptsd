@@ -51,7 +51,8 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 
 	const std::vector<contacts::TouchPoint> &contacts = this->processor.process();
 
-	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()), static_cast<i32>(IPTS_MAX_CONTACTS));
+	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()),
+			     static_cast<i32>(IPTS_MAX_CONTACTS));
 
 	for (i32 i = 0; i < count; i++) {
 		f64 x = contacts[i].mean.x;

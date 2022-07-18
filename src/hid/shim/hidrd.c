@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include <stdint.h>
-#include <stddef.h>
-
 #include <hidrd/item/any.h>
+#include <stddef.h>
+#include <stdint.h>
 
 size_t shim_hidrd_item_get_size(const uint8_t *item)
 {
