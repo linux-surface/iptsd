@@ -28,11 +28,11 @@ constexpr u8 IPTS_HID_FRAME_TYPE_HEATMAP = 0x1;
 constexpr u8 IPTS_HID_FRAME_TYPE_RAW     = 0xEE;
 constexpr u8 IPTS_HID_FRAME_TYPE_REPORTS = 0xFF;
 
-constexpr u16 IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP = 0x400;
-constexpr u16 IPTS_REPORT_TYPE_HEATMAP_DIM       = 0x403;
-constexpr u16 IPTS_REPORT_TYPE_HEATMAP           = 0x425;
-constexpr u16 IPTS_REPORT_TYPE_STYLUS_V1         = 0x410;
-constexpr u16 IPTS_REPORT_TYPE_STYLUS_V2         = 0x460;
+constexpr u8 IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP = 0x00;
+constexpr u8 IPTS_REPORT_TYPE_HEATMAP_DIM       = 0x03;
+constexpr u8 IPTS_REPORT_TYPE_HEATMAP           = 0x25;
+constexpr u8 IPTS_REPORT_TYPE_STYLUS_V1         = 0x10;
+constexpr u8 IPTS_REPORT_TYPE_STYLUS_V2         = 0x60;
 
 constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY = 0;
 constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_CONTACT   = 1;
@@ -80,7 +80,8 @@ struct [[gnu::packed]] ipts_hid_frame {
 };
 
 struct [[gnu::packed]] ipts_report {
-	u16 type;
+	u8 type;
+	u8 flags;
 	u16 size;
 };
 
