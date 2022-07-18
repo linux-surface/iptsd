@@ -5,7 +5,6 @@
 #include "protocol.hpp"
 
 #include <cstddef>
-#include <hidrd/usage/page.h>
 #include <iterator>
 #include <vector>
 

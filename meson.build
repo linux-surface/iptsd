@@ -1,4 +1,4 @@
-project('iptsd', 'cpp',
+project('iptsd', 'cpp', 'c',
         version: '0.5.1',
         license: 'GPL-2.0-or-later',
         meson_version: '>=0.58.0',

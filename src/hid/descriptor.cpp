@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <gsl/gsl>
-#include <hidrd/item/any.h>
+#include <hid/shim/hidrd.h>
 #include <vector>
 
 namespace iptsd::hid {

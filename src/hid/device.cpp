@@ -8,8 +8,6 @@
 #include <common/cwrap.hpp>
 
 #include <gsl/gsl>
-#include <hidrd/item/any.h>
-#include <hidrd/usage/all.h>
 #include <linux/hidraw.h>
 #include <string>
 #include <sys/types.h>

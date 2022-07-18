@@ -1,3 +1,5 @@
+subdir('shim')
+
 sources = [
   'descriptor.cpp',
   'device.cpp',
@@ -5,8 +7,7 @@ sources = [
 
 deps = [
   gsl,
-  hidrd_item,
-  hidrd_usage,
+  hidrd_shim,
   iptsd_common,
 ]
 
