@@ -28,8 +28,8 @@ constexpr u8 IPTS_HID_FRAME_TYPE_HEATMAP = 0x1;
 constexpr u8 IPTS_HID_FRAME_TYPE_RAW     = 0xEE;
 constexpr u8 IPTS_HID_FRAME_TYPE_REPORTS = 0xFF;
 
-constexpr u8 IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP        = 0x00;
-constexpr u8 IPTS_REPORT_TYPE_HEATMAP_DIM              = 0x03;
+constexpr u8 IPTS_REPORT_TYPE_TIMESTAMP                = 0x00;
+constexpr u8 IPTS_REPORT_TYPE_DIMENSIONS               = 0x03;
 constexpr u8 IPTS_REPORT_TYPE_HEATMAP                  = 0x25;
 constexpr u8 IPTS_REPORT_TYPE_STYLUS_V1                = 0x10;
 constexpr u8 IPTS_REPORT_TYPE_STYLUS_V2                = 0x60;
@@ -131,7 +131,7 @@ struct [[gnu::packed]] ipts_stylus_data_v1 {
 	u8 reserved2;
 };
 
-struct [[gnu::packed]] ipts_heatmap_dim {
+struct [[gnu::packed]] ipts_dimensions {
 	u8 height;
 	u8 width;
 	u8 y_min;
@@ -142,7 +142,7 @@ struct [[gnu::packed]] ipts_heatmap_dim {
 	u8 z_max;
 };
 
-struct [[gnu::packed]] ipts_heatmap_timestamp {
+struct [[gnu::packed]] ipts_timestamp {
 	u8 reserved[2]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 	u16 count;
 	u32 timestamp;

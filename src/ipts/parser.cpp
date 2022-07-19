@@ -20,19 +20,8 @@ namespace iptsd::ipts {
 
 void Heatmap::resize(u16 size)
 {
-	this->width = 0;
-	this->height = 0;
-	this->size = size;
-
-	if (this->data.size() != this->size)
-		this->data.resize(this->size);
-}
-
-void Heatmap::resize(u8 w, u8 h)
-{
-	this->resize(w * h);
-	this->width = w;
-	this->height = h;
+	if (this->data.size() != size)
+		this->data.resize(size);
 }
 
 void Parser::parse(const gsl::span<u8> data)
@@ -118,11 +107,11 @@ void Parser::parse_reports(Reader &reader, u32 framesize)
 		case IPTS_REPORT_TYPE_STYLUS_V2:
 			this->parse_stylus_v2(reader);
 			break;
-		case IPTS_REPORT_TYPE_HEATMAP_DIM:
-			this->parse_heatmap_dim(reader);
+		case IPTS_REPORT_TYPE_DIMENSIONS:
+			this->parse_dimensions(reader);
 			break;
-		case IPTS_REPORT_TYPE_HEATMAP_TIMESTAMP:
-			this->parse_heatmap_timestamp(reader);
+		case IPTS_REPORT_TYPE_TIMESTAMP:
+			this->parse_timestamp(reader);
 			break;
 		case IPTS_REPORT_TYPE_HEATMAP:
 			this->parse_heatmap_data(reader);
@@ -197,93 +186,40 @@ void Parser::parse_stylus_v2(Reader &reader)
 	}
 }
 
-void Parser::parse_heatmap_dim(Reader &reader)
+void Parser::parse_dimensions(Reader &reader)
 {
-	auto const dim = reader.read<struct ipts_heatmap_dim>();
-
-	if (!this->heatmap)
-		this->heatmap = std::make_unique<Heatmap>();
-
-	this->heatmap->resize(dim.width, dim.height);
-
-	this->heatmap->y_min = dim.y_min;
-	this->heatmap->y_max = dim.y_max;
-	this->heatmap->x_min = dim.x_min;
-	this->heatmap->x_max = dim.x_max;
-	this->heatmap->z_min = dim.z_min;
-	this->heatmap->z_max = dim.z_max;
+	this->dim = reader.read<struct ipts_dimensions>();
 
 	// On newer devices, z_max may be 0, lets use a sane value instead.
-	if (this->heatmap->z_max == 0)
-		this->heatmap->z_max = 255;
-
-	this->heatmap->has_dim = true;
-	this->heatmap->has_size = true;
-	this->try_submit_heatmap();
+	if (this->dim.z_max == 0)
+		this->dim.z_max = 255;
 }
 
-void Parser::parse_heatmap_timestamp(Reader &reader)
+void Parser::parse_timestamp(Reader &reader)
 {
-	auto const timestamp = reader.read<struct ipts_heatmap_timestamp>();
-
-	if (!this->heatmap)
-		this->heatmap = std::make_unique<Heatmap>();
-
-	this->heatmap->count = timestamp.count;
-	this->heatmap->timestamp = timestamp.timestamp;
-
-	this->heatmap->has_time = true;
-	this->try_submit_heatmap();
+	this->time = reader.read<struct ipts_timestamp>();
 }
 
 void Parser::parse_heatmap_data(Reader &reader)
 {
 	if (!this->heatmap)
-		return;
+		this->heatmap = std::make_unique<Heatmap>();
 
-	if (!this->heatmap->has_size)
-		return;
+	this->heatmap->resize(this->dim.width * this->dim.height);
 
 	reader.read(gsl::span(this->heatmap->data));
 
-	this->heatmap->has_data = true;
-	this->try_submit_heatmap();
+	this->heatmap->dim = this->dim;
+	this->heatmap->time = this->time;
+
+	if (this->on_heatmap)
+		this->on_heatmap(*this->heatmap);
 }
 
 void Parser::parse_heatmap_frame(Reader &reader)
 {
-	const auto header = reader.read<struct ipts_heatmap_header>();
-
-	if (!this->heatmap)
-		this->heatmap = std::make_unique<Heatmap>();
-
-	this->heatmap->resize(header.size);
-
-	this->heatmap->has_size = true;
+	reader.skip(sizeof(struct ipts_heatmap_header));
 	this->parse_heatmap_data(reader);
-}
-
-void Parser::try_submit_heatmap()
-{
-	if (!this->heatmap->has_dim)
-		return;
-
-	if (!this->heatmap->has_time)
-		return;
-
-	if (!this->heatmap->has_size)
-		return;
-
-	if (!this->heatmap->has_data)
-		return;
-
-	if (this->on_heatmap)
-		this->on_heatmap(*this->heatmap);
-
-	this->heatmap->has_dim = false;
-	this->heatmap->has_time = false;
-	this->heatmap->has_data = false;
-	this->heatmap->has_size = false;
 }
 
 void Parser::parse_dft_window(Reader &reader)
@@ -299,6 +235,9 @@ void Parser::parse_dft_window(Reader &reader)
 
 	dft.rows = window.num_rows;
 	dft.type = window.data_type;
+
+	dft.dim = this->dim;
+	dft.time = this->time;
 
 	if (!this->on_dft)
 		return;
