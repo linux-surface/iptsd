@@ -127,6 +127,9 @@ void Parser::parse_reports(Reader &reader, u32 framesize)
 		case IPTS_REPORT_TYPE_HEATMAP:
 			this->parse_heatmap_data(reader);
 			break;
+		case IPTS_REPORT_TYPE_PEN_DFT_WINDOW:
+			this->parse_dft_window(reader);
+			break;
 		default:
 			reader.skip(report.size);
 			break;
@@ -281,6 +284,31 @@ void Parser::try_submit_heatmap()
 	this->heatmap->has_time = false;
 	this->heatmap->has_data = false;
 	this->heatmap->has_size = false;
+}
+
+void Parser::parse_dft_window(Reader &reader)
+{
+	DftWindow dft {};
+	const auto window = reader.read<struct ipts_pen_dft_window>();
+
+	for (int i = 0; i < window.num_rows; i++)
+		dft.x.at(i) = reader.read<struct ipts_pen_dft_window_row>();
+
+	for (int i = 0; i < window.num_rows; i++)
+		dft.y.at(i) = reader.read<struct ipts_pen_dft_window_row>();
+
+	dft.rows = window.num_rows;
+	dft.type = window.data_type;
+
+	if (!this->on_dft)
+		return;
+
+	this->on_dft(dft, this->stylus);
+
+	if (!this->on_stylus)
+		return;
+
+	this->on_stylus(this->stylus);
 }
 
 } // namespace iptsd::ipts

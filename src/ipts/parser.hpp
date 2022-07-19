@@ -8,6 +8,7 @@
 
 #include <common/types.hpp>
 
+#include <array>
 #include <cstddef>
 #include <functional>
 #include <gsl/gsl>
@@ -59,9 +60,19 @@ public:
 	void resize(u8 w, u8 h);
 };
 
+class DftWindow {
+public:
+	u8 rows;
+	u8 type;
+
+	std::array<struct ipts_pen_dft_window_row, IPTS_DFT_MAX_ROWS> x;
+	std::array<struct ipts_pen_dft_window_row, IPTS_DFT_MAX_ROWS> y;
+};
+
 class Parser {
 private:
 	std::unique_ptr<Heatmap> heatmap;
+	StylusData stylus;
 
 	void parse_raw(Reader &reader);
 	void parse_hid(Reader &reader, u32 headersize);
@@ -74,12 +85,14 @@ private:
 	void parse_heatmap_timestamp(Reader &reader);
 	void parse_heatmap_data(Reader &reader);
 	void parse_heatmap_frame(Reader &reader);
+	void parse_dft_window(Reader &reader);
 
 	void try_submit_heatmap();
 
 public:
 	std::function<void(const StylusData &)> on_stylus;
 	std::function<void(const Heatmap &)> on_heatmap;
+	std::function<void(const DftWindow &, StylusData &)> on_dft;
 
 	void parse(gsl::span<u8> data);
 };
