@@ -32,6 +32,10 @@ if target_cpu == 'x86_64'
   optflags += '-march=x86-64-v3'
 endif
 
+if target_cpu == 'aarch64'
+  optflags += '-march=armv8.2-a+crypto+fp16+rcpc+dotprod' # Surface Pro X
+endif
+
 cxxflags = cpp.get_supported_arguments(cxxflags)
 add_project_arguments(cxxflags, language: 'cpp')
 
