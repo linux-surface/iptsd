@@ -32,6 +32,9 @@ public:
 	u16 altitude = 0;
 	u16 azimuth = 0;
 	u32 serial = 0;
+
+	i32 real;
+	i32 imag;
 };
 
 class Heatmap {

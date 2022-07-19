@@ -1,0 +1,244 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+#include "dft.hpp"
+
+#include <ipts/parser.hpp>
+#include <ipts/protocol.hpp>
+
+#include <algorithm>
+#include <cmath>
+#include <gsl/gsl>
+#include <tuple>
+
+namespace iptsd::daemon {
+
+constexpr u16 IPTS_DFT_POSITION_MIN_AMP = 50;
+constexpr u16 IPTS_DFT_POSITION_MIN_MAG = 2000;
+constexpr u16 IPTS_DFT_BUTTON_MIN_MAG = 1000;
+constexpr u16 IPTS_DFT_FREQ_MIN_MAG = 10000;
+constexpr f32 IPTS_DFT_POSITION_EXP =
+	-.7; // tune this value to minimize jagginess of diagonal lines
+
+static void iptsd_dft_lift(ipts::StylusData &stylus)
+{
+	stylus.proximity = false;
+	stylus.rubber = false;
+	stylus.contact = false;
+	stylus.button = false;
+}
+
+static std::tuple<bool, f64>
+iptsd_dft_interpolate_position(const struct ipts_pen_dft_window_row &row)
+{
+	// assume the center component has the max amplitude
+	u8 maxi = IPTS_DFT_NUM_COMPONENTS / 2;
+
+	// off-screen components are always zero, don't use them
+	f64 mind = -0.5;
+	f64 maxd = 0.5;
+
+	if (row.real[maxi - 1] == 0 && row.imag[maxi - 1] == 0) {
+		maxi++;
+		mind = -1;
+	} else if (row.real[maxi + 1] == 0 && row.imag[maxi + 1] == 0) {
+		maxi--;
+		maxd = 1;
+	}
+
+	// get phase-aligned amplitudes of the three center components
+	f64 amp = std::sqrt(row.real[maxi] * row.real[maxi] + row.imag[maxi] * row.imag[maxi]);
+	if (amp < IPTS_DFT_POSITION_MIN_AMP)
+		return std::tuple {false, 0};
+
+	f64 sin = row.real[maxi] / amp;
+	f64 cos = row.imag[maxi] / amp;
+
+	std::array<f64, 3> x = {
+		sin * row.real[maxi - 1] + cos * row.imag[maxi - 1],
+		amp,
+		sin * row.real[maxi + 1] + cos * row.imag[maxi + 1],
+	};
+
+	// convert the amplitudes into something we can fit a parabola to
+	for (u8 i = 0; i < 3; i++)
+		x.at(i) = std::pow(x.at(i), IPTS_DFT_POSITION_EXP);
+
+	// check orientation of fitted parabola
+	if (x[0] + x[2] <= 2 * x[1])
+		return std::tuple {false, 0};
+
+	// find critical point of fitted parabola
+	f64 d = (x[0] - x[2]) / (2 * (x[0] - 2 * x[1] + x[2]));
+
+	return std::tuple {true, row.first + maxi + std::clamp(d, mind, maxd)};
+}
+
+static f64 iptsd_dft_interpolate_frequency(const ipts::DftWindow &dft, u8 rows)
+{
+	if (rows < 3)
+		return NAN;
+
+	// find max row
+	u8 maxi = 0;
+	u64 maxm = 0;
+
+	for (u8 i = 0; i < rows; i++) {
+		u64 m = dft.x.at(i).magnitude + dft.y.at(i).magnitude;
+		if (m > maxm) {
+			maxm = m;
+			maxi = i;
+		}
+	}
+
+	if (maxm < static_cast<u64>(2 * IPTS_DFT_FREQ_MIN_MAG))
+		return NAN;
+
+	f64 mind = -0.5;
+	f64 maxd = 0.5;
+
+	if (maxi < 1) {
+		maxi = 1;
+		mind = -1;
+	} else if (maxi > rows - 2) {
+		maxi = rows - 2;
+		maxd = 1;
+	}
+
+	// all components in a row have the same phase, and corresponding x and y rows also have the
+	// same phase, so we can add everything together
+	std::array<i32, 3> real {};
+	std::array<i32, 3> imag {};
+
+	for (u8 i = 0; i < 3; i++) {
+		real.at(i) = 0;
+		imag.at(i) = 0;
+
+		for (u8 j = 0; j < IPTS_DFT_NUM_COMPONENTS; j++) {
+			const auto &x = dft.x.at(maxi + i - 1);
+			const auto &y = dft.y.at(maxi + i - 1);
+
+			real.at(i) += gsl::at(x.real, j) + gsl::at(y.real, j);
+			imag.at(i) += gsl::at(x.imag, j) + gsl::at(y.imag, j);
+		}
+	}
+
+	// interpolate using Eric Jacobsen's modified quadratic estimator
+	i32 ra = real[0] - real[2];
+	i32 rb = 2 * real[1] - real[0] - real[2];
+	i32 ia = imag[0] - imag[2];
+	i32 ib = 2 * imag[1] - imag[0] - imag[2];
+
+	f64 d = (ra * rb + ia * ib) / static_cast<f64>(rb * rb + ib * ib);
+
+	return (maxi + std::clamp(d, mind, maxd)) / (rows - 1);
+}
+
+static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
+				      ipts::StylusData &stylus)
+{
+	if (dft.rows <= 0) {
+		iptsd_dft_lift(stylus);
+		return;
+	}
+
+	if (dft.x[0].magnitude <= IPTS_DFT_POSITION_MIN_MAG ||
+	    dft.y[0].magnitude <= IPTS_DFT_POSITION_MIN_MAG) {
+		iptsd_dft_lift(stylus);
+		return;
+	}
+
+	stylus.real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
+		      dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
+	stylus.imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
+		      dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
+
+	auto [px, x] = iptsd_dft_interpolate_position(dft.x[0]);
+	auto [py, y] = iptsd_dft_interpolate_position(dft.y[0]);
+
+	if (px && py) {
+		stylus.proximity = true;
+
+		x /= dft.dim.width - 1;
+		y /= dft.dim.height - 1;
+
+		if (ctx.config.invert_x)
+			x = 1 - x;
+
+		if (ctx.config.invert_y)
+			y = 1 - y;
+
+		x = std::round(std::clamp(x, 0.0, 1.0) * IPTS_MAX_X);
+		y = std::round(std::clamp(y, 0.0, 1.0) * IPTS_MAX_Y);
+
+		stylus.x = gsl::narrow_cast<u16>(x);
+		stylus.y = gsl::narrow_cast<u16>(y);
+	} else {
+		iptsd_dft_lift(stylus);
+	}
+}
+
+static void iptsd_dft_handle_button(Context &ctx, const ipts::DftWindow &dft,
+				    ipts::StylusData &stylus)
+{
+	if (dft.rows <= 0)
+		return;
+
+	bool button = false;
+	bool rubber = false;
+
+	if (dft.x[0].magnitude > IPTS_DFT_BUTTON_MIN_MAG &&
+	    dft.y[0].magnitude > IPTS_DFT_BUTTON_MIN_MAG) {
+		i32 real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
+			   dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
+		i32 imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
+			   dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
+
+		// same phase as position signal = eraser, opposite phase = button
+		i32 val = stylus.real * real + stylus.imag * imag;
+
+		button = val < 0;
+		rubber = val > 0;
+	}
+
+	// toggling rubber while proximity is true seems to cause issues, so set proximity off first
+	if (stylus.rubber != rubber)
+		iptsd_dft_lift(stylus);
+
+	stylus.button = button;
+	stylus.rubber = rubber;
+}
+
+static void iptsd_dft_handle_pressure(Context &ctx, const ipts::DftWindow &dft,
+				      ipts::StylusData &stylus)
+{
+	if (dft.rows < IPTS_DFT_PRESSURE_ROWS)
+		return;
+
+	f64 p = iptsd_dft_interpolate_frequency(dft, IPTS_DFT_PRESSURE_ROWS);
+	p = (1 - p) * IPTS_MAX_PRESSURE;
+
+	if (p > 1) {
+		stylus.contact = true;
+		stylus.pressure = std::min(gsl::narrow_cast<u16>(p), IPTS_MAX_PRESSURE);
+	} else {
+		stylus.contact = false;
+		stylus.pressure = 0;
+	}
+}
+
+void iptsd_dft_input(Context &ctx, const ipts::DftWindow &dft, ipts::StylusData &stylus)
+{
+	switch (dft.type) {
+	case IPTS_DFT_ID_POSITION:
+		iptsd_dft_handle_position(ctx, dft, stylus);
+		break;
+	case IPTS_DFT_ID_BUTTON:
+		iptsd_dft_handle_button(ctx, dft, stylus);
+		break;
+	case IPTS_DFT_ID_PRESSURE:
+		iptsd_dft_handle_pressure(ctx, dft, stylus);
+		break;
+	}
+}
+
+} // namespace iptsd::daemon
