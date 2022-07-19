@@ -33,39 +33,39 @@ public:
 	u16 azimuth = 0;
 	u32 serial = 0;
 
-	i32 real;
-	i32 imag;
+	i32 real = 0;
+	i32 imag = 0;
 };
 
 class Heatmap {
 public:
-	struct ipts_dimensions dim;
-	struct ipts_timestamp time;
+	struct ipts_dimensions dim {};
+	struct ipts_timestamp time {};
 
-	std::vector<u8> data;
+	std::vector<u8> data {};
 
 	void resize(u16 size);
 };
 
 class DftWindow {
 public:
-	u8 rows;
-	u8 type;
+	u8 rows = 0;
+	u8 type = 0;
 
-	struct ipts_dimensions dim;
-	struct ipts_timestamp time;
+	struct ipts_dimensions dim {};
+	struct ipts_timestamp time {};
 
-	std::array<struct ipts_pen_dft_window_row, IPTS_DFT_MAX_ROWS> x;
-	std::array<struct ipts_pen_dft_window_row, IPTS_DFT_MAX_ROWS> y;
+	std::array<struct ipts_pen_dft_window_row, IPTS_DFT_MAX_ROWS> x {};
+	std::array<struct ipts_pen_dft_window_row, IPTS_DFT_MAX_ROWS> y {};
 };
 
 class Parser {
 private:
-	std::unique_ptr<Heatmap> heatmap;
+	std::unique_ptr<Heatmap> heatmap = nullptr;
 
-	StylusData stylus;
-	struct ipts_dimensions dim;
-	struct ipts_timestamp time;
+	StylusData stylus {};
+	struct ipts_dimensions dim {};
+	struct ipts_timestamp time {};
 
 	void parse_raw(Reader &reader);
 	void parse_hid(Reader &reader, u32 headersize);
