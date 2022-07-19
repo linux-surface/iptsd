@@ -27,110 +27,86 @@ void Heatmap::resize(u16 size)
 void Parser::parse(const gsl::span<u8> data)
 {
 	Reader reader(data);
-
 	reader.skip(sizeof(struct ipts_header));
+
 	const auto header = reader.read<struct ipts_hid_frame>();
+	Reader sub = reader.sub(header.size - sizeof(header));
 
 	// Check if we are dealing with GuC based or HID based IPTS
 	switch (header.type) {
 	case IPTS_HID_FRAME_TYPE_RAW:
-		this->parse_raw(reader);
+		this->parse_raw(sub);
 		break;
 	case IPTS_HID_FRAME_TYPE_HID:
-		this->parse_hid(reader, header.size);
-		break;
-	default:
-		reader.skip(header.size);
+		this->parse_hid(sub);
 		break;
 	}
 }
 
-void Parser::parse_raw(Reader &reader)
+void Parser::parse_raw(Reader reader)
 {
 	const auto header = reader.read<struct ipts_raw_header>();
 
 	for (u32 i = 0; i < header.frames; i++) {
 		const auto frame = reader.read<struct ipts_raw_frame>();
+		Reader sub = reader.sub(frame.size);
 
 		switch (frame.type) {
 		case IPTS_RAW_FRAME_TYPE_STYLUS:
 		case IPTS_RAW_FRAME_TYPE_HEATMAP:
-			this->parse_reports(reader, frame.size);
-			break;
-		default:
-			reader.skip(frame.size);
+			this->parse_reports(sub);
 			break;
 		}
 	}
 }
 
-void Parser::parse_hid(Reader &reader, u32 headersize)
+void Parser::parse_hid(Reader reader)
 {
-	u32 size = 0;
-
-	while (size < headersize) {
+	while (reader.size() > 0) {
 		const auto frame = reader.read<struct ipts_hid_frame>();
-		size += frame.size;
+		Reader sub = reader.sub(frame.size - sizeof(frame));
 
 		switch (frame.type) {
 		case IPTS_HID_FRAME_TYPE_HEATMAP:
-			this->parse_heatmap_frame(reader);
+			this->parse_heatmap_frame(sub);
 			break;
 		case IPTS_HID_FRAME_TYPE_REPORTS:
-			this->parse_reports(reader, frame.size - sizeof(frame));
-			break;
-		default:
-			reader.skip(frame.size - sizeof(frame));
+			this->parse_reports(sub);
 			break;
 		}
 	}
 }
 
-void Parser::parse_reports(Reader &reader, u32 framesize)
+void Parser::parse_reports(Reader reader)
 {
-	u32 size = 0;
-
-	while (size < framesize) {
-		if (size + sizeof(struct ipts_report) > framesize)
-			break;
-
+	while (reader.size() > 0) {
 		const auto report = reader.read<struct ipts_report>();
-		size += sizeof(struct ipts_report);
-
-		if (size + report.size > framesize)
-			break;
+		Reader sub = reader.sub(report.size);
 
 		switch (report.type) {
 		case IPTS_REPORT_TYPE_STYLUS_V1:
-			this->parse_stylus_v1(reader);
+			this->parse_stylus_v1(sub);
 			break;
 		case IPTS_REPORT_TYPE_STYLUS_V2:
-			this->parse_stylus_v2(reader);
+			this->parse_stylus_v2(sub);
 			break;
 		case IPTS_REPORT_TYPE_DIMENSIONS:
-			this->parse_dimensions(reader);
+			this->parse_dimensions(sub);
 			break;
 		case IPTS_REPORT_TYPE_TIMESTAMP:
-			this->parse_timestamp(reader);
+			this->parse_timestamp(sub);
 			break;
 		case IPTS_REPORT_TYPE_HEATMAP:
-			this->parse_heatmap_data(reader);
+			this->parse_heatmap_data(sub);
 			break;
 		case IPTS_REPORT_TYPE_PEN_DFT_WINDOW:
-			this->parse_dft_window(reader);
-			break;
-		default:
-			reader.skip(report.size);
+			this->parse_dft_window(sub);
 			break;
 		}
-
-		size += report.size;
 	}
-
-	reader.skip(framesize - size);
 }
 
-void Parser::parse_stylus_v1(Reader &reader)
+void Parser::parse_stylus_v1(Reader reader)
 {
 	StylusData stylus;
 
@@ -158,7 +134,7 @@ void Parser::parse_stylus_v1(Reader &reader)
 	}
 }
 
-void Parser::parse_stylus_v2(Reader &reader)
+void Parser::parse_stylus_v2(Reader reader)
 {
 	StylusData stylus;
 
@@ -186,7 +162,7 @@ void Parser::parse_stylus_v2(Reader &reader)
 	}
 }
 
-void Parser::parse_dimensions(Reader &reader)
+void Parser::parse_dimensions(Reader reader)
 {
 	this->dim = reader.read<struct ipts_dimensions>();
 
@@ -195,12 +171,12 @@ void Parser::parse_dimensions(Reader &reader)
 		this->dim.z_max = 255;
 }
 
-void Parser::parse_timestamp(Reader &reader)
+void Parser::parse_timestamp(Reader reader)
 {
 	this->time = reader.read<struct ipts_timestamp>();
 }
 
-void Parser::parse_heatmap_data(Reader &reader)
+void Parser::parse_heatmap_data(Reader reader)
 {
 	if (!this->heatmap)
 		this->heatmap = std::make_unique<Heatmap>();
@@ -216,13 +192,15 @@ void Parser::parse_heatmap_data(Reader &reader)
 		this->on_heatmap(*this->heatmap);
 }
 
-void Parser::parse_heatmap_frame(Reader &reader)
+void Parser::parse_heatmap_frame(Reader reader)
 {
-	reader.skip(sizeof(struct ipts_heatmap_header));
-	this->parse_heatmap_data(reader);
+	const auto header = reader.read<struct ipts_heatmap_header>();
+	Reader sub = reader.sub(header.size);
+
+	this->parse_heatmap_data(sub);
 }
 
-void Parser::parse_dft_window(Reader &reader)
+void Parser::parse_dft_window(Reader reader)
 {
 	DftWindow dft {};
 	const auto window = reader.read<struct ipts_pen_dft_window>();

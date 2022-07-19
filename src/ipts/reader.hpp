@@ -25,6 +25,7 @@ public:
 	void read(const gsl::span<u8> dest);
 	void skip(const size_t size);
 	std::size_t size();
+	Reader sub(std::size_t size);
 
 	template <class T> T read();
 };
