@@ -33,11 +33,8 @@ inline int ioctl(int fd, unsigned long rq)
 
 template <class T> inline int ioctl(int fd, unsigned long rq, T data)
 {
-	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-	void *b = reinterpret_cast<void *>(data);
-
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
-	return ::ioctl(fd, rq, b);
+	return ::ioctl(fd, rq, data);
 }
 
 } // namespace iptsd::common
