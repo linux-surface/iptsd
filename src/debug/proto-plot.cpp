@@ -29,7 +29,7 @@ enum class mode_type {
 	perf,
 };
 
-static int main(int argc, char *argv[])
+static int main(gsl::span<char *> args)
 {
 	/*	auto mode = mode_type::plot;
 		auto path_in = std::string {};
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return iptsd::debug::plot::main(argc, argv);
+		return iptsd::debug::plot::main(gsl::span(argv, argc));
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

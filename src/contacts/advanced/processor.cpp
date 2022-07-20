@@ -72,11 +72,10 @@ TouchProcessor::TouchProcessor(index2_t size)
     , m_gf_window{11, 11}
     , m_touchpoints{}
 {
-    m_wdt_queue = std::priority_queue { std::less<alg::wdt::QItem<f32>>(), [](){
-        auto buf = std::vector<alg::wdt::QItem<f32>>{};
-        buf.reserve(512);
-        return buf;
-    }() };
+    std::less<alg::wdt::QItem<f32>> op {};
+    std::vector<alg::wdt::QItem<f32>> buf {512};
+
+    m_wdt_queue = std::priority_queue { op, buf };
 
     alg::gfit::reserve(m_gf_params, 32, size);
 

@@ -37,7 +37,7 @@ public:
 	auto draw_event(const Cairo::RefPtr<Cairo::Context> &cr) -> bool;
 
 public:
-	Gtk::DrawingArea *m_widget;
+	Gtk::DrawingArea *m_widget = nullptr;
 
 private:
 	gfx::Visualization m_vis;
@@ -59,7 +59,7 @@ private:
 };
 
 MainContext::MainContext(index2_t img_size)
-	: m_widget {nullptr}, m_vis {img_size}, m_img1 {img_size}, m_img2 {img_size}, m_tps1 {},
+	: m_vis {img_size}, m_img1 {img_size}, m_img2 {img_size}, m_tps1 {},
 	  m_tps2 {}, m_img_frnt {&m_img1}, m_img_back {&m_img2}, m_tps_frnt {&m_tps1},
 	  m_tps_back {&m_tps2}
 {
@@ -108,7 +108,7 @@ auto MainContext::draw_event(const Cairo::RefPtr<Cairo::Context> &cr) -> bool
 	return false;
 }
 
-static int main(int argc, char *argv[])
+static int main(gsl::span<char *> args)
 {
 	const index2_t size {72, 48};
 	MainContext ctx {size};
@@ -154,6 +154,10 @@ static int main(int argc, char *argv[])
 		dev.set_mode(false);
 	});
 
+	// gtkmm expects a reference
+	int argc = gsl::narrow<int>(args.size());
+	char **argv = args.data();
+
 	auto app = Gtk::Application::create(argc, argv);
 	Gtk::Window window;
 
@@ -188,7 +192,7 @@ int main(int argc, char *argv[])
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return iptsd::debug::rt::main(argc, argv);
+		return iptsd::debug::rt::main(gsl::span(argv, argc));
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

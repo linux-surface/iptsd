@@ -44,13 +44,13 @@ public:
 public:
 	std::string name;
 
-	unsigned int n_measurements;
+	unsigned int n_measurements = 0;
 	clock::duration duration;
 	clock::duration minimum;
 	clock::duration maximum;
 
-	double r_mean_ns;
-	double r_var_ns;
+	double r_mean_ns = 0;
+	double r_var_ns = 0;
 };
 
 class measurement {
@@ -86,8 +86,8 @@ inline constexpr Token::Token(std::size_t i) : m_index {i}
 }
 
 inline Entry::Entry(std::string name)
-	: name {std::move(name)}, n_measurements {0}, duration {0},
-	  minimum {clock::duration::max()}, maximum {0}, r_mean_ns {0.0f}, r_var_ns {0.0f}
+	: name {std::move(name)}, duration {0},
+	  minimum {clock::duration::max()}, maximum {0}
 {
 }
 
