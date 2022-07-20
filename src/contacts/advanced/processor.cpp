@@ -158,7 +158,7 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
     }
 
     // labels
-    u16 num_labels;
+    u16 num_labels = 0;
     {
         auto _r = m_perf_reg.record(m_perf_t_lbl);
 

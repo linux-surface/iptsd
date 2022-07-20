@@ -116,7 +116,7 @@ auto label(Image<u16>& out, Image<T> const& data, T threshold) -> u16
     auto const background = impl::find_background(data, threshold);
 
     // pass 1: build forest
-    index_t i;
+    index_t i = 0;
 
     // x = 0, y = 0
     out[0] = 0;

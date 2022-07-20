@@ -169,8 +169,8 @@ template <std::size_t N> auto Lut<N>::map_value(f32 value) const -> Srgb
 	auto const a = std::floor(v);
 	auto const b = std::ceil(v);
 
-	auto const ca = m_table[static_cast<std::size_t>(a)];
-	auto const cb = m_table[static_cast<std::size_t>(b)];
+	auto const ca = m_table.at(static_cast<std::size_t>(a));
+	auto const cb = m_table.at(static_cast<std::size_t>(b));
 
 	return (v - a) * cb + (1.0f - (v - a)) * ca;
 }

@@ -35,9 +35,9 @@ public:
 
 class Heatmap {
 public:
-	u8 width;
-	u8 height;
-	u16 size;
+	u8 width = 0;
+	u8 height = 0;
+	u16 size = 0;
 
 	u8 y_min = 0;
 	u8 y_max = 0;

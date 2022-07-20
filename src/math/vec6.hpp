@@ -24,12 +24,12 @@ public:
 
 template <class T> inline constexpr auto Vec6<T>::operator[](index_t i) -> T &
 {
-	return this->data[i];
+	return this->data.at(i);
 }
 
 template <class T> inline constexpr auto Vec6<T>::operator[](index_t i) const -> T const &
 {
-	return this->data[i];
+	return this->data.at(i);
 }
 
 template <class T> struct num<Vec6<T>> {

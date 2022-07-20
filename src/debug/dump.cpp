@@ -26,7 +26,7 @@ struct PrettyBuf {
 	size_t size;
 };
 
-template <> struct fmt::formatter<PrettyBuf> {
+template <> struct fmt::formatter<gsl::span<const u8>> {
 	char hexfmt = 'x';
 	char prefix = 'n';
 
@@ -47,44 +47,36 @@ template <> struct fmt::formatter<PrettyBuf> {
 		return it;
 	}
 
-	template <class FormatContext> auto format(PrettyBuf const &buf, FormatContext &ctx)
+	template <class FormatContext>
+	auto format(const gsl::span<const u8> &buf, FormatContext &ctx)
 	{
 		char const *pfxstr = prefix == 'o' ? "{:04x}: " : "{:04X}: ";
 		char const *fmtstr = hexfmt == 'x' ? "{:02x} " : "{:02X} ";
 
 		auto it = ctx.out();
-		for (size_t i = 0; i < buf.size; i += 32) {
+		for (size_t i = 0; i < buf.size(); i += 32) {
 			size_t j = 0;
 
-			if (prefix != 'n') {
+			if (prefix != 'n')
 				it = format_to(it, pfxstr, i);
-			}
 
-			for (; j < 8 && i + j < buf.size; j++) {
-				it = format_to(it, fmtstr,
-					       static_cast<unsigned char>(buf.data[i + j]));
-			}
+			for (; j < 8 && i + j < buf.size(); j++)
+				it = format_to(it, fmtstr, buf[i + j]);
 
 			it = format_to(it, " ");
 
-			for (; j < 16 && i + j < buf.size; j++) {
-				it = format_to(it, fmtstr,
-					       static_cast<unsigned char>(buf.data[i + j]));
-			}
+			for (; j < 16 && i + j < buf.size(); j++)
+				it = format_to(it, fmtstr, buf[i + j]);
 
 			it = format_to(it, " ");
 
-			for (; j < 24 && i + j < buf.size; j++) {
-				it = format_to(it, fmtstr,
-					       static_cast<unsigned char>(buf.data[i + j]));
-			}
+			for (; j < 24 && i + j < buf.size(); j++)
+				it = format_to(it, fmtstr, buf[i + j]);
 
 			it = format_to(it, " ");
 
-			for (; j < 32 && i + j < buf.size; j++) {
-				it = format_to(it, fmtstr,
-					       static_cast<unsigned char>(buf.data[i + j]));
-			}
+			for (; j < 32 && i + j < buf.size(); j++)
+				it = format_to(it, fmtstr, buf[i + j]);
 
 			it = format_to(it, "\n");
 		}
@@ -138,7 +130,7 @@ static int main(gsl::span<char *> args)
 		try {
 			ssize_t rsize = dev.read(buffer);
 
-			const PrettyBuf buf {buffer.data(), (size_t)rsize};
+			const gsl::span<const u8> buf {buffer.data(), (std::size_t)rsize};
 			fmt::print("== Size: {} ==\n", rsize);
 			fmt::print("{:ox}\n", buf);
 		} catch (std::exception &e) {

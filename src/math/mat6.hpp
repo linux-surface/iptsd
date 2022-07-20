@@ -36,12 +36,12 @@ template <class T> inline constexpr auto Mat6<T>::identity() -> Mat6<T>
 
 template <class T> inline constexpr auto Mat6<T>::operator[](index2_t i) -> T &
 {
-	return this->data[i.x * 6 + i.y];
+	return this->data.at(i.x * 6 + i.y);
 }
 
 template <class T> inline constexpr auto Mat6<T>::operator[](index2_t i) const -> T const &
 {
-	return this->data[i.x * 6 + i.y];
+	return this->data.at(i.x * 6 + i.y);
 }
 
 } /* namespace iptsd::math */
