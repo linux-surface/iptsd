@@ -23,8 +23,8 @@ Cluster::Cluster(Heatmap &hm, index2_t center)
 
 void Cluster::add(index2_t pos, f32 val)
 {
-	f32 x = gsl::narrow_cast<f32>(pos.x);
-	f32 y = gsl::narrow_cast<f32>(pos.y);
+	f32 x = gsl::narrow<f32>(pos.x);
+	f32 y = gsl::narrow<f32>(pos.y);
 
 	this->x += val * x;
 	this->y += val * y;

@@ -51,7 +51,7 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 
 	const std::vector<contacts::TouchPoint> &contacts = this->processor.process();
 
-	i32 count = std::min(gsl::narrow_cast<i32>(contacts.size()),
+	i32 count = std::min(gsl::narrow<i32>(contacts.size()),
 			     static_cast<i32>(IPTS_MAX_CONTACTS));
 
 	for (i32 i = 0; i < count; i++) {
@@ -64,8 +64,8 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		if (this->conf.invert_y)
 			y = 1 - y;
 
-		this->inputs[i].x = gsl::narrow_cast<i32>(x * IPTS_MAX_X);
-		this->inputs[i].y = gsl::narrow_cast<i32>(y * IPTS_MAX_Y);
+		this->inputs[i].x = gsl::narrow<i32>(std::round(x * IPTS_MAX_X));
+		this->inputs[i].y = gsl::narrow<i32>(std::round(y * IPTS_MAX_Y));
 
 		math::Eigen2<f32> eigen = contacts[i].cov.eigen();
 		f64 s1 = std::sqrt(eigen.w[0]);
@@ -77,8 +77,8 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		f64 major = std::max(d1, d2);
 		f64 minor = std::min(d1, d2);
 
-		this->inputs[i].major = gsl::narrow_cast<i32>(major * IPTS_DIAGONAL);
-		this->inputs[i].minor = gsl::narrow_cast<i32>(minor * IPTS_DIAGONAL);
+		this->inputs[i].major = gsl::narrow<i32>(std::round(major * IPTS_DIAGONAL));
+		this->inputs[i].minor = gsl::narrow<i32>(std::round(minor * IPTS_DIAGONAL));
 
 		math::Vec2<f64> v1 = eigen.v[0].cast<f64>() * s1;
 		f64 angle = M_PI_2 - std::atan2(v1.x, v1.y);
@@ -89,7 +89,7 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		if (angle > M_PI)
 			angle -= M_PI;
 
-		this->inputs[i].orientation = gsl::narrow_cast<i32>(angle / M_PI * 180);
+		this->inputs[i].orientation = gsl::narrow<i32>(std::round(angle / M_PI * 180));
 		this->inputs[i].palm = contacts[i].palm;
 
 		this->inputs[i].ev1 = eigen.w[0];
@@ -193,8 +193,8 @@ void TouchManager::track()
 			f64 y = this->inputs[i].y -
 				this->conf.position_stability_threshold * (dy / dist);
 
-			this->inputs[i].x = gsl::narrow_cast<i32>(x);
-			this->inputs[i].y = gsl::narrow_cast<i32>(y);
+			this->inputs[i].x = gsl::narrow<i32>(std::round(x));
+			this->inputs[i].y = gsl::narrow<i32>(std::round(y));
 		}
 
 		// Set the distance of all pairs that contain one of i and j

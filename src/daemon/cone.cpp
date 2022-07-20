@@ -34,7 +34,7 @@ void Cone::update_direction(i32 x, i32 y)
 	auto time_diff = timestamp - this->direction_update;
 	auto ms_diff = std::chrono::duration_cast<std::chrono::milliseconds>(time_diff);
 
-	f32 weight = std::exp2f(gsl::narrow_cast<f32>(-ms_diff.count()) / 1000.0f);
+	f32 weight = std::exp2f(gsl::narrow<f32>(-ms_diff.count()) / 1000.0f);
 	f64 d = std::hypot(this->x - x, this->y - y);
 
 	f64 dx = (x - this->x) / (d + 1E-6);

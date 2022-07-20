@@ -34,8 +34,8 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 	f64 atan_x = std::atan2(cos_alt, sin_alt * cos_azm);
 	f64 atan_y = std::atan2(cos_alt, sin_alt * sin_azm);
 
-	i32 tx = 9000 - gsl::narrow_cast<i32>(atan_x * 4500 / M_PI_4);
-	i32 ty = gsl::narrow_cast<i32>(atan_y * 4500 / M_PI_4) - 9000;
+	i32 tx = 9000 - gsl::narrow<i32>(std::round(atan_x * 4500 / M_PI_4));
+	i32 ty = gsl::narrow<i32>(std::round(atan_y * 4500 / M_PI_4)) - 9000;
 
 	return {tx, ty};
 }

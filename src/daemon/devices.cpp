@@ -25,7 +25,7 @@ namespace iptsd::daemon {
 static i32 res(i32 virt, i32 phys)
 {
 	f64 res = static_cast<f64>(virt * 10) / static_cast<f64>(phys);
-	return gsl::narrow_cast<i32>(std::round(res));
+	return gsl::narrow<i32>(std::round(res));
 }
 
 StylusDevice::StylusDevice(Config conf, u32 serial, std::shared_ptr<Cone> cone)
@@ -52,8 +52,8 @@ StylusDevice::StylusDevice(Config conf, u32 serial, std::shared_ptr<Cone> cone)
 	this->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
 	this->set_absinfo(ABS_PRESSURE, 0, IPTS_MAX_PRESSURE, 0);
-	this->set_absinfo(ABS_TILT_X, -9000, 9000, gsl::narrow_cast<i32>(18000 / M_PI));
-	this->set_absinfo(ABS_TILT_Y, -9000, 9000, gsl::narrow_cast<i32>(18000 / M_PI));
+	this->set_absinfo(ABS_TILT_X, -9000, 9000, gsl::narrow<i32>(std::round(18000 / M_PI)));
+	this->set_absinfo(ABS_TILT_Y, -9000, 9000, gsl::narrow<i32>(std::round(18000 / M_PI)));
 	this->set_absinfo(ABS_MISC, 0, USHRT_MAX, 0);
 
 	this->create();
@@ -74,7 +74,7 @@ TouchDevice::TouchDevice(Config conf) : UinputDevice(), manager(conf)
 	f64 diag = std::sqrt(conf.width * conf.width + conf.height * conf.height);
 	i32 res_x = res(IPTS_MAX_X, conf.width);
 	i32 res_y = res(IPTS_MAX_Y, conf.height);
-	i32 res_d = res(IPTS_DIAGONAL, gsl::narrow_cast<i32>(diag));
+	i32 res_d = res(IPTS_DIAGONAL, gsl::narrow<i32>(std::round(diag)));
 
 	this->set_absinfo(ABS_MT_SLOT, 0, IPTS_MAX_CONTACTS, 0);
 	this->set_absinfo(ABS_MT_TRACKING_ID, 0, IPTS_MAX_CONTACTS, 0);

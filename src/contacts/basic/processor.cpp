@@ -77,8 +77,8 @@ const std::vector<TouchPoint> &TouchProcessor::process()
 			math::Mat2s<f32> cov = cluster.cov();
 			math::Vec2<f32> mean = cluster.mean();
 
-			mean.x /= gsl::narrow_cast<f32>(this->heatmap.size.x) - 1.0f;
-			mean.y /= gsl::narrow_cast<f32>(this->heatmap.size.y) - 1.0f;
+			mean.x /= gsl::narrow<f32>(this->heatmap.size.x) - 1.0f;
+			mean.y /= gsl::narrow<f32>(this->heatmap.size.y) - 1.0f;
 
 			math::Eigen2<f32> eigen = cov.eigen();
 			f32 vx = std::max(eigen.w[0], eigen.w[1]);

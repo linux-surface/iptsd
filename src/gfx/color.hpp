@@ -55,9 +55,9 @@ constexpr auto Srgba::from(f32 r, f32 g, f32 b) -> Srgba
 constexpr auto Argb::from(f32 r, f32 g, f32 b) -> Argb
 {
 	u32 color = 255 << 24;
-	color += gsl::narrow_cast<u8>(r * 255) << 16;
-	color += gsl::narrow_cast<u8>(g * 255) << 8;
-	color += gsl::narrow_cast<u8>(b * 255);
+	color += gsl::narrow<u8>(std::round(r * 255)) << 16;
+	color += gsl::narrow<u8>(std::round(g * 255)) << 8;
+	color += gsl::narrow<u8>(std::round(b * 255));
 
 	return Argb {color};
 }

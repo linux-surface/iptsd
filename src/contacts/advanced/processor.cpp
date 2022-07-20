@@ -355,8 +355,8 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
         auto const cs = m_img_lbl[{ x, y }] > 0 ? m_cscore.at(m_img_lbl[{ x, y }] - 1) : 0.0f;
 
         math::Vec2<f32> mean = p.mean.cast<f32>();
-        mean.x = (mean.x + 0.5f) / gsl::narrow_cast<f32>(m_hm.size().x);
-        mean.y = (mean.y + 0.5f) / gsl::narrow_cast<f32>(m_hm.size().y);
+        mean.x = (mean.x + 0.5f) / gsl::narrow<f32>(m_hm.size().x);
+        mean.y = (mean.y + 0.5f) / gsl::narrow<f32>(m_hm.size().y);
 
         m_touchpoints.push_back(TouchPoint { cs, static_cast<f32>(p.scale), false, mean, cov->cast<f32>() });
     }

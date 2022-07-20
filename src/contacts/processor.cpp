@@ -41,7 +41,7 @@ void TouchProcessor::resize(index2_t size)
 	}
 
 	f64 diag = std::sqrt(size.x * size.x + size.y * size.y);
-	this->diag = gsl::narrow_cast<i32>(diag);
+	this->diag = gsl::narrow<i32>(std::round(diag));
 }
 
 i32 TouchProcessor::diagonal()
