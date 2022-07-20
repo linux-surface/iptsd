@@ -71,8 +71,8 @@ auto gaussian(T sigma) -> Kernel<T, Nx, Ny>
     for (index_t j = 0; j < Ny; j++) {
         for (index_t i = 0; i < Nx; i++) {
             auto const x = (Vec2<T> {
-                static_cast<T>(i - (Nx - 1) / 2),
-                static_cast<T>(j - (Ny - 1) / 2)
+                static_cast<T>(i - (Nx - 1) / 2.0),
+                static_cast<T>(j - (Ny - 1) / 2.0)
             } / sigma).norm_l2();
 
             auto const v = std::exp(-static_cast<T>(0.5) * x * x);

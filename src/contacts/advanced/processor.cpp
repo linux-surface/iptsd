@@ -94,7 +94,7 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
         alg::convolve(m_img_pp, hm, m_kern_pp);
 
         auto const sum = container::ops::sum(m_img_pp);
-        auto const avg = sum / m_img_pp.size().span();
+        auto const avg = sum / gsl::narrow<f32>(m_img_pp.size().span());
 
         container::ops::transform(m_img_pp, [&](auto const x) {
             return std::max(x - avg, 0.0f);
@@ -186,7 +186,7 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
 
             m_cstats.at(label - 1).size += 1;
             m_cstats.at(label - 1).volume += value;
-            m_cstats.at(label - 1).incoherence += 1.0f - (coherence * coherence);
+            m_cstats.at(label - 1).incoherence += 1.0f - gsl::narrow<f32>(coherence * coherence);
         }
 
         for (auto m : m_maximas) {
@@ -207,7 +207,7 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
             auto const alph_vol = std::log(-(cov_vol + 1.0f) / (cov_vol - 1.0f)) / spr_vol;
             auto const beta_vol = alph_vol * cen_vol;
 
-            auto const s_vol = 1.0f - 1.0f / (1.0f + std::exp(-alph_vol * stats.size + beta_vol));
+            auto const s_vol = 1.0f - 1.0f / (1.0f + std::exp(-alph_vol * gsl::narrow<f32>(stats.size) + beta_vol));
 
             // rotation score per size
             auto const cen_rot = 0.4f;
@@ -217,7 +217,7 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
             auto const alph_rot = std::log(-(cov_rot + 1.0f) / (cov_rot - 1.0f)) / spr_rot;
             auto const beta_rot = alph_rot * cen_rot;
 
-            auto const s_rot = 1.0f / (1.0f + std::exp(-alph_rot * (stats.incoherence / stats.size) + beta_rot));
+            auto const s_rot = 1.0f / (1.0f + std::exp(-alph_rot * (stats.incoherence / gsl::narrow<f32>(stats.size)) + beta_rot));
 
             // combined score
             m_cscore.at(i) = stats.maximas > 0 ? s_vol * s_rot : 0.0f;

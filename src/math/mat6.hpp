@@ -11,7 +11,7 @@ namespace iptsd::math {
 
 template <class T> struct Mat6 {
 public:
-	std::array<T, 6 * 6> data;
+	std::array<T, 6L * 6L> data;
 
 public:
 	using value_type = T;
