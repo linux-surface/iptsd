@@ -147,7 +147,7 @@ inline auto cubehelix(f32 start = 0.5f, f32 rotations = -1.5f, f32 hue = 1.2f, f
 
 template <std::size_t N> class Lut : public Cmap {
 public:
-	template <class... Args> Lut(Args &&...t);
+	template <class... Args> Lut(Args &&...t) noexcept;
 
 	[[nodiscard]] auto map_value(f32 value) const -> Srgb override;
 
@@ -157,7 +157,7 @@ private:
 
 template <std::size_t N>
 template <class... Args>
-Lut<N>::Lut(Args &&...args) : m_table {std::forward<Args>(args)...}
+Lut<N>::Lut(Args &&...args) noexcept : m_table {std::forward<Args>(args)...}
 {
 }
 
