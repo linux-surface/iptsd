@@ -2,6 +2,7 @@ sources = [
   'cone.cpp',
   'config.cpp',
   'devices.cpp',
+  'dft.cpp',
   'main.cpp',
   'stylus.cpp',
   'touch-manager.cpp',

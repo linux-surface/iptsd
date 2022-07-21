@@ -3,6 +3,7 @@
 #include "config.hpp"
 #include "context.hpp"
 #include "devices.hpp"
+#include "dft.hpp"
 #include "stylus.hpp"
 #include "touch.hpp"
 
@@ -46,6 +47,7 @@ static int main(gsl::span<char *> args)
 	ipts::Parser parser {};
 	parser.on_stylus = [&](const auto &data) { iptsd_stylus_input(ctx, data); };
 	parser.on_heatmap = [&](const auto &data) { iptsd_touch_input(ctx, data); };
+	parser.on_dft = [&](const auto &dft, auto &stylus) { iptsd_dft_input(ctx, dft, stylus); };
 
 	// Get the buffer size from the HID descriptor
 	std::size_t buffer_size = device.buffer_size();
