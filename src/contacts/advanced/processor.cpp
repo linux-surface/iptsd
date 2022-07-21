@@ -185,7 +185,7 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
 
             m_cstats.at(label - 1).size += 1;
             m_cstats.at(label - 1).volume += value;
-            m_cstats.at(label - 1).incoherence += 1.0f - gsl::narrow<f32>(coherence * coherence);
+            m_cstats.at(label - 1).incoherence += 1.0f - gsl::narrow_cast<f32>(coherence * coherence);
         }
 
         for (auto m : m_maximas) {
