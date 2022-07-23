@@ -30,26 +30,27 @@ iptsd_dft_interpolate_position(const Context &ctx, const struct ipts_pen_dft_win
 	f64 mind = -0.5;
 	f64 maxd = 0.5;
 
-	if (row.real[maxi - 1] == 0 && row.imag[maxi - 1] == 0) {
+	if (gsl::at(row.real, maxi - 1) == 0 && gsl::at(row.imag, maxi - 1) == 0) {
 		maxi++;
 		mind = -1;
-	} else if (row.real[maxi + 1] == 0 && row.imag[maxi + 1] == 0) {
+	} else if (gsl::at(row.real, maxi + 1) == 0 && gsl::at(row.imag, maxi + 1) == 0) {
 		maxi--;
 		maxd = 1;
 	}
 
 	// get phase-aligned amplitudes of the three center components
-	f64 amp = std::sqrt(row.real[maxi] * row.real[maxi] + row.imag[maxi] * row.imag[maxi]);
+	f64 amp = std::sqrt(gsl::at(row.real, maxi) * gsl::at(row.real, maxi) +
+			    gsl::at(row.imag, maxi) * gsl::at(row.imag, maxi));
 	if (amp < ctx.config.dft_position_min_amp)
 		return std::tuple {false, 0};
 
-	f64 sin = row.real[maxi] / amp;
-	f64 cos = row.imag[maxi] / amp;
+	f64 sin = gsl::at(row.real, maxi) / amp;
+	f64 cos = gsl::at(row.imag, maxi) / amp;
 
 	std::array<f64, 3> x = {
-		sin * row.real[maxi - 1] + cos * row.imag[maxi - 1],
+		sin * gsl::at(row.real, maxi - 1) + cos * gsl::at(row.imag, maxi - 1),
 		amp,
-		sin * row.real[maxi + 1] + cos * row.imag[maxi + 1],
+		sin * gsl::at(row.real, maxi + 1) + cos * gsl::at(row.imag, maxi + 1),
 	};
 
 	// convert the amplitudes into something we can fit a parabola to
