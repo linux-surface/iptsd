@@ -102,6 +102,21 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 			std::pow(config->position_stability_threshold, 2);
 	}
 
+	if (section == "DFT" && name == "PositionMinAmp")
+		config->dft_position_min_amp = std::stoi(value);
+
+	if (section == "DFT" && name == "PositionMinMag")
+		config->dft_position_min_mag = std::stoi(value);
+
+	if (section == "DFT" && name == "PositionExp")
+		config->dft_position_exp = std::stof(value);
+
+	if (section == "DFT" && name == "ButtonMinMag")
+		config->dft_button_min_mag = std::stoi(value);
+
+	if (section == "DFT" && name == "FreqMinMag")
+		config->dft_freq_min_mag = std::stoi(value);
+
 	return 1;
 }
 

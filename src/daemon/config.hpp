@@ -34,6 +34,12 @@ public:
 	f32 position_stability_threshold = 8;
 	f64 position_stability_threshold_square = 8 * 8;
 
+	u16 dft_position_min_amp = 50;
+	u16 dft_position_min_mag = 2000;
+	f32 dft_position_exp = -0.7;
+	u16 dft_button_min_mag = 1000;
+	u16 dft_freq_min_mag = 10000;
+
 	i16 vendor;
 	i16 product;
 

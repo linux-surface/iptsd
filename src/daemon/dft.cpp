@@ -12,13 +12,6 @@
 
 namespace iptsd::daemon {
 
-constexpr u16 IPTS_DFT_POSITION_MIN_AMP = 50;
-constexpr u16 IPTS_DFT_POSITION_MIN_MAG = 2000;
-constexpr u16 IPTS_DFT_BUTTON_MIN_MAG = 1000;
-constexpr u16 IPTS_DFT_FREQ_MIN_MAG = 10000;
-constexpr f32 IPTS_DFT_POSITION_EXP =
-	-.7; // tune this value to minimize jagginess of diagonal lines
-
 static void iptsd_dft_lift(ipts::StylusData &stylus)
 {
 	stylus.proximity = false;
@@ -28,7 +21,7 @@ static void iptsd_dft_lift(ipts::StylusData &stylus)
 }
 
 static std::tuple<bool, f64>
-iptsd_dft_interpolate_position(const struct ipts_pen_dft_window_row &row)
+iptsd_dft_interpolate_position(const Context &ctx, const struct ipts_pen_dft_window_row &row)
 {
 	// assume the center component has the max amplitude
 	u8 maxi = IPTS_DFT_NUM_COMPONENTS / 2;
@@ -47,7 +40,7 @@ iptsd_dft_interpolate_position(const struct ipts_pen_dft_window_row &row)
 
 	// get phase-aligned amplitudes of the three center components
 	f64 amp = std::sqrt(row.real[maxi] * row.real[maxi] + row.imag[maxi] * row.imag[maxi]);
-	if (amp < IPTS_DFT_POSITION_MIN_AMP)
+	if (amp < ctx.config.dft_position_min_amp)
 		return std::tuple {false, 0};
 
 	f64 sin = row.real[maxi] / amp;
@@ -61,7 +54,7 @@ iptsd_dft_interpolate_position(const struct ipts_pen_dft_window_row &row)
 
 	// convert the amplitudes into something we can fit a parabola to
 	for (u8 i = 0; i < 3; i++)
-		x.at(i) = std::pow(x.at(i), IPTS_DFT_POSITION_EXP);
+		x.at(i) = std::pow(x.at(i), ctx.config.dft_position_exp);
 
 	// check orientation of fitted parabola
 	if (x[0] + x[2] <= 2 * x[1])
@@ -73,7 +66,7 @@ iptsd_dft_interpolate_position(const struct ipts_pen_dft_window_row &row)
 	return std::tuple {true, row.first + maxi + std::clamp(d, mind, maxd)};
 }
 
-static f64 iptsd_dft_interpolate_frequency(const ipts::DftWindow &dft, u8 rows)
+static f64 iptsd_dft_interpolate_frequency(const Context &ctx, const ipts::DftWindow &dft, u8 rows)
 {
 	if (rows < 3)
 		return NAN;
@@ -90,7 +83,7 @@ static f64 iptsd_dft_interpolate_frequency(const ipts::DftWindow &dft, u8 rows)
 		}
 	}
 
-	if (maxm < static_cast<u64>(2 * IPTS_DFT_FREQ_MIN_MAG))
+	if (maxm < static_cast<u64>(2 * ctx.config.dft_freq_min_mag))
 		return NAN;
 
 	f64 mind = -0.5;
@@ -141,8 +134,8 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 		return;
 	}
 
-	if (dft.x[0].magnitude <= IPTS_DFT_POSITION_MIN_MAG ||
-	    dft.y[0].magnitude <= IPTS_DFT_POSITION_MIN_MAG) {
+	if (dft.x[0].magnitude <= ctx.config.dft_position_min_mag ||
+	    dft.y[0].magnitude <= ctx.config.dft_position_min_mag) {
 		iptsd_dft_lift(stylus);
 		return;
 	}
@@ -152,8 +145,8 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 	stylus.imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
 		      dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
 
-	auto [px, x] = iptsd_dft_interpolate_position(dft.x[0]);
-	auto [py, y] = iptsd_dft_interpolate_position(dft.y[0]);
+	auto [px, x] = iptsd_dft_interpolate_position(ctx, dft.x[0]);
+	auto [py, y] = iptsd_dft_interpolate_position(ctx, dft.y[0]);
 
 	if (px && py) {
 		stylus.proximity = true;
@@ -186,8 +179,8 @@ static void iptsd_dft_handle_button(Context &ctx, const ipts::DftWindow &dft,
 	bool button = false;
 	bool rubber = false;
 
-	if (dft.x[0].magnitude > IPTS_DFT_BUTTON_MIN_MAG &&
-	    dft.y[0].magnitude > IPTS_DFT_BUTTON_MIN_MAG) {
+	if (dft.x[0].magnitude > ctx.config.dft_button_min_mag &&
+	    dft.y[0].magnitude > ctx.config.dft_button_min_mag) {
 		i32 real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
 			   dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
 		i32 imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
@@ -214,7 +207,7 @@ static void iptsd_dft_handle_pressure(Context &ctx, const ipts::DftWindow &dft,
 	if (dft.rows < IPTS_DFT_PRESSURE_ROWS)
 		return;
 
-	f64 p = iptsd_dft_interpolate_frequency(dft, IPTS_DFT_PRESSURE_ROWS);
+	f64 p = iptsd_dft_interpolate_frequency(ctx, dft, IPTS_DFT_PRESSURE_ROWS);
 	p = (1 - p) * IPTS_MAX_PRESSURE;
 
 	if (p > 1) {
