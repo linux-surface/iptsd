@@ -59,9 +59,8 @@ private:
 };
 
 MainContext::MainContext(index2_t img_size)
-	: m_vis {img_size}, m_img1 {img_size}, m_img2 {img_size}, m_tps1 {},
-	  m_tps2 {}, m_img_frnt {&m_img1}, m_img_back {&m_img2}, m_tps_frnt {&m_tps1},
-	  m_tps_back {&m_tps2}
+	: m_vis {img_size}, m_img1 {img_size}, m_img2 {img_size}, m_tps1 {}, m_tps2 {},
+	  m_img_frnt {&m_img1}, m_img_back {&m_img2}, m_tps_frnt {&m_tps1}, m_tps_back {&m_tps2}
 {
 }
 

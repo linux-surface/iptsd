@@ -86,8 +86,7 @@ inline constexpr Token::Token(std::size_t i) : m_index {i}
 }
 
 inline Entry::Entry(std::string name)
-	: name {std::move(name)}, duration {0},
-	  minimum {clock::duration::max()}, maximum {0}
+	: name {std::move(name)}, duration {0}, minimum {clock::duration::max()}, maximum {0}
 {
 }
 

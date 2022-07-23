@@ -22,7 +22,9 @@ public:
 
 private:
 	static void handler(int signum);
-	inline static SignalStub s_seat; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+
+	// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
+	inline static SignalStub s_seat;
 
 	std::function<void(int)> m_handler;
 };
