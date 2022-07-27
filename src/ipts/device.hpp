@@ -15,6 +15,10 @@
 namespace iptsd::ipts {
 
 class Device : public hid::Device {
+private:
+	bool is_set_mode(u8 report);
+	u8 get_set_mode();
+
 public:
 	Device(const std::string &path) : hid::Device(path) {};
 

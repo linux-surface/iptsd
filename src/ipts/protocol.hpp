@@ -16,9 +16,9 @@ constexpr u8 IPTS_HID_REPORT_USAGE_SCAN_TIME = 0x56;
 constexpr u8 IPTS_HID_REPORT_USAGE_GESTURE_DATA = 0x61;
 
 /*
- * The feature report that is used for switching into multitouch mode and back
+ * If a one byte feature report contains only this usage, it is used for switching modes.
  */
-constexpr u8 IPTS_HID_FEATURE_REPORT_MODE = 0x5;
+constexpr u8 IPTS_HID_REPORT_USAGE_SET_MODE = 0xC8;
 
 constexpr u8 IPTS_RAW_FRAME_TYPE_STYLUS  = 0x6;
 constexpr u8 IPTS_RAW_FRAME_TYPE_HEATMAP = 0x8;
