@@ -118,6 +118,11 @@ static int main(gsl::span<char *> args)
 	std::size_t buffer_size = dev.buffer_size();
 	std::vector<u8> buffer(buffer_size);
 
+	if (file) {
+		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+		file.write(reinterpret_cast<char *>(&buffer_size), sizeof(buffer_size));
+	}
+
 	fmt::print("Vendor:       {:04X}\n", dev.vendor());
 	fmt::print("Product:      {:04X}\n", dev.product());
 	fmt::print("Buffer Size:  {}\n", buffer_size);
@@ -130,6 +135,17 @@ static int main(gsl::span<char *> args)
 		try {
 			ssize_t rsize = dev.read(buffer);
 
+			if (file) {
+				if (!dev.is_touch_data(buffer[0]))
+					continue;
+
+				// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+				file.write(reinterpret_cast<char *>(buffer.data()),
+					   gsl::narrow<std::streamsize>(buffer_size));
+
+				continue;
+			}
+
 			const gsl::span<const u8> buf {buffer.data(), (std::size_t)rsize};
 			fmt::print("== Size: {} ==\n", rsize);
 			fmt::print("{:ox}\n", buf);
@@ -140,44 +156,6 @@ static int main(gsl::span<char *> args)
 	}
 
 	dev.set_mode(false);
-
-	/*
-
-	fmt::print("Version:      {}\n", ctrl.info.version);
-	fmt::print("Buffer Size:  {}\n", ctrl.info.buffer_size);
-	fmt::print("Max Contacts: {}\n", ctrl.info.max_contacts);
-	fmt::print("\n");
-
-	std::vector<char> data(ctrl.info.buffer_size);
-
-	while (true) {
-		uint32_t doorbell = ctrl.doorbell();
-		if (doorbell <= ctrl.current_doorbell)
-			continue;
-
-		ctrl.read(gsl::span(data));
-		auto *header = reinterpret_cast<struct ipts_data *>(data.data());
-
-		if (file) {
-			file.write(data.data(), sizeof(struct ipts_data) + header->size);
-		} else {
-			auto const header_type = header->type;
-			auto const header_buffer = header->buffer;
-			auto const header_size = header->size;
-
-			const PrettyBuf buf {&data[sizeof(struct ipts_data)], header->size};
-
-			fmt::print("====== Buffer: {} == Type: {} == Size: {} =====\n", header_type,
-				   header_buffer, header_size);
-
-			fmt::print("{:ox}\n", buf);
-		}
-
-		ctrl.send_feedback();
-	}
-
-	*/
-
 	return 0;
 }
 
