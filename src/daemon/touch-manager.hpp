@@ -34,14 +34,10 @@ public:
 
 class TouchManager {
 public:
-	i32 diagonal = 0;
-	index2_t size;
+	Config conf;
 	contacts::TouchProcessor processor;
 
-	Config conf;
-
 	std::vector<TouchInput> inputs;
-
 	std::vector<TouchInput> last;
 	std::vector<f64> distances;
 

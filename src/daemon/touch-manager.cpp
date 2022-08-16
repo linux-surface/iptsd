@@ -25,7 +25,7 @@
 namespace iptsd::daemon {
 
 TouchManager::TouchManager(Config conf)
-	: size(), conf(conf), inputs(IPTS_MAX_CONTACTS), last(IPTS_MAX_CONTACTS),
+	: conf(conf), inputs(IPTS_MAX_CONTACTS), last(IPTS_MAX_CONTACTS),
 	  distances(static_cast<std::size_t>(IPTS_MAX_CONTACTS) * IPTS_MAX_CONTACTS)
 {
 	for (i32 i = 0; i < IPTS_MAX_CONTACTS; i++) {
@@ -71,8 +71,8 @@ std::vector<TouchInput> &TouchManager::process(const ipts::Heatmap &data)
 		f64 s1 = std::sqrt(eigen.w[0]);
 		f64 s2 = std::sqrt(eigen.w[1]);
 
-		f64 d1 = 4 * s1 / this->diagonal;
-		f64 d2 = 4 * s2 / this->diagonal;
+		f64 d1 = 4 * s1 / this->processor.diagonal();
+		f64 d2 = 4 * s2 / this->processor.diagonal();
 
 		f64 major = std::max(d1, d2);
 		f64 minor = std::min(d1, d2);
