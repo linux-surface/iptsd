@@ -128,6 +128,15 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	if (section == "DFT" && name == "FreqMinMag")
 		config->dft_freq_min_mag = std::stoi(value);
 
+	if (section == "DFT" && name == "TiltMinMag")
+		config->dft_tilt_min_mag = std::stoi(value);
+
+	if (section == "DFT" && name == "TiltDistance")
+		config->dft_tilt_distance = std::stof(value);
+
+	if (section == "DFT" && name == "TipDistance")
+		config->dft_tip_distance = std::stof(value);
+
 	return 1;
 }
 

@@ -50,6 +50,9 @@ public:
 	f32 dft_position_exp = -0.7;
 	u16 dft_button_min_mag = 1000;
 	u16 dft_freq_min_mag = 10000;
+	u16 dft_tilt_min_mag = 10000;
+	f32 dft_tilt_distance = 6;
+	f32 dft_tip_distance = 2;
 
 public:
 	Config(i16 vendor, i16 product);
