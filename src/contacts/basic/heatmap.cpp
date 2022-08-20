@@ -4,72 +4,68 @@
 
 #include <common/types.hpp>
 
-#include <cstddef>
+#include <algorithm>
 #include <gsl/gsl>
 
 namespace iptsd::contacts::basic {
 
-f32 Heatmap::value(index2_t x)
+f32 Heatmap::value(index2_t pos)
 {
-	if (x.x < 0 || x.x >= this->size.x)
+	if (pos.x < 0 || pos.x >= this->size.x)
 		return 0;
 
-	if (x.y < 0 || x.y >= this->size.y)
+	if (pos.y < 0 || pos.y >= this->size.y)
 		return 0;
 
-	f32 val = this->data[x];
-	if (val > this->average)
-		return val - this->average;
-	else
-		return 0;
+	return std::max(this->data[pos] - this->average, 0.0f);
 }
 
-bool Heatmap::compare(index2_t x, index2_t y)
+bool Heatmap::compare(index2_t px, index2_t py)
 {
-	f64 v1 = this->value(x);
-	f64 v2 = this->value(y);
+	f64 x = this->value(px);
+	f64 y = this->value(py);
 
-	if (v2 > v1)
+	if (y > x)
 		return false;
 
-	if (v2 < v1)
+	if (y < x)
 		return true;
 
-	if (y.x > x.x)
+	if (py.x > px.x)
 		return false;
 
-	if (y.x < x.x)
+	if (py.x < px.x)
 		return true;
 
-	if (y.y > x.y)
+	if (py.y > px.y)
 		return false;
 
-	if (y.y < x.y)
+	if (py.y < px.y)
 		return true;
 
-	return y.y == x.y;
+	return py.y == px.y;
 }
 
-bool Heatmap::get_visited(index2_t x)
+bool Heatmap::get_visited(index2_t pos)
 {
-	if (x.x < 0 || x.x >= this->size.x)
+	if (pos.x < 0 || pos.x >= this->size.x)
 		return true;
 
-	if (x.y < 0 || x.y >= this->size.y)
+	if (pos.y < 0 || pos.y >= this->size.y)
 		return true;
 
-	return this->visited[x];
+	return this->visited[pos];
 }
 
-void Heatmap::set_visited(index2_t x, bool value)
+void Heatmap::set_visited(index2_t pos, bool value)
 {
-	if (x.x < 0 || x.x >= this->size.x)
+	if (pos.x < 0 || pos.x >= this->size.x)
 		return;
 
-	if (x.y < 0 || x.y >= this->size.y)
+	if (pos.y < 0 || pos.y >= this->size.y)
 		return;
 
-	this->visited[x] = value;
+	this->visited[pos] = value;
 }
 
 void Heatmap::reset()
@@ -81,7 +77,7 @@ void Heatmap::reset()
 
 	f32 value = 0;
 
-	for (auto i : this->data)
+	for (const auto i : this->data)
 		value += i;
 
 	this->average = value / gsl::narrow<f32>(this->size.span());

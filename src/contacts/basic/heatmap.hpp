@@ -24,10 +24,10 @@ public:
 		: size(size), diagonal(std::sqrt(size.x * size.x + size.y * size.y)), data(size),
 		  visited(size) {};
 
-	f32 value(index2_t x);
-	bool compare(index2_t x, index2_t y);
-	bool get_visited(index2_t x);
-	void set_visited(index2_t x, bool value);
+	f32 value(index2_t pos);
+	bool compare(index2_t px, index2_t py);
+	bool get_visited(index2_t pos);
+	void set_visited(index2_t pos, bool value);
 	void reset();
 };
 
