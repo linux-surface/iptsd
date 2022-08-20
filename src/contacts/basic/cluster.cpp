@@ -7,12 +7,7 @@
 
 #include <common/types.hpp>
 
-#include <cmath>
-#include <cstddef>
 #include <gsl/gsl>
-#include <iterator>
-#include <memory>
-#include <tuple>
 
 namespace iptsd::contacts::basic {
 
@@ -33,15 +28,15 @@ void Cluster::add(index2_t pos, f32 val)
 	this->xy += val * x * y;
 	this->w += val;
 
-	if (this->max_v < val)
+	if (this->max_v > val)
 		this->max_v = val;
 }
 
 math::Vec2<f32> Cluster::mean()
 {
-	f32 fx = (f32)this->x;
-	f32 fy = (f32)this->y;
-	f32 fw = (f32)this->w;
+	f32 fx = this->x;
+	f32 fy = this->y;
+	f32 fw = this->w;
 
 	return math::Vec2<f32> {fx / fw, fy / fw};
 }

@@ -9,10 +9,6 @@
 #include <math/mat2.hpp>
 #include <math/vec2.hpp>
 
-#include <cstddef>
-#include <tuple>
-#include <vector>
-
 namespace iptsd::contacts::basic {
 
 class Cluster {
@@ -27,12 +23,11 @@ public:
 
 	Cluster(Heatmap &hm, index2_t center);
 
-	void add(index2_t pos, f32 val);
-
 	math::Vec2<f32> mean();
 	math::Mat2s<f32> cov();
 
 private:
+	void add(index2_t pos, f32 val);
 	void check(Heatmap &hm, index2_t pos);
 };
 
