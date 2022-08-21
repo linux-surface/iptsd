@@ -82,9 +82,9 @@ template <class T> inline constexpr auto Vec2<T>::dot(Vec2<T> const &v) const ->
 
 template <class T> inline constexpr auto Vec2<T>::norm_l2() const -> T
 {
-	using std::sqrt;
+	using std::hypot;
 
-	return sqrt(this->x * this->x + this->y * this->y);
+	return hypot(this->x, this->y);
 }
 
 template <class T>

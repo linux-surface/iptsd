@@ -50,9 +50,8 @@ bool ContactFinder::check_dist(const Contact &from, const Contact &to)
 
 const std::vector<Contact> &ContactFinder::search()
 {
-	f64 data_diag = std::sqrt(this->size.x * this->size.x + this->size.y * this->size.y);
-	f64 phys_diag = std::sqrt(this->config.width * this->config.width +
-				  this->config.height * this->config.height);
+	f64 data_diag = std::hypot(this->size.x, this->size.y);
+	f64 phys_diag = std::hypot(this->config.width, this->config.height);
 
 	const std::vector<Blob> &blobs = this->detector->search();
 	std::size_t count = std::min(blobs.size(), static_cast<u64>(this->config.max_contacts));
@@ -144,8 +143,6 @@ const std::vector<Contact> &ContactFinder::search()
 
 void ContactFinder::track()
 {
-	f64 position_thresh_sq = this->config.position_thresh * this->config.position_thresh;
-
 	// Calculate the distances between current and previous inputs
 	for (u32 i = 0; i < this->config.max_contacts; i++) {
 		for (u32 j = 0; j < this->config.max_contacts; j++) {
@@ -165,7 +162,7 @@ void ContactFinder::track()
 			f64 dx = in.x - last.x;
 			f64 dy = in.y - last.y;
 
-			this->distances[idx] = std::sqrt(dx * dx + dy * dy);
+			this->distances[idx] = std::hypot(dx, dy);
 		}
 	}
 
@@ -196,15 +193,13 @@ void ContactFinder::track()
 
 		f64 dx = contact.x - last.x;
 		f64 dy = contact.y - last.y;
-		f64 sqdist = dx * dx + dy * dy;
+		f64 dist = std::hypot(dx, dy);
 
 		// Is the position stable?
-		if (sqdist < position_thresh_sq) {
+		if (dist < this->config.position_thresh) {
 			contact.x = last.x;
 			contact.y = last.y;
 		} else {
-			f64 dist = std::sqrt(sqdist);
-
 			contact.x -= this->config.position_thresh * (dx / dist);
 			contact.y -= this->config.position_thresh * (dy / dist);
 		}

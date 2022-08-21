@@ -239,7 +239,7 @@ auto BlobDetector::process(Image<f32> const& hm) -> std::vector<Blob> const&
             auto const [ev1, ev2] = m_img_stev[i];
             auto const grad = std::max(ev1, 0.0f) + std::max(ev2, 0.0f);
             auto const ridge = m_img_rdg[i];
-            auto const dist = std::sqrt(static_cast<f32>(d.x * d.x + d.y * d.y));
+            auto const dist = std::hypotf(gsl::narrow<f32>(d.x), gsl::narrow<f32>(d.y));
 
             return c_ridge * ridge + c_grad * grad + c_dist * dist;
         };

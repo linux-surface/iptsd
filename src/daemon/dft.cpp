@@ -39,8 +39,7 @@ iptsd_dft_interpolate_position(const Context &ctx, const struct ipts_pen_dft_win
 	}
 
 	// get phase-aligned amplitudes of the three center components
-	f64 amp = std::sqrt(gsl::at(row.real, maxi) * gsl::at(row.real, maxi) +
-			    gsl::at(row.imag, maxi) * gsl::at(row.imag, maxi));
+	f64 amp = std::hypot(gsl::at(row.real, maxi), gsl::at(row.imag, maxi));
 	if (amp < ctx.config.dft_position_min_amp)
 		return std::tuple {false, 0};
 
