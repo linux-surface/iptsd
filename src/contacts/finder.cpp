@@ -21,6 +21,13 @@ ContactFinder::ContactFinder(Config config) : config {config}
 	this->contacts.resize(config.max_contacts);
 	this->last.resize(config.max_contacts);
 	this->distances.resize(static_cast<std::size_t>(config.max_contacts) * config.max_contacts);
+
+	// Make sure that the contacts in last have proper indices set,
+	// to avoid copying the index 0 to all contacts.
+	for (std::size_t i = 0; i < config.max_contacts; i++) {
+		this->last[i].index = i;
+		this->last[i].active = false;
+	}
 }
 
 void ContactFinder::resize(index2_t size)
