@@ -9,6 +9,7 @@
 #include <math/mat2.hpp>
 
 #include <algorithm>
+#include <cmath>
 #include <gsl/gsl>
 #include <memory>
 #include <vector>
@@ -44,8 +45,14 @@ bool ContactFinder::check_palm(const Contact &contact)
 
 bool ContactFinder::check_dist(const Contact &from, const Contact &to)
 {
-	// TODO: reimplement
-	return false;
+	// Assumption: All contacts are perfect circles. The radius is major / 2.
+	// This might cover a bit more area than neccessary, but will make implementation easier.
+
+	f64 dist = std::hypot(from.x - to.x, from.y - to.y);
+	dist -= from.major / 2;
+	dist -= to.major / 2;
+
+	return dist <= this->config.dist_thresh;
 }
 
 const std::vector<Contact> &ContactFinder::search()

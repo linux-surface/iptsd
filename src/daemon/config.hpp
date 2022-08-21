@@ -34,6 +34,7 @@ public:
 	std::string contacts_detection = "basic";
 	f32 contacts_size_thresh = 0.1;
 	f32 contacts_position_thresh = 0.2;
+	f32 contacts_distance_thresh = 1;
 
 	// [Cone]
 	f32 cone_angle = 30;

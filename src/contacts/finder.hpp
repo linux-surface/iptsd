@@ -45,6 +45,7 @@ struct Config {
 
 	f32 size_thresh = 0.1;
 	f32 position_thresh = 0.2;
+	f32 dist_thresh = 1;
 };
 
 class ContactFinder {
