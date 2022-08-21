@@ -6,12 +6,14 @@
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
+#include <contacts/finder.hpp>
 #include <ipts/protocol.hpp>
 
 #include <climits>
 #include <cmath>
 #include <cstddef>
 #include <gsl/gsl>
+#include <gsl/narrow>
 #include <iterator>
 #include <linux/input-event-codes.h>
 #include <linux/input.h>
@@ -22,13 +24,16 @@
 
 namespace iptsd::daemon {
 
-static i32 res(i32 virt, i32 phys)
+static i32 res(i32 virt, f64 phys)
 {
-	f64 res = static_cast<f64>(virt * 10) / static_cast<f64>(phys);
+	// The kernel expects the resolution of an axis in units/mm.
+	// We store width and height in centimeters, so they need to be converted.
+
+	f64 res = virt / (phys * 10.0);
 	return gsl::narrow<i32>(std::round(res));
 }
 
-StylusDevice::StylusDevice(Config conf, u32 serial, std::shared_ptr<Cone> cone)
+StylusDevice::StylusDevice(const Config &conf, u32 serial, std::shared_ptr<Cone> cone)
 	: UinputDevice(), serial(serial), cone(std::move(cone))
 {
 	this->name = "IPTS Stylus";
@@ -49,17 +54,20 @@ StylusDevice::StylusDevice(Config conf, u32 serial, std::shared_ptr<Cone> cone)
 	i32 res_x = res(IPTS_MAX_X, conf.width);
 	i32 res_y = res(IPTS_MAX_Y, conf.height);
 
+	// Resolution for tilt is expected to be units/radian.
+	i32 res_tilt = gsl::narrow<i32>(std::round(18000 / M_PI));
+
 	this->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
 	this->set_absinfo(ABS_PRESSURE, 0, IPTS_MAX_PRESSURE, 0);
-	this->set_absinfo(ABS_TILT_X, -9000, 9000, gsl::narrow<i32>(std::round(18000 / M_PI)));
-	this->set_absinfo(ABS_TILT_Y, -9000, 9000, gsl::narrow<i32>(std::round(18000 / M_PI)));
+	this->set_absinfo(ABS_TILT_X, -9000, 9000, res_tilt);
+	this->set_absinfo(ABS_TILT_Y, -9000, 9000, res_tilt);
 	this->set_absinfo(ABS_MISC, 0, USHRT_MAX, 0);
 
 	this->create();
 }
 
-TouchDevice::TouchDevice(Config conf) : UinputDevice(), manager(conf)
+TouchDevice::TouchDevice(const Config &conf) : UinputDevice(), cones {}, finder {conf.contacts()}
 {
 	this->name = "IPTS Touch";
 	this->vendor = conf.vendor;
@@ -74,7 +82,7 @@ TouchDevice::TouchDevice(Config conf) : UinputDevice(), manager(conf)
 	f64 diag = std::sqrt(conf.width * conf.width + conf.height * conf.height);
 	i32 res_x = res(IPTS_MAX_X, conf.width);
 	i32 res_y = res(IPTS_MAX_Y, conf.height);
-	i32 res_d = res(IPTS_DIAGONAL, gsl::narrow<i32>(std::round(diag)));
+	i32 res_d = res(IPTS_DIAGONAL, diag);
 
 	this->set_absinfo(ABS_MT_SLOT, 0, IPTS_MAX_CONTACTS, 0);
 	this->set_absinfo(ABS_MT_TRACKING_ID, 0, IPTS_MAX_CONTACTS, 0);
@@ -92,7 +100,7 @@ TouchDevice::TouchDevice(Config conf) : UinputDevice(), manager(conf)
 	this->create();
 }
 
-DeviceManager::DeviceManager(Config conf) : conf(conf), touch(conf)
+DeviceManager::DeviceManager(const Config &conf) : conf {conf}, touch {conf}
 {
 	if (conf.width == 0 || conf.height == 0)
 		throw std::runtime_error("Display size is 0");
@@ -103,7 +111,7 @@ DeviceManager::DeviceManager(Config conf) : conf(conf), touch(conf)
 StylusDevice &DeviceManager::create_stylus(u32 serial)
 {
 	std::shared_ptr<Cone> cone = std::make_shared<Cone>(conf.cone_angle, conf.cone_distance);
-	this->touch.manager.cones.push_back(cone);
+	this->touch.cones.push_back(cone);
 	return this->styli.emplace_back(this->conf, serial, std::move(cone));
 }
 

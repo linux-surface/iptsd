@@ -13,16 +13,14 @@ namespace iptsd::contacts::basic {
 
 class Heatmap {
 public:
-	index2_t size;
-	f64 diagonal;
-	f32 average = 0;
-
 	container::Image<f32> data;
+
+private:
+	f32 average = 0;
 	container::Image<bool> visited;
 
-	Heatmap(index2_t size)
-		: size(size), diagonal(std::sqrt(size.x * size.x + size.y * size.y)), data(size),
-		  visited(size) {};
+public:
+	Heatmap(index2_t size) : data {size}, visited {size} {};
 
 	f32 value(index2_t pos);
 	bool compare(index2_t px, index2_t py);

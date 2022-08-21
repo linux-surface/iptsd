@@ -1,0 +1,51 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+#include "detector.hpp"
+
+#include "../interface.hpp"
+#include "cluster.hpp"
+
+#include <common/types.hpp>
+#include <container/image.hpp>
+#include <math/mat2.hpp>
+#include <math/vec2.hpp>
+
+#include <gsl/gsl>
+#include <vector>
+
+namespace iptsd::contacts::basic {
+
+const std::vector<Blob> &BlobDetector::search()
+{
+	this->heatmap.reset();
+	this->blobs.clear();
+
+	index2_t size = this->heatmap.data.size();
+
+	for (index_t x = 0; x < size.x; x++) {
+		for (index_t y = 0; y < size.y; y++) {
+			index2_t pos {x, y};
+
+			if (this->heatmap.get_visited(pos))
+				continue;
+
+			Cluster cluster {this->heatmap, pos};
+
+			math::Mat2s<f32> cov = cluster.cov();
+			math::Vec2<f32> mean = cluster.mean();
+
+			mean.x /= gsl::narrow<f32>(size.x) - 1.0f;
+			mean.y /= gsl::narrow<f32>(size.y) - 1.0f;
+
+			math::Eigen2<f32> eigen = cov.eigen();
+			if (eigen.w[0] <= 0 || eigen.w[1] <= 0)
+				continue;
+
+			this->blobs.push_back(Blob {mean, cov});
+		}
+	}
+
+	return this->blobs;
+}
+
+} // namespace iptsd::contacts::basic

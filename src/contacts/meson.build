@@ -7,11 +7,11 @@ deps = [
 ]
 
 src = [
-  'processor.cpp',
-  'advanced/processor.cpp',
+  'finder.cpp',
+  'advanced/detector.cpp',
   'basic/cluster.cpp',
+  'basic/detector.cpp',
   'basic/heatmap.cpp',
-  'basic/processor.cpp',
 ]
 
 libcontacts = static_library('contacts', src, dependencies: deps, include_directories: includes)

@@ -3,6 +3,8 @@
 #include "config.hpp"
 
 #include <common/types.hpp>
+#include <contacts/finder.hpp>
+#include <ipts/protocol.hpp>
 
 #include <algorithm>
 #include <cctype>
@@ -62,45 +64,39 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 		config->invert_y = to_bool(value);
 
 	if (section == "Config" && name == "Width")
-		config->width = std::stoi(value);
+		config->width = std::stof(value);
 
 	if (section == "Config" && name == "Height")
-		config->height = std::stoi(value);
+		config->height = std::stof(value);
 
-	if (section == "Stylus" && name == "Cone")
-		config->stylus_cone = to_bool(value);
+	if (section == "Touch" && name == "CheckCone")
+		config->touch_check_cone = to_bool(value);
 
-	if (section == "Stylus" && name == "DisableTouch")
-		config->stylus_disable_touch = to_bool(value);
-
-	if (section == "Touch" && name == "Stability")
-		config->touch_stability = to_bool(value);
-
-	if (section == "Touch" && name == "Processing") {
-		std::transform(value.begin(), value.end(), value.begin(), ::tolower);
-		config->touch_advanced = value == "advanced";
-	}
+	if (section == "Touch" && name == "CheckStability")
+		config->touch_check_stability = to_bool(value);
 
 	if (section == "Touch" && name == "DisableOnPalm")
 		config->touch_disable_on_palm = to_bool(value);
 
-	if (section == "Basic" && name == "Pressure")
-		config->basic_pressure = std::stof(value);
+	if (section == "Touch" && name == "DisableOnStylus")
+		config->touch_disable_on_stylus = to_bool(value);
+
+	if (section == "Contacts" && name == "Detection") {
+		std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+		config->contacts_detection = value;
+	}
+
+	if (section == "Contacts" && name == "SizeThreshold")
+		config->contacts_size_thresh = std::stof(value);
+
+	if (section == "Contacts" && name == "PositionThreshold")
+		config->contacts_position_thresh = std::stof(value);
 
 	if (section == "Cone" && name == "Angle")
 		config->cone_angle = std::stof(value);
 
 	if (section == "Cone" && name == "Distance")
 		config->cone_distance = std::stof(value);
-
-	if (section == "Stability" && name == "Threshold")
-		config->stability_threshold = std::stof(value);
-
-	if (section == "Stability" && name == "PositionThreshold") {
-		config->position_stability_threshold = std::stof(value);
-		config->position_stability_threshold_square =
-			std::pow(config->position_stability_threshold, 2);
-	}
 
 	if (section == "DFT" && name == "PositionMinAmp")
 		config->dft_position_min_amp = std::stoi(value);
@@ -139,13 +135,34 @@ void Config::load_dir(const std::string &name)
 	}
 }
 
-Config::Config(i16 vendor, i16 product) : vendor(vendor), product(product)
+Config::Config(i16 vendor, i16 product) : vendor {vendor}, product {product}
 {
 	this->load_dir(IPTSD_CONFIG_DIR);
 	this->load_dir("./etc/config");
 
 	if (std::filesystem::exists(IPTSD_CONFIG_FILE))
 		ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
+}
+
+contacts::Config Config::contacts() const
+{
+	contacts::Config config {};
+
+	config.max_contacts = IPTS_MAX_CONTACTS;
+	config.width = this->width;
+	config.height = this->height;
+	config.invert_x = this->invert_x;
+	config.invert_y = this->invert_y;
+
+	if (this->contacts_detection == "basic")
+		config.mode = contacts::BlobDetection::BASIC;
+	else if (this->contacts_detection == "advanced")
+		config.mode = contacts::BlobDetection::ADVANCED;
+
+	config.size_thresh = this->contacts_size_thresh;
+	config.position_thresh = this->contacts_position_thresh;
+
+	return config;
 }
 
 } // namespace iptsd::daemon

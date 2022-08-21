@@ -18,6 +18,7 @@ public:
 	u16 product = 0;
 	u32 version = 0;
 
+public:
 	UinputDevice();
 	~UinputDevice();
 

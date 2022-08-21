@@ -1,4 +1,4 @@
-#include "processor.hpp"
+#include "detector.hpp"
 
 #include <common/types.hpp>
 
@@ -33,7 +33,7 @@ using namespace iptsd::math;
 
 namespace iptsd::contacts::advanced {
 
-TouchProcessor::TouchProcessor(index2_t size)
+BlobDetector::BlobDetector(index2_t size)
     : m_perf_reg{}
     , m_perf_t_total{m_perf_reg.create_entry("total")}
     , m_perf_t_prep{m_perf_reg.create_entry("preprocessing")}
@@ -78,11 +78,9 @@ TouchProcessor::TouchProcessor(index2_t size)
     m_wdt_queue = std::priority_queue { op, buf };
 
     alg::gfit::reserve(m_gf_params, 32, size);
-
-    m_touchpoints.reserve(32);
 }
 
-auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> const&
+auto BlobDetector::process(Image<f32> const& hm) -> std::vector<Blob> const&
 {
     auto _tr = m_perf_reg.record(m_perf_t_total);
 
@@ -345,20 +343,11 @@ auto TouchProcessor::process(Image<f32> const& hm) -> std::vector<TouchPoint> co
             continue;
         }
 
-        auto const aspect = std::max(sd1, sd2) / std::min(sd1, sd2);
-        if (aspect > 2.0f) {
-            continue;
-        }
-
-        auto const x = std::clamp(static_cast<index_t>(p.mean.x), 0, m_img_lbl.size().x - 1);
-        auto const y = std::clamp(static_cast<index_t>(p.mean.y), 0, m_img_lbl.size().y - 1);
-        auto const cs = m_img_lbl[{ x, y }] > 0 ? m_cscore.at(m_img_lbl[{ x, y }] - 1) : 0.0f;
-
         math::Vec2<f32> mean = p.mean.cast<f32>();
         mean.x = (mean.x + 0.5f) / gsl::narrow<f32>(m_hm.size().x);
         mean.y = (mean.y + 0.5f) / gsl::narrow<f32>(m_hm.size().y);
 
-        m_touchpoints.push_back(TouchPoint { cs, static_cast<f32>(p.scale), false, mean, cov->cast<f32>() });
+        m_touchpoints.push_back(Blob { mean, cov->cast<f32>() });
     }
 
     return m_touchpoints;

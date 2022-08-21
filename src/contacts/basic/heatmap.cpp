@@ -3,6 +3,7 @@
 #include "heatmap.hpp"
 
 #include <common/types.hpp>
+#include <container/ops.hpp>
 
 #include <algorithm>
 #include <gsl/gsl>
@@ -11,10 +12,12 @@ namespace iptsd::contacts::basic {
 
 f32 Heatmap::value(index2_t pos)
 {
-	if (pos.x < 0 || pos.x >= this->size.x)
+	index2_t size = this->data.size();
+
+	if (pos.x < 0 || pos.x >= size.x)
 		return 0;
 
-	if (pos.y < 0 || pos.y >= this->size.y)
+	if (pos.y < 0 || pos.y >= size.y)
 		return 0;
 
 	return std::max(this->data[pos] - this->average, 0.0f);
@@ -48,10 +51,12 @@ bool Heatmap::compare(index2_t px, index2_t py)
 
 bool Heatmap::get_visited(index2_t pos)
 {
-	if (pos.x < 0 || pos.x >= this->size.x)
+	index2_t size = this->data.size();
+
+	if (pos.x < 0 || pos.x >= size.x)
 		return true;
 
-	if (pos.y < 0 || pos.y >= this->size.y)
+	if (pos.y < 0 || pos.y >= size.y)
 		return true;
 
 	return this->visited[pos];
@@ -59,10 +64,12 @@ bool Heatmap::get_visited(index2_t pos)
 
 void Heatmap::set_visited(index2_t pos, bool value)
 {
-	if (pos.x < 0 || pos.x >= this->size.x)
+	index2_t size = this->data.size();
+
+	if (pos.x < 0 || pos.x >= size.x)
 		return;
 
-	if (pos.y < 0 || pos.y >= this->size.y)
+	if (pos.y < 0 || pos.y >= size.y)
 		return;
 
 	this->visited[pos] = value;
@@ -70,17 +77,14 @@ void Heatmap::set_visited(index2_t pos, bool value)
 
 void Heatmap::reset()
 {
-	for (index_t x = 0; x < this->size.x; x++) {
-		for (index_t y = 0; y < this->size.y; y++)
+	index2_t size = this->data.size();
+
+	for (index_t x = 0; x < size.x; x++) {
+		for (index_t y = 0; y < size.y; y++)
 			this->set_visited(index2_t {x, y}, false);
 	}
 
-	f32 value = 0;
-
-	for (const auto i : this->data)
-		value += i;
-
-	this->average = value / gsl::narrow<f32>(this->size.span());
+	this->average = container::ops::sum(this->data) / gsl::narrow<f32>(size.span());
 }
 
 } // namespace iptsd::contacts::basic

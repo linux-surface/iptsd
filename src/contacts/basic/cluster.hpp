@@ -19,8 +19,8 @@ public:
 	f32 yy = 0;
 	f32 xy = 0;
 	f32 w = 0;
-	f32 max_v = 0;
 
+public:
 	Cluster(Heatmap &hm, index2_t center);
 
 	math::Vec2<f32> mean();

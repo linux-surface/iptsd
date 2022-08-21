@@ -32,17 +32,15 @@ struct ComponentStats {
 };
 
 
-class TouchProcessor : public ITouchProcessor {
+class BlobDetector : public IBlobDetector {
 public:
-    TouchProcessor(index2_t size);
+    BlobDetector(index2_t size);
 
-    auto hm() -> Image<f32> & override;
-    auto process() -> std::vector<TouchPoint> const& override;
-
-    [[nodiscard]] auto perf() const -> eval::perf::Registry const& override;
+    auto data() -> Image<f32> & override;
+    auto search() -> std::vector<Blob> const& override;
 
 private:
-    auto process(Image<f32> const& hm) -> std::vector<TouchPoint> const&;
+    auto process(Image<f32> const& hm) -> std::vector<Blob> const&;
 
     // performance measurements
     eval::perf::Registry m_perf_reg;
@@ -91,21 +89,15 @@ private:
     index2_t m_gf_window;
 
     // output
-    std::vector<TouchPoint> m_touchpoints;
+    std::vector<Blob> m_touchpoints;
 };
 
-
-inline auto TouchProcessor::perf() const -> eval::perf::Registry const&
-{
-    return m_perf_reg;
-}
-
-inline auto TouchProcessor::hm() -> Image<f32> &
+inline auto BlobDetector::data() -> Image<f32> &
 {
     return m_hm;
 }
 
-inline auto TouchProcessor::process() -> std::vector<TouchPoint> const&
+inline auto BlobDetector::search() -> std::vector<Blob> const&
 {
 	return this->process(this->m_hm);
 }

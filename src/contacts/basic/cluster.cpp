@@ -27,18 +27,11 @@ void Cluster::add(index2_t pos, f32 val)
 	this->yy += val * y * y;
 	this->xy += val * x * y;
 	this->w += val;
-
-	if (this->max_v > val)
-		this->max_v = val;
 }
 
 math::Vec2<f32> Cluster::mean()
 {
-	f32 fx = this->x;
-	f32 fy = this->y;
-	f32 fw = this->w;
-
-	return math::Vec2<f32> {fx / fw, fy / fw};
+	return math::Vec2<f32> {this->x / this->w, this->y / this->w};
 }
 
 math::Mat2s<f32> Cluster::cov()

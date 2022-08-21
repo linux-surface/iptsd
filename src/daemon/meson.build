@@ -5,7 +5,6 @@ sources = [
   'dft.cpp',
   'main.cpp',
   'stylus.cpp',
-  'touch-manager.cpp',
   'touch.cpp',
   'uinput-device.cpp',
 ]

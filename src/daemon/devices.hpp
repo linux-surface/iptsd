@@ -5,10 +5,10 @@
 
 #include "cone.hpp"
 #include "config.hpp"
-#include "touch-manager.hpp"
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
+#include <contacts/finder.hpp>
 
 #include <memory>
 #include <vector>
@@ -21,25 +21,29 @@ public:
 	bool active = false;
 	std::shared_ptr<Cone> cone;
 
-	StylusDevice(Config conf, u32 serial, std::shared_ptr<Cone> cone);
+public:
+	StylusDevice(const Config &conf, u32 serial, std::shared_ptr<Cone> cone);
 };
 
 class TouchDevice : public UinputDevice {
 public:
-	TouchManager manager;
+	std::vector<std::shared_ptr<Cone>> cones;
+	contacts::ContactFinder finder;
 
-	TouchDevice(Config conf);
+public:
+	TouchDevice(const Config &conf);
 };
 
 class DeviceManager {
 public:
-	Config conf;
+	const Config &conf;
 	TouchDevice touch;
 
 	std::vector<StylusDevice> styli;
 	u32 active_styli = 0;
 
-	DeviceManager(Config conf);
+public:
+	DeviceManager(const Config &conf);
 
 	StylusDevice &create_stylus(u32 serial);
 	StylusDevice &get_stylus(u32 serial);

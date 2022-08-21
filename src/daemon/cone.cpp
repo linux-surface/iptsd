@@ -15,7 +15,7 @@ bool Cone::alive()
 	return this->position_update > clock::from_time_t(0);
 }
 
-void Cone::update_position(i32 x, i32 y)
+void Cone::update_position(f64 x, f64 y)
 {
 	this->x = x;
 	this->y = y;
@@ -27,7 +27,7 @@ bool Cone::active()
 	return this->position_update + std::chrono::milliseconds(300) > clock::now();
 }
 
-void Cone::update_direction(i32 x, i32 y)
+void Cone::update_direction(f64 x, f64 y)
 {
 	clock::time_point timestamp = clock::now();
 
@@ -35,35 +35,35 @@ void Cone::update_direction(i32 x, i32 y)
 	auto diff = std::chrono::duration_cast<std::chrono::seconds>(time_diff);
 
 	f64 weight = std::exp2(-diff.count());
-	f64 d = std::hypot(this->x - x, this->y - y);
+	f64 dist = std::hypot(this->x - x, this->y - y);
 
-	f64 dx = (x - this->x) / (d + 1E-6);
-	f64 dy = (y - this->y) / (d + 1E-6);
+	f64 dx = (x - this->x) / (dist + 1E-6);
+	f64 dy = (y - this->y) / (dist + 1E-6);
 
 	this->dx = weight * this->dx + dx;
 	this->dy = weight * this->dy + dy;
 
 	// Normalize cone direction vector
-	d = std::hypot(this->dx, this->dy) + 1E-6;
-	this->dx /= d;
-	this->dy /= d;
+	dist = std::hypot(this->dx, this->dy) + 1E-6;
+	this->dx /= dist;
+	this->dy /= dist;
 
 	this->direction_update = timestamp;
 }
 
-bool Cone::check(i32 x, i32 y)
+bool Cone::check(f64 x, f64 y)
 {
 	if (!this->active())
 		return false;
 
-	i32 dx = x - this->x;
-	i32 dy = y - this->y;
-	f64 d = std::hypot(dx, dy);
+	f64 dx = x - this->x;
+	f64 dy = y - this->y;
+	f64 dist = std::hypot(dx, dy);
 
-	if (d > this->distance)
+	if (dist > this->distance)
 		return false;
 
-	if (dx * this->dx + dy * this->dy > this->angle * d)
+	if (dx * this->dx + dy * this->dy > this->angle * dist)
 		return true;
 
 	return false;

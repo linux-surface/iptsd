@@ -1,5 +1,5 @@
 #include <common/types.hpp>
-#include <contacts/advanced/processor.hpp>
+#include <contacts/advanced/detector.hpp>
 #include <contacts/eval/perf.hpp>
 #include <container/image.hpp>
 #include <gfx/visualization.hpp>
@@ -32,7 +32,7 @@ class MainContext {
 public:
 	MainContext(index2_t img_size);
 
-	void submit(container::Image<f32> const &img, std::vector<contacts::TouchPoint> const &tps);
+	void submit(container::Image<f32> const &img, std::vector<contacts::Blob> const &tps);
 
 	auto draw_event(const Cairo::RefPtr<Cairo::Context> &cr) -> bool;
 
@@ -45,16 +45,16 @@ private:
 	container::Image<f32> m_img1;
 	container::Image<f32> m_img2;
 
-	std::vector<contacts::TouchPoint> m_tps1;
-	std::vector<contacts::TouchPoint> m_tps2;
+	std::vector<contacts::Blob> m_tps1;
+	std::vector<contacts::Blob> m_tps2;
 
 	std::mutex m_lock;
 
 	container::Image<f32> *m_img_frnt;
 	container::Image<f32> *m_img_back;
 
-	std::vector<contacts::TouchPoint> *m_tps_frnt;
-	std::vector<contacts::TouchPoint> *m_tps_back;
+	std::vector<contacts::Blob> *m_tps_frnt;
+	std::vector<contacts::Blob> *m_tps_back;
 	bool m_swap = false;
 };
 
@@ -64,8 +64,7 @@ MainContext::MainContext(index2_t img_size)
 {
 }
 
-void MainContext::submit(container::Image<f32> const &img,
-			 std::vector<contacts::TouchPoint> const &tps)
+void MainContext::submit(container::Image<f32> const &img, std::vector<contacts::Blob> const &tps)
 {
 	{
 		// set swap to false to prevent read-access in draw
@@ -111,7 +110,7 @@ static int main(gsl::span<char *> args)
 {
 	const index2_t size {72, 48};
 	MainContext ctx {size};
-	contacts::advanced::TouchProcessor prc {size};
+	contacts::advanced::BlobDetector prc {size};
 
 	std::atomic_bool run = true;
 
@@ -138,8 +137,8 @@ static int main(gsl::span<char *> args)
 				return 1.0f - val;
 			});
 
-			std::copy(hm.begin(), hm.end(), prc.hm().begin());
-			ctx.submit(hm, prc.process());
+			std::copy(hm.begin(), hm.end(), prc.data().begin());
+			ctx.submit(hm, prc.search());
 		};
 
 		while (run.load()) {

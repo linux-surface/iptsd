@@ -4,6 +4,7 @@
 #define IPTSD_DAEMON_CONFIG_HPP
 
 #include <common/types.hpp>
+#include <contacts/finder.hpp>
 
 #include <optional>
 #include <string>
@@ -12,38 +13,43 @@ namespace iptsd::daemon {
 
 class Config {
 public:
+	// [Device]
+	i16 vendor;
+	i16 product;
+
+	// [Config]
 	bool invert_x = false;
 	bool invert_y = false;
 
-	i32 width = 0;
-	i32 height = 0;
+	f32 width = 0;
+	f32 height = 0;
 
-	bool stylus_cone = true;
-	bool stylus_disable_touch = false;
-
-	bool touch_stability = true;
-	bool touch_advanced = false;
+	// [Touch]
+	bool touch_check_cone = true;
+	bool touch_check_stability = true;
 	bool touch_disable_on_palm = false;
+	bool touch_disable_on_stylus = false;
 
-	f32 basic_pressure = 0.04;
+	// [Contacts]
+	std::string contacts_detection = "basic";
+	f32 contacts_size_thresh = 0.1;
+	f32 contacts_position_thresh = 0.2;
 
+	// [Cone]
 	f32 cone_angle = 30;
-	f32 cone_distance = 1600;
+	f32 cone_distance = 5;
 
-	f32 stability_threshold = 0.1;
-	f32 position_stability_threshold = 8;
-	f64 position_stability_threshold_square = 8 * 8;
-
+	// [DFT]
 	u16 dft_position_min_amp = 50;
 	u16 dft_position_min_mag = 2000;
 	f32 dft_position_exp = -0.7;
 	u16 dft_button_min_mag = 1000;
 	u16 dft_freq_min_mag = 10000;
 
-	i16 vendor;
-	i16 product;
-
+public:
 	Config(i16 vendor, i16 product);
+
+	[[nodiscard]] contacts::Config contacts() const;
 
 private:
 	void load_dir(const std::string &name);

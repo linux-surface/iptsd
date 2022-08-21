@@ -3,8 +3,6 @@
 #ifndef IPTSD_CONTACTS_INTERFACE_HPP
 #define IPTSD_CONTACTS_INTERFACE_HPP
 
-#include "eval/perf.hpp"
-
 #include <common/types.hpp>
 #include <container/image.hpp>
 #include <math/mat2.hpp>
@@ -14,27 +12,17 @@
 
 namespace iptsd::contacts {
 
-struct TouchPoint {
-	f32 confidence;
-	f32 scale;
-	bool palm;
+struct Blob {
 	math::Vec2<f32> mean;
 	math::Mat2s<f32> cov;
 };
 
-struct Config {
-	index2_t size {};
-	f32 basic_pressure = 0;
-};
-
-class ITouchProcessor {
+class IBlobDetector {
 public:
-	virtual ~ITouchProcessor() = default;
+	virtual ~IBlobDetector() = default;
 
-	virtual container::Image<f32> &hm() = 0;
-	virtual const std::vector<TouchPoint> &process() = 0;
-
-	[[nodiscard]] virtual const eval::perf::Registry &perf() const = 0;
+	virtual container::Image<f32> &data() = 0;
+	virtual const std::vector<Blob> &search() = 0;
 };
 
 } /* namespace iptsd::contacts */

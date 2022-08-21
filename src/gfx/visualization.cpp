@@ -4,7 +4,7 @@
 
 #include "cmap.hpp"
 
-#include <contacts/advanced/processor.hpp>
+#include <contacts/advanced/detector.hpp>
 #include <container/image.hpp>
 
 #include <cairo.h>
@@ -46,7 +46,7 @@ inline void translate(const Cairo::RefPtr<Cairo::Context> &cr, math::Vec2<f64> v
 }
 
 void Visualization::draw(const Cairo::RefPtr<Cairo::Context> &cr, container::Image<f32> const &img,
-			 std::vector<contacts::TouchPoint> const &tps, int width, int height)
+			 std::vector<contacts::Blob> const &tps, int width, int height)
 {
 	auto const img_w = static_cast<f64>(img.size().x);
 	auto const img_h = static_cast<f64>(img.size().y);
@@ -132,14 +132,8 @@ void Visualization::draw(const Cairo::RefPtr<Cairo::Context> &cr, container::Ima
 		// stats
 		cr->set_source_rgb(1.0, 1.0, 1.0);
 
-		move_to(cr, t({tp.mean.x - 3.5, tp.mean.y + 3.0}));
-		cr->show_text(fmt::format("c:{:.02f}", tp.confidence));
-
 		move_to(cr, t({tp.mean.x - 3.5, tp.mean.y + 2.0}));
 		cr->show_text(fmt::format("a:{:.02f}", std::max(s1, s2) / std::min(s1, s2)));
-
-		move_to(cr, t({tp.mean.x - 3.5, tp.mean.y + 1.0}));
-		cr->show_text(fmt::format("s:{:.02f}", tp.scale));
 	}
 }
 

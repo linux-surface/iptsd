@@ -1,5 +1,5 @@
 #include <common/types.hpp>
-#include <contacts/advanced/processor.hpp>
+#include <contacts/advanced/detector.hpp>
 #include <contacts/eval/perf.hpp>
 #include <container/image.hpp>
 #include <gfx/visualization.hpp>
