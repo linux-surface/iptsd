@@ -32,6 +32,10 @@ public:
 
 	// [Contacts]
 	std::string contacts_detection = "basic";
+	f32 contacts_finger_size = 1;
+	f32 contacts_thumb_size = 2;
+	f32 contacts_thumb_aspect = 1.5;
+	f32 contacts_palm_aspect = 2;
 	f32 contacts_size_thresh = 0.1;
 	f32 contacts_position_thresh = 0.2;
 	f32 contacts_distance_thresh = 1;

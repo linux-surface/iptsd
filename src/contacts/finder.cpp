@@ -39,8 +39,15 @@ void ContactFinder::resize(index2_t size)
 
 bool ContactFinder::check_palm(const Contact &contact)
 {
-	// TODO: reimplement
-	return false;
+	f64 aspect = contact.major / contact.minor;
+
+	if (aspect > this->config.palm_aspect)
+		return true;
+
+	if (aspect > this->config.thumb_aspect)
+		return contact.major > this->config.thumb_size;
+
+	return contact.major > this->config.finger_size;
 }
 
 bool ContactFinder::check_dist(const Contact &from, const Contact &to)

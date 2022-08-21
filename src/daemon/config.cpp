@@ -86,6 +86,18 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 		config->contacts_detection = value;
 	}
 
+	if (section == "Contacts" && name == "FingerSize")
+		config->contacts_finger_size = std::stof(value);
+
+	if (section == "Contacts" && name == "ThumbSize")
+		config->contacts_thumb_size = std::stof(value);
+
+	if (section == "Contacts" && name == "ThumbAspect")
+		config->contacts_thumb_aspect = std::stof(value);
+
+	if (section == "Contacts" && name == "PalmAspect")
+		config->contacts_palm_aspect = std::stof(value);
+
 	if (section == "Contacts" && name == "SizeThreshold")
 		config->contacts_size_thresh = std::stof(value);
 
@@ -161,6 +173,11 @@ contacts::Config Config::contacts() const
 		config.mode = contacts::BlobDetection::BASIC;
 	else if (this->contacts_detection == "advanced")
 		config.mode = contacts::BlobDetection::ADVANCED;
+
+	config.finger_size = this->contacts_finger_size;
+	config.thumb_size = this->contacts_thumb_size;
+	config.thumb_aspect = this->contacts_thumb_aspect;
+	config.palm_aspect = this->contacts_palm_aspect;
 
 	config.size_thresh = this->contacts_size_thresh;
 	config.position_thresh = this->contacts_position_thresh;
