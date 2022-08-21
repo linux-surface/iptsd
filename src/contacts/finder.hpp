@@ -33,19 +33,19 @@ enum BlobDetection {
 };
 
 struct Config {
-	u32 max_contacts = 0;
+	u32 max_contacts;
 
 	f32 width;
 	f32 height;
 
-	bool invert_x = false;
-	bool invert_y = false;
+	bool invert_x;
+	bool invert_y;
 
-	enum BlobDetection mode = BlobDetection::BASIC;
+	enum BlobDetection mode;
 
-	f32 size_thresh = 0.1;
-	f32 position_thresh = 0.2;
-	f32 dist_thresh = 1;
+	f32 size_thresh;
+	f32 position_thresh;
+	f32 dist_thresh;
 };
 
 class ContactFinder {
