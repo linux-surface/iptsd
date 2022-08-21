@@ -83,6 +83,11 @@ const std::vector<Contact> &ContactFinder::search()
 		contact.major = std::max(d1, d2) * phys_diag;
 		contact.minor = std::min(d1, d2) * phys_diag;
 
+		// The eigenvalues give us the radius of the ellipse, but
+		// major / minor need to be the full length of the axis.
+		contact.major *= 2;
+		contact.minor *= 2;
+
 		math::Vec2<f64> v1 = eigen.v[0].cast<f64>() * s1;
 		f64 angle = (math::num<f64>::pi / 2) - std::atan2(v1.x, v1.y);
 
