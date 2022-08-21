@@ -22,6 +22,19 @@ const std::vector<Blob> &BlobDetector::search()
 
 	index2_t size = this->heatmap.data.size();
 
+	// Mark positions where the value is 0 as visited to
+	// avoid producing clusters spanning the whole map.
+	for (index_t x = 0; x < size.x; x++) {
+		for (index_t y = 0; y < size.y; y++) {
+			index2_t pos {x, y};
+
+			if (this->heatmap.value(pos) > 0)
+				continue;
+
+			this->heatmap.set_visited(pos, true);
+		}
+	}
+
 	for (index_t x = 0; x < size.x; x++) {
 		for (index_t y = 0; y < size.y; y++) {
 			index2_t pos {x, y};
