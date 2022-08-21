@@ -98,7 +98,6 @@ const std::vector<Contact> &ContactFinder::search()
 			angle -= math::num<f64>::pi;
 
 		contact.angle = angle;
-		contact.eigen = eigen;
 
 		contact.palm = this->check_palm(contact);
 		contact.stable = true;
@@ -113,7 +112,6 @@ const std::vector<Contact> &ContactFinder::search()
 		contact.index = i;
 		contact.active = false;
 		contact.palm = false;
-		contact.eigen = math::Eigen2<f32> {};
 	}
 
 	// Mark contacts that are very close to a palm as palms too

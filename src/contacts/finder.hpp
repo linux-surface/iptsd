@@ -17,11 +17,9 @@ struct Contact {
 	f64 x = 0;
 	f64 y = 0;
 
+	f64 angle = 0;
 	f64 major = 0;
 	f64 minor = 0;
-
-	f64 angle = 0;
-	math::Eigen2<f32> eigen {};
 
 	u32 index = 0;
 	bool palm = false;
