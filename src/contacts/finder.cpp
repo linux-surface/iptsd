@@ -88,8 +88,8 @@ const std::vector<Contact> &ContactFinder::search()
 		contact.major *= 2;
 		contact.minor *= 2;
 
-		math::Vec2<f64> v1 = eigen.v[0].cast<f64>() * s1;
-		f64 angle = (math::num<f64>::pi / 2) - std::atan2(v1.x, v1.y);
+		math::Vec2<f64> v = eigen.v[0].cast<f64>() * s1;
+		f64 angle = (math::num<f64>::pi / 2) - std::atan2(v.x, v.y);
 
 		// Make sure that the angle is always a positive number
 		if (angle < 0)

@@ -105,7 +105,7 @@ static void emit_multi(const TouchDevice &dev, const contacts::Contact &contact)
 	i32 x = gsl::narrow<i32>(std::round(contact.x * IPTS_MAX_X));
 	i32 y = gsl::narrow<i32>(std::round(contact.y * IPTS_MAX_Y));
 
-	i32 angle = gsl::narrow<i32>(std::round(contact.angle));
+	i32 angle = gsl::narrow<i32>(std::round(contact.angle * (180 / math::num<f64>::pi)));
 	i32 major = gsl::narrow<i32>(std::round(contact.major * IPTS_DIAGONAL));
 	i32 minor = gsl::narrow<i32>(std::round(contact.minor * IPTS_DIAGONAL));
 
