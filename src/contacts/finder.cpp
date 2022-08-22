@@ -16,7 +16,8 @@
 
 namespace iptsd::contacts {
 
-ContactFinder::ContactFinder(Config config) : config {config}
+ContactFinder::ContactFinder(Config config)
+	: config {config}, phys_diag(std::hypot(config.width, config.height))
 {
 	this->contacts.resize(config.max_contacts);
 	this->last.resize(config.max_contacts);
@@ -37,6 +38,7 @@ void ContactFinder::resize(index2_t size)
 
 	this->detector.reset();
 	this->size = size;
+	this->data_diag = std::hypot(size.x, size.y);
 
 	if (this->config.mode == BlobDetection::BASIC)
 		this->detector = std::make_unique<basic::BlobDetector>(size);
@@ -47,14 +49,15 @@ void ContactFinder::resize(index2_t size)
 bool ContactFinder::check_palm(const Contact &contact)
 {
 	f64 aspect = contact.major / contact.minor;
+	f64 major = contact.major * this->phys_diag;
 
 	if (aspect > this->config.palm_aspect)
 		return true;
 
 	if (aspect > this->config.thumb_aspect)
-		return contact.major > this->config.thumb_size;
+		return major > this->config.thumb_size;
 
-	return contact.major > this->config.finger_size;
+	return major > this->config.finger_size;
 }
 
 bool ContactFinder::check_dist(const Contact &from, const Contact &to)
@@ -62,18 +65,18 @@ bool ContactFinder::check_dist(const Contact &from, const Contact &to)
 	// Assumption: All contacts are perfect circles. The radius is major / 2.
 	// This might cover a bit more area than neccessary, but will make implementation easier.
 
-	f64 dist = std::hypot(from.x - to.x, from.y - to.y);
-	dist -= from.major / 2;
-	dist -= to.major / 2;
+	f64 dx = (from.x - to.x) * this->config.width;
+	f64 dy = (from.y - to.y) * this->config.height;
+
+	f64 dist = std::hypot(dx, dy);
+	dist -= (from.major * this->phys_diag) / 2;
+	dist -= (to.major * this->phys_diag) / 2;
 
 	return dist <= this->config.dist_thresh;
 }
 
 const std::vector<Contact> &ContactFinder::search()
 {
-	f64 data_diag = std::hypot(this->size.x, this->size.y);
-	f64 phys_diag = std::hypot(this->config.width, this->config.height);
-
 	const std::vector<Blob> &blobs = this->detector->search();
 	std::size_t count = std::min(blobs.size(), static_cast<u64>(this->config.max_contacts));
 
@@ -81,28 +84,24 @@ const std::vector<Contact> &ContactFinder::search()
 		const auto &blob = blobs[i];
 		auto &contact = this->contacts[i];
 
-		f64 x = blob.mean.x;
-		f64 y = blob.mean.y;
+		contact.x = blob.mean.x;
+		contact.y = blob.mean.y;
 
 		if (this->config.invert_x)
-			x = 1 - x;
+			contact.x = 1 - contact.x;
 
 		if (this->config.invert_y)
-			y = 1 - y;
-
-		// Convert from relative to physical dimensions
-		contact.x = x * this->config.width;
-		contact.y = y * this->config.height;
+			contact.y = 1 - contact.y;
 
 		math::Eigen2<f32> eigen = blob.cov.eigen();
 		f64 s1 = std::sqrt(eigen.w[0]);
 		f64 s2 = std::sqrt(eigen.w[1]);
 
-		f64 d1 = s1 / data_diag;
-		f64 d2 = s2 / data_diag;
+		f64 d1 = s1 / this->data_diag;
+		f64 d2 = s2 / this->data_diag;
 
-		contact.major = std::max(d1, d2) * phys_diag;
-		contact.minor = std::min(d1, d2) * phys_diag;
+		contact.major = std::max(d1, d2);
+		contact.minor = std::min(d1, d2);
 
 		// The eigenvalues give us the radius of the ellipse, but
 		// major / minor need to be the full length of the axis.
@@ -149,17 +148,6 @@ const std::vector<Contact> &ContactFinder::search()
 	}
 
 	this->track();
-
-	// Convert all values back to relative dimensions
-	for (std::size_t i = 0; i < count; i++) {
-		auto &contact = this->contacts[i];
-
-		contact.x /= this->config.width;
-		contact.y /= this->config.height;
-
-		contact.major /= phys_diag;
-		contact.minor /= phys_diag;
-	}
 
 	std::swap(this->contacts, this->last);
 	return this->last;
@@ -208,15 +196,15 @@ void ContactFinder::track()
 		if (contact.active)
 			contact.palm |= last.palm;
 
-		f64 dmaj = contact.major - last.major;
-		f64 dmin = contact.minor - last.minor;
+		f64 dmaj = (contact.major - last.major) * this->phys_diag;
+		f64 dmin = (contact.minor - last.minor) * this->phys_diag;
 
 		// Is the contact rapidly increasing its size?
 		contact.stable =
 			(dmaj < this->config.size_thresh && dmin < this->config.size_thresh);
 
-		f64 dx = contact.x - last.x;
-		f64 dy = contact.y - last.y;
+		f64 dx = (contact.x - last.x) * this->config.width;
+		f64 dy = (contact.y - last.y) * this->config.height;
 		f64 dist = std::hypot(dx, dy);
 
 		// Is the position stable?
@@ -224,8 +212,10 @@ void ContactFinder::track()
 			contact.x = last.x;
 			contact.y = last.y;
 		} else {
-			contact.x -= this->config.position_thresh * (dx / dist);
-			contact.y -= this->config.position_thresh * (dy / dist);
+			contact.x -=
+				(this->config.position_thresh * (dx / dist)) / this->config.width;
+			contact.y -=
+				(this->config.position_thresh * (dy / dist)) / this->config.height;
 		}
 
 		// Set the distance of all pairs that contain one of i and j

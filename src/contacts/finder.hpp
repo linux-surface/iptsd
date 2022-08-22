@@ -64,6 +64,9 @@ private:
 	std::vector<Contact> last {};
 	std::vector<f64> distances {};
 
+	f64 data_diag = 0;
+	f64 phys_diag = 0;
+
 public:
 	ContactFinder(Config config);
 
