@@ -45,16 +45,12 @@ const std::vector<Blob> &BlobDetector::search()
 			Cluster cluster {this->heatmap, pos};
 
 			math::Mat2s<f32> cov = cluster.cov();
-			math::Vec2<f32> mean = cluster.mean();
-
-			mean.x /= gsl::narrow<f32>(size.x) - 1.0f;
-			mean.y /= gsl::narrow<f32>(size.y) - 1.0f;
-
 			math::Eigen2<f32> eigen = cov.eigen();
+
 			if (eigen.w[0] <= 0 || eigen.w[1] <= 0)
 				continue;
 
-			this->blobs.push_back(Blob {mean, cov});
+			this->blobs.push_back(Blob {cluster.mean() + 0.5f, cov});
 		}
 	}
 

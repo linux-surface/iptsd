@@ -343,11 +343,7 @@ auto BlobDetector::process(Image<f32> const& hm) -> std::vector<Blob> const&
             continue;
         }
 
-        math::Vec2<f32> mean = p.mean.cast<f32>();
-        mean.x = (mean.x + 0.5f) / gsl::narrow<f32>(m_hm.size().x);
-        mean.y = (mean.y + 0.5f) / gsl::narrow<f32>(m_hm.size().y);
-
-        m_touchpoints.push_back(Blob { mean, cov->cast<f32>() });
+        m_touchpoints.push_back(Blob { p.mean.cast<f32>() + 0.5f, cov->cast<f32>() });
     }
 
     return m_touchpoints;

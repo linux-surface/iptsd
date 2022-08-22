@@ -84,8 +84,8 @@ const std::vector<Contact> &ContactFinder::search()
 		const auto &blob = blobs[i];
 		auto &contact = this->contacts[i];
 
-		contact.x = blob.mean.x;
-		contact.y = blob.mean.y;
+		contact.x = blob.mean.x / gsl::narrow<f32>(this->size.x);
+		contact.y = blob.mean.y / gsl::narrow<f32>(this->size.y);
 
 		if (this->config.invert_x)
 			contact.x = 1 - contact.x;
