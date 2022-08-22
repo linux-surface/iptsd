@@ -3,8 +3,6 @@
 #ifndef IPTSD_COMMON_ACCESS_HPP
 #define IPTSD_COMMON_ACCESS_HPP
 
-#include "compiler.hpp"
-
 #include <array>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
