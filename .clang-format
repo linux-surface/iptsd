@@ -31,7 +31,7 @@ AllowShortBlocksOnASingleLine: Empty
 AlignConsecutiveMacros: true
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex: '^<(common|contacts|container|gfx|ipts|math)/'
+  - Regex: '^<(common|contacts|container|drm|gfx|hid|ipts|math)/'
     Priority: 2
 KeepEmptyLinesAtTheStartOfBlocks: false
 SpacesInContainerLiterals: false

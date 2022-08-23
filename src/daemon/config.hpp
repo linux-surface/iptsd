@@ -5,6 +5,7 @@
 
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
+#include <drm/device.hpp>
 
 #include <optional>
 #include <string>
@@ -20,9 +21,6 @@ public:
 	// [Config]
 	bool invert_x = false;
 	bool invert_y = false;
-
-	f32 width = 0;
-	f32 height = 0;
 
 	// [Touch]
 	bool touch_check_cone = true;
@@ -54,7 +52,7 @@ public:
 public:
 	Config(i16 vendor, i16 product);
 
-	[[nodiscard]] contacts::Config contacts() const;
+	[[nodiscard]] contacts::Config contacts(const drm::Device &display) const;
 
 private:
 	void load_dir(const std::string &name);

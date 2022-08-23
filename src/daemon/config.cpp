@@ -4,6 +4,7 @@
 
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
+#include <drm/device.hpp>
 #include <ipts/protocol.hpp>
 
 #include <algorithm>
@@ -62,12 +63,6 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 
 	if (section == "Config" && name == "InvertY")
 		config->invert_y = to_bool(value);
-
-	if (section == "Config" && name == "Width")
-		config->width = std::stof(value);
-
-	if (section == "Config" && name == "Height")
-		config->height = std::stof(value);
 
 	if (section == "Touch" && name == "CheckCone")
 		config->touch_check_cone = to_bool(value);
@@ -159,13 +154,13 @@ Config::Config(i16 vendor, i16 product) : vendor {vendor}, product {product}
 		ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
 }
 
-contacts::Config Config::contacts() const
+contacts::Config Config::contacts(const drm::Device &display) const
 {
 	contacts::Config config {};
 
 	config.max_contacts = IPTS_MAX_CONTACTS;
-	config.width = this->width;
-	config.height = this->height;
+	config.width = display.width;
+	config.height = display.height;
 	config.invert_x = this->invert_x;
 	config.invert_y = this->invert_y;
 
