@@ -14,7 +14,6 @@
 #include <cmath>
 #include <cstddef>
 #include <gsl/gsl>
-#include <gsl/narrow>
 #include <iterator>
 #include <linux/input-event-codes.h>
 #include <linux/input.h>

@@ -8,7 +8,6 @@
 #include <cstddef>
 #include <functional>
 #include <gsl/gsl>
-#include <gsl/span>
 #include <memory>
 #include <vector>
 

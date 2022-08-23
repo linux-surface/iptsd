@@ -7,7 +7,7 @@
 #include <hid/shim/hidrd.h>
 
 #include <cstddef>
-#include <gsl/span>
+#include <gsl/gsl>
 #include <vector>
 
 namespace iptsd::hid {

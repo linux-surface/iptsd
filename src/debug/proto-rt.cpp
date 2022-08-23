@@ -11,7 +11,7 @@
 #include <cairomm/enums.h>
 #include <cairomm/refptr.h>
 #include <fstream>
-#include <gsl/span>
+#include <gsl/gsl>
 #include <gtkmm/application.h>
 #include <gtkmm/applicationwindow.h>
 #include <gtkmm/drawingarea.h>

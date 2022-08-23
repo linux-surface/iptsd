@@ -8,7 +8,7 @@
 #include <common/cwrap.hpp>
 
 #include <filesystem>
-#include <gsl/narrow>
+#include <gsl/gsl>
 #include <stdexcept>
 #include <xf86drmMode.h>
 

@@ -11,7 +11,6 @@
 #include <bitset>
 #include <cstring>
 #include <gsl/gsl>
-#include <gsl/span>
 #include <memory>
 #include <stdexcept>
 #include <utility>
