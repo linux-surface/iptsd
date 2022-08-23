@@ -1,6 +1,7 @@
 tools = get_option('debug_tools')
 
 dbg_dump = tools.contains('dump')
+dbg_finger = tools.contains('finger')
 dbg_plot = tools.contains('plot')
 dbg_rt = tools.contains('rt')
 
@@ -18,6 +19,24 @@ if dbg_dump and cli11.found()
   executable('ipts-dump', 'dump.cpp', dependencies: deps, include_directories: includes, install: true)
 elif dbg_dump
   warning('Debug tool "dump" is enabled but has missing deps')
+endif
+
+if dbg_finger and cli11.found()
+  deps = [
+    cli11,
+    fmt,
+    gsl,
+    iptsd_common,
+    iptsd_contacts,
+    iptsd_drm,
+    iptsd_ipts,
+    spdlog,
+    stdcppfs,
+  ]
+
+  executable('iptsd-finger-size', 'finger-size.cpp', dependencies: deps, include_directories: includes, install: true)
+elif dbg_finger
+  warning('Debug tool "finger" is enabled but has missing deps')
 endif
 
 if dbg_plot and cli11.found() and cairomm.found()
