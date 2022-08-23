@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include "container/ops.hpp"
-#include "drm/device.hpp"
-#include "ipts/parser.hpp"
-#include "ipts/protocol.hpp"
-
 #include <common/signal.hpp>
 #include <contacts/finder.hpp>
+#include <container/ops.hpp>
+#include <drm/device.hpp>
 #include <ipts/device.hpp>
+#include <ipts/parser.hpp>
+#include <ipts/protocol.hpp>
 
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>

@@ -2,11 +2,10 @@
 
 #include "device.hpp"
 
-#include "drm_mode.h"
-
 #include <common/cerror.hpp>
 #include <common/cwrap.hpp>
 
+#include <drm_mode.h>
 #include <filesystem>
 #include <gsl/gsl>
 #include <stdexcept>
