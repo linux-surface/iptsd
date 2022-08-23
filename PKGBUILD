@@ -9,7 +9,7 @@ depends=(
 	'libfmt.so'
 	'libinih'
 	'libspdlog.so'
-	'libdrm.so.2'
+	'libdrm'
 	'cairomm'
 	'gtkmm3'
 )
