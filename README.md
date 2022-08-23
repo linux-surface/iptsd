@@ -1,103 +1,77 @@
-# Intel Precise Touch & Stylus
+# IPTSD
 
-This is the userspace part of IPTS (Intel Precise Touch & Stylus) for Linux.
+This is the userspace touch processing daemon for Microsoft Surface devices using Intel Precise Touch technology.
 
-With IPTS the Intel Management Engine acts as an interface for a touch
-controller, returning raw capacitive touch data. This data is processed
-outside of the ME and then relayed into the HID / input subsystem of the OS.
+The daemon will read incoming HID reports containing raw capacitive touch data, and create standard input events from it using uinput devices.
 
-This daemon relies on a kernel driver that can be found here:
-https://github.com/linux-surface/intel-precise-touch
+The following kernel drivers are supported:
+ * ipts
+ * ithc
+ * spi-hid
 
-The driver will establish and manage the connection to the IPTS hardware. It
-will also set up an API that can be used by userspace to read the touch data
-from IPTS.
+At the moment, only systemd based distributions are properly supported. The daemon itself does not depend on the service manager in any ways, but it needs to know which hidraw device corresponds to the touchscreen. The easiest way to do this is with udev and a parameterized service file, which only systemd seems to support.
 
-The daemon will connect to the IPTS UAPI and start reading data. It will
-parse the data, and generate input events using uinput devices. The reason for
-doing this in userspace is that parsing the data requires floating points,
-which are not allowed in the kernel.
+### Installing
 
-### What is working?
- * MS Surface Gen 4-6:
-   * Stylus Input
-   * Multitouch Finger Input
-   * Contact area calculation
- * MS Surface Gen 7:
-   * Singletouch Finger Input
- * HP Spectre 13 x2 (only non-surface device to use IPTS)
-   * Entirely untested
+IPTSD is included in the linux-surface repository. This is the recommended way of installing it.
 
-### What doesn't work?
- * MS Surface Gen 7:
-   * Multitouch Input
-   * Stylus Input
- * HP Spectre 13 x2
-   * Entirely untested
-
-**NOTE:** The multitouch code has not been tested on all devices. It is
-very likely that it will still need adjustments to run correctly on some
-devices. If you have a device with IPTS and want to test it, feel free to
-open an issue or join ##linux-surface on Freenode IRC and get in touch.
-
-Tested Devices:
- * Surface Book 1
- * Surface Book 2 (13" and 15")
- * Surface Pro 4 (`1B96:006A` variant)
- * Surface Pro 5
- * Surface Pro 6
+If you want to try out changes that are not yet released, GitHub Actions builds Arch Linux, Debian and Fedora packages for every commit. Go to https://github.com/linux-surface/iptsd/actions, select the last successful build and download the artifact named `<your distro>-latest`.
 
 ### Building
-You need to install git, a c compiler, meson, ninja through your
-distributions package manager.
 
-We are using libinih to parse configuration files. You should install it
-if your distribution already packages it. All the major distros have it in
-their repos already.
+To build IPTSD from source, you need to install the following dependencies:
 
-``` bash
-$ sudo apt install libinih1 libinih-dev
-$ sudo pacman -S libinih
-$ sudo dnf install inih inih-devel
-$ sudo zypper install libinih0 libinih-devel
-```
+ * A C and a C++ compiler
+ * meson
+ * ninja
+ * fmt
+ * gsl
+ * hidrd
+ * inih
+ * libdrm
+ * spdlog
 
-If libinih is not found on your system, a copy will be downloaded and included
-automatically.
+To build the debugging tools you need to install a few more dependencies. The debugging tools will be enabled automatically when these are detected:
 
-Use meson and ninja to build iptsd, and then run it with sudo.
+ * CLI11
+ * cairomm
+ * gtkmm
 
-``` bash
+Most of the dependencies can be downloaded and included automatically by meson, should your distribution not include them.
+
+```bash
 $ git clone https://github.com/linux-surface/iptsd
 $ cd iptsd
 $ meson build
 $ ninja -C build
-$ sudo ./build/iptsd
 ```
 
-You need to have the latest UAPI version of the IPTS kernel driver installed.
-All recent linux-surface kernels already include this. To check if you have the
-correct driver installed and loaded, check if a file called `/dev/ipts/0` exists.
+To run iptsd, you need to determine the ID of the hidraw device of your touchscreen:
 
-``` bash
-$ ls -l /dev/ipts/
+```bash
+$ sudo dmesg | grep hidraw
 ```
 
-### Installing
-***Note:** iptsd is included as a package in the linux-surface repository.
-Unless you are doing development, or need the latest version from master, it is
-recommended to use the version from the repository.*
+You can then run iptsd with the device path as a launch argument:
 
-If you want to permanently install the daemon, we provide a systemd service
-configuration that you can use. If your distro does not use systemd, you will
-have to write your own definition, but it shouldn't be too hard.
+```bash
+$ sudo ./build/src/daemon/iptsd /dev/hidrawN
+```
 
-Patches with support for other service managers are welcome!
-
-You need to run the steps from "Building" first.
+Alternatively, you can install the files you just built to the system. After a reboot, iptsd will be automatically started by udev:
 
 ```bash
 $ sudo ninja -C build install
-$ sudo systemctl daemon-reload
-$ sudo systemctl enable --now iptsd
 ```
+
+On Fedora (or any other SELinux enabled distribution) you also need to fix the SELinux contexts:
+
+```bash
+$ sudo semanage fcontext -a -t systemd_unit_file_t -s system_u /usr/lib/systemd/system/iptsd@.service
+$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/ipts*
+
+$ sudo restorecon -vF /usr/lib/systemd/system/iptsd@.service
+$ sudo restorecon -vF /usr/local/bin/ipts*
+```
+
+This is only neccessary when using `ninja install`. When you install one of the packages from GitHub Actions, or build your own package, everything will just work.
