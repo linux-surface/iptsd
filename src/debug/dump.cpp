@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <common/signal.hpp>
+#include <hid/device.hpp>
 #include <ipts/device.hpp>
 #include <ipts/protocol.hpp>
 
@@ -14,7 +15,6 @@
 #include <fmt/format.h>
 #include <fstream>
 #include <gsl/gsl>
-#include <hid/device.hpp>
 #include <iostream>
 #include <iterator>
 #include <spdlog/spdlog.h>

@@ -4,10 +4,10 @@
 #define IPTSD_HID_DESCRIPTOR_HPP
 
 #include <common/types.hpp>
+#include <hid/shim/hidrd.h>
 
 #include <cstddef>
 #include <gsl/span>
-#include <hid/shim/hidrd.h>
 #include <vector>
 
 namespace iptsd::hid {

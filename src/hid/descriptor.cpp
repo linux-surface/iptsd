@@ -3,11 +3,11 @@
 #include "descriptor.hpp"
 
 #include <common/types.hpp>
+#include <hid/shim/hidrd.h>
 
 #include <algorithm>
 #include <cstddef>
 #include <gsl/gsl>
-#include <hid/shim/hidrd.h>
 #include <vector>
 
 namespace iptsd::hid {

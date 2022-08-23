@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "device.hpp"
+
 #include "drm_mode.h"
+
 #include <common/cerror.hpp>
 #include <common/cwrap.hpp>
-#include <gsl/narrow>
-#include <xf86drmMode.h>
+
 #include <filesystem>
+#include <gsl/narrow>
 #include <stdexcept>
+#include <xf86drmMode.h>
 
 namespace iptsd::drm {
 
@@ -37,7 +40,8 @@ Device::Device()
 			// NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 			drmModeConnector *c = drmModeGetConnector(device, res->connectors[i]);
 
-			if (c->connection == DRM_MODE_CONNECTED && c->connector_type == DRM_MODE_CONNECTOR_eDP) {
+			if (c->connection == DRM_MODE_CONNECTED &&
+			    c->connector_type == DRM_MODE_CONNECTOR_eDP) {
 				connector = c;
 				break;
 			}

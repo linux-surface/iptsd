@@ -4,9 +4,9 @@
 #define IPTSD_IPTS_DEVICE_HPP
 
 #include <common/types.hpp>
+#include <hid/device.hpp>
 
 #include <gsl/gsl>
-#include <hid/device.hpp>
 #include <linux/hidraw.h>
 #include <string>
 #include <utility>

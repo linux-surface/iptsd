@@ -5,11 +5,11 @@
 
 #include "cone.hpp"
 #include "config.hpp"
-#include <drm/device.hpp>
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
+#include <drm/device.hpp>
 
 #include <memory>
 #include <vector>
