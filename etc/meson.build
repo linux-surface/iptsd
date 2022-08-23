@@ -1,7 +1,6 @@
 install_subdir('config', install_dir: configdir, strip_directory: true)
 
 configure_file(input: 'systemd/iptsd@.service.in', output: 'iptsd@.service', configuration: conf)
-configure_file(input: 'openrc/iptsd.initd.in', output: 'iptsd.initd', configuration: conf)
 
 service_manager = get_option('service_manager')
 if service_manager.contains('systemd')
@@ -21,13 +20,6 @@ if service_manager.contains('systemd')
   else
     warning('systemd integration was enabled, but systemd was not found')
   endif
-endif
-
-if service_manager.contains('openrc')
-  openrcdir = join_paths(sysconfdir, 'init.d')
-
-  unit = join_paths(meson.current_build_dir(), 'iptsd.initd')
-  install_data(unit, install_dir: openrcdir, rename: 'iptsd')
 endif
 
 if get_option('sample_config')
