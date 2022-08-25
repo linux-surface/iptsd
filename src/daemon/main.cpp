@@ -17,7 +17,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <exception>
-#include <fmt/format.h>
 #include <functional>
 #include <iostream>
 #include <spdlog/spdlog.h>

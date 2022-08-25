@@ -5,7 +5,7 @@
 
 #include "num.hpp"
 
-#include <common/access.hpp>
+#include <array>
 
 namespace iptsd::math {
 

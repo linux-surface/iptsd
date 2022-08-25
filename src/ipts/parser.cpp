@@ -5,7 +5,6 @@
 #include "protocol.hpp"
 #include "reader.hpp"
 
-#include <common/access.hpp>
 #include <common/types.hpp>
 
 #include <bitset>

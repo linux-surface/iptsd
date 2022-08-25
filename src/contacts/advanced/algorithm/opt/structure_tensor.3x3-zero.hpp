@@ -4,6 +4,7 @@
 
 #include "../structure_tensor.hpp"
 
+#include <common/access.hpp>
 
 namespace iptsd::contacts::advanced::alg::stensor::impl {
 

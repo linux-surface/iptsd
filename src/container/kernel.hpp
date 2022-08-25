@@ -3,7 +3,6 @@
 #ifndef IPTSD_CONTAINER_KERNEL_HPP
 #define IPTSD_CONTAINER_KERNEL_HPP
 
-#include <common/access.hpp>
 #include <common/types.hpp>
 
 #include <array>

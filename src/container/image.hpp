@@ -3,7 +3,6 @@
 #ifndef IPTSD_CONTAINER_IMAGE_HPP
 #define IPTSD_CONTAINER_IMAGE_HPP
 
-#include <common/access.hpp>
 #include <common/types.hpp>
 
 #include <algorithm>

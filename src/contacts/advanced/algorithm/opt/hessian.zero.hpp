@@ -4,6 +4,7 @@
 
 #include "../hessian.hpp"
 
+#include <common/access.hpp>
 
 namespace iptsd::contacts::advanced::alg::hess::impl {
 

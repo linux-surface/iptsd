@@ -4,6 +4,7 @@
 
 #include "../convolution.hpp"
 
+#include <common/access.hpp>
 
 namespace iptsd::contacts::advanced::alg::conv::impl {
 
