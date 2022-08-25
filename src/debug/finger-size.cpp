@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <common/signal.hpp>
+#include <common/types.hpp>
 #include <config/config.hpp>
 #include <contacts/finder.hpp>
 #include <container/ops.hpp>
 #include <ipts/device.hpp>
 #include <ipts/parser.hpp>
-#include <ipts/protocol.hpp>
 
-#include <CLI/App.hpp>
-#include <CLI/Config.hpp>
-#include <CLI/Formatter.hpp>
 #include <cmath>
 #include <gsl/gsl>
 #include <iostream>
@@ -72,31 +69,15 @@ static void iptsd_finger_handle_input(const config::Config &config, contacts::Co
 
 static int main(gsl::span<char *> args)
 {
-	std::filesystem::path path;
-	contacts::BlobDetection mode = contacts::BlobDetection::BASIC;
+	if (args.size() < 2)
+		throw std::runtime_error("You need to specify the hidraw device!");
 
-	CLI::App app {"Measure the size of your fingers."};
+	std::atomic_bool should_exit = false;
 
-	std::map<std::string, contacts::BlobDetection> map {
-		{"basic", contacts::BlobDetection::BASIC},
-		{"advanced", contacts::BlobDetection::ADVANCED},
-	};
-
-	app.add_option("-d,--device", path, "The IPTS hidraw device.")
-		->type_name("FILE")
-		->required();
-
-	app.add_option("-m,--mode", mode, "The blob detection mode to use.")
-		->default_str("basic")
-		->transform(CLI::CheckedTransformer {map, CLI::ignore_case});
-
-	CLI11_PARSE(app, args.size(), args.data());
-
-	std::atomic_bool should_exit {false};
 	const auto _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
 	const auto _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
 
-	ipts::Device device {path};
+	ipts::Device device {args[1]};
 	config::Config config {device.vendor(), device.product()};
 
 	// Check if a config was found
@@ -108,11 +89,8 @@ static int main(gsl::span<char *> args)
 	spdlog::info("Size:    0.000 (Min: 0.000; Max: 0.000)");
 	spdlog::info("Aspect:  0.000 (Min: 0.000; Max: 0.000)");
 
-	contacts::Config cfg {};
+	contacts::Config cfg = config.contacts();
 	cfg.max_contacts = 1;
-	cfg.width = config.width;
-	cfg.height = config.height;
-	cfg.mode = mode;
 
 	contacts::ContactFinder finder {cfg};
 
