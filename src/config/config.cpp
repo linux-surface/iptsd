@@ -14,7 +14,7 @@
 #include <ini.h>
 #include <string>
 
-namespace iptsd::daemon {
+namespace iptsd::config {
 
 struct iptsd_config_device {
 	u16 vendor;
@@ -186,4 +186,4 @@ contacts::Config Config::contacts() const
 	return config;
 }
 
-} // namespace iptsd::daemon
+} // namespace iptsd::config

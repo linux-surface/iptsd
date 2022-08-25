@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-#ifndef IPTSD_DAEMON_CONFIG_HPP
-#define IPTSD_DAEMON_CONFIG_HPP
+#ifndef IPTSD_CONFIG_CONFIG_HPP
+#define IPTSD_CONFIG_CONFIG_HPP
 
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
@@ -9,7 +9,7 @@
 #include <optional>
 #include <string>
 
-namespace iptsd::daemon {
+namespace iptsd::config {
 
 class Config {
 public:
@@ -60,6 +60,6 @@ private:
 	void load_dir(const std::string &name);
 };
 
-} /* namespace iptsd::daemon */
+} /* namespace iptsd::config */
 
-#endif /* IPTSD_DAEMON_CONFIG_HPP */
+#endif /* IPTSD_CONFIG_CONFIG_HPP */

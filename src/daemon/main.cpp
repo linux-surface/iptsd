@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include "config.hpp"
 #include "context.hpp"
 #include "devices.hpp"
 #include "dft.hpp"

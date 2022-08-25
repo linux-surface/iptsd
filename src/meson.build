@@ -85,6 +85,8 @@ subdir('hid')
 subdir('ipts')
 
 subdir('contacts')
+subdir('config')
+
 subdir('daemon')
 
 if get_option('debug_tools').length() > 0

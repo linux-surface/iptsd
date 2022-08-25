@@ -3,16 +3,16 @@
 #ifndef IPTSD_DAEMON_CONTEXT_HPP
 #define IPTSD_DAEMON_CONTEXT_HPP
 
-#include "config.hpp"
 #include "devices.hpp"
 
 #include <common/types.hpp>
+#include <config/config.hpp>
 
 namespace iptsd::daemon {
 
 class Context {
 public:
-	Config config;
+	config::Config config;
 	DeviceManager devices;
 
 public:

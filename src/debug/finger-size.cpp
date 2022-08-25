@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <common/signal.hpp>
+#include <config/config.hpp>
 #include <contacts/finder.hpp>
 #include <container/ops.hpp>
 #include <ipts/device.hpp>
@@ -23,8 +24,7 @@ namespace iptsd::debug::finger {
 static std::vector<f64> size {};   // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 static std::vector<f64> aspect {}; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
-/*
-static void iptsd_finger_handle_input(const drm::Device &display, contacts::ContactFinder &finder,
+static void iptsd_finger_handle_input(const config::Config &config, contacts::ContactFinder &finder,
 				      const ipts::Heatmap &data)
 {
 	// Make sure that all buffers have the correct size
@@ -46,7 +46,7 @@ static void iptsd_finger_handle_input(const drm::Device &display, contacts::Cont
 		return;
 
 	// Calculate size and aspect
-	size.push_back(contact.major * std::hypot(display.width, display.height));
+	size.push_back(contact.major * std::hypot(config.width, config.height));
 	aspect.push_back(contact.major / contact.minor);
 
 	f64 size_avg = container::ops::sum(size) / static_cast<f64>(size.size());
@@ -69,11 +69,9 @@ static void iptsd_finger_handle_input(const drm::Device &display, contacts::Cont
 	spdlog::info("Aspect:  {:.3f} (Min: {:.3f}; Max: {:.3f})", aspect_avg, aspect_min,
 		     aspect_max);
 }
-*/
 
 static int main(gsl::span<char *> args)
 {
-	/*
 	std::filesystem::path path;
 	contacts::BlobDetection mode = contacts::BlobDetection::BASIC;
 
@@ -98,8 +96,8 @@ static int main(gsl::span<char *> args)
 	const auto _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
 	const auto _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
 
-	drm::Device display {};
 	ipts::Device device {path};
+	config::Config config {device.vendor(), device.product()};
 
 	spdlog::info("Connected to device {:04X}:{:04X}", device.vendor(), device.product());
 	spdlog::info("Samples: 0");
@@ -108,15 +106,15 @@ static int main(gsl::span<char *> args)
 
 	contacts::Config cfg {};
 	cfg.max_contacts = 1;
-	cfg.width = display.width;
-	cfg.height = display.height;
+	cfg.width = config.width;
+	cfg.height = config.height;
 	cfg.mode = mode;
 
 	contacts::ContactFinder finder {cfg};
 
 	ipts::Parser parser {};
 	parser.on_heatmap = [&](const auto &data) {
-		iptsd_finger_handle_input(display, finder, data);
+		iptsd_finger_handle_input(config, finder, data);
 	};
 
 	// Get the buffer size from the HID descriptor
@@ -145,7 +143,7 @@ static int main(gsl::span<char *> args)
 
 	// Disable multitouch mode
 	device.set_mode(false);
-*/
+
 	return 0;
 }
 

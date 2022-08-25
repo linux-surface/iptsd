@@ -27,6 +27,7 @@ if dbg_finger and cli11.found()
     fmt,
     gsl,
     iptsd_common,
+    iptsd_config,
     iptsd_contacts,
     iptsd_ipts,
     spdlog,

@@ -2,10 +2,10 @@
 
 #include "devices.hpp"
 
-#include "config.hpp"
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
+#include <config/config.hpp>
 #include <contacts/finder.hpp>
 #include <ipts/protocol.hpp>
 
@@ -32,7 +32,7 @@ static i32 res(i32 virt, f64 phys)
 	return gsl::narrow<i32>(std::round(res));
 }
 
-StylusDevice::StylusDevice(const Config &conf, u32 serial, std::shared_ptr<Cone> cone)
+StylusDevice::StylusDevice(const config::Config &conf, u32 serial, std::shared_ptr<Cone> cone)
 	: UinputDevice(), serial(serial), cone(std::move(cone))
 {
 	this->name = "IPTS Stylus";
@@ -66,7 +66,8 @@ StylusDevice::StylusDevice(const Config &conf, u32 serial, std::shared_ptr<Cone>
 	this->create();
 }
 
-TouchDevice::TouchDevice(const Config &conf) : UinputDevice(), cones {}, finder {conf.contacts()}
+TouchDevice::TouchDevice(const config::Config &conf)
+	: UinputDevice(), cones {}, finder {conf.contacts()}
 {
 	this->name = "IPTS Touch";
 	this->vendor = conf.vendor;
@@ -99,7 +100,7 @@ TouchDevice::TouchDevice(const Config &conf) : UinputDevice(), cones {}, finder 
 	this->create();
 }
 
-DeviceManager::DeviceManager(const Config &conf) : conf {conf}, touch {conf}
+DeviceManager::DeviceManager(const config::Config &conf) : conf {conf}, touch {conf}
 {
 	if (conf.width == 0 || conf.height == 0)
 		throw std::runtime_error("Display size is 0");

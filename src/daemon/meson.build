@@ -1,6 +1,5 @@
 sources = [
   'cone.cpp',
-  'config.cpp',
   'devices.cpp',
   'dft.cpp',
   'main.cpp',
@@ -14,6 +13,7 @@ deps = [
   gsl,
   inih,
   iptsd_common,
+  iptsd_config,
   iptsd_contacts,
   iptsd_ipts,
   iptsd_math,

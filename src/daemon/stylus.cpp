@@ -2,11 +2,11 @@
 
 #include "stylus.hpp"
 
-#include "config.hpp"
 #include "context.hpp"
 #include "devices.hpp"
 
 #include <common/types.hpp>
+#include <config/config.hpp>
 #include <ipts/parser.hpp>
 #include <ipts/protocol.hpp>
 

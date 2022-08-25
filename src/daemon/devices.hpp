@@ -4,10 +4,10 @@
 #define IPTSD_DAEMON_DEVICES_HPP
 
 #include "cone.hpp"
-#include "config.hpp"
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
+#include <config/config.hpp>
 #include <contacts/finder.hpp>
 
 #include <memory>
@@ -22,7 +22,7 @@ public:
 	std::shared_ptr<Cone> cone;
 
 public:
-	StylusDevice(const Config &conf, u32 serial, std::shared_ptr<Cone> cone);
+	StylusDevice(const config::Config &conf, u32 serial, std::shared_ptr<Cone> cone);
 };
 
 class TouchDevice : public UinputDevice {
@@ -31,19 +31,19 @@ public:
 	contacts::ContactFinder finder;
 
 public:
-	TouchDevice(const Config &conf);
+	TouchDevice(const config::Config &conf);
 };
 
 class DeviceManager {
 public:
-	const Config &conf;
+	const config::Config &conf;
 	TouchDevice touch;
 
 	std::vector<StylusDevice> styli;
 	u32 active_styli = 0;
 
 public:
-	DeviceManager(const Config &conf);
+	DeviceManager(const config::Config &conf);
 
 	StylusDevice &create_stylus(u32 serial);
 	StylusDevice &get_stylus(u32 serial);
