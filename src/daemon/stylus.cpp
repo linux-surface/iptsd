@@ -54,8 +54,8 @@ void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
 
 	if (data.proximity) {
 		// Convert logical to physical coordinates
-		f64 x = (static_cast<f64>(data.x) / IPTS_MAX_X) * ctx.display.width;
-		f64 y = (static_cast<f64>(data.y) / IPTS_MAX_Y) * ctx.display.height;
+		f64 x = (static_cast<f64>(data.x) / IPTS_MAX_X) * ctx.config.width;
+		f64 y = (static_cast<f64>(data.y) / IPTS_MAX_Y) * ctx.config.height;
 
 		stylus.cone->update_position(x, y);
 	}

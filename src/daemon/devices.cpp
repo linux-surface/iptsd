@@ -7,7 +7,6 @@
 
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
-#include <drm/device.hpp>
 #include <ipts/protocol.hpp>
 
 #include <climits>
@@ -33,8 +32,7 @@ static i32 res(i32 virt, f64 phys)
 	return gsl::narrow<i32>(std::round(res));
 }
 
-StylusDevice::StylusDevice(const Config &conf, const drm::Device &display, u32 serial,
-			   std::shared_ptr<Cone> cone)
+StylusDevice::StylusDevice(const Config &conf, u32 serial, std::shared_ptr<Cone> cone)
 	: UinputDevice(), serial(serial), cone(std::move(cone))
 {
 	this->name = "IPTS Stylus";
@@ -52,8 +50,8 @@ StylusDevice::StylusDevice(const Config &conf, const drm::Device &display, u32 s
 	this->set_keybit(BTN_TOOL_PEN);
 	this->set_keybit(BTN_TOOL_RUBBER);
 
-	i32 res_x = res(IPTS_MAX_X, display.width);
-	i32 res_y = res(IPTS_MAX_Y, display.height);
+	i32 res_x = res(IPTS_MAX_X, conf.width);
+	i32 res_y = res(IPTS_MAX_Y, conf.height);
 
 	// Resolution for tilt is expected to be units/radian.
 	i32 res_tilt = gsl::narrow<i32>(std::round(18000 / math::num<f32>::pi));
@@ -68,8 +66,7 @@ StylusDevice::StylusDevice(const Config &conf, const drm::Device &display, u32 s
 	this->create();
 }
 
-TouchDevice::TouchDevice(const Config &conf, const drm::Device &display)
-	: UinputDevice(), cones {}, finder {conf.contacts(display)}
+TouchDevice::TouchDevice(const Config &conf) : UinputDevice(), cones {}, finder {conf.contacts()}
 {
 	this->name = "IPTS Touch";
 	this->vendor = conf.vendor;
@@ -81,9 +78,9 @@ TouchDevice::TouchDevice(const Config &conf, const drm::Device &display)
 	this->set_propbit(INPUT_PROP_DIRECT);
 	this->set_keybit(BTN_TOUCH);
 
-	f64 diag = std::hypot(display.width, display.height);
-	i32 res_x = res(IPTS_MAX_X, display.width);
-	i32 res_y = res(IPTS_MAX_Y, display.height);
+	f64 diag = std::hypot(conf.width, conf.height);
+	i32 res_x = res(IPTS_MAX_X, conf.width);
+	i32 res_y = res(IPTS_MAX_Y, conf.height);
 	i32 res_d = res(IPTS_DIAGONAL, diag);
 
 	this->set_absinfo(ABS_MT_SLOT, 0, IPTS_MAX_CONTACTS, 0);
@@ -102,9 +99,11 @@ TouchDevice::TouchDevice(const Config &conf, const drm::Device &display)
 	this->create();
 }
 
-DeviceManager::DeviceManager(const Config &conf, const drm::Device &display)
-	: conf {conf}, display {display}, touch {conf, display}
+DeviceManager::DeviceManager(const Config &conf) : conf {conf}, touch {conf}
 {
+	if (conf.width == 0 || conf.height == 0)
+		throw std::runtime_error("Display size is 0");
+
 	this->create_stylus(0);
 }
 
@@ -112,7 +111,7 @@ StylusDevice &DeviceManager::create_stylus(u32 serial)
 {
 	std::shared_ptr<Cone> cone = std::make_shared<Cone>(conf.cone_angle, conf.cone_distance);
 	this->touch.cones.push_back(cone);
-	return this->styli.emplace_back(this->conf, this->display, serial, std::move(cone));
+	return this->styli.emplace_back(this->conf, serial, std::move(cone));
 }
 
 StylusDevice &DeviceManager::get_stylus(u32 serial)

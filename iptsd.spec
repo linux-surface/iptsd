@@ -20,7 +20,6 @@ BuildRequires: pkgconfig(fmt)
 BuildRequires: pkgconfig(inih)
 BuildRequires: cmake(Microsoft.GSL)
 BuildRequires: pkgconfig(spdlog)
-BuildRequires: pkgconfig(libdrm)
 BuildRequires: hidrd-devel
 
 # Debug Tools

@@ -15,7 +15,6 @@ deps = [
   inih,
   iptsd_common,
   iptsd_contacts,
-  iptsd_drm,
   iptsd_ipts,
   iptsd_math,
   iptsd_container,

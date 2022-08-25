@@ -1,7 +1,6 @@
 [Unit]
 Description=Intel Precise Touch & Stylus Daemon
 Documentation=https://github.com/linux-surface/iptsd
-After=graphical.target
 
 [Service]
 Type=simple

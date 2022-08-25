@@ -28,7 +28,6 @@ if dbg_finger and cli11.found()
     gsl,
     iptsd_common,
     iptsd_contacts,
-    iptsd_drm,
     iptsd_ipts,
     spdlog,
     stdcppfs,

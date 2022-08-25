@@ -7,19 +7,16 @@
 #include "devices.hpp"
 
 #include <common/types.hpp>
-#include <drm/device.hpp>
 
 namespace iptsd::daemon {
 
 class Context {
 public:
 	Config config;
-	drm::Device display;
 	DeviceManager devices;
 
 public:
-	Context(i16 vendor, i16 product)
-		: config {vendor, product}, display {}, devices {config, display} {};
+	Context(i16 vendor, i16 product) : config {vendor, product}, devices {config} {};
 };
 
 } /* namespace iptsd::daemon */

@@ -3,7 +3,6 @@
 #include <common/signal.hpp>
 #include <contacts/finder.hpp>
 #include <container/ops.hpp>
-#include <drm/device.hpp>
 #include <ipts/device.hpp>
 #include <ipts/parser.hpp>
 #include <ipts/protocol.hpp>
@@ -24,6 +23,7 @@ namespace iptsd::debug::finger {
 static std::vector<f64> size {};   // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 static std::vector<f64> aspect {}; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
+/*
 static void iptsd_finger_handle_input(const drm::Device &display, contacts::ContactFinder &finder,
 				      const ipts::Heatmap &data)
 {
@@ -69,9 +69,11 @@ static void iptsd_finger_handle_input(const drm::Device &display, contacts::Cont
 	spdlog::info("Aspect:  {:.3f} (Min: {:.3f}; Max: {:.3f})", aspect_avg, aspect_min,
 		     aspect_max);
 }
+*/
 
 static int main(gsl::span<char *> args)
 {
+	/*
 	std::filesystem::path path;
 	contacts::BlobDetection mode = contacts::BlobDetection::BASIC;
 
@@ -143,7 +145,7 @@ static int main(gsl::span<char *> args)
 
 	// Disable multitouch mode
 	device.set_mode(false);
-
+*/
 	return 0;
 }
 

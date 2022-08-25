@@ -77,14 +77,10 @@ endif
 # Find libstdc++fs for older GCC
 stdcppfs = cpp.find_library('stdc++fs')
 
-# Find drm library
-drm = dependency('libdrm')
-
 subdir('common')
 subdir('math')
 
 subdir('container')
-subdir('drm')
 subdir('hid')
 subdir('ipts')
 

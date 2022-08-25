@@ -28,7 +28,6 @@ To build IPTSD from source, you need to install the following dependencies:
  * gsl
  * hidrd
  * inih
- * libdrm
  * spdlog
 
 To build the debugging tools you need to install a few more dependencies. The debugging tools will be enabled automatically when these are detected:

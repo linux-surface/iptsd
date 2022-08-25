@@ -20,8 +20,8 @@ static bool check_cones(const Context &ctx, const contacts::Contact &contact)
 	const TouchDevice &touch = ctx.devices.touch;
 
 	// Convert relative to physical coordinates
-	f64 x = contact.x * ctx.display.width;
-	f64 y = contact.y * ctx.display.height;
+	f64 x = contact.x * ctx.config.width;
+	f64 y = contact.y * ctx.config.height;
 
 	for (const auto &cone : touch.cones) {
 		if (cone->check(x, y))
@@ -39,8 +39,8 @@ static void update_cones(Context &ctx, const contacts::Contact &contact)
 	f64 distance = INFINITY;
 
 	// Convert relative to physical coordinates
-	f64 x = contact.x * ctx.display.width;
-	f64 y = contact.y * ctx.display.height;
+	f64 x = contact.x * ctx.config.width;
+	f64 y = contact.y * ctx.config.height;
 
 	// find closest cone (by center)
 	for (auto &current : touch.cones) {

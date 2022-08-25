@@ -7,7 +7,6 @@ Build-Depends:
  debhelper-compat (= 12),
  meson,
  pkg-config,
- libdrm-dev,
  libcairomm-1.0-dev,
  libgtkmm-3.0-dev,
  systemd,
