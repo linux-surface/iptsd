@@ -103,7 +103,7 @@ TouchDevice::TouchDevice(const config::Config &conf)
 DeviceManager::DeviceManager(const config::Config &conf) : conf {conf}, touch {conf}
 {
 	if (conf.width == 0 || conf.height == 0)
-		throw std::runtime_error("Display size is 0");
+		throw std::runtime_error("No display config for this device was found!");
 
 	this->create_stylus(0);
 }
