@@ -8,18 +8,10 @@ sources = [
   'uinput-device.cpp',
 ]
 
-deps = [
-  fmt,
-  gsl,
-  inih,
-  iptsd_common,
+deps = dependencies + [
   iptsd_config,
   iptsd_contacts,
   iptsd_ipts,
-  iptsd_math,
-  iptsd_container,
-  spdlog,
-  stdcppfs,
 ]
 
 executable('iptsd', sources, dependencies: deps, include_directories: includes, install: true)

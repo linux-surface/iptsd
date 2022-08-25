@@ -77,16 +77,19 @@ endif
 # Find libstdc++fs for older GCC
 stdcppfs = cpp.find_library('stdc++fs')
 
-subdir('common')
-subdir('math')
+# Default dependencies
+dependencies = [
+  fmt,
+  gsl,
+  spdlog,
+  stdcppfs,
+]
 
-subdir('container')
 subdir('hid')
 subdir('ipts')
-
 subdir('contacts')
-subdir('config')
 
+subdir('config')
 subdir('daemon')
 
 if get_option('debug_tools').length() > 0

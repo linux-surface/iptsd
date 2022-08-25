@@ -4,9 +4,7 @@ sources = [
   'reader.cpp',
 ]
 
-deps = [
-  gsl,
-  iptsd_common,
+deps = dependencies + [
   iptsd_hid,
 ]
 

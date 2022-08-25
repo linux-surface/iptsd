@@ -2,10 +2,8 @@ sources = [
   'config.cpp'
 ]
 
-deps = [
-  gsl,
+deps = dependencies + [
   inih,
-  iptsd_common,
   iptsd_contacts,
   iptsd_ipts,
 ]

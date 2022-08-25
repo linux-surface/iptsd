@@ -5,10 +5,8 @@ sources = [
   'device.cpp',
 ]
 
-deps = [
-  gsl,
+deps = dependencies + [
   hidrd_shim,
-  iptsd_common,
 ]
 
 libhid = static_library('hid', sources, dependencies: deps, include_directories: includes)
