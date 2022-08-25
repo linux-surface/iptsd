@@ -99,6 +99,10 @@ static int main(gsl::span<char *> args)
 	ipts::Device device {path};
 	config::Config config {device.vendor(), device.product()};
 
+	// Check if a config was found
+	if (config.width == 0 || config.height == 0)
+		throw std::runtime_error("No display config for this device was found!");
+
 	spdlog::info("Connected to device {:04X}:{:04X}", device.vendor(), device.product());
 	spdlog::info("Samples: 0");
 	spdlog::info("Size:    0.000 (Min: 0.000; Max: 0.000)");
