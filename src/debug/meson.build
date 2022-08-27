@@ -39,7 +39,7 @@ if dbg_plot and cli11.found() and cairomm.found()
     iptsd_ipts,
   ]
 
-  executable('ipts-proto-plot', 'proto-plot.cpp', dependencies: deps, include_directories: includes, install: true)
+  executable('iptsd-plot', 'plot.cpp', dependencies: deps, include_directories: includes, install: true)
 elif dbg_plot
   warning('Debug tool "plot" is enabled but has missing deps')
 endif
