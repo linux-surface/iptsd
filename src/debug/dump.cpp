@@ -22,7 +22,7 @@
 #include <vector>
 
 struct PrettyBuf {
-	u8 const *data;
+	const u8 *data;
 	size_t size;
 };
 
@@ -87,16 +87,23 @@ template <> struct fmt::formatter<gsl::span<const u8>> {
 
 namespace iptsd::debug::dump {
 
+struct iptsd_dump_header {
+	i16 vendor;
+	i16 product;
+	std::size_t buffer_size;
+};
+
 static int main(gsl::span<char *> args)
 {
-	std::filesystem::path device;
+	CLI::App app {};
+	std::filesystem::path path;
 	std::filesystem::path filename;
 
-	CLI::App app {"Read raw IPTS data"};
-	app.add_option("-d,--device", device, "The hidraw device to open")
+	app.add_option("DEVICE", path, "The hidraw device to read from.")
 		->type_name("FILE")
 		->required();
-	app.add_option("-b,--binary", filename, "Write data to binary file instead of stdout")
+
+	app.add_option("OUTPUT", filename, "Output binary data to this file in addition to stdout.")
 		->type_name("FILE");
 
 	CLI11_PARSE(app, args.size(), args.data());
@@ -107,55 +114,58 @@ static int main(gsl::span<char *> args)
 		file.open(filename, std::ios::out | std::ios::binary);
 	}
 
-	ipts::Device dev(device);
-
-	std::atomic_bool should_exit {false};
-
-	auto const _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
-	auto const _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
+	ipts::Device dev {path};
 
 	// Get the buffer size from the HID descriptor
 	std::size_t buffer_size = dev.buffer_size();
 	std::vector<u8> buffer(buffer_size);
 
 	if (file) {
+		struct iptsd_dump_header header {};
+		header.vendor = dev.vendor();
+		header.product = dev.product();
+		header.buffer_size = buffer_size;
+
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-		file.write(reinterpret_cast<char *>(&buffer_size), sizeof(buffer_size));
+		file.write(reinterpret_cast<char *>(&header), sizeof(header));
 	}
 
-	fmt::print("Vendor:       {:04X}\n", dev.vendor());
-	fmt::print("Product:      {:04X}\n", dev.product());
-	fmt::print("Buffer Size:  {}\n", buffer_size);
-	fmt::print("\n");
+	spdlog::info("Vendor:       {:04X}", dev.vendor());
+	spdlog::info("Product:      {:04X}", dev.product());
+	spdlog::info("Buffer Size:  {}", buffer_size);
 
 	// Enable multitouch mode
 	dev.set_mode(true);
 
-	while (!should_exit) {
+	while (true) {
 		try {
-			ssize_t rsize = dev.read(buffer);
+			ssize_t size = dev.read(buffer);
+
+			if (!dev.is_touch_data(buffer[0]))
+				continue;
 
 			if (file) {
-				if (!dev.is_touch_data(buffer[0]))
-					continue;
+				// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+				file.write(reinterpret_cast<char *>(&size), sizeof(size));
 
 				// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 				file.write(reinterpret_cast<char *>(buffer.data()),
 					   gsl::narrow<std::streamsize>(buffer_size));
-
-				continue;
 			}
 
-			const gsl::span<const u8> buf {buffer.data(), (std::size_t)rsize};
-			fmt::print("== Size: {} ==\n", rsize);
-			fmt::print("{:ox}\n", buf);
+			const gsl::span<const u8> buf(buffer.data(), size);
+
+			spdlog::info("== Size: {} ==", size);
+			spdlog::info("{:ox}", buf);
 		} catch (std::exception &e) {
 			spdlog::error(e.what());
 			break;
 		}
 	}
 
+	// Disable multitouch mode
 	dev.set_mode(false);
+
 	return 0;
 }
 
