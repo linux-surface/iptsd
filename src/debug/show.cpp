@@ -16,9 +16,9 @@
 
 using namespace iptsd::gfx;
 
-namespace iptsd::debug::rt {
+namespace iptsd::debug::show {
 
-static void iptsd_rt_handle_input(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t rsize,
+static void iptsd_show_handle_input(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t rsize,
 				  gfx::Visualization &vis, contacts::ContactFinder &finder,
 				  const ipts::Heatmap &data)
 {
@@ -84,7 +84,7 @@ static int main(gsl::span<char *> args)
 
 	ipts::Parser parser {};
 	parser.on_heatmap = [&](const auto &data) {
-		iptsd_rt_handle_input(cairo, rsize, vis, finder, data);
+		iptsd_show_handle_input(cairo, rsize, vis, finder, data);
 	};
 
 	// Enable multitouch mode
@@ -129,14 +129,14 @@ static int main(gsl::span<char *> args)
 	return 0;
 }
 
-} // namespace iptsd::debug::rt
+} // namespace iptsd::debug::show
 
 int main(int argc, char *argv[])
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return iptsd::debug::rt::main(gsl::span(argv, argc));
+		return iptsd::debug::show::main(gsl::span(argv, argc));
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

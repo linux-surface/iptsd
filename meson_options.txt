@@ -6,8 +6,8 @@ option('service_manager',
 option('sample_config', type: 'boolean', value: true)
 option('debug_tools',
        type: 'array',
-       choices: ['dump', 'finger', 'plot', 'rt'],
-       value: ['dump', 'finger', 'plot', 'rt'])
+       choices: ['dump', 'finger', 'plot', 'show'],
+       value: ['dump', 'finger', 'plot', 'show'])
 
 option('access_checks', type: 'boolean', value: true)
 option('force_access_checks', type: 'boolean', value: false)

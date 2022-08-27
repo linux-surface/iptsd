@@ -3,7 +3,7 @@ tools = get_option('debug_tools')
 dbg_dump = tools.contains('dump')
 dbg_finger = tools.contains('finger')
 dbg_plot = tools.contains('plot')
-dbg_rt = tools.contains('rt')
+dbg_show = tools.contains('show')
 
 if dbg_dump and cli11.found()
   deps = dependencies + [
@@ -43,7 +43,7 @@ elif dbg_plot
   warning('Debug tool "plot" is enabled but has missing deps')
 endif
 
-if dbg_rt and cairomm.found() and sdl.found()
+if dbg_show and cairomm.found() and sdl.found()
   deps = dependencies + [
     cairomm,
     iptsd_config,
@@ -53,7 +53,7 @@ if dbg_rt and cairomm.found() and sdl.found()
     sdl,
   ]
 
-  executable('ipts-proto-rt', 'proto-rt.cpp', dependencies: deps, include_directories: includes, install: true)
-elif dbg_rt
-  warning('Debug tool "rt" is enabled but has missing deps')
+  executable('iptsd-show', 'show.cpp', dependencies: deps, include_directories: includes, install: true)
+elif dbg_show
+  warning('Debug tool "show" is enabled but has missing deps')
 endif
