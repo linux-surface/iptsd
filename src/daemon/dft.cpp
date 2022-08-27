@@ -63,6 +63,9 @@ iptsd_dft_interpolate_position(const Context &ctx, const struct ipts_pen_dft_win
 	// find critical point of fitted parabola
 	f64 d = (x[0] - x[2]) / (2 * (x[0] - 2 * x[1] + x[2]));
 
+	if (std::isnan(d))
+		return std::tuple {false, 0};
+
 	return std::tuple {true, row.first + maxi + std::clamp(d, mind, maxd)};
 }
 
