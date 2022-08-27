@@ -7,8 +7,10 @@
 #include <ipts/device.hpp>
 #include <ipts/parser.hpp>
 
+#include <CLI/CLI.hpp>
 #include <SDL2/SDL.h>
 #include <cairomm/cairomm.h>
+#include <filesystem>
 #include <gsl/gsl>
 #include <gsl/span>
 #include <spdlog/spdlog.h>
@@ -19,8 +21,8 @@ using namespace iptsd::gfx;
 namespace iptsd::debug::show {
 
 static void iptsd_show_handle_input(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t rsize,
-				  gfx::Visualization &vis, contacts::ContactFinder &finder,
-				  const ipts::Heatmap &data)
+				    gfx::Visualization &vis, contacts::ContactFinder &finder,
+				    const ipts::Heatmap &data)
 {
 	// Make sure that all buffers have the correct size
 	finder.resize(index2_t {data.dim.width, data.dim.height});
@@ -45,10 +47,16 @@ static void iptsd_show_handle_input(const Cairo::RefPtr<Cairo::Context> &cairo, 
 
 static int main(gsl::span<char *> args)
 {
-	if (args.size() < 2)
-		throw std::runtime_error("You need to specify the hidraw device!");
+	CLI::App app {};
+	std::filesystem::path path;
 
-	ipts::Device device {args[1]};
+	app.add_option("DEVICE", path, "The hidraw device to read from.")
+		->type_name("FILE")
+		->required();
+
+	CLI11_PARSE(app, args.size(), args.data());
+
+	ipts::Device device {path};
 	config::Config config {device.vendor(), device.product()};
 
 	// Check if a config was found

@@ -46,6 +46,7 @@ endif
 if dbg_show and cairomm.found() and sdl.found()
   deps = dependencies + [
     cairomm,
+    cli11,
     iptsd_config,
     iptsd_contacts,
     iptsd_gfx,
