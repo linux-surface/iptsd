@@ -9,6 +9,7 @@ sources = [
 ]
 
 deps = dependencies + [
+  cli11,
   iptsd_config,
   iptsd_contacts,
   iptsd_ipts,

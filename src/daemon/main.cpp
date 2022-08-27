@@ -11,12 +11,14 @@
 #include <ipts/device.hpp>
 #include <ipts/parser.hpp>
 
+#include <CLI/CLI.hpp>
 #include <atomic>
 #include <chrono>
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <exception>
+#include <filesystem>
 #include <functional>
 #include <iostream>
 #include <spdlog/spdlog.h>
@@ -29,15 +31,21 @@ namespace iptsd::daemon {
 
 static int main(gsl::span<char *> args)
 {
-	if (args.size() < 2)
-		throw std::runtime_error("You need to specify the hidraw device!");
+	CLI::App app {};
+	std::filesystem::path path;
+
+	app.add_option("DEVICE", path, "The hidraw device to read from.")
+		->type_name("FILE")
+		->required();
+
+	CLI11_PARSE(app, args.size(), args.data());
 
 	std::atomic_bool should_exit = false;
 
 	auto const _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
 	auto const _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
 
-	ipts::Device device {args[1]};
+	ipts::Device device {path};
 	Context ctx {device.vendor(), device.product()};
 
 	spdlog::info("Connected to device {:04X}:{:04X}", device.vendor(), device.product());
