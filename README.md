@@ -24,6 +24,7 @@ To build IPTSD from source, you need to install the following dependencies:
  * A C and a C++ compiler
  * meson
  * ninja
+ * CLI11
  * fmt
  * gsl
  * hidrd
@@ -32,7 +33,6 @@ To build IPTSD from source, you need to install the following dependencies:
 
 To build the debugging tools you need to install a few more dependencies. The debugging tools will be enabled automatically when these are detected:
 
- * CLI11
  * cairomm
  * SDL2
 

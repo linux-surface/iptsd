@@ -16,6 +16,7 @@ BuildRequires: gcc-g++
 BuildRequires: cmake
 
 # Daemon
+BuildRequires: cmake(CLI11)
 BuildRequires: pkgconfig(fmt)
 BuildRequires: pkgconfig(inih)
 BuildRequires: cmake(Microsoft.GSL)
@@ -23,7 +24,6 @@ BuildRequires: pkgconfig(spdlog)
 BuildRequires: hidrd-devel
 
 # Debug Tools
-BuildRequires: cmake(CLI11)
 BuildRequires: pkgconfig(cairomm-1.0)
 BuildRequires: pkgconfig(sdl2)
 
