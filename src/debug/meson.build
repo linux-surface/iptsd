@@ -43,13 +43,14 @@ elif dbg_plot
   warning('Debug tool "plot" is enabled but has missing deps')
 endif
 
-if dbg_rt and cairomm.found() and gtkmm.found()
+if dbg_rt and cairomm.found() and sdl.found()
   deps = dependencies + [
-    gtkmm,
     cairomm,
+    iptsd_config,
     iptsd_contacts,
     iptsd_gfx,
     iptsd_ipts,
+    sdl,
   ]
 
   executable('ipts-proto-rt', 'proto-rt.cpp', dependencies: deps, include_directories: includes, install: true)

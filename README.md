@@ -34,7 +34,7 @@ To build the debugging tools you need to install a few more dependencies. The de
 
  * CLI11
  * cairomm
- * gtkmm
+ * SDL2
 
 Most of the dependencies can be downloaded and included automatically by meson, should your distribution not include them.
 

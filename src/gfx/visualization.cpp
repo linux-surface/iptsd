@@ -3,18 +3,19 @@
 #include "visualization.hpp"
 
 #include "cmap.hpp"
+#include "color.hpp"
 
+#include <common/types.hpp>
 #include <contacts/advanced/detector.hpp>
+#include <contacts/finder.hpp>
 #include <container/image.hpp>
 
 #include <cairo.h>
 #include <cairomm/cairomm.h>
-#include <cairomm/context.h>
-#include <cairomm/enums.h>
-#include <cairomm/matrix.h>
-#include <cairomm/pattern.h>
-#include <cairomm/refptr.h>
-#include <cairomm/surface.h>
+#include <cmath>
+#include <fmt/format.h>
+#include <memory>
+#include <vector>
 
 namespace iptsd::gfx {
 
@@ -30,110 +31,98 @@ Cairo::RefPtr<Cairo::ImageSurface> image_surface_create(container::Image<Argb> &
 	return Cairo::ImageSurface::create(data, format, size.x, size.y, stride);
 }
 
-inline void move_to(const Cairo::RefPtr<Cairo::Context> &cr, math::Vec2<f64> v)
+void Visualization::draw_heatmap(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t window,
+				 const container::Image<f32> &heatmap)
 {
-	cr->move_to(v.x, v.y);
+	if (!this->data || this->data->size() != heatmap.size())
+		this->data = std::make_unique<container::Image<gfx::Argb>>(heatmap.size());
+
+	// Plot heatmap into data buffer
+	cmap::grayscale.map_into(*this->data, heatmap, {{0, 1}});
+
+	// Create Cairo surface based on data buffer
+	Cairo::RefPtr<Cairo::ImageSurface> source = image_surface_create(*this->data);
+
+	f64 sx = heatmap.size().x / static_cast<f64>(window.x);
+	f64 sy = heatmap.size().y / static_cast<f64>(window.y);
+
+	f64 tx = 0;
+	f64 ty = 0;
+
+	if (this->config.invert_x) {
+		sx = -sx;
+		tx = heatmap.size().x;
+	}
+
+	if (this->config.invert_y) {
+		sy = -sy;
+		ty = heatmap.size().y;
+	}
+
+	Cairo::Matrix matrix = Cairo::identity_matrix();
+	matrix.translate(tx, ty);
+	matrix.scale(sx, sy);
+
+	// Upscale surface to window dimensions
+	Cairo::RefPtr<Cairo::SurfacePattern> pattern = Cairo::SurfacePattern::create(source);
+	pattern->set_matrix(matrix);
+	pattern->set_filter(Cairo::FILTER_NEAREST);
+
+	// Copy source into output
+	cairo->set_source(pattern);
+	cairo->rectangle(0, 0, window.x, window.y);
+	cairo->fill();
 }
 
-inline void line_to(const Cairo::RefPtr<Cairo::Context> &cr, math::Vec2<f64> v)
+void Visualization::draw_contacts(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t window,
+				  const std::vector<contacts::Contact> &contacts)
 {
-	cr->line_to(v.x, v.y);
-}
+	f64 diag = std::hypot(window.x, window.y);
 
-inline void translate(const Cairo::RefPtr<Cairo::Context> &cr, math::Vec2<f64> v)
-{
-	cr->translate(v.x, v.y);
-}
+	// Select Font
+	cairo->select_font_face("monospace", Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_NORMAL);
+	cairo->set_font_size(24.0);
 
-void Visualization::draw(const Cairo::RefPtr<Cairo::Context> &cr, container::Image<f32> const &img,
-			 std::vector<contacts::Blob> const &tps, int width, int height)
-{
-	auto const img_w = static_cast<f64>(img.size().x);
-	auto const img_h = static_cast<f64>(img.size().y);
+	for (const auto &contact : contacts) {
+		if (!contact.active)
+			continue;
 
-	auto const win_w = static_cast<f64>(width);
-	auto const win_h = static_cast<f64>(height);
+		// Color palms red, instable contacts yellow, and stable contacts green
+		if (contact.palm)
+			cairo->set_source_rgb(1, 0, 0);
+		else if (!contact.stable)
+			cairo->set_source_rgb(1, 1, 0);
+		else
+			cairo->set_source_rgb(0, 1, 0);
 
-	auto const t = [&](math::Vec2<f64> p) -> math::Vec2<f64> {
-		return {p.x * (win_w / img_w), win_h - p.y * (win_h / img_h)};
-	};
+		std::string index = fmt::format("{:02}", contact.index);
 
-	// plot
-	cmap::cubehelix(0.1, -0.6, 1.0, 2.0).map_into(m_data, img, {{0.1f, 0.7f}});
+		Cairo::TextExtents extends {};
+		cairo->get_text_extents(index, extends);
 
-	// create source surface based on data
-	auto src = image_surface_create(m_data);
+		f64 x = contact.x * window.x;
+		f64 y = contact.y * window.y;
 
-	// select font
-	cr->select_font_face("monospace", Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_NORMAL);
-	cr->set_font_size(12.0);
+		// Center the text at the mean point of the contact
+		cairo->move_to(x - (extends.x_bearing + extends.width / 2),
+			       y - (extends.y_bearing + extends.height / 2));
+		cairo->save();
 
-	// plot heatmap
-	auto m = Cairo::identity_matrix();
-	m.translate(0.0, img_h);
-	m.scale(img_w / win_w, -img_h / win_h);
+		cairo->show_text(index);
+		cairo->restore();
+		cairo->stroke();
 
-	auto p = Cairo::SurfacePattern::create(src);
-	p->set_matrix(m);
-	p->set_filter(Cairo::FILTER_NEAREST);
+		cairo->move_to(x, y);
+		cairo->save();
 
-	cr->set_source(p);
-	cr->rectangle(0, 0, win_w, win_h);
-	cr->fill();
+		cairo->translate(x, y);
+		cairo->rotate(-contact.angle);
+		cairo->scale(contact.major * diag, contact.minor * diag);
+		cairo->begin_new_sub_path();
+		cairo->arc(0, 0, 1, 0, 2 * math::num<f64>::pi);
 
-	// plot touch-points
-	for (auto const &tp : tps) {
-		auto const eigen = tp.cov.eigen();
-
-		// get standard deviation
-		auto const nstd = 1.0;
-		auto const s1 = nstd * std::sqrt(eigen.w[0]);
-		auto const s2 = nstd * std::sqrt(eigen.w[1]);
-
-		// eigenvectors scaled with standard deviation
-		auto const v1 = eigen.v[0].cast<f64>() * s1;
-		auto const v2 = eigen.v[1].cast<f64>() * s2;
-
-		// standard deviation
-		cr->set_source_rgba(0.0, 0.0, 0.0, 0.33);
-
-		move_to(cr, t({tp.mean.x + 0.5, tp.mean.y + 0.5}));
-		line_to(cr, t({tp.mean.x + 0.5 + v1.x, tp.mean.y + 0.5 + v1.y}));
-
-		move_to(cr, t({tp.mean.x + 0.5, tp.mean.y + 0.5}));
-		line_to(cr, t({tp.mean.x + 0.5 + v2.x, tp.mean.y + 0.5 + v2.y}));
-
-		cr->stroke();
-
-		// mean
-		cr->set_source_rgb(1.0, 0.0, 0.0);
-
-		move_to(cr, t({tp.mean.x + 0.1, tp.mean.y + 0.5}));
-		line_to(cr, t({tp.mean.x + 0.9, tp.mean.y + 0.5}));
-
-		move_to(cr, t({tp.mean.x + 0.5, tp.mean.y + 0.1}));
-		line_to(cr, t({tp.mean.x + 0.5, tp.mean.y + 0.9}));
-
-		cr->stroke();
-
-		// standard deviation ellipse
-		cr->set_source_rgb(1.0, 0.0, 0.0);
-
-		cr->save();
-
-		translate(cr, t({tp.mean.x + 0.5, tp.mean.y + 0.5}));
-		cr->rotate(std::atan2(v1.x, v1.y));
-		cr->scale(s2 * win_w / img_w, s1 * win_h / img_h);
-		cr->arc(0.0, 0.0, 1.0, 0.0, 2.0 * math::num<f64>::pi);
-
-		cr->restore();
-		cr->stroke();
-
-		// stats
-		cr->set_source_rgb(1.0, 1.0, 1.0);
-
-		move_to(cr, t({tp.mean.x - 3.5, tp.mean.y + 2.0}));
-		cr->show_text(fmt::format("a:{:.02f}", std::max(s1, s2) / std::min(s1, s2)));
+		cairo->restore();
+		cairo->stroke();
 	}
 }
 

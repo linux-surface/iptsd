@@ -1,186 +1,132 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 #include <common/types.hpp>
-#include <contacts/advanced/detector.hpp>
-#include <contacts/eval/perf.hpp>
+#include <contacts/finder.hpp>
 #include <container/image.hpp>
 #include <gfx/visualization.hpp>
 #include <ipts/device.hpp>
 #include <ipts/parser.hpp>
 
-#include <atomic>
-#include <cairomm/context.h>
-#include <cairomm/enums.h>
-#include <cairomm/refptr.h>
-#include <fstream>
+#include <SDL2/SDL.h>
+#include <cairomm/cairomm.h>
 #include <gsl/gsl>
-#include <gtkmm/application.h>
-#include <gtkmm/applicationwindow.h>
-#include <gtkmm/drawingarea.h>
-#include <gtkmm/enums.h>
-#include <gtkmm/object.h>
-#include <gtkmm/widget.h>
-#include <iostream>
-#include <mutex>
+#include <gsl/span>
 #include <spdlog/spdlog.h>
-#include <thread>
 #include <vector>
 
 using namespace iptsd::gfx;
 
 namespace iptsd::debug::rt {
 
-class MainContext {
-public:
-	MainContext(index2_t img_size);
-
-	void submit(container::Image<f32> const &img, std::vector<contacts::Blob> const &tps);
-
-	auto draw_event(const Cairo::RefPtr<Cairo::Context> &cr) -> bool;
-
-public:
-	Gtk::DrawingArea *m_widget = nullptr;
-
-private:
-	gfx::Visualization m_vis;
-
-	container::Image<f32> m_img1;
-	container::Image<f32> m_img2;
-
-	std::vector<contacts::Blob> m_tps1;
-	std::vector<contacts::Blob> m_tps2;
-
-	std::mutex m_lock;
-
-	container::Image<f32> *m_img_frnt;
-	container::Image<f32> *m_img_back;
-
-	std::vector<contacts::Blob> *m_tps_frnt;
-	std::vector<contacts::Blob> *m_tps_back;
-	bool m_swap = false;
-};
-
-MainContext::MainContext(index2_t img_size)
-	: m_vis {img_size}, m_img1 {img_size}, m_img2 {img_size}, m_tps1 {}, m_tps2 {},
-	  m_img_frnt {&m_img1}, m_img_back {&m_img2}, m_tps_frnt {&m_tps1}, m_tps_back {&m_tps2}
+static void iptsd_rt_handle_input(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t rsize,
+				  gfx::Visualization &vis, contacts::ContactFinder &finder,
+				  const ipts::Heatmap &data)
 {
-}
+	// Make sure that all buffers have the correct size
+	finder.resize(index2_t {data.dim.width, data.dim.height});
 
-void MainContext::submit(container::Image<f32> const &img, std::vector<contacts::Blob> const &tps)
-{
-	{
-		// set swap to false to prevent read-access in draw
-		auto guard = std::lock_guard(m_lock);
-		m_swap = false;
-	}
+	// Normalize and invert the heatmap data.
+	std::transform(data.data.begin(), data.data.end(), finder.data().begin(), [&](auto v) {
+		f32 val = static_cast<f32>(v - data.dim.z_min) /
+			  static_cast<f32>(data.dim.z_max - data.dim.z_min);
 
-	// copy to back-buffer
-	*m_img_back = img;
-	*m_tps_back = tps;
+		return 1.0f - val;
+	});
 
-	{
-		// set swap to true to indicate that new data has arrived
-		auto guard = std::lock_guard(m_lock);
-		m_swap = true;
-	}
+	// Search for a contact
+	const std::vector<contacts::Contact> &contacts = finder.search();
 
-	// request update
-	m_widget->queue_draw();
-}
+	// Draw the raw heatmap
+	vis.draw_heatmap(cairo, rsize, finder.data());
 
-auto MainContext::draw_event(const Cairo::RefPtr<Cairo::Context> &cr) -> bool
-{
-	auto const width = m_widget->get_allocated_width();
-	auto const height = m_widget->get_allocated_height();
-
-	{
-		// check and swap buffers, if necessary
-		auto guard = std::lock_guard(m_lock);
-
-		if (m_swap) {
-			std::swap(m_img_frnt, m_img_back);
-			std::swap(m_tps_frnt, m_tps_back);
-			m_swap = false;
-		}
-	}
-
-	m_vis.draw(cr, *m_img_frnt, *m_tps_frnt, width, height);
-	return false;
+	// Draw the contacts
+	vis.draw_contacts(cairo, rsize, contacts);
 }
 
 static int main(gsl::span<char *> args)
 {
-	const index2_t size {72, 48};
-	MainContext ctx {size};
-	contacts::advanced::BlobDetector prc {size};
+	if (args.size() < 2)
+		throw std::runtime_error("You need to specify the hidraw device!");
 
-	std::atomic_bool run = true;
+	ipts::Device device {args[1]};
+	config::Config config {device.vendor(), device.product()};
 
-	std::thread updt([&]() -> void {
-		using namespace std::chrono_literals;
+	// Check if a config was found
+	if (config.width == 0 || config.height == 0)
+		throw std::runtime_error("No display config for this device was found!");
 
-		ipts::Parser parser {};
-		ipts::Device dev("/dev/hidraw2");
+	gfx::Visualization vis {config};
+	contacts::ContactFinder finder {config.contacts()};
 
-		// Read the buffer size
-		std::size_t buffer_size = dev.buffer_size();
-		std::vector<u8> buffer(buffer_size);
+	// Get the buffer size from the HID descriptor
+	std::size_t buffer_size = device.buffer_size();
+	std::vector<u8> buffer(buffer_size);
 
-		// Enable multitouch mode
-		dev.set_mode(true);
+	SDL_Init(SDL_INIT_VIDEO);
 
-		parser.on_heatmap = [&](const auto &data) {
-			container::Image<f32> hm {size};
+	SDL_Window *window = nullptr;
+	SDL_Renderer *renderer = nullptr;
 
-			std::transform(data.data.begin(), data.data.end(), hm.begin(), [&](auto v) {
-				f32 val = static_cast<f32>(v - data.dim.z_min) /
-					  static_cast<f32>(data.dim.z_max - data.dim.z_min);
+	// Create an SDL window
+	SDL_CreateWindowAndRenderer(0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_ALLOW_HIGHDPI,
+				    &window, &renderer);
 
-				return 1.0f - val;
-			});
+	index2_t rsize {};
+	SDL_GetRendererOutputSize(renderer, &rsize.x, &rsize.y);
 
-			std::copy(hm.begin(), hm.end(), prc.data().begin());
-			ctx.submit(hm, prc.search());
-		};
+	// Create a texture that will be rendered later
+	SDL_Texture *rendertex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888,
+						   SDL_TEXTUREACCESS_STREAMING, rsize.x, rsize.y);
 
-		while (run.load()) {
-			ssize_t rsize = dev.read(buffer);
-			parser.parse(gsl::span<u8>(buffer.data(), rsize));
+	// Create a texture for drawing
+	auto drawtex = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, rsize.x, rsize.y);
+	auto cairo = Cairo::Context::create(drawtex);
 
-			std::this_thread::sleep_for(10ms);
+	ipts::Parser parser {};
+	parser.on_heatmap = [&](const auto &data) {
+		iptsd_rt_handle_input(cairo, rsize, vis, finder, data);
+	};
+
+	// Enable multitouch mode
+	device.set_mode(true);
+
+	while (true) {
+		try {
+			ssize_t size = device.read(buffer);
+
+			// Does this report contain touch data?
+			if (!device.is_touch_data(buffer[0]))
+				continue;
+
+			parser.parse(gsl::span<u8>(buffer.data(), size));
+
+			void *pixels = nullptr;
+			int pitch = 0;
+
+			// Copy drawtex to rendertex
+			SDL_LockTexture(rendertex, nullptr, &pixels, &pitch);
+			std::memcpy(pixels, drawtex->get_data(), rsize.span() * 4L);
+			SDL_UnlockTexture(rendertex);
+
+			// Display rendertex
+			SDL_RenderClear(renderer);
+			SDL_RenderCopy(renderer, rendertex, nullptr, nullptr);
+			SDL_RenderPresent(renderer);
+		} catch (std::exception &e) {
+			spdlog::error(e.what());
+			break;
 		}
+	}
 
-		// Disable multitouch mode
-		dev.set_mode(false);
-	});
+	// Disable multitouch mode
+	device.set_mode(false);
 
-	// gtkmm expects a reference
-	int argc = gsl::narrow<int>(args.size());
-	char **argv = args.data();
+	SDL_DestroyTexture(rendertex);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 
-	auto app = Gtk::Application::create(argc, argv);
-	Gtk::Window window;
-
-	window.set_position(Gtk::WIN_POS_CENTER);
-	window.set_default_size(900, 600);
-	window.set_title("IPTS Processor Prototype");
-	window.set_resizable(false);
-
-	ctx.m_widget = Gtk::make_managed<Gtk::DrawingArea>();
-	window.add(*ctx.m_widget);
-
-	ctx.m_widget->signal_draw().connect([&](const Cairo::RefPtr<Cairo::Context> &cr) -> bool {
-		return ctx.draw_event(cr);
-	});
-
-	window.show_all();
-
-	int status = app->run(window);
-
-	// TODO: should probably hook into destroy event to stop thread before gtk_main() returns
-
-	run.store(false);
-	updt.join();
-
-	return status;
+	SDL_Quit();
+	return 0;
 }
 
 } // namespace iptsd::debug::rt

@@ -25,7 +25,7 @@ BuildRequires: hidrd-devel
 # Debug Tools
 BuildRequires: cmake(CLI11)
 BuildRequires: pkgconfig(cairomm-1.0)
-BuildRequires: pkgconfig(gtkmm-3.0)
+BuildRequires: pkgconfig(sdl2)
 
 BuildRequires: pkgconfig(systemd)
 BuildRequires: pkgconfig(udev)

@@ -10,7 +10,7 @@ depends=(
 	'libinih'
 	'libspdlog.so'
 	'cairomm'
-	'gtkmm3'
+	'sdl2'
 )
 makedepends=(
 	'meson'
