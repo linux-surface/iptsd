@@ -7,6 +7,7 @@ dbg_show = tools.contains('show')
 
 if dbg_calibrate and cli11.found()
   deps = dependencies + [
+    cli11,
     iptsd_config,
     iptsd_contacts,
     iptsd_ipts,

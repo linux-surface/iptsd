@@ -8,7 +8,9 @@
 #include <ipts/device.hpp>
 #include <ipts/parser.hpp>
 
+#include <CLI/CLI.hpp>
 #include <cmath>
+#include <filesystem>
 #include <gsl/gsl>
 #include <iostream>
 #include <map>
@@ -69,15 +71,21 @@ static void iptsd_calibrate_handle_input(const config::Config &config,
 
 static int main(gsl::span<char *> args)
 {
-	if (args.size() < 2)
-		throw std::runtime_error("You need to specify the hidraw device!");
+	CLI::App app {};
+	std::filesystem::path path;
+
+	app.add_option("DEVICE", path, "The hidraw device to read from.")
+		->type_name("FILE")
+		->required();
+
+	CLI11_PARSE(app, args.size(), args.data());
 
 	std::atomic_bool should_exit = false;
 
 	const auto _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
 	const auto _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
 
-	ipts::Device device {args[1]};
+	ipts::Device device {path};
 	config::Config config {device.vendor(), device.product()};
 
 	// Check if a config was found
