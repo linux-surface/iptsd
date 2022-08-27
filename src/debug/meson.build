@@ -23,7 +23,7 @@ if dbg_dump and cli11.found()
     iptsd_ipts,
   ]
 
-  executable('ipts-dump', 'dump.cpp', dependencies: deps, include_directories: includes, install: true)
+  executable('iptsd-dump', 'dump.cpp', dependencies: deps, include_directories: includes, install: true)
 elif dbg_dump
   warning('Debug tool "dump" is enabled but has missing deps')
 endif
