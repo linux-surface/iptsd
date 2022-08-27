@@ -56,7 +56,7 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %doc README.md
 %config(noreplace) %{_sysconfdir}/ipts.conf
 %{_bindir}/iptsd
-%{_bindir}/iptsd-finger-size
+%{_bindir}/iptsd-calibrate
 %{_bindir}/iptsd-show
 %{_bindir}/ipts-dump
 %{_bindir}/ipts-proto-plot

@@ -16,13 +16,13 @@
 #include <string>
 #include <vector>
 
-namespace iptsd::debug::finger {
+namespace iptsd::debug::calibrate {
 
 static std::vector<f64> size {};   // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 static std::vector<f64> aspect {}; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
-static void iptsd_finger_handle_input(const config::Config &config, contacts::ContactFinder &finder,
-				      const ipts::Heatmap &data)
+static void iptsd_calibrate_handle_input(const config::Config &config,
+					 contacts::ContactFinder &finder, const ipts::Heatmap &data)
 {
 	// Make sure that all buffers have the correct size
 	finder.resize(index2_t {data.dim.width, data.dim.height});
@@ -96,7 +96,7 @@ static int main(gsl::span<char *> args)
 
 	ipts::Parser parser {};
 	parser.on_heatmap = [&](const auto &data) {
-		iptsd_finger_handle_input(config, finder, data);
+		iptsd_calibrate_handle_input(config, finder, data);
 	};
 
 	// Get the buffer size from the HID descriptor
@@ -129,14 +129,14 @@ static int main(gsl::span<char *> args)
 	return 0;
 }
 
-} // namespace iptsd::debug::finger
+} // namespace iptsd::debug::calibrate
 
 int main(int argc, char *argv[])
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return iptsd::debug::finger::main(gsl::span<char *>(argv, argc));
+		return iptsd::debug::calibrate::main(gsl::span<char *>(argv, argc));
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;
