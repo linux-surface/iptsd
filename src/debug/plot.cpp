@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <common/types.hpp>
-#include <contacts/advanced/detector.hpp>
-#include <contacts/eval/perf.hpp>
+#include <contacts/finder.hpp>
 #include <container/image.hpp>
 #include <gfx/visualization.hpp>
 #include <ipts/parser.hpp>
@@ -19,8 +18,6 @@
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <vector>
-
-using namespace iptsd::gfx;
 
 namespace iptsd::debug::plot {
 

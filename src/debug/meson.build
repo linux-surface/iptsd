@@ -41,6 +41,7 @@ if dbg_plot and cairomm.found()
   deps = dependencies + [
     cairomm,
     cli11,
+    iptsd_config,
     iptsd_contacts,
     iptsd_gfx,
     iptsd_ipts,

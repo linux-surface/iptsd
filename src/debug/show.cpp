@@ -16,8 +16,6 @@
 #include <spdlog/spdlog.h>
 #include <vector>
 
-using namespace iptsd::gfx;
-
 namespace iptsd::debug::show {
 
 static void iptsd_show_handle_input(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t rsize,
