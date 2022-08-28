@@ -8,6 +8,7 @@ project('iptsd', 'cpp', 'c',
           'werror=true',
           'sysconfdir=/etc',
           'buildtype=debugoptimized',
+          'b_lto=true',
         ])
 
 prefix = get_option('prefix')
