@@ -22,9 +22,7 @@ cxxflags = [
   '-Wno-unused-parameter',
 ]
 
-optflags = [
-  '-ffast-math',
-]
+optflags = []
 
 target_cpu = target_machine.cpu_family()
 
