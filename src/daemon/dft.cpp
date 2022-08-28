@@ -192,8 +192,8 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 					y -= yt * r;
 				}
 
-				xt *= ctx.config.width * 10 / ctx.config.dft_tilt_distance;
-				yt *= ctx.config.height * 10 / ctx.config.dft_tilt_distance;
+				xt *= ctx.config.width / ctx.config.dft_tilt_distance;
+				yt *= ctx.config.height / ctx.config.dft_tilt_distance;
 
 				auto azm = std::fmod(std::atan2(-yt, xt) / M_PI + 2, 2) * 18000;
 				auto alt = std::asin(std::min(1.0, std::hypot(xt, yt))) / M_PI * 18000;
