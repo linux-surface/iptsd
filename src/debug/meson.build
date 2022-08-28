@@ -2,6 +2,7 @@ tools = get_option('debug_tools')
 
 dbg_calibrate = tools.contains('calibrate')
 dbg_dump = tools.contains('dump')
+dbg_perf = tools.contains('perf')
 dbg_plot = tools.contains('plot')
 dbg_show = tools.contains('show')
 
@@ -23,6 +24,17 @@ if dbg_dump
   ]
 
   executable('iptsd-dump', 'dump.cpp', dependencies: deps, include_directories: includes, install: true)
+endif
+
+if dbg_perf
+  deps = dependencies + [
+    cli11,
+    iptsd_config,
+    iptsd_contacts,
+    iptsd_ipts,
+  ]
+
+  executable('iptsd-perf', 'perf.cpp', dependencies: deps, include_directories: includes, install: true)
 endif
 
 if dbg_plot and cairomm.found()
