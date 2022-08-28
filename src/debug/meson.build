@@ -5,7 +5,7 @@ dbg_dump = tools.contains('dump')
 dbg_plot = tools.contains('plot')
 dbg_show = tools.contains('show')
 
-if dbg_calibrate and cli11.found()
+if dbg_calibrate
   deps = dependencies + [
     cli11,
     iptsd_config,
@@ -14,28 +14,23 @@ if dbg_calibrate and cli11.found()
   ]
 
   executable('iptsd-calibrate', 'calibrate.cpp', dependencies: deps, include_directories: includes, install: true)
-elif dbg_calibrate
-  warning('Debug tool "calibrate" is enabled but has missing deps')
 endif
 
-if dbg_dump and cli11.found()
+if dbg_dump
   deps = dependencies + [
     cli11,
     iptsd_ipts,
   ]
 
   executable('iptsd-dump', 'dump.cpp', dependencies: deps, include_directories: includes, install: true)
-elif dbg_dump
-  warning('Debug tool "dump" is enabled but has missing deps')
 endif
 
-if dbg_plot and cli11.found() and cairomm.found()
+if dbg_plot and cairomm.found()
   deps = dependencies + [
     cairomm,
     cli11,
     iptsd_contacts,
     iptsd_gfx,
-    iptsd_hid,
     iptsd_ipts,
   ]
 
