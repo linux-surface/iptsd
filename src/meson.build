@@ -56,7 +56,6 @@ add_project_arguments('-DSPDLOG_FMT_EXTERNAL', language: 'cpp')
 
 # Dependencies
 cli11 = dependency('CLI11',
-  required: false,
   fallback: ['cli11', 'CLI11_dep'],
   default_options: ['default_library=static'],
 )
