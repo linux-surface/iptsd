@@ -108,6 +108,11 @@ static int main(gsl::span<char *> args)
 
 	CLI11_PARSE(app, args.size(), args.data());
 
+	std::atomic_bool should_exit = false;
+
+	const auto _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
+	const auto _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
+
 	std::ofstream file;
 	if (!filename.empty()) {
 		file.exceptions(std::ios::badbit | std::ios::failbit);
@@ -137,7 +142,7 @@ static int main(gsl::span<char *> args)
 	// Enable multitouch mode
 	dev.set_mode(true);
 
-	while (true) {
+	while (!should_exit) {
 		try {
 			ssize_t size = dev.read(buffer);
 
