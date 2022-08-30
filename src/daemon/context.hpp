@@ -16,7 +16,7 @@ public:
 	DeviceManager devices;
 
 public:
-	Context(i16 vendor, i16 product) : config {vendor, product}, devices {config} {};
+	Context(const config::Config &config) : config {config}, devices {config} {};
 };
 
 } /* namespace iptsd::daemon */
