@@ -63,6 +63,9 @@ iptsd_dft_interpolate_position(const Context &ctx, const struct ipts_pen_dft_win
 	// find critical point of fitted parabola
 	f64 d = (x[0] - x[2]) / (2 * (x[0] - 2 * x[1] + x[2]));
 
+	if (std::isnan(d))
+		return std::tuple {false, 0};
+
 	return std::tuple {true, row.first + maxi + std::clamp(d, mind, maxd)};
 }
 
@@ -129,7 +132,7 @@ static f64 iptsd_dft_interpolate_frequency(const Context &ctx, const ipts::DftWi
 static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 				      ipts::StylusData &stylus)
 {
-	if (dft.rows <= 0) {
+	if (dft.rows <= 1) {
 		iptsd_dft_lift(stylus);
 		return;
 	}
@@ -159,6 +162,47 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 
 		if (ctx.config.invert_y)
 			y = 1 - y;
+
+		if (dft.x[1].magnitude > ctx.config.dft_tilt_min_mag &&
+		    dft.y[1].magnitude > ctx.config.dft_tilt_min_mag) {
+
+			// calculate tilt angle from relative position of secondary transmitter
+
+			auto [pxt, xt] = iptsd_dft_interpolate_position(ctx, dft.x[1]);
+			auto [pyt, yt] = iptsd_dft_interpolate_position(ctx, dft.y[1]);
+
+			if (pxt && pyt) {
+
+				xt /= dft.dim.width - 1;
+				yt /= dft.dim.height - 1;
+
+				if (ctx.config.invert_x)
+					xt = 1 - xt;
+
+				if (ctx.config.invert_y)
+					yt = 1 - yt;
+
+				xt -= x;
+				yt -= y;
+
+				if (ctx.config.dft_tip_distance) {
+					// correct tip position using tilt data
+					auto r = ctx.config.dft_tip_distance / ctx.config.dft_tilt_distance;
+					x -= xt * r;
+					y -= yt * r;
+				}
+
+				xt *= ctx.config.width / ctx.config.dft_tilt_distance;
+				yt *= ctx.config.height / ctx.config.dft_tilt_distance;
+
+				auto azm = std::fmod(std::atan2(-yt, xt) / M_PI + 2, 2) * 18000;
+				auto alt = std::asin(std::min(1.0, std::hypot(xt, yt))) / M_PI * 18000;
+				stylus.azimuth = gsl::narrow<u16>(std::round(azm));
+				stylus.altitude = gsl::narrow<u16>(std::round(alt));
+
+			}
+
+		}
 
 		x = std::round(std::clamp(x, 0.0, 1.0) * IPTS_MAX_X);
 		y = std::round(std::clamp(y, 0.0, 1.0) * IPTS_MAX_Y);
