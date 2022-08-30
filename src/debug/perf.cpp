@@ -11,6 +11,7 @@
 #include <CLI/CLI.hpp>
 #include <algorithm>
 #include <chrono>
+#include <exception>
 #include <filesystem>
 #include <fmt/core.h>
 #include <fstream>
@@ -84,25 +85,30 @@ static int main(gsl::span<char *> args)
 	std::vector<f64> measurements {};
 
 	while (ifs.peek() != EOF) {
-		ssize_t size = 0;
+		try {
+			ssize_t size = 0;
 
-		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-		ifs.read(reinterpret_cast<char *>(&size), sizeof(size));
+			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+			ifs.read(reinterpret_cast<char *>(&size), sizeof(size));
 
-		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-		ifs.read(reinterpret_cast<char *>(buffer.data()),
-			 gsl::narrow<std::streamsize>(buffer.size()));
+			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+			ifs.read(reinterpret_cast<char *>(buffer.data()),
+				 gsl::narrow<std::streamsize>(buffer.size()));
 
-		// Take start time
-		auto start = std::chrono::high_resolution_clock::now();
+			// Take start time
+			auto start = std::chrono::high_resolution_clock::now();
 
-		parser.parse(gsl::span<u8>(buffer.data(), size));
+			parser.parse(gsl::span<u8>(buffer.data(), size));
 
-		// Take end time
-		auto end = std::chrono::high_resolution_clock::now();
+			// Take end time
+			auto end = std::chrono::high_resolution_clock::now();
 
-		// Save measurement
-		measurements.push_back(gsl::narrow<f64>((end - start).count()));
+			// Save measurement
+			measurements.push_back(gsl::narrow<f64>((end - start).count()));
+		} catch (std::exception &e) {
+			spdlog::warn(e.what());
+			continue;
+		}
 	}
 
 	auto total = container::ops::sum(measurements);
