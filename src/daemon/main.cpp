@@ -72,8 +72,8 @@ static int main(gsl::span<char *> args)
 
 			parser.parse(gsl::span<u8>(buffer.data(), size));
 		} catch (std::exception &e) {
-			spdlog::error(e.what());
-			break;
+			spdlog::warn(e.what());
+			continue;
 		}
 	}
 

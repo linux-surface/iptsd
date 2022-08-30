@@ -163,8 +163,8 @@ static int main(gsl::span<char *> args)
 			spdlog::info("== Size: {} ==", size);
 			spdlog::info("{:ox}", buf);
 		} catch (std::exception &e) {
-			spdlog::error(e.what());
-			break;
+			spdlog::warn(e.what());
+			continue;
 		}
 	}
 
