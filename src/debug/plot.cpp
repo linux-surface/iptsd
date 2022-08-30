@@ -9,6 +9,7 @@
 #include <CLI/CLI.hpp>
 #include <algorithm>
 #include <cairomm/cairomm.h>
+#include <exception>
 #include <filesystem>
 #include <fmt/core.h>
 #include <fstream>
@@ -110,19 +111,24 @@ static int main(gsl::span<char *> args)
 
 	u32 i = 0;
 	while (ifs.peek() != EOF) {
-		ssize_t size = 0;
+		try {
+			ssize_t size = 0;
 
-		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-		ifs.read(reinterpret_cast<char *>(&size), sizeof(size));
+			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+			ifs.read(reinterpret_cast<char *>(&size), sizeof(size));
 
-		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-		ifs.read(reinterpret_cast<char *>(buffer.data()),
-			 gsl::narrow<std::streamsize>(buffer.size()));
+			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+			ifs.read(reinterpret_cast<char *>(buffer.data()),
+				 gsl::narrow<std::streamsize>(buffer.size()));
 
-		parser.parse(gsl::span<u8>(buffer.data(), size));
+			parser.parse(gsl::span<u8>(buffer.data(), size));
 
-		// Save the texture to a png file
-		drawtex->write_to_png(output / fmt::format("{:05}.png", i++));
+			// Save the texture to a png file
+			drawtex->write_to_png(output / fmt::format("{:05}.png", i++));
+		} catch (std::exception &e) {
+			spdlog::warn(e.what());
+			continue;
+		}
 	}
 
 	return 0;
