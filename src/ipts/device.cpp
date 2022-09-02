@@ -56,6 +56,32 @@ u8 Device::get_set_mode()
 	return 0;
 }
 
+bool Device::is_metadata_report(u8 report)
+{
+	auto &desc = this->descriptor();
+	auto usage = desc.usage(report);
+
+	if (usage.size() != 1)
+		return false;
+
+	if (usage[0] != IPTS_HID_REPORT_USAGE_METADATA)
+		return false;
+
+	return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
+}
+
+u8 Device::get_metadata_report_id()
+{
+	auto &desc = this->descriptor();
+
+	for (auto report : desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE)) {
+		if (this->is_metadata_report(report))
+			return report;
+	}
+
+	return 0;
+}
+
 std::size_t Device::buffer_size()
 {
 	std::size_t size = 0;
@@ -79,6 +105,26 @@ void Device::set_mode(bool multitouch)
 		report.push_back(0x0);
 
 	this->set_feature(report);
+}
+
+std::optional<Metadata> Device::get_metadata()
+{
+	u8 id = this->get_metadata_report_id();
+	if (!id)
+		return std::nullopt;
+
+	std::vector<u8> report(1 + this->descriptor().size(id));
+	report.at(0) = id;
+
+	this->get_feature(report);
+
+	std::optional<Metadata> metadata = std::nullopt;
+	Parser parser;
+	parser.on_metadata = [&](const auto &m) { metadata = m; };
+
+	parser.parse(report, false);
+
+	return metadata;
 }
 
 } // namespace iptsd::ipts
