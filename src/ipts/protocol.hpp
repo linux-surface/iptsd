@@ -20,13 +20,19 @@ constexpr u8 IPTS_HID_REPORT_USAGE_GESTURE_DATA = 0x61;
  */
 constexpr u8 IPTS_HID_REPORT_USAGE_SET_MODE = 0xC8;
 
-constexpr u8 IPTS_RAW_FRAME_TYPE_STYLUS  = 0x6;
-constexpr u8 IPTS_RAW_FRAME_TYPE_HEATMAP = 0x8;
+/*
+ * If a feature report contains only this usage, it contains touch/pen metadata.
+ */
+constexpr u8 IPTS_HID_REPORT_USAGE_METADATA = 0x63;
 
-constexpr u8 IPTS_HID_FRAME_TYPE_HID     = 0x0;
-constexpr u8 IPTS_HID_FRAME_TYPE_HEATMAP = 0x1;
-constexpr u8 IPTS_HID_FRAME_TYPE_RAW     = 0xEE;
-constexpr u8 IPTS_HID_FRAME_TYPE_REPORTS = 0xFF;
+constexpr u8 IPTS_RAW_FRAME_TYPE_STYLUS   = 0x6;
+constexpr u8 IPTS_RAW_FRAME_TYPE_HEATMAP  = 0x8;
+
+constexpr u8 IPTS_HID_FRAME_TYPE_HID      = 0x0;
+constexpr u8 IPTS_HID_FRAME_TYPE_HEATMAP  = 0x1;
+constexpr u8 IPTS_HID_FRAME_TYPE_METADATA = 0x2;
+constexpr u8 IPTS_HID_FRAME_TYPE_RAW      = 0xEE;
+constexpr u8 IPTS_HID_FRAME_TYPE_REPORTS  = 0xFF;
 
 constexpr u8 IPTS_REPORT_TYPE_TIMESTAMP                = 0x00;
 constexpr u8 IPTS_REPORT_TYPE_DIMENSIONS               = 0x03;
@@ -171,6 +177,22 @@ struct [[gnu::packed]] ipts_pen_dft_window_row {
 	i8 last;
 	i8 mid;
 	i8 zero;
+};
+
+struct ipts_touch_metadata_size {
+	u32 rows;
+	u32 columns;
+	u32 width;
+	u32 height;
+};
+
+struct ipts_touch_metadata_transform {
+	float xx, yx, tx;
+	float xy, yy, ty;
+};
+
+struct ipts_touch_metadata_unknown {
+	float unknown[16]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 };
 
 #endif /* IPTSD_IPTS_PROTOCOL_HPP */

@@ -5,6 +5,7 @@
 
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
+#include <ipts/parser.hpp>
 
 #include <optional>
 #include <string>
@@ -57,7 +58,7 @@ public:
 	f32 dft_tip_distance = 0;
 
 public:
-	Config(i16 vendor, i16 product);
+	Config(i16 vendor, i16 product, std::optional<ipts::Metadata> metadata = std::nullopt);
 
 	[[nodiscard]] contacts::Config contacts() const;
 

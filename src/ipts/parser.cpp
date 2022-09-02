@@ -22,10 +22,10 @@ void Heatmap::resize(u16 size)
 		this->data.resize(size);
 }
 
-void Parser::parse(const gsl::span<u8> data)
+void Parser::parse(const gsl::span<u8> data, bool has_timestamp)
 {
 	Reader reader(data);
-	reader.skip(sizeof(struct ipts_header));
+	reader.skip(has_timestamp ? sizeof(struct ipts_header) : 1);
 
 	const auto header = reader.read<struct ipts_hid_frame>();
 	Reader sub = reader.sub(header.size - sizeof(header));
@@ -71,8 +71,30 @@ void Parser::parse_hid(Reader reader)
 		case IPTS_HID_FRAME_TYPE_REPORTS:
 			this->parse_reports(sub);
 			break;
+		case IPTS_HID_FRAME_TYPE_METADATA:
+			this->parse_metadata(sub);
+			break;
 		}
 	}
+}
+
+void Parser::parse_metadata(Reader reader)
+{
+	Metadata m;
+
+	m.size = reader.read<ipts_touch_metadata_size>();
+	m.unknown_byte = reader.read<u8>();
+	m.transform = reader.read<ipts_touch_metadata_transform>();
+	m.unknown = reader.read<ipts_touch_metadata_unknown>();
+
+	if (this->on_metadata)
+		this->on_metadata(m);
+}
+
+void Parser::set_dimensions(u8 columns, u8 rows)
+{
+	this->dim.width = columns;
+	this->dim.height = rows;
 }
 
 void Parser::parse_reports(Reader reader)

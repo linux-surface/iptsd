@@ -23,6 +23,7 @@
 #include <functional>
 #include <iostream>
 #include <spdlog/spdlog.h>
+#include <spdlog/fmt/ranges.h>
 #include <stdexcept>
 #include <thread>
 
@@ -47,7 +48,17 @@ static int main(gsl::span<char *> args)
 	auto const _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
 
 	ipts::Device device {path};
-	config::Config config {device.vendor(), device.product()};
+
+	auto meta = device.get_metadata();
+	if (meta.has_value()) {
+		auto &t = meta->transform;
+		spdlog::info("Metadata: rows={}, columns={}, width={}, height={}, transform={}, unknown={}, {}",
+			meta->size.rows, meta->size.columns, meta->size.width, meta->size.height,
+			std::vector<float> { t.xx, t.yx, t.tx, t.xy, t.yy, t.ty },
+			meta->unknown_byte, meta->unknown.unknown);
+	}
+
+	config::Config config {device.vendor(), device.product(), meta};
 
 	// Check if a config was found
 	if (config.width == 0 || config.height == 0)
@@ -57,6 +68,8 @@ static int main(gsl::span<char *> args)
 	spdlog::info("Connected to device {:04X}:{:04X}", device.vendor(), device.product());
 
 	ipts::Parser parser {};
+	if (meta.has_value())
+		parser.set_dimensions(gsl::narrow<u8>(meta->size.columns), gsl::narrow<u8>(meta->size.rows));
 	parser.on_stylus = [&](const auto &data) { iptsd_stylus_input(ctx, data); };
 	parser.on_heatmap = [&](const auto &data) { iptsd_touch_input(ctx, data); };
 	parser.on_dft = [&](const auto &dft, auto &stylus) { iptsd_dft_input(ctx, dft, stylus); };
