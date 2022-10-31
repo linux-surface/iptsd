@@ -157,7 +157,7 @@ const std::vector<Contact> &ContactFinder::search()
 			if (!this->check_dist(contact, other))
 				continue;
 
-			other.valid = false;
+			other.stable = false;
 		}
 	}
 
