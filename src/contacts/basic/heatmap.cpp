@@ -6,7 +6,11 @@
 #include <container/ops.hpp>
 
 #include <algorithm>
+#include <array>
+#include <cstdint>
 #include <gsl/gsl>
+#include <iterator>
+#include <limits>
 
 namespace iptsd::contacts::basic {
 
@@ -20,7 +24,12 @@ f32 Heatmap::value(index2_t pos)
 	if (pos.y < 0 || pos.y >= size.y)
 		return 0;
 
-	return std::max(this->data[pos] - this->average, 0.0f);
+	f32 thresh = this->average + (8.0f / 255); // TODO: Magic number
+
+	if (this->data[pos] < thresh)
+		return 0.0f;
+
+	return this->data[pos] - this->average;
 }
 
 bool Heatmap::compare(index2_t px, index2_t py)
@@ -78,13 +87,23 @@ void Heatmap::set_visited(index2_t pos, bool value)
 void Heatmap::reset()
 {
 	index2_t size = this->data.size();
+	std::array<u32, UINT8_MAX + 1> count {};
 
 	for (index_t x = 0; x < size.x; x++) {
-		for (index_t y = 0; y < size.y; y++)
-			this->set_visited(index2_t {x, y}, false);
+		for (index_t y = 0; y < size.y; y++) {
+			index2_t pos {x, y};
+
+			this->set_visited(pos, false);
+
+			u8 val = gsl::narrow_cast<u8>(this->data[pos] * UINT8_MAX);
+			count.at(val)++;
+		}
 	}
 
-	this->average = container::ops::sum(this->data) / gsl::narrow<f32>(size.span());
+	auto max = std::max_element(count.begin(), count.end());
+	u32 idx = std::distance(count.begin(), max);
+
+	this->average = gsl::narrow<f32>(idx + 1) / UINT8_MAX;
 }
 
 } // namespace iptsd::contacts::basic
