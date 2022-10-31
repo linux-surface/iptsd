@@ -141,6 +141,11 @@ const std::vector<Contact> &ContactFinder::search()
 		contact.index = i;
 		contact.active = false;
 		contact.palm = false;
+		contact.x = 0;
+		contact.y = 0;
+		contact.angle = 0;
+		contact.major = 0;
+		contact.minor = 0;
 	}
 
 	// Mark contacts that are very close to a palm as palms too
@@ -230,15 +235,22 @@ void ContactFinder::track()
 		f64 dy = (contact.y - last.y) * this->config.height;
 		f64 dist = std::hypot(dx, dy);
 
-		// Is the position stable?
-		if (dist < this->config.position_thresh) {
-			contact.x = last.x;
-			contact.y = last.y;
-		} else {
-			contact.x -=
-				(this->config.position_thresh * (dx / dist)) / this->config.width;
-			contact.y -=
-				(this->config.position_thresh * (dy / dist)) / this->config.height;
+		if (contact.active && last.active) {
+			if (dist > this->config.position_thresh_max) {
+				// Mark large position changes as unstable to prevent contacts
+				// jumping away in one frame and jumping back in the next one.
+				contact.stable = false;
+			} else if (dist < this->config.position_thresh_min) {
+				// Ignore small position changes to prevent jitter
+				contact.x = last.x;
+				contact.y = last.y;
+			} else {
+				// Stabilize movements
+				contact.x -= (this->config.position_thresh_min * (dx / dist)) /
+					     this->config.width;
+				contact.y -= (this->config.position_thresh_min * (dy / dist)) /
+					     this->config.height;
+			}
 		}
 
 		// Set the distance of all pairs that contain one of i and j

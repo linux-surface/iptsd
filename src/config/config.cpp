@@ -104,8 +104,11 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	if (section == "Contacts" && name == "SizeThreshold")
 		config->contacts_size_thresh = std::stof(value);
 
-	if (section == "Contacts" && name == "PositionThreshold")
-		config->contacts_position_thresh = std::stof(value);
+	if (section == "Contacts" && name == "PositionThresholdMin")
+		config->contacts_position_thresh_min = std::stof(value);
+
+	if (section == "Contacts" && name == "PositionThresholdMax")
+		config->contacts_position_thresh_max = std::stof(value);
 
 	if (section == "Contacts" && name == "DistanceThreshold")
 		config->contacts_distance_thresh = std::stof(value);
@@ -194,7 +197,8 @@ contacts::Config Config::contacts() const
 	config.palm_aspect = this->contacts_palm_aspect;
 
 	config.size_thresh = this->contacts_size_thresh;
-	config.position_thresh = this->contacts_position_thresh;
+	config.position_thresh_min = this->contacts_position_thresh_min;
+	config.position_thresh_max = this->contacts_position_thresh_max;
 	config.dist_thresh = this->contacts_distance_thresh;
 
 	return config;

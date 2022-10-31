@@ -51,7 +51,8 @@ struct Config {
 	f32 palm_aspect;
 
 	f32 size_thresh;
-	f32 position_thresh;
+	f32 position_thresh_min;
+	f32 position_thresh_max;
 	f32 dist_thresh;
 };
 

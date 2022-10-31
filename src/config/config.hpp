@@ -38,7 +38,8 @@ public:
 	f32 contacts_thumb_aspect = 1.5;
 	f32 contacts_palm_aspect = 2;
 	f32 contacts_size_thresh = 0.1;
-	f32 contacts_position_thresh = 0.2;
+	f32 contacts_position_thresh_min = 0.2;
+	f32 contacts_position_thresh_max = 2;
 	f32 contacts_distance_thresh = 1;
 
 	// [Cone]
