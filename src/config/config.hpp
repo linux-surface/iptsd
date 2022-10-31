@@ -32,6 +32,7 @@ public:
 
 	// [Contacts]
 	std::string contacts_detection = "basic";
+	u32 contacts_temporal_window = 3;
 	f32 contacts_finger_size = 1;
 	f32 contacts_thumb_size = 2;
 	f32 contacts_thumb_aspect = 1.5;

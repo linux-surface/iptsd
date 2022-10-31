@@ -86,6 +86,9 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 		config->contacts_detection = value;
 	}
 
+	if (section == "Contacts" && name == "TemporalWindow")
+		config->contacts_temporal_window = std::stoi(value);
+
 	if (section == "Contacts" && name == "FingerSize")
 		config->contacts_finger_size = std::stof(value);
 
@@ -173,6 +176,8 @@ contacts::Config Config::contacts() const
 	contacts::Config config {};
 
 	config.max_contacts = IPTS_MAX_CONTACTS;
+	config.temporal_window = this->contacts_temporal_window;
+
 	config.width = this->width;
 	config.height = this->height;
 	config.invert_x = this->invert_x;

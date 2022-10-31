@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <tuple>
+#include <vector>
 
 namespace iptsd::contacts {
 
@@ -34,6 +35,7 @@ enum BlobDetection {
 
 struct Config {
 	u32 max_contacts;
+	u32 temporal_window;
 
 	f32 width;
 	f32 height;
@@ -60,8 +62,7 @@ private:
 	index2_t size {};
 	std::unique_ptr<IBlobDetector> detector = nullptr;
 
-	std::vector<Contact> contacts {};
-	std::vector<Contact> last {};
+	std::vector<std::vector<Contact>> frames {};
 	std::vector<f64> distances {};
 
 	f64 data_diag = 0;
