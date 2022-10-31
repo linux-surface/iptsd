@@ -59,72 +59,72 @@ int64_t shim_hidrd_item_report_size_get_value(const uint8_t *item)
 	return hidrd_item_report_size_get_value((const hidrd_item *)item);
 }
 
-int64_t shim_hidrd_item_basic_format_short()
+int64_t shim_hidrd_item_basic_format_short(void)
 {
 	return HIDRD_ITEM_BASIC_FORMAT_SHORT;
 }
 
-int64_t shim_hidrd_item_short_type_global()
+int64_t shim_hidrd_item_short_type_global(void)
 {
 	return HIDRD_ITEM_SHORT_TYPE_GLOBAL;
 }
 
-int64_t shim_hidrd_item_short_type_main()
+int64_t shim_hidrd_item_short_type_main(void)
 {
 	return HIDRD_ITEM_SHORT_TYPE_MAIN;
 }
 
-int64_t shim_hidrd_item_global_tag_report_id()
+int64_t shim_hidrd_item_global_tag_report_id(void)
 {
 	return HIDRD_ITEM_GLOBAL_TAG_REPORT_ID;
 }
 
-int64_t shim_hidrd_item_main_tag_input()
+int64_t shim_hidrd_item_main_tag_input(void)
 {
 	return HIDRD_ITEM_MAIN_TAG_INPUT;
 }
 
-int64_t shim_hidrd_item_main_tag_output()
+int64_t shim_hidrd_item_main_tag_output(void)
 {
 	return HIDRD_ITEM_MAIN_TAG_OUTPUT;
 }
 
-int64_t shim_hidrd_item_main_tag_feature()
+int64_t shim_hidrd_item_main_tag_feature(void)
 {
 	return HIDRD_ITEM_MAIN_TAG_FEATURE;
 }
 
-int64_t shim_hidrd_item_short_type_local()
+int64_t shim_hidrd_item_short_type_local(void)
 {
 	return HIDRD_ITEM_SHORT_TYPE_LOCAL;
 }
 
-int64_t shim_hidrd_item_local_tag_usage()
+int64_t shim_hidrd_item_local_tag_usage(void)
 {
 	return HIDRD_ITEM_LOCAL_TAG_USAGE;
 }
 
-int64_t shim_hidrd_usage_page_max()
+int64_t shim_hidrd_usage_page_max(void)
 {
 	return HIDRD_USAGE_PAGE_MAX;
 }
 
-int64_t shim_hidrd_item_global_tag_usage_page()
+int64_t shim_hidrd_item_global_tag_usage_page(void)
 {
 	return HIDRD_ITEM_GLOBAL_TAG_USAGE_PAGE;
 }
 
-int64_t shim_hidrd_item_global_tag_report_count()
+int64_t shim_hidrd_item_global_tag_report_count(void)
 {
 	return HIDRD_ITEM_GLOBAL_TAG_REPORT_COUNT;
 }
 
-int64_t shim_hidrd_item_global_tag_report_size()
+int64_t shim_hidrd_item_global_tag_report_size(void)
 {
 	return HIDRD_ITEM_GLOBAL_TAG_REPORT_SIZE;
 }
 
-int64_t shim_hidrd_usage_page_digitizer()
+int64_t shim_hidrd_usage_page_digitizer(void)
 {
 	return HIDRD_USAGE_PAGE_DIGITIZER;
 }

@@ -27,20 +27,20 @@ int64_t shim_hidrd_item_usage_page_get_value(const uint8_t *item);
 int64_t shim_hidrd_item_report_count_get_value(const uint8_t *item);
 int64_t shim_hidrd_item_report_size_get_value(const uint8_t *item);
 
-int64_t shim_hidrd_item_basic_format_short();
-int64_t shim_hidrd_item_short_type_global();
-int64_t shim_hidrd_item_short_type_main();
-int64_t shim_hidrd_item_global_tag_report_id();
-int64_t shim_hidrd_item_main_tag_input();
-int64_t shim_hidrd_item_main_tag_output();
-int64_t shim_hidrd_item_main_tag_feature();
-int64_t shim_hidrd_item_short_type_local();
-int64_t shim_hidrd_item_local_tag_usage();
-int64_t shim_hidrd_usage_page_max();
-int64_t shim_hidrd_item_global_tag_usage_page();
-int64_t shim_hidrd_item_global_tag_report_count();
-int64_t shim_hidrd_item_global_tag_report_size();
-int64_t shim_hidrd_usage_page_digitizer();
+int64_t shim_hidrd_item_basic_format_short(void);
+int64_t shim_hidrd_item_short_type_global(void);
+int64_t shim_hidrd_item_short_type_main(void);
+int64_t shim_hidrd_item_global_tag_report_id(void);
+int64_t shim_hidrd_item_main_tag_input(void);
+int64_t shim_hidrd_item_main_tag_output(void);
+int64_t shim_hidrd_item_main_tag_feature(void);
+int64_t shim_hidrd_item_short_type_local(void);
+int64_t shim_hidrd_item_local_tag_usage(void);
+int64_t shim_hidrd_usage_page_max(void);
+int64_t shim_hidrd_item_global_tag_usage_page(void);
+int64_t shim_hidrd_item_global_tag_report_count(void);
+int64_t shim_hidrd_item_global_tag_report_size(void);
+int64_t shim_hidrd_usage_page_digitizer(void);
 
 #define hidrd_item_get_size		  shim_hidrd_item_get_size
 #define hidrd_item_report_id_get_value	  shim_hidrd_item_report_id_get_value
