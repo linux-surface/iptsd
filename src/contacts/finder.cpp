@@ -253,6 +253,10 @@ void ContactFinder::track()
 			}
 		}
 
+		// Don't mark unstable contacts as invalid, because the true state is not known yet.
+		if (!contact.stable)
+			contact.valid = true;
+
 		// Set the distance of all pairs that contain one of i and j
 		// to something even higher than the distance chosen above.
 		// This prevents i and j from getting selected again.
