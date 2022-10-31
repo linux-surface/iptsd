@@ -45,10 +45,10 @@ struct Config {
 
 	enum BlobDetection mode;
 
-	f32 finger_size;
-	f32 thumb_size;
-	f32 thumb_aspect;
-	f32 palm_aspect;
+	f32 aspect_min;
+	f32 aspect_max;
+	f32 size_min;
+	f32 size_max;
 
 	f32 size_thresh;
 	f32 position_thresh_min;

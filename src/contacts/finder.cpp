@@ -60,13 +60,13 @@ bool ContactFinder::check_valid(const Contact &contact)
 	f64 aspect = contact.major / contact.minor;
 	f64 major = contact.major * this->phys_diag;
 
-	if (aspect > this->config.palm_aspect)
+	if (aspect < this->config.aspect_min || aspect > this->config.aspect_max)
 		return false;
 
-	if (aspect > this->config.thumb_aspect)
-		return major <= this->config.thumb_size;
+	if (major < this->config.size_min || major > this->config.size_max)
+		return false;
 
-	return major <= this->config.finger_size;
+	return true;
 }
 
 bool ContactFinder::check_dist(const Contact &from, const Contact &to)

@@ -89,17 +89,17 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	if (section == "Contacts" && name == "TemporalWindow")
 		config->contacts_temporal_window = std::stoi(value);
 
-	if (section == "Contacts" && name == "FingerSize")
-		config->contacts_finger_size = std::stof(value);
+	if (section == "Contacts" && name == "SizeMin")
+		config->contacts_size_min = std::stof(value);
 
-	if (section == "Contacts" && name == "ThumbSize")
-		config->contacts_thumb_size = std::stof(value);
+	if (section == "Contacts" && name == "SizeMax")
+		config->contacts_size_max = std::stof(value);
 
-	if (section == "Contacts" && name == "ThumbAspect")
-		config->contacts_thumb_aspect = std::stof(value);
+	if (section == "Contacts" && name == "AspectMin")
+		config->contacts_aspect_min = std::stof(value);
 
-	if (section == "Contacts" && name == "PalmAspect")
-		config->contacts_palm_aspect = std::stof(value);
+	if (section == "Contacts" && name == "AspectMax")
+		config->contacts_aspect_max = std::stof(value);
 
 	if (section == "Contacts" && name == "SizeThreshold")
 		config->contacts_size_thresh = std::stof(value);
@@ -191,10 +191,10 @@ contacts::Config Config::contacts() const
 	else if (this->contacts_detection == "advanced")
 		config.mode = contacts::BlobDetection::ADVANCED;
 
-	config.finger_size = this->contacts_finger_size;
-	config.thumb_size = this->contacts_thumb_size;
-	config.thumb_aspect = this->contacts_thumb_aspect;
-	config.palm_aspect = this->contacts_palm_aspect;
+	config.aspect_min = this->contacts_aspect_min;
+	config.aspect_max = this->contacts_aspect_max;
+	config.size_min = this->contacts_size_min;
+	config.size_max = this->contacts_size_max;
 
 	config.size_thresh = this->contacts_size_thresh;
 	config.position_thresh_min = this->contacts_position_thresh_min;
