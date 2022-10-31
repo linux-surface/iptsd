@@ -23,7 +23,7 @@ struct Contact {
 	f64 minor = 0;
 
 	u32 index = 0;
-	bool palm = false;
+	bool valid = true;
 	bool stable = false;
 	bool active = false;
 };
@@ -78,7 +78,7 @@ public:
 	void resize(index2_t size);
 
 private:
-	bool check_palm(const Contact &contact);
+	bool check_valid(const Contact &contact);
 	bool check_dist(const Contact &from, const Contact &to);
 
 	void track();

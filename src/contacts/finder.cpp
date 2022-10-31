@@ -55,18 +55,18 @@ void ContactFinder::resize(index2_t size)
 		this->detector = std::make_unique<advanced::BlobDetector>(size);
 }
 
-bool ContactFinder::check_palm(const Contact &contact)
+bool ContactFinder::check_valid(const Contact &contact)
 {
 	f64 aspect = contact.major / contact.minor;
 	f64 major = contact.major * this->phys_diag;
 
 	if (aspect > this->config.palm_aspect)
-		return true;
+		return false;
 
 	if (aspect > this->config.thumb_aspect)
-		return major > this->config.thumb_size;
+		return major <= this->config.thumb_size;
 
-	return major > this->config.finger_size;
+	return major <= this->config.finger_size;
 }
 
 bool ContactFinder::check_dist(const Contact &from, const Contact &to)
@@ -128,7 +128,7 @@ const std::vector<Contact> &ContactFinder::search()
 
 		contact.angle = angle;
 
-		contact.palm = this->check_palm(contact);
+		contact.valid = this->check_valid(contact);
 		contact.stable = true;
 
 		contact.index = i;
@@ -140,7 +140,7 @@ const std::vector<Contact> &ContactFinder::search()
 
 		contact.index = i;
 		contact.active = false;
-		contact.palm = false;
+		contact.valid = true;
 		contact.x = 0;
 		contact.y = 0;
 		contact.angle = 0;
@@ -148,16 +148,16 @@ const std::vector<Contact> &ContactFinder::search()
 		contact.minor = 0;
 	}
 
-	// Mark contacts that are very close to a palm as palms too
+	// Mark contacts that are very close to an invalid contact as invalid too
 	for (const auto &contact : this->frames[0]) {
-		if (!contact.palm)
+		if (contact.valid)
 			continue;
 
 		for (auto &other : this->frames[0]) {
 			if (!this->check_dist(contact, other))
 				continue;
 
-			other.palm = true;
+			other.valid = false;
 		}
 	}
 
@@ -210,7 +210,7 @@ void ContactFinder::track()
 
 		contact.index = last.index;
 		if (contact.active)
-			contact.palm |= last.palm;
+			contact.valid &= last.valid;
 
 		f64 dmaj = (contact.major - last.major) * this->phys_diag;
 		f64 dmin = (contact.minor - last.minor) * this->phys_diag;

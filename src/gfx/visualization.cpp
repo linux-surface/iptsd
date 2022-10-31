@@ -87,8 +87,8 @@ void Visualization::draw_contacts(const Cairo::RefPtr<Cairo::Context> &cairo, in
 		if (!contact.active)
 			continue;
 
-		// Color palms red, instable contacts yellow, and stable contacts green
-		if (contact.palm)
+		// Color invalid contacts red, instable contacts yellow, and stable contacts green
+		if (!contact.valid)
 			cairo->set_source_rgb(1, 0, 0);
 		else if (!contact.stable)
 			cairo->set_source_rgb(1, 1, 0);

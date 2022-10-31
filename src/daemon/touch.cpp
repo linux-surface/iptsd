@@ -69,7 +69,7 @@ static bool check_blocked(const Context &ctx, const std::vector<contacts::Contac
 	bool blocked = false;
 
 	for (const auto &p : contacts)
-		blocked |= p.palm && ctx.config.touch_disable_on_palm;
+		blocked |= !p.valid && ctx.config.touch_disable_on_palm;
 
 	if (ctx.devices.active_styli > 0 && ctx.config.touch_disable_on_stylus)
 		blocked = true;
@@ -83,8 +83,8 @@ static bool check_lift(const Context &ctx, const contacts::Contact &contact)
 	if (!contact.active)
 		return true;
 
-	// Lift palms
-	if (contact.palm)
+	// Lift invalid contacts
+	if (!contact.valid)
 		return true;
 
 	// Lift contacts that are blocked by a rejection cone
