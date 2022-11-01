@@ -9,7 +9,9 @@
 #include <ipts/parser.hpp>
 
 #include <CLI/CLI.hpp>
+#include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <filesystem>
 #include <gsl/gsl>
 #include <iostream>
@@ -48,11 +50,21 @@ static void iptsd_calibrate_handle_input(const config::Config &config,
 	size.push_back(contact.major * std::hypot(config.width, config.height));
 	aspect.push_back(contact.major / contact.minor);
 
-	f64 size_avg = container::ops::sum(size) / static_cast<f64>(size.size());
-	auto [size_min, size_max] = container::ops::minmax(size);
+	std::sort(size.begin(), size.end());
+	std::sort(aspect.begin(), aspect.end());
 
+	f64 size_avg = container::ops::sum(size) / static_cast<f64>(size.size());
 	f64 aspect_avg = container::ops::sum(aspect) / static_cast<f64>(aspect.size());
-	auto [aspect_min, aspect_max] = container::ops::minmax(aspect);
+
+	// Determine 1st and 99th percentile
+	f64 min_idx = gsl::narrow<f64>(size.size() - 1) * 0.01;
+	f64 max_idx = gsl::narrow<f64>(size.size() - 1) * 0.99;
+
+	f64 size_min = size[gsl::narrow<std::size_t>(std::round(min_idx))];
+	f64 size_max = size[gsl::narrow<std::size_t>(std::round(max_idx))];
+
+	f64 aspect_min = aspect[gsl::narrow<std::size_t>(std::round(min_idx))];
+	f64 aspect_max = aspect[gsl::narrow<std::size_t>(std::round(max_idx))];
 
 	// Reset console output
 	std::cout << "\033[A"; // Move cursor up one line
