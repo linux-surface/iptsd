@@ -88,9 +88,6 @@ TouchDevice::TouchDevice(const config::Config &conf)
 	this->set_absinfo(ABS_MT_TRACKING_ID, 0, IPTS_MAX_CONTACTS, 0);
 	this->set_absinfo(ABS_MT_POSITION_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_MT_POSITION_Y, 0, IPTS_MAX_Y, res_y);
-	this->set_absinfo(ABS_MT_TOOL_TYPE, 0, MT_TOOL_MAX, 0);
-	this->set_absinfo(ABS_MT_TOOL_X, 0, IPTS_MAX_X, res_x);
-	this->set_absinfo(ABS_MT_TOOL_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_MT_ORIENTATION, 0, 180, 0);
 	this->set_absinfo(ABS_MT_TOUCH_MAJOR, 0, IPTS_DIAGONAL, res_d);
 	this->set_absinfo(ABS_MT_TOUCH_MINOR, 0, IPTS_DIAGONAL, res_d);

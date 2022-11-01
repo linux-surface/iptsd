@@ -113,10 +113,6 @@ static void emit_multi(const TouchDevice &dev, const contacts::Contact &contact)
 	dev.emit(EV_ABS, ABS_MT_POSITION_X, x);
 	dev.emit(EV_ABS, ABS_MT_POSITION_Y, y);
 
-	dev.emit(EV_ABS, ABS_MT_TOOL_TYPE, MT_TOOL_FINGER);
-	dev.emit(EV_ABS, ABS_MT_TOOL_X, x);
-	dev.emit(EV_ABS, ABS_MT_TOOL_Y, x);
-
 	dev.emit(EV_ABS, ABS_MT_ORIENTATION, angle);
 	dev.emit(EV_ABS, ABS_MT_TOUCH_MAJOR, major);
 	dev.emit(EV_ABS, ABS_MT_TOUCH_MINOR, minor);
