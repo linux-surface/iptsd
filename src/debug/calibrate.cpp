@@ -39,16 +39,17 @@ static void iptsd_calibrate_handle_input(const config::Config &config,
 		return 1.0f - val;
 	});
 
-	// Search for a contact
-	const contacts::Contact &contact = finder.search()[0];
+	// Search contacts
+	const std::vector<contacts::Contact> &contacts = finder.search();
 
-	// If there was no stable contact, return
-	if (!contact.active || !contact.stable)
-		return;
+	// Calculate size and aspect of all stable contacts
+	for (const auto &contact : contacts) {
+		if (!contact.active || !contact.stable)
+			continue;
 
-	// Calculate size and aspect
-	size.push_back(contact.major * std::hypot(config.width, config.height));
-	aspect.push_back(contact.major / contact.minor);
+		size.push_back(contact.major * std::hypot(config.width, config.height));
+		aspect.push_back(contact.major / contact.minor);
+	}
 
 	std::sort(size.begin(), size.end());
 	std::sort(aspect.begin(), aspect.end());
@@ -109,10 +110,7 @@ static int main(gsl::span<char *> args)
 	spdlog::info("Size:    0.000 (Min: 0.000; Max: 0.000)");
 	spdlog::info("Aspect:  0.000 (Min: 0.000; Max: 0.000)");
 
-	contacts::Config cfg = config.contacts();
-	cfg.max_contacts = 1;
-
-	contacts::ContactFinder finder {cfg};
+	contacts::ContactFinder finder {config.contacts()};
 
 	ipts::Parser parser {};
 	parser.on_heatmap = [&](const auto &data) {
