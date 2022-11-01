@@ -165,14 +165,12 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 
 		if (dft.x[1].magnitude > ctx.config.dft_tilt_min_mag &&
 		    dft.y[1].magnitude > ctx.config.dft_tilt_min_mag) {
-
 			// calculate tilt angle from relative position of secondary transmitter
 
 			auto [pxt, xt] = iptsd_dft_interpolate_position(ctx, dft.x[1]);
 			auto [pyt, yt] = iptsd_dft_interpolate_position(ctx, dft.y[1]);
 
 			if (pxt && pyt) {
-
 				xt /= dft.dim.width - 1;
 				yt /= dft.dim.height - 1;
 
@@ -187,7 +185,8 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 
 				if (ctx.config.dft_tip_distance) {
 					// correct tip position using tilt data
-					auto r = ctx.config.dft_tip_distance / ctx.config.dft_tilt_distance;
+					auto r = ctx.config.dft_tip_distance /
+						 ctx.config.dft_tilt_distance;
 					x -= xt * r;
 					y -= yt * r;
 				}
@@ -196,12 +195,11 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 				yt *= ctx.config.height / ctx.config.dft_tilt_distance;
 
 				auto azm = std::fmod(std::atan2(-yt, xt) / M_PI + 2, 2) * 18000;
-				auto alt = std::asin(std::min(1.0, std::hypot(xt, yt))) / M_PI * 18000;
+				auto alt =
+					std::asin(std::min(1.0, std::hypot(xt, yt))) / M_PI * 18000;
 				stylus.azimuth = gsl::narrow<u16>(std::round(azm));
 				stylus.altitude = gsl::narrow<u16>(std::round(alt));
-
 			}
-
 		}
 
 		x = std::round(std::clamp(x, 0.0, 1.0) * IPTS_MAX_X);
