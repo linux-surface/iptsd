@@ -42,8 +42,8 @@ static void iptsd_calibrate_handle_input(const config::Config &config,
 	// Search for a contact
 	const contacts::Contact &contact = finder.search()[0];
 
-	// If there was no contact, return
-	if (!contact.active)
+	// If there was no stable contact, return
+	if (!contact.active || !contact.stable)
 		return;
 
 	// Calculate size and aspect
