@@ -4,4 +4,8 @@ HIDRAW="$(dmesg | grep hidraw)"
 HIDRAW="$(echo "$HIDRAW" | grep -E "IPTS|Intel Touch Host Controller")"
 HIDRAW="$(echo "$HIDRAW" | tail -n1 | grep -Eo "hidraw[0-9]+")"
 
+if [ "$HIDRAW" = "" ]; then
+	exit 1
+fi
+
 echo "/dev/$HIDRAW"
