@@ -106,6 +106,18 @@ static int main(gsl::span<char *> args)
 			break;
 		}
 
+		SDL_Event event;
+		bool quit = false;
+
+		// Check for SDL quit event
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT)
+				quit = true;
+		}
+
+		if (quit)
+			break;
+
 		try {
 			ssize_t size = device.read(buffer);
 
