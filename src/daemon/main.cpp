@@ -65,10 +65,19 @@ static int main(gsl::span<char *> args)
 	std::size_t buffer_size = device.buffer_size();
 	std::vector<u8> buffer(buffer_size);
 
+	// Count errors, if we receive 50 continuous errors, chances are pretty good that
+	// something is broken beyond repair and the program should exit.
+	i32 errors = 0;
+
 	// Enable multitouch mode
 	device.set_mode(true);
 
 	while (!should_exit) {
+		if (errors >= 50) {
+			spdlog::error("Encountered 50 continuous errors, aborting...");
+			break;
+		}
+
 		try {
 			ssize_t size = device.read(buffer);
 
@@ -79,8 +88,12 @@ static int main(gsl::span<char *> args)
 			parser.parse(gsl::span<u8>(buffer.data(), size));
 		} catch (std::exception &e) {
 			spdlog::warn(e.what());
+			errors++;
 			continue;
 		}
+
+		// Reset error count
+		errors = 0;
 	}
 
 	spdlog::info("Stopping");
