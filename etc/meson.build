@@ -1,6 +1,7 @@
 install_subdir('config', install_dir: configdir, strip_directory: true)
 
 configure_file(input: 'systemd/iptsd@.service.in', output: 'iptsd@.service', configuration: conf)
+install_data('iptsd-find-hidraw', install_dir: bindir)
 
 service_manager = get_option('service_manager')
 if service_manager.contains('systemd')
