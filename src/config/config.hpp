@@ -36,7 +36,7 @@ public:
 	f32 contacts_size_min = 0.2;
 	f32 contacts_size_max = 2;
 	f32 contacts_aspect_min = 1;
-	f32 contacts_aspect_max = 1.8;
+	f32 contacts_aspect_max = 2.5;
 	f32 contacts_size_thresh = 0.1;
 	f32 contacts_position_thresh_min = 0.2;
 	f32 contacts_position_thresh_max = 2;
