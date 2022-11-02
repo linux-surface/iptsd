@@ -51,6 +51,9 @@ static void iptsd_calibrate_handle_input(const config::Config &config,
 		aspect.push_back(contact.major / contact.minor);
 	}
 
+	if (size.size() == 0)
+		return;
+
 	std::sort(size.begin(), size.end());
 	std::sort(aspect.begin(), aspect.end());
 
@@ -58,8 +61,8 @@ static void iptsd_calibrate_handle_input(const config::Config &config,
 	f64 aspect_avg = container::ops::sum(aspect) / static_cast<f64>(aspect.size());
 
 	// Determine 1st and 99th percentile
-	f64 min_idx = gsl::narrow<f64>(size.size() - 1) * 0.01;
-	f64 max_idx = gsl::narrow<f64>(size.size() - 1) * 0.99;
+	f64 min_idx = std::max(gsl::narrow<f64>(size.size()) - 1, 0.0) * 0.01;
+	f64 max_idx = std::max(gsl::narrow<f64>(size.size()) - 1, 0.0) * 0.99;
 
 	f64 size_min = size[gsl::narrow<std::size_t>(std::round(min_idx))];
 	f64 size_max = size[gsl::narrow<std::size_t>(std::round(max_idx))];
