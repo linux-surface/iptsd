@@ -191,7 +191,7 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 				xt -= x;
 				yt -= y;
 
-				if (ctx.config.dft_tip_distance) {
+				if (ctx.config.dft_tip_distance > 0) {
 					// correct tip position using tilt data
 					auto r = ctx.config.dft_tip_distance /
 						 ctx.config.dft_tilt_distance;
