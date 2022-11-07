@@ -10,10 +10,10 @@
 
 #include <gsl/gsl>
 #include <linux/hidraw.h>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
-#include <optional>
 
 namespace iptsd::ipts {
 

@@ -187,12 +187,12 @@ struct ipts_touch_metadata_size {
 };
 
 struct ipts_touch_metadata_transform {
-	float xx, yx, tx;
-	float xy, yy, ty;
+	f32 xx, yx, tx;
+	f32 xy, yy, ty;
 };
 
 struct ipts_touch_metadata_unknown {
-	float unknown[16]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+	f32 unknown[16]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 };
 
 #endif /* IPTSD_IPTS_PROTOCOL_HPP */

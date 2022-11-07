@@ -82,10 +82,10 @@ void Parser::parse_metadata(Reader reader)
 {
 	Metadata m;
 
-	m.size = reader.read<ipts_touch_metadata_size>();
+	m.size = reader.read<struct ipts_touch_metadata_size>();
 	m.unknown_byte = reader.read<u8>();
-	m.transform = reader.read<ipts_touch_metadata_transform>();
-	m.unknown = reader.read<ipts_touch_metadata_unknown>();
+	m.transform = reader.read<struct ipts_touch_metadata_transform>();
+	m.unknown = reader.read<struct ipts_touch_metadata_unknown>();
 
 	if (this->on_metadata)
 		this->on_metadata(m);
