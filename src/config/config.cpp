@@ -165,11 +165,12 @@ void Config::load_dir(const std::string &name)
 	}
 }
 
-Config::Config(i16 vendor, i16 product, std::optional<ipts::Metadata> metadata) : vendor {vendor}, product {product}
+Config::Config(i16 vendor, i16 product, std::optional<ipts::Metadata> metadata)
+	: vendor {vendor}, product {product}
 {
 	if (metadata.has_value()) {
-		this->width = metadata->size.width / 1e3;
-		this->height = metadata->size.height / 1e3;
+		this->width = gsl::narrow<f32>(metadata->size.width) / 1e3f;
+		this->height = gsl::narrow<f32>(metadata->size.height) / 1e3f;
 		this->invert_x = metadata->transform.xx < 0;
 		this->invert_y = metadata->transform.yy < 0;
 	}
