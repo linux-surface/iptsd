@@ -7,6 +7,9 @@
 
 #include <common/types.hpp>
 #include <config/config.hpp>
+#include <ipts/parser.hpp>
+
+#include <optional>
 
 namespace iptsd::daemon {
 
@@ -15,8 +18,11 @@ public:
 	config::Config config;
 	DeviceManager devices;
 
+	std::optional<ipts::Metadata> meta;
+
 public:
-	Context(const config::Config &config) : config {config}, devices {config} {};
+	Context(const config::Config &config, const std::optional<ipts::Metadata> &meta)
+		: config {config}, devices {config}, meta {meta} {};
 };
 
 } /* namespace iptsd::daemon */

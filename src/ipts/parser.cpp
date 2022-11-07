@@ -91,12 +91,6 @@ void Parser::parse_metadata(Reader reader)
 		this->on_metadata(m);
 }
 
-void Parser::set_dimensions(u8 columns, u8 rows)
-{
-	this->dim.width = columns;
-	this->dim.height = rows;
-}
-
 void Parser::parse_reports(Reader reader)
 {
 	while (reader.size() > 0) {

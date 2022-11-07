@@ -96,7 +96,6 @@ public:
 	std::function<void(const Metadata &)> on_metadata;
 
 	void parse(gsl::span<u8> data, bool has_timestamp = true);
-	void set_dimensions(u8 columns, u8 rows);
 };
 
 } /* namespace iptsd::ipts */

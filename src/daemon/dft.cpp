@@ -143,6 +143,14 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 		return;
 	}
 
+	u8 width = dft.dim.width;
+	u8 height = dft.dim.height;
+
+	if ((width == 0 || height == 0) && ctx.meta.has_value()) {
+		width = gsl::narrow<u8>(ctx.meta->size.columns);
+		height = gsl::narrow<u8>(ctx.meta->size.rows);
+	}
+
 	stylus.real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
 		      dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
 	stylus.imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
@@ -154,8 +162,8 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 	if (px && py) {
 		stylus.proximity = true;
 
-		x /= dft.dim.width - 1;
-		y /= dft.dim.height - 1;
+		x /= width - 1;
+		y /= height - 1;
 
 		if (ctx.config.invert_x)
 			x = 1 - x;
@@ -171,8 +179,8 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 			auto [pyt, yt] = iptsd_dft_interpolate_position(ctx, dft.y[1]);
 
 			if (pxt && pyt) {
-				xt /= dft.dim.width - 1;
-				yt /= dft.dim.height - 1;
+				xt /= width - 1;
+				yt /= height - 1;
 
 				if (ctx.config.invert_x)
 					xt = 1 - xt;
