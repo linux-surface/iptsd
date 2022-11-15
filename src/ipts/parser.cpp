@@ -8,6 +8,7 @@
 #include <common/types.hpp>
 
 #include <bitset>
+#include <cstddef>
 #include <cstring>
 #include <gsl/gsl>
 #include <memory>
@@ -22,11 +23,16 @@ void Heatmap::resize(u16 size)
 		this->data.resize(size);
 }
 
-void Parser::parse(const gsl::span<u8> data, bool has_timestamp)
+void Parser::parse_with_header(const gsl::span<u8> data, std::size_t header)
 {
 	Reader reader(data);
-	reader.skip(has_timestamp ? sizeof(struct ipts_header) : 1);
+	reader.skip(header);
 
+	this->parse_frame(reader);
+}
+
+void Parser::parse_frame(Reader reader)
+{
 	const auto header = reader.read<struct ipts_hid_frame>();
 	Reader sub = reader.sub(header.size - sizeof(header));
 

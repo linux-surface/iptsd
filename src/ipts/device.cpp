@@ -109,20 +109,21 @@ void Device::set_mode(bool multitouch)
 
 std::optional<Metadata> Device::get_metadata()
 {
+	std::optional<Metadata> metadata = std::nullopt;
+	auto &desc = this->descriptor();
+
 	u8 id = this->get_metadata_report_id();
 	if (!id)
 		return std::nullopt;
 
-	std::vector<u8> report(1 + this->descriptor().size(id));
+	std::vector<u8> report(desc.size(id) + 1);
 	report.at(0) = id;
 
 	this->get_feature(report);
 
-	std::optional<Metadata> metadata = std::nullopt;
 	Parser parser;
 	parser.on_metadata = [&](const auto &m) { metadata = m; };
-
-	parser.parse(report, false);
+	parser.parse<u8>(report);
 
 	return metadata;
 }
