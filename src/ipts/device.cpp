@@ -107,7 +107,7 @@ void Device::set_mode(bool multitouch)
 	this->set_feature(report);
 }
 
-std::optional<Metadata> Device::get_metadata()
+std::optional<const Metadata> Device::get_metadata()
 {
 	std::optional<Metadata> metadata = std::nullopt;
 	auto &desc = this->descriptor();

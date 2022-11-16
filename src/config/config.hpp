@@ -58,7 +58,8 @@ public:
 	f32 dft_tip_distance = 0;
 
 public:
-	Config(i16 vendor, i16 product, std::optional<ipts::Metadata> metadata = std::nullopt);
+	Config(i16 vendor, i16 product,
+	       std::optional<const ipts::Metadata> metadata = std::nullopt);
 
 	[[nodiscard]] contacts::Config contacts() const;
 

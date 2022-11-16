@@ -179,19 +179,19 @@ struct [[gnu::packed]] ipts_pen_dft_window_row {
 	i8 zero;
 };
 
-struct ipts_touch_metadata_size {
+struct [[gnu::packed]] ipts_touch_metadata_size {
 	u32 rows;
 	u32 columns;
 	u32 width;
 	u32 height;
 };
 
-struct ipts_touch_metadata_transform {
+struct [[gnu::packed]] ipts_touch_metadata_transform {
 	f32 xx, yx, tx;
 	f32 xy, yy, ty;
 };
 
-struct ipts_touch_metadata_unknown {
+struct [[gnu::packed]] ipts_touch_metadata_unknown {
 	f32 unknown[16]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 };
 

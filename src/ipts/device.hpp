@@ -30,7 +30,7 @@ public:
 	bool is_touch_data(u8 report);
 	std::size_t buffer_size();
 	void set_mode(bool multitouch);
-	std::optional<Metadata> get_metadata();
+	std::optional<const Metadata> get_metadata();
 };
 
 } // namespace iptsd::ipts

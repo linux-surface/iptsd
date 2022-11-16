@@ -165,7 +165,7 @@ void Config::load_dir(const std::string &name)
 	}
 }
 
-Config::Config(i16 vendor, i16 product, std::optional<ipts::Metadata> metadata)
+Config::Config(i16 vendor, i16 product, std::optional<const ipts::Metadata> metadata)
 	: vendor {vendor}, product {product}
 {
 	if (metadata.has_value()) {
