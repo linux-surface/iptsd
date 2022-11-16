@@ -22,7 +22,6 @@
 #include <filesystem>
 #include <functional>
 #include <iostream>
-#include <spdlog/fmt/ranges.h>
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <thread>
@@ -52,11 +51,15 @@ static int main(gsl::span<char *> args)
 	auto meta = device.get_metadata();
 	if (meta.has_value()) {
 		auto &t = meta->transform;
-		spdlog::info(
-			"Metadata: rows={}, columns={}, width={}, height={}, transform={}, unknown={}, {}",
-			meta->size.rows, meta->size.columns, meta->size.width, meta->size.height,
-			std::vector<float> {t.xx, t.yx, t.tx, t.xy, t.yy, t.ty}, meta->unknown_byte,
-			meta->unknown.unknown);
+		auto &u = meta->unknown.unknown;
+
+		spdlog::info("Metadata:");
+		spdlog::info("rows={}, columns={}", meta->size.rows, meta->size.columns);
+		spdlog::info("width={}, height{}", meta->size.width, meta->size.height);
+		spdlog::info("transform=[{},{},{},{},{},{}]", t.xx, t.yx, t.tx, t.xy, t.yy, t.ty);
+		spdlog::info("unknown={}, [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]",
+			     meta->unknown_byte, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7],
+			     u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
 	}
 
 	config::Config config {device.vendor(), device.product(), meta};
