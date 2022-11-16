@@ -125,6 +125,9 @@ static int main(gsl::span<char *> args)
 	std::size_t buffer_size = dev.buffer_size();
 	std::vector<u8> buffer(buffer_size);
 
+	// Get device metadata
+	auto meta = dev.get_metadata();
+
 	if (file) {
 		struct iptsd_dump_header header {};
 		header.vendor = dev.vendor();
@@ -133,11 +136,34 @@ static int main(gsl::span<char *> args)
 
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 		file.write(reinterpret_cast<char *>(&header), sizeof(header));
+		char has_meta = meta.has_value() ? 1 : 0;
+
+		file.write(&has_meta, sizeof(has_meta));
+
+		if (meta.has_value()) {
+			auto m = meta.value();
+
+			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+			file.write(reinterpret_cast<char *>(&m), sizeof(m));
+		}
 	}
 
 	spdlog::info("Vendor:       {:04X}", dev.vendor());
 	spdlog::info("Product:      {:04X}", dev.product());
 	spdlog::info("Buffer Size:  {}", buffer_size);
+
+	if (meta.has_value()) {
+		auto &t = meta->transform;
+		auto &u = meta->unknown.unknown;
+
+		spdlog::info("Metadata:");
+		spdlog::info("rows={}, columns={}", meta->size.rows, meta->size.columns);
+		spdlog::info("width={}, height{}", meta->size.width, meta->size.height);
+		spdlog::info("transform=[{},{},{},{},{},{}]", t.xx, t.yx, t.tx, t.xy, t.yy, t.ty);
+		spdlog::info("unknown={}, [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]",
+			     meta->unknown_byte, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7],
+			     u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
+	}
 
 	// Count errors, if we receive 50 continuous errors, chances are pretty good that
 	// something is broken beyond repair and the program should exit.
