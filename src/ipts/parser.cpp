@@ -75,6 +75,15 @@ void Parser::parse_hid(Reader reader)
 			this->parse_heatmap_frame(sub);
 			break;
 		case IPTS_HID_FRAME_TYPE_REPORTS:
+			// On SP7 we receive the following data about once per second:
+			// 16 00 00 00 00 00 00
+			//   0b 00 00 00 00 ff 00
+			//     74 00 04 00 00 00 00 00
+			// This causes a parse error, because the "0b" should be "0f".
+			// So let's just ignore these packets:
+			if (reader.size() == 4)
+				return;
+
 			this->parse_reports(sub);
 			break;
 		case IPTS_HID_FRAME_TYPE_METADATA:
