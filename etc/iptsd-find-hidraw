@@ -1,8 +1,7 @@
 #!/bin/sh
 
-HIDRAW="$(dmesg | grep hidraw)"
-HIDRAW="$(echo "$HIDRAW" | grep -E "IPTS|Intel Touch Host Controller")"
-HIDRAW="$(echo "$HIDRAW" | tail -n1 | grep -Eo "hidraw[0-9]+")"
+DEVICES="$(grep -E "IPTS|Intel Touch Host Controller" /sys/class/hidraw/*/device/uevent)"
+HIDRAW="$(echo "$DEVICES" | tail -n1 | grep -Eo "hidraw[0-9]+")"
 
 if [ "$HIDRAW" = "" ]; then
 	exit 1
