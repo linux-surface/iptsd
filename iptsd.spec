@@ -42,7 +42,7 @@ kernel driver, and sends them back to the kernel using uinput devices.
 # Give us all the O's
 %global optflags %(echo %{optflags} | sed 's|-O2||g' | sed 's|-mtune=generic||g')
 
-%meson --buildtype=release
+%meson --buildtype=release --debug
 %meson_build
 
 %install

@@ -7,7 +7,8 @@ project('iptsd', 'cpp', 'c',
           'warning_level=3',
           'werror=true',
           'sysconfdir=/etc',
-          'buildtype=debugoptimized',
+          'optimization=3',
+          'debug=true',
           'b_lto=true',
         ])
 

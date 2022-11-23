@@ -27,7 +27,7 @@ build() {
 	export CFLAGS="$(echo "$CFLAGS" | sed 's|-O2||g' | sed 's|-mtune=generic||g' | sed 's|-march=x86_64||g')"
 	export CXXFLAGS="$(echo "$CXXFLAGS" | sed 's|-O2||g' | sed 's|-mtune=generic||g' | sed 's|-march=x86_64||g')"
 
-	arch-meson build --wrap-mode=default --force-fallback-for=hidrd_usage,hidrd_item,cli11 --buildtype=release
+	arch-meson build --wrap-mode=default --force-fallback-for=hidrd_usage,hidrd_item,cli11 --buildtype=release --debug
 	meson compile -C build
 }
 

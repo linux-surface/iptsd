@@ -9,7 +9,7 @@ export DEB_CXXFLAGS_MAINT_STRIP=-O2
 
 # Create a giant statically linked blob that contains all of our dependencies.
 override_dh_auto_configure:
-	dh_auto_configure -- --default-library=static --wrap-mode=forcefallback --buildtype=release
+	dh_auto_configure -- --default-library=static --wrap-mode=forcefallback --buildtype=release --debug
 
 override_dh_strip:
 	dh_strip --no-automatic-dbgsym
