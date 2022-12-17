@@ -8,6 +8,7 @@
 #define IPTSD_SYSCONFDIR "@sysconfdir@"
 
 #define IPTSD_PRESET_DIR  "@presetdir@"
+#define IPTSD_CONFIG_DIR  "@configdir@"
 #define IPTSD_CONFIG_FILE "@configfile@"
 
 #endif /* IPTSD_CONFIGURE_H */

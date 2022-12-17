@@ -25,4 +25,10 @@ endif
 
 if get_option('sample_config')
   install_data('iptsd.conf', install_dir: sysconfdir)
+
+  if meson.version().version_compare('>=0.60')
+    install_emptydir(configdir)
+  else
+    meson.add_install_script('sh', '-c', 'mkdir -p "$DESTDIR/@0@"'.format(configdir))
+  endif
 endif

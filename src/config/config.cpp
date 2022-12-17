@@ -146,7 +146,7 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	return 1;
 }
 
-void Config::load_dir(const std::string &name)
+void Config::load_dir(const std::string &name, bool check_device)
 {
 	if (!std::filesystem::exists(name))
 		return;
@@ -155,11 +155,13 @@ void Config::load_dir(const std::string &name)
 		if (!p.is_regular_file())
 			continue;
 
-		struct iptsd_config_device dev {};
-		ini_parse(p.path().c_str(), parse_dev, &dev);
+		if (check_device) {
+			struct iptsd_config_device dev {};
+			ini_parse(p.path().c_str(), parse_dev, &dev);
 
-		if (dev.vendor != this->vendor || dev.product != this->product)
-			continue;
+			if (dev.vendor != this->vendor || dev.product != this->product)
+				continue;
+		}
 
 		ini_parse(p.path().c_str(), parse_conf, this);
 	}
@@ -175,11 +177,13 @@ Config::Config(i16 vendor, i16 product, std::optional<const ipts::Metadata> meta
 		this->invert_y = metadata->transform.yy < 0;
 	}
 
-	this->load_dir(IPTSD_PRESET_DIR);
-	this->load_dir("./etc/presets");
+	this->load_dir(IPTSD_PRESET_DIR, true);
+	this->load_dir("./etc/presets", true);
 
 	if (std::filesystem::exists(IPTSD_CONFIG_FILE))
 		ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
+
+	this->load_dir(IPTSD_CONFIG_DIR, false);
 }
 
 contacts::Config Config::contacts() const

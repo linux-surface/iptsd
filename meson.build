@@ -18,6 +18,7 @@ datadir = join_paths(prefix, get_option('datadir'))
 sysconfdir = get_option('sysconfdir')
 
 presetdir = join_paths(datadir, 'iptsd')
+configdir = join_paths(sysconfdir, 'iptsd.d')
 configfile = join_paths(sysconfdir, 'iptsd.conf')
 
 conf = configuration_data()
@@ -26,6 +27,7 @@ conf.set('datadir', datadir)
 conf.set('sysconfdir', sysconfdir)
 
 conf.set('presetdir', presetdir)
+conf.set('configdir', configdir)
 conf.set('configfile', configfile)
 
 subdir('etc')

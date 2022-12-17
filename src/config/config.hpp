@@ -64,7 +64,7 @@ public:
 	[[nodiscard]] contacts::Config contacts() const;
 
 private:
-	void load_dir(const std::string &name);
+	void load_dir(const std::string &name, bool check_device);
 };
 
 } /* namespace iptsd::config */
