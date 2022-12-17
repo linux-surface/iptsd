@@ -17,8 +17,8 @@ bindir = join_paths(prefix, get_option('bindir'))
 datadir = join_paths(prefix, get_option('datadir'))
 sysconfdir = get_option('sysconfdir')
 
-configdir = join_paths(datadir, 'ipts')
-configfile = join_paths(sysconfdir, 'ipts.conf')
+configdir = join_paths(datadir, 'iptsd')
+configfile = join_paths(sysconfdir, 'iptsd.conf')
 
 conf = configuration_data()
 conf.set('bindir', bindir)

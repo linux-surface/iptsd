@@ -24,5 +24,5 @@ if service_manager.contains('systemd')
 endif
 
 if get_option('sample_config')
-  install_data('ipts.conf', install_dir: sysconfdir)
+  install_data('iptsd.conf', install_dir: sysconfdir)
 endif

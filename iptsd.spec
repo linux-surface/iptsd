@@ -54,7 +54,7 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %files
 %license LICENSE
 %doc README.md
-%config(noreplace) %{_sysconfdir}/ipts.conf
+%config(noreplace) %{_sysconfdir}/iptsd.conf
 %{_bindir}/iptsd
 %{_bindir}/iptsd-calibrate
 %{_bindir}/iptsd-dump
@@ -64,4 +64,4 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %{_bindir}/iptsd-show
 %{_unitdir}/iptsd@.service
 %{_udevrulesdir}/50-ipts.rules
-%{_datadir}/ipts/*
+%{_datadir}/iptsd/*
