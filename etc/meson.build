@@ -1,4 +1,4 @@
-install_subdir('config', install_dir: configdir, strip_directory: true)
+install_subdir('presets', install_dir: presetdir, strip_directory: true)
 
 configure_file(input: 'systemd/iptsd@.service.in', output: 'iptsd@.service', configuration: conf)
 install_data('iptsd-find-hidraw', install_dir: bindir)

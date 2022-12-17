@@ -175,8 +175,8 @@ Config::Config(i16 vendor, i16 product, std::optional<const ipts::Metadata> meta
 		this->invert_y = metadata->transform.yy < 0;
 	}
 
-	this->load_dir(IPTSD_CONFIG_DIR);
-	this->load_dir("./etc/config");
+	this->load_dir(IPTSD_PRESET_DIR);
+	this->load_dir("./etc/presets");
 
 	if (std::filesystem::exists(IPTSD_CONFIG_FILE))
 		ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
