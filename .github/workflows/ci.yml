@@ -156,42 +156,10 @@ jobs:
         name: fedora-36-latest
         path: release
 
-  build-f35:
-    name: Build Fedora 35 package
-    container: fedora:35
-    runs-on: ubuntu-latest
-    needs: [checkout]
-    steps:
-    - name: Restore workspace
-      uses: actions/download-artifact@v3
-      with:
-        name: workspace
-
-    - name: Install build dependencies
-      run: bash $SCRIPTS/pkg-fedora.sh install
-
-    - name: Build package
-      run: bash $SCRIPTS/pkg-fedora.sh build
-
-    - name: Sign packages
-      env:
-        GPG_KEY_ID: 56C464BAAC421453
-        GPG_KEY: ${{ secrets.SURFACE_GPG_KEY }}
-      run: bash $SCRIPTS/pkg-fedora.sh sign
-
-    - name: Prepare release
-      run: bash $SCRIPTS/pkg-fedora.sh release
-
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: fedora-35-latest
-        path: release
-
   release:
     name: Publish release
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
-    needs: [build-deb, build-arch, build-f37, build-f36, build-f35]
+    needs: [build-deb, build-arch, build-f37, build-f36]
     runs-on: ubuntu-latest
     steps:
     - name: Download Debian artifacts
@@ -213,11 +181,6 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: fedora-36-latest
-
-    - name: Download Fedora 35 artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: fedora-35-latest
 
     - name: Upload assets
       uses: svenstaro/upload-release-action@v1-release
@@ -315,25 +278,3 @@ jobs:
         SURFACEBOT_TOKEN: ${{ secrets.SURFACE_BOT_TOKEN }}
         GIT_REF: ${{ github.ref }}
       run: bash $SCRIPTS/repo-fedora.sh $NAME 36
-
-  repo-f35:
-    name: Update Fedora 35 package repository
-    container: fedora:35
-    runs-on: ubuntu-latest
-    needs: [release]
-    steps:
-    - name: Restore workspace
-      uses: actions/download-artifact@v3
-      with:
-        name: workspace
-
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: fedora-35-latest
-
-    - name: Update repository
-      env:
-        SURFACEBOT_TOKEN: ${{ secrets.SURFACE_BOT_TOKEN }}
-        GIT_REF: ${{ github.ref }}
-      run: bash $SCRIPTS/repo-fedora.sh $NAME 35
