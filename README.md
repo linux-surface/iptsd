@@ -39,46 +39,46 @@ To build the debugging tools you need to install a few more dependencies. The de
 Most of the dependencies can be downloaded and included automatically by meson, should your distribution not include them.
 
 ```bash
-git clone https://github.com/linux-surface/iptsd
-cd iptsd
-meson build
-ninja -C build
+$ git clone https://github.com/linux-surface/iptsd
+$ cd iptsd
+$ meson build
+$ ninja -C build
 ```
 
 To run iptsd, you need to determine the ID of the hidraw device of your touchscreen:
 
 ```bash
-sudo ./etc/iptsd-find-hidraw
+$ sudo ./etc/iptsd-find-hidraw
 ```
 
 You can then run iptsd with the device path as a launch argument:
 
 ```bash
-sudo ./build/src/daemon/iptsd /dev/hidrawN
+$ sudo ./build/src/daemon/iptsd /dev/hidrawN
 ```
 
 Alternatively, you can install the files you just built to the system. After a reboot, iptsd will be automatically started by udev:
 
 ```bash
-sudo ninja -C build install
+$ sudo ninja -C build install
 ```
 
 On Fedora (or any other SELinux enabled distribution) you also need to fix the SELinux contexts:
 
 ```bash
-sudo semanage fcontext -a -t systemd_unit_file_t -s system_u /usr/lib/systemd/system/iptsd@.service
-sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd
-sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-calibrate
-sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-dump
-sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-find-hidraw
-sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-perf
+$ sudo semanage fcontext -a -t systemd_unit_file_t -s system_u /usr/lib/systemd/system/iptsd@.service
+$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd
+$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-calibrate
+$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-dump
+$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-find-hidraw
+$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-perf
 
-sudo restorecon -vF /usr/lib/systemd/system/iptsd@.service
-sudo restorecon -vF /usr/local/bin/iptsd
-sudo restorecon -vF /usr/local/bin/iptsd-calibrate
-sudo restorecon -vF /usr/local/bin/iptsd-dump
-sudo restorecon -vF /usr/local/bin/iptsd-find-hidraw
-sudo restorecon -vF /usr/local/bin/iptsd-perf
+$ sudo restorecon -vF /usr/lib/systemd/system/iptsd@.service
+$ sudo restorecon -vF /usr/local/bin/iptsd
+$ sudo restorecon -vF /usr/local/bin/iptsd-calibrate
+$ sudo restorecon -vF /usr/local/bin/iptsd-dump
+$ sudo restorecon -vF /usr/local/bin/iptsd-find-hidraw
+$ sudo restorecon -vF /usr/local/bin/iptsd-perf
 ```
 
 This is only neccessary when using `ninja install`. When you install one of the packages from GitHub Actions, or build your own package, everything will just work.
