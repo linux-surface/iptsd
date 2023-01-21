@@ -67,7 +67,7 @@ On Fedora (or any other SELinux enabled distribution) you also need to fix the S
 
 ```bash
 $ sudo semanage fcontext -a -t systemd_unit_file_t -s system_u /usr/lib/systemd/system/iptsd@.service
-$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/ipts*
+$ sudo semanage fcontext -a -t usr_t -s system_u '/usr/local/bin/ipts.*'
 
 $ sudo restorecon -vF /usr/lib/systemd/system/iptsd@.service
 $ sudo restorecon -vF /usr/local/bin/ipts*
