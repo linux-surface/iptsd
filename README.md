@@ -67,18 +67,10 @@ On Fedora (or any other SELinux enabled distribution) you also need to fix the S
 
 ```bash
 $ sudo semanage fcontext -a -t systemd_unit_file_t -s system_u /usr/lib/systemd/system/iptsd@.service
-$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd
-$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-calibrate
-$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-dump
-$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-find-hidraw
-$ sudo semanage fcontext -a -t usr_t -s system_u /usr/local/bin/iptsd-perf
+$ sudo semanage fcontext -a -t usr_t -s system_u '/usr/local/bin/ipts.*'
 
 $ sudo restorecon -vF /usr/lib/systemd/system/iptsd@.service
-$ sudo restorecon -vF /usr/local/bin/iptsd
-$ sudo restorecon -vF /usr/local/bin/iptsd-calibrate
-$ sudo restorecon -vF /usr/local/bin/iptsd-dump
-$ sudo restorecon -vF /usr/local/bin/iptsd-find-hidraw
-$ sudo restorecon -vF /usr/local/bin/iptsd-perf
+$ sudo restorecon -vF /usr/local/bin/ipts*
 ```
 
 This is only neccessary when using `ninja install`. When you install one of the packages from GitHub Actions, or build your own package, everything will just work.
