@@ -116,7 +116,11 @@ static int main(gsl::span<char *> args)
 	// Disable multitouch mode
 	device.set_mode(false);
 
-	return EXIT_FAILURE;
+	// If iptsd was stopped from outside, return no error
+	if (!should_exit)
+		return EXIT_FAILURE;
+
+	return 0;
 }
 
 } // namespace iptsd::daemon
