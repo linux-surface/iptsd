@@ -104,6 +104,10 @@ static int main(gsl::span<char *> args)
 		} catch (std::exception &e) {
 			spdlog::warn(e.what());
 			errors++;
+
+			// Sleep for 100ms to allow the device to get back to normal state
+			std::this_thread::sleep_for(100ms);
+
 			continue;
 		}
 
@@ -113,8 +117,12 @@ static int main(gsl::span<char *> args)
 
 	spdlog::info("Stopping");
 
-	// Disable multitouch mode
-	device.set_mode(false);
+	try {
+		// Disable multitouch mode
+		device.set_mode(false);
+	} catch (std::exception &e) {
+		spdlog::error(e.what());
+	}
 
 	// If iptsd was stopped from outside, return no error
 	if (!should_exit)
