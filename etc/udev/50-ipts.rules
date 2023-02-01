@@ -1,11 +1,7 @@
-SUBSYSTEM=="hidraw", DRIVERS=="ipts", TAG+="systemd", \
-    PROGRAM="/bin/systemd-escape --path $env{DEVNAME}" \
-    ENV{SYSTEMD_WANTS}+="iptsd@$result.service"
+DRIVER=="hid-multitouch", DRIVERS=="ipts", TAG+="iptsd"
+DRIVER=="hid-multitouch", DRIVERS=="ithc", TAG+="iptsd"
+DRIVER=="hid-multitouch", DRIVERS=="spi_hid", TAG+="iptsd"
 
-SUBSYSTEM=="hidraw", DRIVERS=="ithc", TAG+="systemd", \
-    PROGRAM="/bin/systemd-escape --path $env{DEVNAME}" \
-    ENV{SYSTEMD_WANTS}+="iptsd@$result.service"
-
-SUBSYSTEM=="hidraw", DRIVERS=="spi_hid", TAG+="systemd", \
+SUBSYSTEM=="hidraw", ACTION=="add", TAGS=="iptsd", TAG+="systemd", \
     PROGRAM="/bin/systemd-escape --path $env{DEVNAME}" \
     ENV{SYSTEMD_WANTS}+="iptsd@$result.service"
