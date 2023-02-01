@@ -166,21 +166,25 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: debian-latest
+        path: debian-latest
 
     - name: Download Arch Linux artifacts
       uses: actions/download-artifact@v3
       with:
         name: arch-latest
+        path: arch-latest
 
     - name: Download Fedora 37 artifacts
       uses: actions/download-artifact@v3
       with:
         name: fedora-37-latest
+        path: fedora-37-latest
 
     - name: Download Fedora 36 artifacts
       uses: actions/download-artifact@v3
       with:
         name: fedora-36-latest
+        path: fedora-36-latest
 
     - name: Upload assets
       uses: svenstaro/upload-release-action@v1-release
@@ -206,6 +210,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: arch-latest
+        path: arch-latest
 
     - name: Update repository
       env:
@@ -228,6 +233,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: debian-latest
+        path: debian-latest
 
     - name: Update repository
       env:
@@ -250,6 +256,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: fedora-37-latest
+        path: fedora-37-latest
 
     - name: Update repository
       env:
@@ -272,6 +279,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: fedora-36-latest
+        path: fedora-36-latest
 
     - name: Update repository
       env:
