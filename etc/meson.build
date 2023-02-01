@@ -1,7 +1,7 @@
 install_subdir('presets', install_dir: presetdir, strip_directory: true)
 
 configure_file(input: 'systemd/iptsd@.service.in', output: 'iptsd@.service', configuration: conf)
-install_data('iptsd-find-hidraw', install_dir: bindir)
+install_data('iptsd-find-hidraw', install_dir: bindir, install_mode: 'rwxr-xr-x')
 
 service_manager = get_option('service_manager')
 if service_manager.contains('systemd')
