@@ -6,4 +6,4 @@ BindsTo=%i.device
 
 [Service]
 Type=simple
-ExecStart=@bindir@/iptsd %I
+ExecStart=@bindir@/iptsd /%I
