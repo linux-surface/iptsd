@@ -1,3 +1,9 @@
+iptsd (1.0.1-1) unstable; urgency=medium
+
+  * iptsd 1.0.1
+
+ -- Dorian Stoll <dorian.stoll@tmsp.io>  Thu, 02 Feb 2023 12:56:06 +0100
+
 iptsd (1.0.0-1) unstable; urgency=medium
 
   * iptsd 1.0.0

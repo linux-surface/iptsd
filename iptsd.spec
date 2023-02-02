@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name: iptsd
-Version: 1.0.0
+Version: 1.0.1
 Release: 1%{?dist}
 Summary: Userspace daemon for Intel Precise Touch & Stylus
 License: GPLv2+
