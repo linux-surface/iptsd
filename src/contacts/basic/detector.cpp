@@ -10,6 +10,7 @@
 #include <math/mat2.hpp>
 #include <math/vec2.hpp>
 
+#include <cmath>
 #include <gsl/gsl>
 #include <vector>
 
@@ -48,6 +49,10 @@ const std::vector<Blob> &BlobDetector::search()
 			math::Eigen2<f64> eigen = cov.eigen();
 
 			if (eigen.w[0] <= 0 || eigen.w[1] <= 0)
+				continue;
+
+			if (std::isnan(eigen.v[0].x) || std::isnan(eigen.v[0].y) ||
+			    std::isnan(eigen.v[1].x) || std::isnan(eigen.v[1].x))
 				continue;
 
 			this->blobs.push_back(Blob {cluster.mean() + 0.5, cov});
