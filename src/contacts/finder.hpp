@@ -43,7 +43,12 @@ struct Config {
 	bool invert_x;
 	bool invert_y;
 
-	enum BlobDetection mode;
+	enum BlobDetection detection_mode;
+
+	enum NeutralMode neutral_mode;
+	f32 neutral_value;
+	f32 activation_threshold;
+	f32 deactivation_threshold;
 
 	f32 aspect_min;
 	f32 aspect_max;

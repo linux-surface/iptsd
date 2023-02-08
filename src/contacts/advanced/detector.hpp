@@ -34,13 +34,15 @@ struct ComponentStats {
 
 class BlobDetector : public IBlobDetector {
 public:
-    BlobDetector(index2_t size);
+    BlobDetector(index2_t size, BlobDetectorConfig config);
 
     auto data() -> Image<f32> & override;
     auto search() -> std::vector<Blob> const& override;
 
 private:
     auto process(Image<f32> const& hm) -> std::vector<Blob> const&;
+
+    BlobDetectorConfig config;
 
     // performance measurements
     eval::perf::Registry m_perf_reg;

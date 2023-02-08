@@ -1,5 +1,7 @@
 #include "detector.hpp"
 
+#include "../neutral.hpp"
+
 #include <common/types.hpp>
 
 #include "algorithm/convolution.hpp"
@@ -33,8 +35,9 @@ using namespace iptsd::math;
 
 namespace iptsd::contacts::advanced {
 
-BlobDetector::BlobDetector(index2_t size)
-    : m_perf_reg{}
+BlobDetector::BlobDetector(index2_t size, BlobDetectorConfig config)
+    : config{config}
+    , m_perf_reg{}
     , m_perf_t_total{m_perf_reg.create_entry("total")}
     , m_perf_t_prep{m_perf_reg.create_entry("preprocessing")}
     , m_perf_t_st{m_perf_reg.create_entry("structure-tensor")}
@@ -90,11 +93,10 @@ auto BlobDetector::process(Image<f32> const& hm) -> std::vector<Blob> const&
 
         alg::convolve(m_img_pp, hm, m_kern_pp);
 
-        auto const sum = container::ops::sum(m_img_pp);
-        auto const avg = sum / gsl::narrow<f32>(m_img_pp.size().span());
+        auto const nval = neutral(this->config, hm);
 
         container::ops::transform(m_img_pp, [&](auto const x) {
-            return std::max(x - avg, 0.0f);
+            return std::max(x - nval, 0.0f);
         });
     }
 

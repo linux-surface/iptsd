@@ -33,6 +33,10 @@ public:
 
 	// [Contacts]
 	std::string contacts_detection = "basic";
+	std::string contacts_neutral = "mode";
+	f32 contacts_neutral_value = 0;
+	f32 contacts_activation_threshold = 12;
+	f32 contacts_deactivation_threshold = 8;
 	u32 contacts_temporal_window = 3;
 	f32 contacts_size_min = 0.2;
 	f32 contacts_size_max = 2;

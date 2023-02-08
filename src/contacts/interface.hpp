@@ -17,6 +17,20 @@ struct Blob {
 	math::Mat2s<f64> cov;
 };
 
+enum NeutralMode {
+	MODE,
+	AVERAGE,
+	CONSTANT,
+};
+
+struct BlobDetectorConfig {
+	f32 activation_threshold;
+	f32 deactivation_threshold;
+
+	f32 neutral_value;
+	enum NeutralMode neutral_mode;
+};
+
 class IBlobDetector {
 public:
 	virtual ~IBlobDetector() = default;

@@ -86,6 +86,20 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 		config->contacts_detection = value;
 	}
 
+	if (section == "Contacts" && name == "Neutral") {
+		std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+		config->contacts_neutral = value;
+	}
+
+	if (section == "Contacts" && name == "NeutralValue")
+		config->contacts_neutral_value = std::stof(value);
+
+	if (section == "Contacts" && name == "ActivationThreshold")
+		config->contacts_activation_threshold = std::stof(value);
+
+	if (section == "Contacts" && name == "DeactivationThreshold")
+		config->contacts_deactivation_threshold = std::stof(value);
+
 	if (section == "Contacts" && name == "TemporalWindow")
 		config->contacts_temporal_window = std::stoi(value);
 
@@ -199,9 +213,20 @@ contacts::Config Config::contacts() const
 	config.invert_y = this->invert_y;
 
 	if (this->contacts_detection == "basic")
-		config.mode = contacts::BlobDetection::BASIC;
+		config.detection_mode = contacts::BlobDetection::BASIC;
 	else if (this->contacts_detection == "advanced")
-		config.mode = contacts::BlobDetection::ADVANCED;
+		config.detection_mode = contacts::BlobDetection::ADVANCED;
+
+	if (this->contacts_neutral == "mode")
+		config.neutral_mode = contacts::NeutralMode::MODE;
+	else if (this->contacts_neutral == "average")
+		config.neutral_mode = contacts::NeutralMode::AVERAGE;
+	else if (this->contacts_neutral == "constant")
+		config.neutral_mode = contacts::NeutralMode::CONSTANT;
+
+	config.neutral_value = this->contacts_neutral_value;
+	config.activation_threshold = this->contacts_activation_threshold;
+	config.deactivation_threshold = this->contacts_deactivation_threshold;
 
 	config.aspect_min = this->contacts_aspect_min;
 	config.aspect_max = this->contacts_aspect_max;

@@ -3,10 +3,12 @@
 #include "detector.hpp"
 
 #include "../interface.hpp"
+#include "../neutral.hpp"
 #include "cluster.hpp"
 
 #include <common/types.hpp>
 #include <container/image.hpp>
+#include <container/ops.hpp>
 #include <math/mat2.hpp>
 #include <math/vec2.hpp>
 
@@ -23,15 +25,17 @@ const std::vector<Blob> &BlobDetector::search()
 	this->blobs.clear();
 
 	index2_t size = this->heatmap.size();
-	f32 neutral = this->neutral();
 
-	// Mark positions where the value is 0 as visited to
-	// avoid producing clusters spanning the whole map.
+	f32 nval = neutral(this->config, this->heatmap);
+	f32 activate = nval + (this->config.activation_threshold / 255);
+	f32 deactivate = nval + (this->config.deactivation_threshold / 255);
+
+	// Mark positions where the blob detection should not be active as visited.
 	for (index_t x = 0; x < size.x; x++) {
 		for (index_t y = 0; y < size.y; y++) {
 			index2_t pos {x, y};
 
-			if (this->heatmap[pos] > (neutral + (8 / 255.0f)))
+			if (this->heatmap[pos] > deactivate)
 				continue;
 
 			this->visited[pos] = true;
@@ -43,6 +47,9 @@ const std::vector<Blob> &BlobDetector::search()
 			index2_t pos {x, y};
 
 			if (this->visited[pos])
+				continue;
+
+			if (this->heatmap[pos] < activate)
 				continue;
 
 			Cluster cluster {this->heatmap, this->visited, pos};
@@ -64,24 +71,6 @@ const std::vector<Blob> &BlobDetector::search()
 	return this->blobs;
 }
 
-f32 BlobDetector::neutral()
-{
-	index2_t size = this->heatmap.size();
-	std::array<u32, UINT8_MAX + 1> count {};
 
-	for (index_t x = 0; x < size.x; x++) {
-		for (index_t y = 0; y < size.y; y++) {
-			index2_t pos {x, y};
-
-			u8 val = gsl::narrow_cast<u8>(this->heatmap[pos] * UINT8_MAX);
-			count.at(val)++;
-		}
-	}
-
-	auto max = std::max_element(count.begin(), count.end());
-	u32 idx = std::distance(count.begin(), max);
-
-	return gsl::narrow<f32>(idx + 1) / UINT8_MAX;
-}
 
 } // namespace iptsd::contacts::basic

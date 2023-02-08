@@ -4,6 +4,7 @@
 
 #include "advanced/detector.hpp"
 #include "basic/detector.hpp"
+#include "interface.hpp"
 
 #include <container/image.hpp>
 #include <math/mat2.hpp>
@@ -49,10 +50,16 @@ void ContactFinder::resize(index2_t size)
 	this->size = size;
 	this->data_diag = std::hypot(size.x, size.y);
 
-	if (this->config.mode == BlobDetection::BASIC)
-		this->detector = std::make_unique<basic::BlobDetector>(size);
-	else if (this->config.mode == BlobDetection::ADVANCED)
-		this->detector = std::make_unique<advanced::BlobDetector>(size);
+	BlobDetectorConfig config {};
+	config.neutral_mode = this->config.neutral_mode;
+	config.neutral_value = this->config.neutral_value;
+	config.activation_threshold = this->config.activation_threshold;
+	config.deactivation_threshold = this->config.deactivation_threshold;
+
+	if (this->config.detection_mode == BlobDetection::BASIC)
+		this->detector = std::make_unique<basic::BlobDetector>(size, config);
+	else if (this->config.detection_mode == BlobDetection::ADVANCED)
+		this->detector = std::make_unique<advanced::BlobDetector>(size, config);
 }
 
 bool ContactFinder::check_valid(const Contact &contact)
