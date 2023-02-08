@@ -44,13 +44,13 @@ const std::vector<Blob> &BlobDetector::search()
 
 			Cluster cluster {this->heatmap, pos};
 
-			math::Mat2s<f32> cov = cluster.cov();
-			math::Eigen2<f32> eigen = cov.eigen();
+			math::Mat2s<f64> cov = cluster.cov();
+			math::Eigen2<f64> eigen = cov.eigen();
 
 			if (eigen.w[0] <= 0 || eigen.w[1] <= 0)
 				continue;
 
-			this->blobs.push_back(Blob {cluster.mean() + 0.5f, cov});
+			this->blobs.push_back(Blob {cluster.mean() + 0.5, cov});
 		}
 	}
 

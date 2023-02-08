@@ -13,8 +13,8 @@
 namespace iptsd::contacts {
 
 struct Blob {
-	math::Vec2<f32> mean;
-	math::Mat2s<f32> cov;
+	math::Vec2<f64> mean;
+	math::Mat2s<f64> cov;
 };
 
 class IBlobDetector {

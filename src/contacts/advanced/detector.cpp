@@ -343,7 +343,7 @@ auto BlobDetector::process(Image<f32> const& hm) -> std::vector<Blob> const&
             continue;
         }
 
-        m_touchpoints.push_back(Blob { p.mean.cast<f32>() + 0.5f, cov->cast<f32>() });
+        m_touchpoints.push_back(Blob { p.mean + 0.5, cov.value() });
     }
 
     return m_touchpoints;

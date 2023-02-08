@@ -102,7 +102,7 @@ const std::vector<Contact> &ContactFinder::search()
 		if (this->config.invert_y)
 			contact.y = 1 - contact.y;
 
-		math::Eigen2<f32> eigen = blob.cov.eigen();
+		math::Eigen2<f64> eigen = blob.cov.eigen();
 		f64 s1 = std::sqrt(eigen.w[0]);
 		f64 s2 = std::sqrt(eigen.w[1]);
 
