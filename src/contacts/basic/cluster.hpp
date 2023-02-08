@@ -3,9 +3,8 @@
 #ifndef IPTSD_CONTACTS_BASIC_CLUSTER_HPP
 #define IPTSD_CONTACTS_BASIC_CLUSTER_HPP
 
-#include "heatmap.hpp"
-
 #include <common/types.hpp>
+#include <container/image.hpp>
 #include <math/mat2.hpp>
 #include <math/vec2.hpp>
 
@@ -21,14 +20,14 @@ public:
 	f64 w = 0;
 
 public:
-	Cluster(Heatmap &hm, index2_t center);
+	Cluster(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t center);
 
 	math::Vec2<f64> mean();
 	math::Mat2s<f64> cov();
 
 private:
 	void add(index2_t pos, f64 val);
-	void check(Heatmap &hm, index2_t pos);
+	void check(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t pos);
 };
 
 } /* namespace iptsd::contacts::basic */

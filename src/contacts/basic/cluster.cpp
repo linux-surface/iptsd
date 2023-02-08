@@ -3,17 +3,15 @@
 
 #include "cluster.hpp"
 
-#include "heatmap.hpp"
-
 #include <common/types.hpp>
 
 #include <gsl/gsl>
 
 namespace iptsd::contacts::basic {
 
-Cluster::Cluster(Heatmap &hm, index2_t center)
+Cluster::Cluster(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t center)
 {
-	this->check(hm, center);
+	this->check(heatmap, visited, center);
 }
 
 void Cluster::add(index2_t pos, f64 val)
@@ -40,20 +38,26 @@ math::Mat2s<f64> Cluster::cov()
 	return math::Mat2s<f64> {r1, r3, r2};
 }
 
-void Cluster::check(Heatmap &hm, index2_t pos)
+void Cluster::check(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t pos)
 {
-	f32 v = hm.value(pos);
+	index2_t size = heatmap.size();
 
-	if (hm.get_visited(pos))
+	if (pos.x < 0 || pos.x >= size.x)
 		return;
 
-	this->add(pos, v);
-	hm.set_visited(pos, true);
+	if (pos.y < 0 || pos.y >= size.y)
+		return;
 
-	this->check(hm, index2_t {pos.x + 1, pos.y});
-	this->check(hm, index2_t {pos.x - 1, pos.y});
-	this->check(hm, index2_t {pos.x, pos.y + 1});
-	this->check(hm, index2_t {pos.x, pos.y - 1});
+	if (visited[pos])
+		return;
+
+	this->add(pos, heatmap[pos]);
+	visited[pos] = true;
+
+	this->check(heatmap, visited, index2_t {pos.x + 1, pos.y});
+	this->check(heatmap, visited, index2_t {pos.x - 1, pos.y});
+	this->check(heatmap, visited, index2_t {pos.x, pos.y + 1});
+	this->check(heatmap, visited, index2_t {pos.x, pos.y - 1});
 }
 
 } // namespace iptsd::contacts::basic

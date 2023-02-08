@@ -10,6 +10,7 @@
 #include <math/mat2.hpp>
 #include <math/vec2.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <gsl/gsl>
 #include <vector>
@@ -18,10 +19,11 @@ namespace iptsd::contacts::basic {
 
 const std::vector<Blob> &BlobDetector::search()
 {
-	this->heatmap.reset();
+	std::fill(this->visited.begin(), this->visited.end(), false);
 	this->blobs.clear();
 
-	index2_t size = this->heatmap.data.size();
+	index2_t size = this->heatmap.size();
+	f32 neutral = this->neutral();
 
 	// Mark positions where the value is 0 as visited to
 	// avoid producing clusters spanning the whole map.
@@ -29,10 +31,10 @@ const std::vector<Blob> &BlobDetector::search()
 		for (index_t y = 0; y < size.y; y++) {
 			index2_t pos {x, y};
 
-			if (this->heatmap.value(pos) > 0)
+			if (this->heatmap[pos] > (neutral + (8 / 255.0f)))
 				continue;
 
-			this->heatmap.set_visited(pos, true);
+			this->visited[pos] = true;
 		}
 	}
 
@@ -40,10 +42,10 @@ const std::vector<Blob> &BlobDetector::search()
 		for (index_t y = 0; y < size.y; y++) {
 			index2_t pos {x, y};
 
-			if (this->heatmap.get_visited(pos))
+			if (this->visited[pos])
 				continue;
 
-			Cluster cluster {this->heatmap, pos};
+			Cluster cluster {this->heatmap, this->visited, pos};
 
 			math::Mat2s<f64> cov = cluster.cov();
 			math::Eigen2<f64> eigen = cov.eigen();
@@ -60,6 +62,26 @@ const std::vector<Blob> &BlobDetector::search()
 	}
 
 	return this->blobs;
+}
+
+f32 BlobDetector::neutral()
+{
+	index2_t size = this->heatmap.size();
+	std::array<u32, UINT8_MAX + 1> count {};
+
+	for (index_t x = 0; x < size.x; x++) {
+		for (index_t y = 0; y < size.y; y++) {
+			index2_t pos {x, y};
+
+			u8 val = gsl::narrow_cast<u8>(this->heatmap[pos] * UINT8_MAX);
+			count.at(val)++;
+		}
+	}
+
+	auto max = std::max_element(count.begin(), count.end());
+	u32 idx = std::distance(count.begin(), max);
+
+	return gsl::narrow<f32>(idx + 1) / UINT8_MAX;
 }
 
 } // namespace iptsd::contacts::basic

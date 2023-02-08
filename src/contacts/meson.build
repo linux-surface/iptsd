@@ -3,7 +3,6 @@ sources = [
   'advanced/detector.cpp',
   'basic/cluster.cpp',
   'basic/detector.cpp',
-  'basic/heatmap.cpp',
 ]
 
 deps = dependencies
