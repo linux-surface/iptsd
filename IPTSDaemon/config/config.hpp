@@ -63,7 +63,7 @@ public:
 
 public:
 	Config(i16 vendor, i16 product,
-	       std::optional<const ipts::Metadata> metadata = std::nullopt);
+	       std::optional<const IPTSDeviceMetaData> metadata = std::nullopt);
 
 	[[nodiscard]] contacts::Config contacts() const;
 

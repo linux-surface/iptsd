@@ -4,7 +4,6 @@
 #define IPTSD_DAEMON_DEVICES_HPP
 
 #include "cone.hpp"
-#include "uinput-device.hpp"
 
 #include <common/types.hpp>
 #include <config/config.hpp>
@@ -15,23 +14,23 @@
 
 namespace iptsd::daemon {
 
-class StylusDevice : public UinputDevice {
+class StylusDevice {
 public:
 	u32 serial;
 	bool active = false;
 	std::shared_ptr<Cone> cone;
 
 public:
-	StylusDevice(const config::Config &conf, u32 serial, std::shared_ptr<Cone> cone);
+    StylusDevice(u32 serial, std::shared_ptr<Cone> cone): serial(serial), cone(std::move(cone)) {};
 };
 
-class TouchDevice : public UinputDevice {
+class TouchDevice {
 public:
 	std::vector<std::shared_ptr<Cone>> cones;
 	contacts::ContactFinder finder;
 
 public:
-	TouchDevice(const config::Config &conf);
+    TouchDevice(const config::Config &conf): finder(conf.contacts()) {};
 };
 
 class DeviceManager {

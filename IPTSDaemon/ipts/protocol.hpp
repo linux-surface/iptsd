@@ -16,11 +16,6 @@ constexpr u8 IPTS_HID_REPORT_USAGE_SCAN_TIME = 0x56;
 constexpr u8 IPTS_HID_REPORT_USAGE_GESTURE_DATA = 0x61;
 
 /*
- * If a one byte feature report contains only this usage, it is used for switching modes.
- */
-constexpr u8 IPTS_HID_REPORT_USAGE_SET_MODE = 0xC8;
-
-/*
  * If a feature report contains only this usage, it contains touch/pen metadata.
  */
 constexpr u8 IPTS_HID_REPORT_USAGE_METADATA = 0x63;
@@ -177,22 +172,6 @@ struct [[gnu::packed]] ipts_pen_dft_window_row {
 	i8 last;
 	i8 mid;
 	i8 zero;
-};
-
-struct [[gnu::packed]] ipts_touch_metadata_size {
-	u32 rows;
-	u32 columns;
-	u32 width;
-	u32 height;
-};
-
-struct [[gnu::packed]] ipts_touch_metadata_transform {
-	f32 xx, yx, tx;
-	f32 xy, yy, ty;
-};
-
-struct [[gnu::packed]] ipts_touch_metadata_unknown {
-	f32 unknown[16]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 };
 
 #endif /* IPTSD_IPTS_PROTOCOL_HPP */

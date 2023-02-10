@@ -86,24 +86,8 @@ void Parser::parse_hid(Reader reader)
 
 			this->parse_reports(sub);
 			break;
-		case IPTS_HID_FRAME_TYPE_METADATA:
-			this->parse_metadata(sub);
-			break;
 		}
 	}
-}
-
-void Parser::parse_metadata(Reader reader)
-{
-	Metadata m;
-
-	m.size = reader.read<struct ipts_touch_metadata_size>();
-	m.unknown_byte = reader.read<u8>();
-	m.transform = reader.read<struct ipts_touch_metadata_transform>();
-	m.unknown = reader.read<struct ipts_touch_metadata_unknown>();
-
-	if (this->on_metadata)
-		this->on_metadata(m);
 }
 
 void Parser::parse_reports(Reader reader)

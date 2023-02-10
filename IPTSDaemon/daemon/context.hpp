@@ -19,10 +19,10 @@ public:
 	config::Config config;
 	DeviceManager devices;
 
-	std::optional<const ipts::Metadata> meta;
+	std::optional<const IPTSDeviceMetaData> meta;
 
 public:
-	Context(const config::Config &config, std::optional<const ipts::Metadata> meta)
+	Context(const config::Config &config, std::optional<const IPTSDeviceMetaData> meta)
 		: config {config}, devices {config}, meta {std::move(meta)} {};
 };
 

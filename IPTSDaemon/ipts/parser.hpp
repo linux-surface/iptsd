@@ -4,6 +4,7 @@
 #define IPTSD_IPTS_PARSER_HPP
 
 #include "protocol.hpp"
+#include "IPTSKenerlUserShared.h"
 #include "reader.hpp"
 
 #include <common/types.hpp>
@@ -59,14 +60,6 @@ public:
 	std::array<struct ipts_pen_dft_window_row, IPTS_DFT_MAX_ROWS> y {};
 };
 
-class Metadata {
-public:
-	struct ipts_touch_metadata_size size {};
-	struct ipts_touch_metadata_transform transform {};
-	u8 unknown_byte = 0;
-	struct ipts_touch_metadata_unknown unknown {};
-};
-
 class Parser {
 private:
 	std::unique_ptr<Heatmap> heatmap = nullptr;
@@ -80,7 +73,6 @@ private:
 	void parse_frame(Reader reader);
 	void parse_raw(Reader reader);
 	void parse_hid(Reader reader);
-	void parse_metadata(Reader reader);
 	void parse_reports(Reader reader);
 
 	void parse_stylus_v1(Reader reader);
@@ -96,7 +88,6 @@ public:
 	std::function<void(const StylusData &)> on_stylus;
 	std::function<void(const Heatmap &)> on_heatmap;
 	std::function<void(const DftWindow &, StylusData &)> on_dft;
-	std::function<void(const Metadata &)> on_metadata;
 
 	void parse(gsl::span<u8> data);
 	template <class T> void parse(gsl::span<u8> data);

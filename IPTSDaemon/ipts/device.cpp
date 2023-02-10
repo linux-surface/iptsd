@@ -1,131 +1,86 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
+//
+//  device.cpp
+//  IPTSDaemon
+//
+//  Created by Xiashangning on 2023/2/10.
+//
 
 #include "device.hpp"
 
-#include "protocol.hpp"
-
-#include <cstddef>
-#include <iterator>
-#include <vector>
+#include <common/cerror.hpp>
 
 namespace iptsd::ipts {
 
-bool Device::is_touch_data(u8 report)
-{
-	auto &desc = this->descriptor();
-	auto usage = desc.usage(report);
-
-	if (usage.size() != 2)
-		return false;
-
-	if (usage[0] != IPTS_HID_REPORT_USAGE_SCAN_TIME)
-		return false;
-
-	if (usage[1] != IPTS_HID_REPORT_USAGE_GESTURE_DATA)
-		return false;
-
-	return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
+Device::Device() {
+    connect_to_kernel();
 }
 
-bool Device::is_set_mode(u8 report)
-{
-	auto &desc = this->descriptor();
-	auto usage = desc.usage(report);
-
-	if (usage.size() != 1)
-		return false;
-
-	if (usage[0] != IPTS_HID_REPORT_USAGE_SET_MODE)
-		return false;
-
-	if (desc.size(report) != 1)
-		return false;
-
-	return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
+Device::~Device() {
+    disconnect_from_kernel();
 }
 
-u8 Device::get_set_mode()
-{
-	auto &desc = this->descriptor();
-
-	for (auto report : desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE)) {
-		if (this->is_set_mode(report))
-			return report;
-	}
-
-	return 0;
+void Device::reset() {
+    disconnect_from_kernel();
+    sleep(2);
+    connect_to_kernel();
 }
 
-bool Device::is_metadata_report(u8 report)
+void Device::connect_to_kernel()
 {
-	auto &desc = this->descriptor();
-	auto usage = desc.usage(report);
+    io_iterator_t   iterator;
+    kern_return_t ret = IOServiceGetMatchingServices(kIOMasterPortDefault, IOServiceMatching("IntelPreciseTouchStylusDriver"), &iterator);
+    if (ret != KERN_SUCCESS)
+        throw common::cerror("Failed to match services");
+    
+    service = IOIteratorNext(iterator);
+    IOObjectRelease(iterator);
+    if (service == IO_OBJECT_NULL)
+        throw common::cerror("Could not find IntelPreciseTouchStylusDriver");
+    
+    ret = IOServiceOpen(service, mach_task_self(), 0, &connect);
+    if (ret != kIOReturnSuccess)
+        throw common::cerror("Failed to establish a connection to the driver");
 
-	if (usage.size() != 1)
-		return false;
-
-	if (usage[0] != IPTS_HID_REPORT_USAGE_METADATA)
-		return false;
-
-	return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
+    IPTSDeviceInfo info;
+    size_t info_size = sizeof(IPTSDeviceInfo);
+    ret = IOConnectCallStructMethod(connect, kMethodGetDeviceInfo, nullptr, 0, &info, &info_size);
+    if (ret != kIOReturnSuccess)
+        throw common::cerror("Failed to get IPTS device info from driver");
+    vendor_id = info.vendor_id;
+    product_id = info.product_id;
+    if (info.meta_data.size.rows != -1)
+        meta_data = info.meta_data;
+    
+    uint64_t size;
+    ret = IOConnectMapMemory(connect, 0, mach_task_self(), &input_buffer, &size, kIOMapAnywhere | kIOMapInhibitCache);
+    if (ret != kIOReturnSuccess)
+        throw common::cerror("Failed to map input buffer into user space");
 }
 
-u8 Device::get_metadata_report_id()
+void Device::disconnect_from_kernel()
 {
-	auto &desc = this->descriptor();
-
-	for (auto report : desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE)) {
-		if (this->is_metadata_report(report))
-			return report;
-	}
-
-	return 0;
+    IOConnectUnmapMemory(connect, 0, mach_task_self(), input_buffer);
+    
+    IOServiceClose(connect);
+    IOObjectRelease(service);
 }
 
-std::size_t Device::buffer_size()
-{
-	std::size_t size = 0;
-	auto &desc = this->descriptor();
-
-	for (auto report : desc.reports(HIDRD_ITEM_MAIN_TAG_INPUT))
-		size = std::max(size, desc.size(report));
-
-	return size;
+gsl::span<u8> Device::read() {
+    UInt64 input_size = 0;
+    UInt32 cnt;
+    kern_return_t ret = IOConnectCallScalarMethod(connect, kMethodReceiveInput, nullptr, 0, &input_size, &cnt);
+    should_reinit = input_size == -1;
+    if (ret != kIOReturnSuccess || should_reinit) {
+        throw common::cerror("Failed to receive input!");
+    }
+    
+    return gsl::span<u8>(reinterpret_cast<u8 *>(input_buffer), input_size);
 }
 
-void Device::set_mode(bool multitouch)
-{
-	std::vector<u8> report;
-
-	report.push_back(this->get_set_mode());
-
-	if (multitouch)
-		report.push_back(0x1);
-	else
-		report.push_back(0x0);
-
-	this->set_feature(report);
-}
-
-std::optional<const Metadata> Device::get_metadata()
-{
-	std::optional<Metadata> metadata = std::nullopt;
-	auto &desc = this->descriptor();
-
-	u8 id = this->get_metadata_report_id();
-	if (!id)
-		return std::nullopt;
-
-	std::vector<u8> report(desc.size(id) + 1);
-	report.at(0) = id;
-
-	this->get_feature(report);
-
-	Parser parser;
-	parser.on_metadata = [&](const auto &m) { metadata = m; };
-	parser.parse<u8>(report);
-
-	return metadata;
+void Device::send_hid_report(IPTSHIDReport &report) {
+    kern_return_t ret = IOConnectCallStructMethod(connect, kMethodSendHIDReport, &report, sizeof(IPTSHIDReport), nullptr, nullptr);
+    if (ret != kIOReturnSuccess)
+        throw common::cerror("Failed to send HID report!");
 }
 
 } // namespace iptsd::ipts

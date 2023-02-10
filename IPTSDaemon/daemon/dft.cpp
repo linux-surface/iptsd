@@ -262,7 +262,7 @@ static void iptsd_dft_handle_pressure(Context &ctx, const ipts::DftWindow &dft,
 
 	if (p > 1) {
 		stylus.contact = true;
-		stylus.pressure = std::min(gsl::narrow_cast<u16>(p), IPTS_MAX_PRESSURE);
+		stylus.pressure = std::min<u16>(gsl::narrow_cast<u16>(p), IPTS_MAX_PRESSURE);
 	} else {
 		stylus.contact = false;
 		stylus.pressure = 0;

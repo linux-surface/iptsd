@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <cctype>
 #include <cmath>
-#include <configure.h>
 #include <filesystem>
 #include <ini.h>
 #include <string>
@@ -181,7 +180,7 @@ void Config::load_dir(const std::string &name, bool check_device)
 	}
 }
 
-Config::Config(i16 vendor, i16 product, std::optional<const ipts::Metadata> metadata)
+Config::Config(i16 vendor, i16 product, std::optional<const IPTSDeviceMetaData> metadata)
 	: vendor {vendor}, product {product}
 {
 	if (metadata.has_value()) {
@@ -191,13 +190,10 @@ Config::Config(i16 vendor, i16 product, std::optional<const ipts::Metadata> meta
 		this->invert_y = metadata->transform.yy < 0;
 	}
 
-	this->load_dir(IPTSD_PRESET_DIR, true);
-	this->load_dir("./etc/presets", true);
+	this->load_dir("/usr/local/iptsd/presets", true);
 
-	if (std::filesystem::exists(IPTSD_CONFIG_FILE))
-		ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
-
-	this->load_dir(IPTSD_CONFIG_DIR, false);
+	if (std::filesystem::exists("/usr/local/iptsd/iptsd.conf"))
+		ini_parse("/usr/local/iptsd/iptsd.conf", parse_conf, this);
 }
 
 contacts::Config Config::contacts() const

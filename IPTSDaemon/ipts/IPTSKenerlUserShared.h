@@ -23,38 +23,32 @@
 #define IPTS_TOUCH_REPORT_ID        0x40
 #define IPTS_STYLUS_REPORT_ID       0x50
 
-/*
- * Made-up type for passing raw IPTS data in a HID report.
- */
-#define IPTS_HID_FRAME_TYPE_RAW 0xEE
+#define IPTS_RAW_FRAME_TYPE_STYLUS      0x6
+#define IPTS_RAW_FRAME_TYPE_HEATMAP     0x8
 
-#define IPTS_PAYLOAD_FRAME_TYPE_STYLUS  0x6
-#define IPTS_PAYLOAD_FRAME_TYPE_HEATMAP 0x8
+#define IPTS_HID_FRAME_TYPE_HID         0x0
+#define IPTS_HID_FRAME_TYPE_HEATMAP     0x1
+#define IPTS_HID_FRAME_TYPE_METADATA    0x2
+#define IPTS_HID_FRAME_TYPE_RAW         0xEE    //Made-up type for passing raw IPTS data in a HID report.
+#define IPTS_HID_FRAME_TYPE_REPORTS     0xFF
 
-#define IPTS_REPORT_TYPE_START 0
-#define IPTS_REPORT_TYPE_END   0xff
-
-#define IPTS_CONTAINER_TYPE_ROOT    0x00
-#define IPTS_CONTAINER_TYPE_HEATMAP 0x01
-#define IPTS_CONTAINER_TYPE_REPORT  0xff
-
-#define IPTS_REPORT_TYPE_HEATMAP_DIM  0x03
-#define IPTS_REPORT_TYPE_HEATMAP      0x25
-#define IPTS_REPORT_TYPE_STYLUS_V1    0x10
-#define IPTS_REPORT_TYPE_STYLUS_V2    0x60
-
-#define IPTS_REPORT_TYPE_FREQUENCY_NOISE          0x04
-#define IPTS_REPORT_TYPE_PEN_GENERAL              0x57
-#define IPTS_REPORT_TYPE_PEN_JNR_OUTPUT           0x58
-#define IPTS_REPORT_TYPE_PEN_NOISE_METRICS_OUTPUT 0x59
-#define IPTS_REPORT_TYPE_PEN_DATA_SELECTION       0x5a
-#define IPTS_REPORT_TYPE_PEN_MAGNITUDE            0x5b
-#define IPTS_REPORT_TYPE_PEN_DFT_WINDOW           0x5c
-#define IPTS_REPORT_TYPE_PEN_MULTIPLE_REGION      0x5d
-#define IPTS_REPORT_TYPE_PEN_TOUCHED_ANTENNAS     0x5e
-#define IPTS_REPORT_TYPE_PEN_METADATA             0x5f
-#define IPTS_REPORT_TYPE_PEN_DETECTION            0x62
-#define IPTS_REPORT_TYPE_PEN_LIFT                 0x63
+#define IPTS_REPORT_TYPE_TIMESTAMP                  0x00
+#define IPTS_REPORT_TYPE_DIMENSIONS                 0x03
+#define IPTS_REPORT_TYPE_HEATMAP                    0x25
+#define IPTS_REPORT_TYPE_STYLUS_V1                  0x10
+#define IPTS_REPORT_TYPE_STYLUS_V2                  0x60
+#define IPTS_REPORT_TYPE_FREQUENCY_NOISE            0x04
+#define IPTS_REPORT_TYPE_PEN_GENERAL                0x57
+#define IPTS_REPORT_TYPE_PEN_JNR_OUTPUT             0x58
+#define IPTS_REPORT_TYPE_PEN_NOISE_METRICS_OUTPUT   0x59
+#define IPTS_REPORT_TYPE_PEN_DATA_SELECTION         0x5a
+#define IPTS_REPORT_TYPE_PEN_MAGNITUDE              0x5b
+#define IPTS_REPORT_TYPE_PEN_DFT_WINDOW             0x5c
+#define IPTS_REPORT_TYPE_PEN_MULTIPLE_REGION        0x5d
+#define IPTS_REPORT_TYPE_PEN_TOUCHED_ANTENNAS       0x5e
+#define IPTS_REPORT_TYPE_PEN_METADATA               0x5f
+#define IPTS_REPORT_TYPE_PEN_DETECTION              0x62
+#define IPTS_REPORT_TYPE_PEN_LIFT                   0x63
 
 #define IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY   0
 #define IPTS_STYLUS_REPORT_MODE_BIT_CONTACT     1
@@ -231,10 +225,45 @@ struct PACKED IPTSHIDReport {
     } report;
 };
 
+struct PACKED IPTSMetadataSize {
+    UInt32 rows;
+    UInt32 columns;
+    UInt32 width;
+    UInt32 height;
+};
+
+#ifdef KERNEL
+struct PACKED IPTSMetadataTransform {
+    UInt32 xx;
+    UInt32 yx;
+    UInt32 tx;
+    UInt32 xy;
+    UInt32 yy;
+    UInt32 ty;
+};
+#else
+struct PACKED IPTSMetadataTransform {
+    Float32 xx;
+    Float32 yx;
+    Float32 tx;
+    Float32 xy;
+    Float32 yy;
+    Float32 ty;
+};
+#endif
+
+struct PACKED IPTSDeviceMetaData {
+    IPTSMetadataSize size;
+    UInt8 unknown1;
+    IPTSMetadataTransform transform;
+    UInt32 unknown2[16];
+};
+
 struct PACKED IPTSDeviceInfo {
     UInt16 vendor_id;
     UInt16 product_id;
     UInt8  max_contacts;
+    IPTSDeviceMetaData meta_data;
 };
 
 enum {

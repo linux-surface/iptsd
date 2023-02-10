@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2520FAAF2996500F00BBAC23 /* visualization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA4D2996500F00BBAC23 /* visualization.cpp */; };
 		2520FAB02996500F00BBAC23 /* detector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA552996500F00BBAC23 /* detector.cpp */; };
 		2520FAB12996500F00BBAC23 /* detector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA6A2996500F00BBAC23 /* detector.cpp */; };
 		2520FAB22996500F00BBAC23 /* cluster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA6B2996500F00BBAC23 /* cluster.cpp */; };
@@ -18,20 +17,14 @@
 		2520FAB72996500F00BBAC23 /* devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7A2996500F00BBAC23 /* devices.cpp */; };
 		2520FAB82996500F00BBAC23 /* touch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7C2996500F00BBAC23 /* touch.cpp */; };
 		2520FAB92996500F00BBAC23 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7D2996500F00BBAC23 /* main.cpp */; };
-		2520FABA2996500F00BBAC23 /* uinput-device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7E2996500F00BBAC23 /* uinput-device.cpp */; };
-		2520FABB2996500F00BBAC23 /* plot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA802996500F00BBAC23 /* plot.cpp */; };
-		2520FABC2996500F00BBAC23 /* perf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA812996500F00BBAC23 /* perf.cpp */; };
-		2520FABD2996500F00BBAC23 /* show.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA832996500F00BBAC23 /* show.cpp */; };
-		2520FABE2996500F00BBAC23 /* calibrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA842996500F00BBAC23 /* calibrate.cpp */; };
-		2520FABF2996500F00BBAC23 /* dump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA852996500F00BBAC23 /* dump.cpp */; };
-		2520FAC02996500F00BBAC23 /* descriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA872996500F00BBAC23 /* descriptor.cpp */; };
-		2520FAC12996500F00BBAC23 /* device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA882996500F00BBAC23 /* device.cpp */; };
-		2520FAC22996500F00BBAC23 /* hidrd.c in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA8F2996500F00BBAC23 /* hidrd.c */; };
-		2520FAC32996500F00BBAC23 /* device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAA62996500F00BBAC23 /* device.cpp */; };
 		2520FAC42996500F00BBAC23 /* reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAA82996500F00BBAC23 /* reader.cpp */; };
 		2520FAC52996500F00BBAC23 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAAA2996500F00BBAC23 /* parser.cpp */; };
 		2520FAC62996500F00BBAC23 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAAE2996500F00BBAC23 /* config.cpp */; };
 		2520FAC92996510000BBAC23 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2520FAC82996510000BBAC23 /* IOKit.framework */; };
+		25526E482996D17A00F61021 /* libfmt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 25526E472996D16B00F61021 /* libfmt.a */; };
+		25526E4A2996D1A300F61021 /* libinih.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 25526E492996D1A300F61021 /* libinih.0.dylib */; };
+		25526E4B2996D1A300F61021 /* libinih.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 25526E492996D1A300F61021 /* libinih.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		25E6114229967DEF005A9966 /* device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 25E6114029967DEF005A9966 /* device.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -43,6 +36,17 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		25526E4C2996D1A300F61021 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				25526E4B2996D1A300F61021 /* libinih.0.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -77,7 +81,6 @@
 		2520FA6E2996500F00BBAC23 /* finder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = finder.cpp; sourceTree = "<group>"; };
 		2520FA702996500F00BBAC23 /* stylus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stylus.cpp; sourceTree = "<group>"; };
 		2520FA712996500F00BBAC23 /* touch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = touch.hpp; sourceTree = "<group>"; };
-		2520FA722996500F00BBAC23 /* uinput-device.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = "uinput-device.hpp"; sourceTree = "<group>"; };
 		2520FA732996500F00BBAC23 /* cone.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cone.hpp; sourceTree = "<group>"; };
 		2520FA742996500F00BBAC23 /* dft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dft.cpp; sourceTree = "<group>"; };
 		2520FA752996500F00BBAC23 /* devices.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = devices.hpp; sourceTree = "<group>"; };
@@ -88,24 +91,15 @@
 		2520FA7B2996500F00BBAC23 /* stylus.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stylus.hpp; sourceTree = "<group>"; };
 		2520FA7C2996500F00BBAC23 /* touch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = touch.cpp; sourceTree = "<group>"; };
 		2520FA7D2996500F00BBAC23 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		2520FA7E2996500F00BBAC23 /* uinput-device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "uinput-device.cpp"; sourceTree = "<group>"; };
 		2520FA802996500F00BBAC23 /* plot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plot.cpp; sourceTree = "<group>"; };
 		2520FA812996500F00BBAC23 /* perf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = perf.cpp; sourceTree = "<group>"; };
 		2520FA832996500F00BBAC23 /* show.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = show.cpp; sourceTree = "<group>"; };
 		2520FA842996500F00BBAC23 /* calibrate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = calibrate.cpp; sourceTree = "<group>"; };
 		2520FA852996500F00BBAC23 /* dump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dump.cpp; sourceTree = "<group>"; };
-		2520FA872996500F00BBAC23 /* descriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = descriptor.cpp; sourceTree = "<group>"; };
-		2520FA882996500F00BBAC23 /* device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = device.cpp; sourceTree = "<group>"; };
-		2520FA8A2996500F00BBAC23 /* device.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = device.hpp; sourceTree = "<group>"; };
-		2520FA8B2996500F00BBAC23 /* descriptor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = descriptor.hpp; sourceTree = "<group>"; };
-		2520FA8D2996500F00BBAC23 /* hidrd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hidrd.h; sourceTree = "<group>"; };
-		2520FA8E2996500F00BBAC23 /* meson.build */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = meson.build; sourceTree = "<group>"; };
-		2520FA8F2996500F00BBAC23 /* hidrd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hidrd.c; sourceTree = "<group>"; };
 		2520FA912996500F00BBAC23 /* ops.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ops.hpp; sourceTree = "<group>"; };
 		2520FA922996500F00BBAC23 /* image.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = image.hpp; sourceTree = "<group>"; };
 		2520FA932996500F00BBAC23 /* kernel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kernel.hpp; sourceTree = "<group>"; };
 		2520FA952996500F00BBAC23 /* access.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = access.hpp; sourceTree = "<group>"; };
-		2520FA962996500F00BBAC23 /* cwrap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cwrap.hpp; sourceTree = "<group>"; };
 		2520FA972996500F00BBAC23 /* signal.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = signal.hpp; sourceTree = "<group>"; };
 		2520FA982996500F00BBAC23 /* cerror.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cerror.hpp; sourceTree = "<group>"; };
 		2520FA992996500F00BBAC23 /* types.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
@@ -119,13 +113,16 @@
 		2520FAA32996500F00BBAC23 /* protocol.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = protocol.hpp; sourceTree = "<group>"; };
 		2520FAA42996500F00BBAC23 /* parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = parser.hpp; sourceTree = "<group>"; };
 		2520FAA52996500F00BBAC23 /* reader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reader.hpp; sourceTree = "<group>"; };
-		2520FAA62996500F00BBAC23 /* device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = device.cpp; sourceTree = "<group>"; };
 		2520FAA82996500F00BBAC23 /* reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reader.cpp; sourceTree = "<group>"; };
-		2520FAA92996500F00BBAC23 /* device.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = device.hpp; sourceTree = "<group>"; };
 		2520FAAA2996500F00BBAC23 /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parser.cpp; sourceTree = "<group>"; };
 		2520FAAC2996500F00BBAC23 /* config.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = config.hpp; sourceTree = "<group>"; };
 		2520FAAE2996500F00BBAC23 /* config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = config.cpp; sourceTree = "<group>"; };
 		2520FAC82996510000BBAC23 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		25526E472996D16B00F61021 /* libfmt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfmt.a; path = ../../../../usr/local/Cellar/fmt/9.0.0/lib/libfmt.a; sourceTree = "<group>"; };
+		25526E492996D1A300F61021 /* libinih.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libinih.0.dylib; path = ../../../../usr/local/Cellar/inih/56/lib/libinih.0.dylib; sourceTree = "<group>"; };
+		25E6114029967DEF005A9966 /* device.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = device.cpp; sourceTree = "<group>"; };
+		25E6114129967DEF005A9966 /* device.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = device.hpp; sourceTree = "<group>"; };
+		25E6114329967E30005A9966 /* IPTSKenerlUserShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPTSKenerlUserShared.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +131,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2520FAC92996510000BBAC23 /* IOKit.framework in Frameworks */,
+				25526E4A2996D1A300F61021 /* libinih.0.dylib in Frameworks */,
+				25526E482996D17A00F61021 /* libfmt.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,7 +166,6 @@
 				2520FA6F2996500F00BBAC23 /* daemon */,
 				2520FA7F2996500F00BBAC23 /* debug */,
 				2520FA4C2996500F00BBAC23 /* gfx */,
-				2520FA862996500F00BBAC23 /* hid */,
 				2520FAA22996500F00BBAC23 /* ipts */,
 				2520FA9A2996500F00BBAC23 /* math */,
 				2520F9CE29964F6D00BBAC23 /* IPTSDaemon.entitlements */,
@@ -250,20 +248,18 @@
 		2520FA6F2996500F00BBAC23 /* daemon */ = {
 			isa = PBXGroup;
 			children = (
-				2520FA702996500F00BBAC23 /* stylus.cpp */,
-				2520FA712996500F00BBAC23 /* touch.hpp */,
-				2520FA722996500F00BBAC23 /* uinput-device.hpp */,
-				2520FA732996500F00BBAC23 /* cone.hpp */,
-				2520FA742996500F00BBAC23 /* dft.cpp */,
-				2520FA752996500F00BBAC23 /* devices.hpp */,
-				2520FA772996500F00BBAC23 /* context.hpp */,
 				2520FA782996500F00BBAC23 /* cone.cpp */,
-				2520FA792996500F00BBAC23 /* dft.hpp */,
+				2520FA732996500F00BBAC23 /* cone.hpp */,
+				2520FA772996500F00BBAC23 /* context.hpp */,
 				2520FA7A2996500F00BBAC23 /* devices.cpp */,
+				2520FA752996500F00BBAC23 /* devices.hpp */,
+				2520FA742996500F00BBAC23 /* dft.cpp */,
+				2520FA792996500F00BBAC23 /* dft.hpp */,
+				2520FA702996500F00BBAC23 /* stylus.cpp */,
 				2520FA7B2996500F00BBAC23 /* stylus.hpp */,
 				2520FA7C2996500F00BBAC23 /* touch.cpp */,
+				2520FA712996500F00BBAC23 /* touch.hpp */,
 				2520FA7D2996500F00BBAC23 /* main.cpp */,
-				2520FA7E2996500F00BBAC23 /* uinput-device.cpp */,
 			);
 			path = daemon;
 			sourceTree = "<group>";
@@ -280,28 +276,6 @@
 			path = debug;
 			sourceTree = "<group>";
 		};
-		2520FA862996500F00BBAC23 /* hid */ = {
-			isa = PBXGroup;
-			children = (
-				2520FA872996500F00BBAC23 /* descriptor.cpp */,
-				2520FA882996500F00BBAC23 /* device.cpp */,
-				2520FA8A2996500F00BBAC23 /* device.hpp */,
-				2520FA8B2996500F00BBAC23 /* descriptor.hpp */,
-				2520FA8C2996500F00BBAC23 /* shim */,
-			);
-			path = hid;
-			sourceTree = "<group>";
-		};
-		2520FA8C2996500F00BBAC23 /* shim */ = {
-			isa = PBXGroup;
-			children = (
-				2520FA8D2996500F00BBAC23 /* hidrd.h */,
-				2520FA8E2996500F00BBAC23 /* meson.build */,
-				2520FA8F2996500F00BBAC23 /* hidrd.c */,
-			);
-			path = shim;
-			sourceTree = "<group>";
-		};
 		2520FA902996500F00BBAC23 /* container */ = {
 			isa = PBXGroup;
 			children = (
@@ -316,7 +290,6 @@
 			isa = PBXGroup;
 			children = (
 				2520FA952996500F00BBAC23 /* access.hpp */,
-				2520FA962996500F00BBAC23 /* cwrap.hpp */,
 				2520FA972996500F00BBAC23 /* signal.hpp */,
 				2520FA982996500F00BBAC23 /* cerror.hpp */,
 				2520FA992996500F00BBAC23 /* types.hpp */,
@@ -341,13 +314,14 @@
 		2520FAA22996500F00BBAC23 /* ipts */ = {
 			isa = PBXGroup;
 			children = (
+				25E6114329967E30005A9966 /* IPTSKenerlUserShared.h */,
 				2520FAA32996500F00BBAC23 /* protocol.hpp */,
-				2520FAA42996500F00BBAC23 /* parser.hpp */,
-				2520FAA52996500F00BBAC23 /* reader.hpp */,
-				2520FAA62996500F00BBAC23 /* device.cpp */,
+				25E6114029967DEF005A9966 /* device.cpp */,
+				25E6114129967DEF005A9966 /* device.hpp */,
 				2520FAA82996500F00BBAC23 /* reader.cpp */,
-				2520FAA92996500F00BBAC23 /* device.hpp */,
+				2520FAA52996500F00BBAC23 /* reader.hpp */,
 				2520FAAA2996500F00BBAC23 /* parser.cpp */,
+				2520FAA42996500F00BBAC23 /* parser.hpp */,
 			);
 			path = ipts;
 			sourceTree = "<group>";
@@ -355,8 +329,8 @@
 		2520FAAB2996500F00BBAC23 /* config */ = {
 			isa = PBXGroup;
 			children = (
-				2520FAAC2996500F00BBAC23 /* config.hpp */,
 				2520FAAE2996500F00BBAC23 /* config.cpp */,
+				2520FAAC2996500F00BBAC23 /* config.hpp */,
 			);
 			path = config;
 			sourceTree = "<group>";
@@ -364,6 +338,8 @@
 		2520FAC72996510000BBAC23 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				25526E492996D1A300F61021 /* libinih.0.dylib */,
+				25526E472996D16B00F61021 /* libfmt.a */,
 				2520FAC82996510000BBAC23 /* IOKit.framework */,
 			);
 			name = Frameworks;
@@ -379,6 +355,7 @@
 				2520F9C029964EA300BBAC23 /* Sources */,
 				2520F9C129964EA300BBAC23 /* Frameworks */,
 				2520F9C229964EA300BBAC23 /* CopyFiles */,
+				25526E4C2996D1A300F61021 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -427,26 +404,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				2520FAC42996500F00BBAC23 /* reader.cpp in Sources */,
-				2520FAAF2996500F00BBAC23 /* visualization.cpp in Sources */,
-				2520FABF2996500F00BBAC23 /* dump.cpp in Sources */,
-				2520FABB2996500F00BBAC23 /* plot.cpp in Sources */,
+				25E6114229967DEF005A9966 /* device.cpp in Sources */,
 				2520FAB82996500F00BBAC23 /* touch.cpp in Sources */,
 				2520FAB42996500F00BBAC23 /* stylus.cpp in Sources */,
 				2520FAB12996500F00BBAC23 /* detector.cpp in Sources */,
-				2520FABE2996500F00BBAC23 /* calibrate.cpp in Sources */,
 				2520FAB92996500F00BBAC23 /* main.cpp in Sources */,
 				2520FAB72996500F00BBAC23 /* devices.cpp in Sources */,
 				2520FAB52996500F00BBAC23 /* dft.cpp in Sources */,
-				2520FAC12996500F00BBAC23 /* device.cpp in Sources */,
 				2520FAC52996500F00BBAC23 /* parser.cpp in Sources */,
-				2520FAC22996500F00BBAC23 /* hidrd.c in Sources */,
-				2520FABD2996500F00BBAC23 /* show.cpp in Sources */,
-				2520FABC2996500F00BBAC23 /* perf.cpp in Sources */,
 				2520FAB32996500F00BBAC23 /* finder.cpp in Sources */,
 				2520FAC62996500F00BBAC23 /* config.cpp in Sources */,
-				2520FAC32996500F00BBAC23 /* device.cpp in Sources */,
-				2520FABA2996500F00BBAC23 /* uinput-device.cpp in Sources */,
-				2520FAC02996500F00BBAC23 /* descriptor.cpp in Sources */,
 				2520FAB22996500F00BBAC23 /* cluster.cpp in Sources */,
 				2520FAB62996500F00BBAC23 /* cone.cpp in Sources */,
 				2520FAB02996500F00BBAC23 /* detector.cpp in Sources */,
@@ -463,7 +430,7 @@
 				ARCHS = x86_64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -507,7 +474,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IPTSDaemon",
+					/usr/local/include/,
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -522,7 +494,7 @@
 				ARCHS = x86_64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -561,7 +533,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/IPTSDaemon",
+					/usr/local/include/,
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -576,6 +553,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = K8RXBXZGN4;
 				ENABLE_HARDENED_RUNTIME = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fmt/9.0.0/lib,
+					/usr/local/Cellar/inih/56/lib,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.xavier;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -589,6 +571,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = K8RXBXZGN4;
 				ENABLE_HARDENED_RUNTIME = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/fmt/9.0.0/lib,
+					/usr/local/Cellar/inih/56/lib,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.xavier;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

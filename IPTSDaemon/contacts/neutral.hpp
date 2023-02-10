@@ -31,7 +31,7 @@ inline f32 neutral_mode(const container::Image<f32> &data)
 	}
 
 	auto max = std::max_element(count.begin(), count.end());
-	u32 idx = std::distance(count.begin(), max);
+	u32 idx = (u32)std::distance(count.begin(), max);
 
 	return gsl::narrow<f32>(idx + 1) / UINT8_MAX;
 }

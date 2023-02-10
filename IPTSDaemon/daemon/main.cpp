@@ -12,7 +12,6 @@
 #include <ipts/device.hpp>
 #include <ipts/parser.hpp>
 
-#include <CLI/CLI.hpp>
 #include <atomic>
 #include <chrono>
 #include <csignal>
@@ -30,77 +29,60 @@ using namespace std::chrono;
 
 namespace iptsd::daemon {
 
-static int main(gsl::span<char *> args)
+static int start()
 {
-	CLI::App app {};
-	std::filesystem::path path;
-
-	app.add_option("DEVICE", path, "The hidraw device to read from.")
-		->type_name("FILE")
-		->required();
-
-	CLI11_PARSE(app, args.size(), args.data());
-
 	std::atomic_bool should_exit = false;
 
 	auto const _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
 	auto const _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
 
-	ipts::Device device {path};
+	ipts::Device device;
 
-	auto meta = device.get_metadata();
+	auto &meta = device.meta_data;
 	if (meta.has_value()) {
 		auto &t = meta->transform;
-		auto &u = meta->unknown.unknown;
+		auto &u = meta->unknown2;
 
 		spdlog::info("Metadata:");
 		spdlog::info("rows={}, columns={}", meta->size.rows, meta->size.columns);
 		spdlog::info("width={}, height={}", meta->size.width, meta->size.height);
 		spdlog::info("transform=[{},{},{},{},{},{}]", t.xx, t.yx, t.tx, t.xy, t.yy, t.ty);
 		spdlog::info("unknown={}, [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]",
-			     meta->unknown_byte, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7],
+			     meta->unknown1, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7],
 			     u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
 	}
 
-	config::Config config {device.vendor(), device.product(), meta};
+	config::Config config {device.vendor_id, device.product_id, meta};
 
 	// Check if a config was found
 	if (config.width == 0 || config.height == 0)
 		throw std::runtime_error("No display config for this device was found!");
 
 	Context ctx {config, meta};
-	spdlog::info("Connected to device {:04X}:{:04X}", device.vendor(), device.product());
+	spdlog::info("Connected to device {:04X}:{:04X}", device.vendor_id, device.product_id);
 
 	ipts::Parser parser {};
 	parser.on_stylus = [&](const auto &data) { iptsd_stylus_input(ctx, data); };
 	parser.on_heatmap = [&](const auto &data) { iptsd_touch_input(ctx, data); };
 	parser.on_dft = [&](const auto &dft, auto &stylus) { iptsd_dft_input(ctx, dft, stylus); };
 
-	// Get the buffer size from the HID descriptor
-	std::size_t buffer_size = device.buffer_size();
-	std::vector<u8> buffer(buffer_size);
-
 	// Count errors, if we receive 50 continuous errors, chances are pretty good that
 	// something is broken beyond repair and the program should exit.
 	i32 errors = 0;
-
-	// Enable multitouch mode
-	device.set_mode(true);
-
 	while (!should_exit) {
-		if (errors >= 50) {
-			spdlog::error("Encountered 50 continuous errors, aborting...");
+		if (errors >= 10) {
+			spdlog::error("Encountered 10 continuous errors, aborting...");
 			break;
 		}
 
 		try {
-			ssize_t size = device.read(buffer);
+            gsl::span<u8> buffer = device.read();
 
-			// Does this report contain touch data?
-			if (!device.is_touch_data(buffer[0]))
-				continue;
+//			// Does this report contain touch data?
+//			if (!device.is_touch_data(buffer[0]))
+//				continue;
 
-			parser.parse(gsl::span<u8>(buffer.data(), size));
+			parser.parse(buffer);
 		} catch (std::exception &e) {
 			spdlog::warn(e.what());
 			errors++;
@@ -115,15 +97,7 @@ static int main(gsl::span<char *> args)
 		errors = 0;
 	}
 
-	spdlog::info("Stopping");
-
-	try {
-		// Disable multitouch mode
-		device.set_mode(false);
-	} catch (std::exception &e) {
-		spdlog::error(e.what());
-	}
-
+    spdlog::info("Stopping");
 	// If iptsd was stopped from outside, return no error
 	if (!should_exit)
 		return EXIT_FAILURE;
@@ -138,7 +112,7 @@ int main(int argc, char **argv)
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 
 	try {
-		return iptsd::daemon::main(gsl::span<char *>(argv, argc));
+		return iptsd::daemon::start();
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

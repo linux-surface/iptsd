@@ -9,8 +9,6 @@
 #include <ipts/parser.hpp>
 #include <ipts/protocol.hpp>
 
-#include <linux/input-event-codes.h>
-#include <linux/input.h>
 #include <vector>
 
 namespace iptsd::daemon {
@@ -96,7 +94,7 @@ static bool check_lift(const Context &ctx, const contacts::Contact &contact)
 
 static void lift_multi(const TouchDevice &dev)
 {
-	dev.emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
+//	dev.emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
 }
 
 static void emit_multi(const TouchDevice &dev, const contacts::Contact &contact)
@@ -109,18 +107,18 @@ static void emit_multi(const TouchDevice &dev, const contacts::Contact &contact)
 	i32 major = gsl::narrow<i32>(std::round(contact.major * IPTS_DIAGONAL));
 	i32 minor = gsl::narrow<i32>(std::round(contact.minor * IPTS_DIAGONAL));
 
-	dev.emit(EV_ABS, ABS_MT_TRACKING_ID, index);
-	dev.emit(EV_ABS, ABS_MT_POSITION_X, x);
-	dev.emit(EV_ABS, ABS_MT_POSITION_Y, y);
-
-	dev.emit(EV_ABS, ABS_MT_ORIENTATION, angle);
-	dev.emit(EV_ABS, ABS_MT_TOUCH_MAJOR, major);
-	dev.emit(EV_ABS, ABS_MT_TOUCH_MINOR, minor);
+//	dev.emit(EV_ABS, ABS_MT_TRACKING_ID, index);
+//	dev.emit(EV_ABS, ABS_MT_POSITION_X, x);
+//	dev.emit(EV_ABS, ABS_MT_POSITION_Y, y);
+//
+//	dev.emit(EV_ABS, ABS_MT_ORIENTATION, angle);
+//	dev.emit(EV_ABS, ABS_MT_TOUCH_MAJOR, major);
+//	dev.emit(EV_ABS, ABS_MT_TOUCH_MINOR, minor);
 }
 
 static void lift_single(const TouchDevice &dev)
 {
-	dev.emit(EV_KEY, BTN_TOUCH, 0);
+//	dev.emit(EV_KEY, BTN_TOUCH, 0);
 }
 
 static void emit_single(const TouchDevice &dev, const contacts::Contact &contact)
@@ -128,9 +126,9 @@ static void emit_single(const TouchDevice &dev, const contacts::Contact &contact
 	i32 x = gsl::narrow<i32>(std::round(contact.x * IPTS_MAX_X));
 	i32 y = gsl::narrow<i32>(std::round(contact.y * IPTS_MAX_Y));
 
-	dev.emit(EV_KEY, BTN_TOUCH, 1);
-	dev.emit(EV_ABS, ABS_X, x);
-	dev.emit(EV_ABS, ABS_Y, y);
+//	dev.emit(EV_KEY, BTN_TOUCH, 1);
+//	dev.emit(EV_ABS, ABS_X, x);
+//	dev.emit(EV_ABS, ABS_Y, y);
 }
 
 static void handle_single(const Context &ctx, const std::vector<contacts::Contact> &contacts)
@@ -139,17 +137,17 @@ static void handle_single(const Context &ctx, const std::vector<contacts::Contac
 	bool blocked = check_blocked(ctx, contacts);
 
 	for (const auto &contact : contacts) {
-		if (contact.active && !contact.stable && ctx.config.touch_check_stability)
-			return;
-
-		if (check_lift(ctx, contact) || blocked)
-			continue;
-
-		emit_single(touch, contact);
-		return;
+//		if (contact.active && !contact.stable && ctx.config.touch_check_stability)
+//			return;
+//
+//		if (check_lift(ctx, contact) || blocked)
+//			continue;
+//
+//		emit_single(touch, contact);
+//		return;
 	}
 
-	lift_single(touch);
+//	lift_single(touch);
 }
 
 static void handle_multi(const Context &ctx, const std::vector<contacts::Contact> &contacts)
@@ -158,16 +156,16 @@ static void handle_multi(const Context &ctx, const std::vector<contacts::Contact
 	bool blocked = check_blocked(ctx, contacts);
 
 	for (const auto &contact : contacts) {
-		touch.emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(contact.index));
-
-		if (contact.active && !contact.stable && ctx.config.touch_check_stability)
-			continue;
-
-		if (check_lift(ctx, contact) || blocked) {
-			lift_multi(touch);
-		} else {
-			emit_multi(touch, contact);
-		}
+//		touch.emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(contact.index));
+//
+//		if (contact.active && !contact.stable && ctx.config.touch_check_stability)
+//			continue;
+//
+//		if (check_lift(ctx, contact) || blocked) {
+//			lift_multi(touch);
+//		} else {
+//			emit_multi(touch, contact);
+//		}
 	}
 }
 
@@ -196,8 +194,6 @@ void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data)
 
 	handle_multi(ctx, contacts);
 	handle_single(ctx, contacts);
-
-	touch.emit(EV_SYN, SYN_REPORT, 0);
 }
 
 } // namespace iptsd::daemon

@@ -32,7 +32,7 @@ ContactFinder::ContactFinder(Config config)
 
 		// Make sure that the contacts in last have proper indices set,
 		// to avoid copying the index 0 to all contacts.
-		for (std::size_t j = 0; j < frame.size(); j++) {
+		for (u32 j = 0; j < frame.size(); j++) {
 			frame[j].index = j;
 			frame[j].active = false;
 		}
@@ -94,9 +94,9 @@ bool ContactFinder::check_dist(const Contact &from, const Contact &to)
 const std::vector<Contact> &ContactFinder::search()
 {
 	const std::vector<Blob> &blobs = this->detector->search();
-	std::size_t count = std::min(blobs.size(), static_cast<u64>(this->config.max_contacts));
+	std::size_t count = std::min<std::size_t>(blobs.size(), this->config.max_contacts);
 
-	for (std::size_t i = 0; i < count; i++) {
+	for (u32 i = 0; i < count; i++) {
 		const auto &blob = blobs[i];
 		auto &contact = this->frames[0][i];
 
@@ -142,7 +142,7 @@ const std::vector<Contact> &ContactFinder::search()
 		contact.active = true;
 	}
 
-	for (std::size_t i = count; i < this->config.max_contacts; i++) {
+	for (u32 i = (u32)count; i < this->config.max_contacts; i++) {
 		auto &contact = this->frames[0][i];
 
 		contact.index = i;
@@ -207,7 +207,7 @@ void ContactFinder::track()
 	// found an index for all inputs.
 	for (u32 k = 0; k < this->config.max_contacts; k++) {
 		auto it = std::min_element(this->distances.begin(), this->distances.end());
-		u32 idx = std::distance(this->distances.begin(), it);
+		u32 idx = (u32)std::distance(this->distances.begin(), it);
 
 		u32 i = idx / this->config.max_contacts;
 		u32 j = idx % this->config.max_contacts;

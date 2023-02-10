@@ -12,7 +12,6 @@
 
 #include <cmath>
 #include <gsl/gsl>
-#include <linux/input-event-codes.h>
 #include <tuple>
 
 namespace iptsd::daemon {
@@ -65,20 +64,21 @@ void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
 
 	const auto [tx, ty] = get_tilt(data.altitude, data.azimuth);
 
-	stylus.emit(EV_KEY, BTN_TOUCH, data.contact);
-	stylus.emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
-	stylus.emit(EV_KEY, BTN_TOOL_RUBBER, btn_rubber);
-	stylus.emit(EV_KEY, BTN_STYLUS, data.button);
-
-	stylus.emit(EV_ABS, ABS_X, data.x);
-	stylus.emit(EV_ABS, ABS_Y, data.y);
-	stylus.emit(EV_ABS, ABS_PRESSURE, data.pressure);
-	stylus.emit(EV_ABS, ABS_MISC, data.timestamp);
-
-	stylus.emit(EV_ABS, ABS_TILT_X, tx);
-	stylus.emit(EV_ABS, ABS_TILT_Y, ty);
-
-	stylus.emit(EV_SYN, SYN_REPORT, 0);
+//TODO: stylus here
+//	stylus.emit(EV_KEY, BTN_TOUCH, data.contact);
+//	stylus.emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
+//	stylus.emit(EV_KEY, BTN_TOOL_RUBBER, btn_rubber);
+//	stylus.emit(EV_KEY, BTN_STYLUS, data.button);
+//
+//	stylus.emit(EV_ABS, ABS_X, data.x);
+//	stylus.emit(EV_ABS, ABS_Y, data.y);
+//	stylus.emit(EV_ABS, ABS_PRESSURE, data.pressure);
+//	stylus.emit(EV_ABS, ABS_MISC, data.timestamp);
+//
+//	stylus.emit(EV_ABS, ABS_TILT_X, tx);
+//	stylus.emit(EV_ABS, ABS_TILT_Y, ty);
+//
+//	stylus.emit(EV_SYN, SYN_REPORT, 0);
 }
 
 } // namespace iptsd::daemon

@@ -1,38 +1,47 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+//
+//  device.hpp
+//  IPTSDaemon
+//
+//  Created by Xiashangning on 2023/2/10.
+//
 
-#ifndef IPTSD_IPTS_DEVICE_HPP
-#define IPTSD_IPTS_DEVICE_HPP
+#ifndef device_hpp
+#define device_hpp
 
-#include "parser.hpp"
-
+#include "IPTSKenerlUserShared.h"
 #include <common/types.hpp>
-#include <hid/device.hpp>
 
 #include <gsl/gsl>
-#include <linux/hidraw.h>
 #include <optional>
-#include <string>
-#include <utility>
-#include <vector>
+#include <IOKit/IOKitLib.h>
 
 namespace iptsd::ipts {
 
-class Device : public hid::Device {
-private:
-	bool is_set_mode(u8 report);
-	u8 get_set_mode();
-	bool is_metadata_report(u8 report);
-	u8 get_metadata_report_id();
-
+class Device {
 public:
-	Device(const std::string &path) : hid::Device(path) {};
-
-	bool is_touch_data(u8 report);
-	std::size_t buffer_size();
-	void set_mode(bool multitouch);
-	std::optional<const Metadata> get_metadata();
+    Device();
+    ~Device();
+    
+    void reset();
+    
+    gsl::span<u8> read();
+    
+    void send_hid_report(IPTSHIDReport &report);
+    
+    IOVirtualAddress input_buffer;
+    bool should_reinit {false};
+    
+    i16 vendor_id  {0};
+    i16 product_id {0};
+    std::optional<IPTSDeviceMetaData> meta_data {std::nullopt};
+private:
+    void connect_to_kernel();
+    void disconnect_from_kernel();
+    
+    io_connect_t connect;
+    io_service_t service;
 };
 
 } // namespace iptsd::ipts
 
-#endif /* IPTSD_IPTS_DEVICE_HPP */
+#endif /* device_hpp */
