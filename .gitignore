@@ -1,33 +1,27 @@
+# Xcode
+#
+# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+
+## Build generated
 build/
-out/
+Build/
+DerivedData/
 
-subprojects/*
-!subprojects/*.wrap
+## Various settings
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
 
-rpm/
-pkg/
-debian/.debhelper/
-debian/debhelper-*
-debian/files
-debian/iptsd.*
-debian/iptsd/
-debian/src/
-obj-x86_64-linux-gnu/
-x86_64-redhat-linux-gnu/
+## Other
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+*.xcuserstate
 
-*.tar
-*.tar.*
-*.buildinfo
-*.changes
-*.deb
-*.dsc
-*.rpm
-
-.*
-compile_commands.json
-
-!.clang-format
-!.clang-tidy
-!.editorconfig
-!.gitignore
-!.github/*
+*.DS_Store

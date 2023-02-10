@@ -1,6 +1,0 @@
-#!/bin/sh
-
-HIDRAW="$(iptsd-find-hidraw)"
-ESCAPED="$(systemd-escape --path "$HIDRAW")"
-
-echo "iptsd@$ESCAPED.service"

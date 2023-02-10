@@ -1,9 +1,0 @@
-[Unit]
-Description=Intel Precise Touch & Stylus Daemon
-Documentation=https://github.com/linux-surface/iptsd
-StopWhenUnneeded=yes
-BindsTo=%i.device
-
-[Service]
-Type=simple
-ExecStart=@bindir@/iptsd /%I

@@ -1,0 +1,621 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2520FAAF2996500F00BBAC23 /* visualization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA4D2996500F00BBAC23 /* visualization.cpp */; };
+		2520FAB02996500F00BBAC23 /* detector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA552996500F00BBAC23 /* detector.cpp */; };
+		2520FAB12996500F00BBAC23 /* detector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA6A2996500F00BBAC23 /* detector.cpp */; };
+		2520FAB22996500F00BBAC23 /* cluster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA6B2996500F00BBAC23 /* cluster.cpp */; };
+		2520FAB32996500F00BBAC23 /* finder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA6E2996500F00BBAC23 /* finder.cpp */; };
+		2520FAB42996500F00BBAC23 /* stylus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA702996500F00BBAC23 /* stylus.cpp */; };
+		2520FAB52996500F00BBAC23 /* dft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA742996500F00BBAC23 /* dft.cpp */; };
+		2520FAB62996500F00BBAC23 /* cone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA782996500F00BBAC23 /* cone.cpp */; };
+		2520FAB72996500F00BBAC23 /* devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7A2996500F00BBAC23 /* devices.cpp */; };
+		2520FAB82996500F00BBAC23 /* touch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7C2996500F00BBAC23 /* touch.cpp */; };
+		2520FAB92996500F00BBAC23 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7D2996500F00BBAC23 /* main.cpp */; };
+		2520FABA2996500F00BBAC23 /* uinput-device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7E2996500F00BBAC23 /* uinput-device.cpp */; };
+		2520FABB2996500F00BBAC23 /* plot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA802996500F00BBAC23 /* plot.cpp */; };
+		2520FABC2996500F00BBAC23 /* perf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA812996500F00BBAC23 /* perf.cpp */; };
+		2520FABD2996500F00BBAC23 /* show.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA832996500F00BBAC23 /* show.cpp */; };
+		2520FABE2996500F00BBAC23 /* calibrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA842996500F00BBAC23 /* calibrate.cpp */; };
+		2520FABF2996500F00BBAC23 /* dump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA852996500F00BBAC23 /* dump.cpp */; };
+		2520FAC02996500F00BBAC23 /* descriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA872996500F00BBAC23 /* descriptor.cpp */; };
+		2520FAC12996500F00BBAC23 /* device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA882996500F00BBAC23 /* device.cpp */; };
+		2520FAC22996500F00BBAC23 /* hidrd.c in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA8F2996500F00BBAC23 /* hidrd.c */; };
+		2520FAC32996500F00BBAC23 /* device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAA62996500F00BBAC23 /* device.cpp */; };
+		2520FAC42996500F00BBAC23 /* reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAA82996500F00BBAC23 /* reader.cpp */; };
+		2520FAC52996500F00BBAC23 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAAA2996500F00BBAC23 /* parser.cpp */; };
+		2520FAC62996500F00BBAC23 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAAE2996500F00BBAC23 /* config.cpp */; };
+		2520FAC92996510000BBAC23 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2520FAC82996510000BBAC23 /* IOKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2520F9C229964EA300BBAC23 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		2520F9C429964EA300BBAC23 /* IPTSDaemon */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = IPTSDaemon; sourceTree = BUILT_PRODUCTS_DIR; };
+		2520F9CE29964F6D00BBAC23 /* IPTSDaemon.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IPTSDaemon.entitlements; sourceTree = "<group>"; };
+		2520FA4D2996500F00BBAC23 /* visualization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = visualization.cpp; sourceTree = "<group>"; };
+		2520FA4F2996500F00BBAC23 /* cmap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cmap.hpp; sourceTree = "<group>"; };
+		2520FA502996500F00BBAC23 /* color.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = color.hpp; sourceTree = "<group>"; };
+		2520FA512996500F00BBAC23 /* visualization.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = visualization.hpp; sourceTree = "<group>"; };
+		2520FA532996500F00BBAC23 /* neutral.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = neutral.hpp; sourceTree = "<group>"; };
+		2520FA552996500F00BBAC23 /* detector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = detector.cpp; sourceTree = "<group>"; };
+		2520FA572996500F00BBAC23 /* border.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = border.hpp; sourceTree = "<group>"; };
+		2520FA582996500F00BBAC23 /* distance_transform.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = distance_transform.hpp; sourceTree = "<group>"; };
+		2520FA592996500F00BBAC23 /* structure_tensor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = structure_tensor.hpp; sourceTree = "<group>"; };
+		2520FA5A2996500F00BBAC23 /* convolution.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = convolution.hpp; sourceTree = "<group>"; };
+		2520FA5B2996500F00BBAC23 /* local_maxima.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = local_maxima.hpp; sourceTree = "<group>"; };
+		2520FA5C2996500F00BBAC23 /* gaussian_fitting.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gaussian_fitting.hpp; sourceTree = "<group>"; };
+		2520FA5D2996500F00BBAC23 /* label.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = label.hpp; sourceTree = "<group>"; };
+		2520FA5E2996500F00BBAC23 /* hessian.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = hessian.hpp; sourceTree = "<group>"; };
+		2520FA602996500F00BBAC23 /* hessian.zero.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = hessian.zero.hpp; sourceTree = "<group>"; };
+		2520FA612996500F00BBAC23 /* convolution.3x3-extend.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = "convolution.3x3-extend.hpp"; sourceTree = "<group>"; };
+		2520FA622996500F00BBAC23 /* convolution.5x5-extend.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = "convolution.5x5-extend.hpp"; sourceTree = "<group>"; };
+		2520FA632996500F00BBAC23 /* structure_tensor.3x3-zero.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = "structure_tensor.3x3-zero.hpp"; sourceTree = "<group>"; };
+		2520FA652996500F00BBAC23 /* detector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = detector.hpp; sourceTree = "<group>"; };
+		2520FA662996500F00BBAC23 /* finder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = finder.hpp; sourceTree = "<group>"; };
+		2520FA672996500F00BBAC23 /* interface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = interface.hpp; sourceTree = "<group>"; };
+		2520FA692996500F00BBAC23 /* cluster.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cluster.hpp; sourceTree = "<group>"; };
+		2520FA6A2996500F00BBAC23 /* detector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = detector.cpp; sourceTree = "<group>"; };
+		2520FA6B2996500F00BBAC23 /* cluster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cluster.cpp; sourceTree = "<group>"; };
+		2520FA6C2996500F00BBAC23 /* detector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = detector.hpp; sourceTree = "<group>"; };
+		2520FA6E2996500F00BBAC23 /* finder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = finder.cpp; sourceTree = "<group>"; };
+		2520FA702996500F00BBAC23 /* stylus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stylus.cpp; sourceTree = "<group>"; };
+		2520FA712996500F00BBAC23 /* touch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = touch.hpp; sourceTree = "<group>"; };
+		2520FA722996500F00BBAC23 /* uinput-device.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = "uinput-device.hpp"; sourceTree = "<group>"; };
+		2520FA732996500F00BBAC23 /* cone.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cone.hpp; sourceTree = "<group>"; };
+		2520FA742996500F00BBAC23 /* dft.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dft.cpp; sourceTree = "<group>"; };
+		2520FA752996500F00BBAC23 /* devices.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = devices.hpp; sourceTree = "<group>"; };
+		2520FA772996500F00BBAC23 /* context.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = context.hpp; sourceTree = "<group>"; };
+		2520FA782996500F00BBAC23 /* cone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cone.cpp; sourceTree = "<group>"; };
+		2520FA792996500F00BBAC23 /* dft.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dft.hpp; sourceTree = "<group>"; };
+		2520FA7A2996500F00BBAC23 /* devices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = devices.cpp; sourceTree = "<group>"; };
+		2520FA7B2996500F00BBAC23 /* stylus.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stylus.hpp; sourceTree = "<group>"; };
+		2520FA7C2996500F00BBAC23 /* touch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = touch.cpp; sourceTree = "<group>"; };
+		2520FA7D2996500F00BBAC23 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		2520FA7E2996500F00BBAC23 /* uinput-device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "uinput-device.cpp"; sourceTree = "<group>"; };
+		2520FA802996500F00BBAC23 /* plot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plot.cpp; sourceTree = "<group>"; };
+		2520FA812996500F00BBAC23 /* perf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = perf.cpp; sourceTree = "<group>"; };
+		2520FA832996500F00BBAC23 /* show.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = show.cpp; sourceTree = "<group>"; };
+		2520FA842996500F00BBAC23 /* calibrate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = calibrate.cpp; sourceTree = "<group>"; };
+		2520FA852996500F00BBAC23 /* dump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dump.cpp; sourceTree = "<group>"; };
+		2520FA872996500F00BBAC23 /* descriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = descriptor.cpp; sourceTree = "<group>"; };
+		2520FA882996500F00BBAC23 /* device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = device.cpp; sourceTree = "<group>"; };
+		2520FA8A2996500F00BBAC23 /* device.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = device.hpp; sourceTree = "<group>"; };
+		2520FA8B2996500F00BBAC23 /* descriptor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = descriptor.hpp; sourceTree = "<group>"; };
+		2520FA8D2996500F00BBAC23 /* hidrd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hidrd.h; sourceTree = "<group>"; };
+		2520FA8E2996500F00BBAC23 /* meson.build */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = meson.build; sourceTree = "<group>"; };
+		2520FA8F2996500F00BBAC23 /* hidrd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hidrd.c; sourceTree = "<group>"; };
+		2520FA912996500F00BBAC23 /* ops.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ops.hpp; sourceTree = "<group>"; };
+		2520FA922996500F00BBAC23 /* image.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = image.hpp; sourceTree = "<group>"; };
+		2520FA932996500F00BBAC23 /* kernel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = kernel.hpp; sourceTree = "<group>"; };
+		2520FA952996500F00BBAC23 /* access.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = access.hpp; sourceTree = "<group>"; };
+		2520FA962996500F00BBAC23 /* cwrap.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cwrap.hpp; sourceTree = "<group>"; };
+		2520FA972996500F00BBAC23 /* signal.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = signal.hpp; sourceTree = "<group>"; };
+		2520FA982996500F00BBAC23 /* cerror.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cerror.hpp; sourceTree = "<group>"; };
+		2520FA992996500F00BBAC23 /* types.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = types.hpp; sourceTree = "<group>"; };
+		2520FA9B2996500F00BBAC23 /* vec6.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = vec6.hpp; sourceTree = "<group>"; };
+		2520FA9C2996500F00BBAC23 /* vec2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = vec2.hpp; sourceTree = "<group>"; };
+		2520FA9D2996500F00BBAC23 /* sle6.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = sle6.hpp; sourceTree = "<group>"; };
+		2520FA9E2996500F00BBAC23 /* mat6.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mat6.hpp; sourceTree = "<group>"; };
+		2520FA9F2996500F00BBAC23 /* mat2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = mat2.hpp; sourceTree = "<group>"; };
+		2520FAA02996500F00BBAC23 /* poly2.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = poly2.hpp; sourceTree = "<group>"; };
+		2520FAA12996500F00BBAC23 /* num.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = num.hpp; sourceTree = "<group>"; };
+		2520FAA32996500F00BBAC23 /* protocol.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = protocol.hpp; sourceTree = "<group>"; };
+		2520FAA42996500F00BBAC23 /* parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = parser.hpp; sourceTree = "<group>"; };
+		2520FAA52996500F00BBAC23 /* reader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reader.hpp; sourceTree = "<group>"; };
+		2520FAA62996500F00BBAC23 /* device.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = device.cpp; sourceTree = "<group>"; };
+		2520FAA82996500F00BBAC23 /* reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reader.cpp; sourceTree = "<group>"; };
+		2520FAA92996500F00BBAC23 /* device.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = device.hpp; sourceTree = "<group>"; };
+		2520FAAA2996500F00BBAC23 /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parser.cpp; sourceTree = "<group>"; };
+		2520FAAC2996500F00BBAC23 /* config.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = config.hpp; sourceTree = "<group>"; };
+		2520FAAE2996500F00BBAC23 /* config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = config.cpp; sourceTree = "<group>"; };
+		2520FAC82996510000BBAC23 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2520F9C129964EA300BBAC23 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2520FAC92996510000BBAC23 /* IOKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2520F9BB29964EA300BBAC23 = {
+			isa = PBXGroup;
+			children = (
+				2520F9C629964EA300BBAC23 /* IPTSDaemon */,
+				2520F9C529964EA300BBAC23 /* Products */,
+				2520FAC72996510000BBAC23 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		2520F9C529964EA300BBAC23 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2520F9C429964EA300BBAC23 /* IPTSDaemon */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2520F9C629964EA300BBAC23 /* IPTSDaemon */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA942996500F00BBAC23 /* common */,
+				2520FAAB2996500F00BBAC23 /* config */,
+				2520FA522996500F00BBAC23 /* contacts */,
+				2520FA902996500F00BBAC23 /* container */,
+				2520FA6F2996500F00BBAC23 /* daemon */,
+				2520FA7F2996500F00BBAC23 /* debug */,
+				2520FA4C2996500F00BBAC23 /* gfx */,
+				2520FA862996500F00BBAC23 /* hid */,
+				2520FAA22996500F00BBAC23 /* ipts */,
+				2520FA9A2996500F00BBAC23 /* math */,
+				2520F9CE29964F6D00BBAC23 /* IPTSDaemon.entitlements */,
+			);
+			path = IPTSDaemon;
+			sourceTree = "<group>";
+		};
+		2520FA4C2996500F00BBAC23 /* gfx */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA4D2996500F00BBAC23 /* visualization.cpp */,
+				2520FA4F2996500F00BBAC23 /* cmap.hpp */,
+				2520FA502996500F00BBAC23 /* color.hpp */,
+				2520FA512996500F00BBAC23 /* visualization.hpp */,
+			);
+			path = gfx;
+			sourceTree = "<group>";
+		};
+		2520FA522996500F00BBAC23 /* contacts */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA542996500F00BBAC23 /* advanced */,
+				2520FA682996500F00BBAC23 /* basic */,
+				2520FA6E2996500F00BBAC23 /* finder.cpp */,
+				2520FA662996500F00BBAC23 /* finder.hpp */,
+				2520FA672996500F00BBAC23 /* interface.hpp */,
+				2520FA532996500F00BBAC23 /* neutral.hpp */,
+			);
+			path = contacts;
+			sourceTree = "<group>";
+		};
+		2520FA542996500F00BBAC23 /* advanced */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA562996500F00BBAC23 /* algorithm */,
+				2520FA552996500F00BBAC23 /* detector.cpp */,
+				2520FA652996500F00BBAC23 /* detector.hpp */,
+			);
+			path = advanced;
+			sourceTree = "<group>";
+		};
+		2520FA562996500F00BBAC23 /* algorithm */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA572996500F00BBAC23 /* border.hpp */,
+				2520FA582996500F00BBAC23 /* distance_transform.hpp */,
+				2520FA592996500F00BBAC23 /* structure_tensor.hpp */,
+				2520FA5A2996500F00BBAC23 /* convolution.hpp */,
+				2520FA5B2996500F00BBAC23 /* local_maxima.hpp */,
+				2520FA5C2996500F00BBAC23 /* gaussian_fitting.hpp */,
+				2520FA5D2996500F00BBAC23 /* label.hpp */,
+				2520FA5E2996500F00BBAC23 /* hessian.hpp */,
+				2520FA5F2996500F00BBAC23 /* opt */,
+			);
+			path = algorithm;
+			sourceTree = "<group>";
+		};
+		2520FA5F2996500F00BBAC23 /* opt */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA602996500F00BBAC23 /* hessian.zero.hpp */,
+				2520FA612996500F00BBAC23 /* convolution.3x3-extend.hpp */,
+				2520FA622996500F00BBAC23 /* convolution.5x5-extend.hpp */,
+				2520FA632996500F00BBAC23 /* structure_tensor.3x3-zero.hpp */,
+			);
+			path = opt;
+			sourceTree = "<group>";
+		};
+		2520FA682996500F00BBAC23 /* basic */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA6B2996500F00BBAC23 /* cluster.cpp */,
+				2520FA692996500F00BBAC23 /* cluster.hpp */,
+				2520FA6A2996500F00BBAC23 /* detector.cpp */,
+				2520FA6C2996500F00BBAC23 /* detector.hpp */,
+			);
+			path = basic;
+			sourceTree = "<group>";
+		};
+		2520FA6F2996500F00BBAC23 /* daemon */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA702996500F00BBAC23 /* stylus.cpp */,
+				2520FA712996500F00BBAC23 /* touch.hpp */,
+				2520FA722996500F00BBAC23 /* uinput-device.hpp */,
+				2520FA732996500F00BBAC23 /* cone.hpp */,
+				2520FA742996500F00BBAC23 /* dft.cpp */,
+				2520FA752996500F00BBAC23 /* devices.hpp */,
+				2520FA772996500F00BBAC23 /* context.hpp */,
+				2520FA782996500F00BBAC23 /* cone.cpp */,
+				2520FA792996500F00BBAC23 /* dft.hpp */,
+				2520FA7A2996500F00BBAC23 /* devices.cpp */,
+				2520FA7B2996500F00BBAC23 /* stylus.hpp */,
+				2520FA7C2996500F00BBAC23 /* touch.cpp */,
+				2520FA7D2996500F00BBAC23 /* main.cpp */,
+				2520FA7E2996500F00BBAC23 /* uinput-device.cpp */,
+			);
+			path = daemon;
+			sourceTree = "<group>";
+		};
+		2520FA7F2996500F00BBAC23 /* debug */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA802996500F00BBAC23 /* plot.cpp */,
+				2520FA812996500F00BBAC23 /* perf.cpp */,
+				2520FA832996500F00BBAC23 /* show.cpp */,
+				2520FA842996500F00BBAC23 /* calibrate.cpp */,
+				2520FA852996500F00BBAC23 /* dump.cpp */,
+			);
+			path = debug;
+			sourceTree = "<group>";
+		};
+		2520FA862996500F00BBAC23 /* hid */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA872996500F00BBAC23 /* descriptor.cpp */,
+				2520FA882996500F00BBAC23 /* device.cpp */,
+				2520FA8A2996500F00BBAC23 /* device.hpp */,
+				2520FA8B2996500F00BBAC23 /* descriptor.hpp */,
+				2520FA8C2996500F00BBAC23 /* shim */,
+			);
+			path = hid;
+			sourceTree = "<group>";
+		};
+		2520FA8C2996500F00BBAC23 /* shim */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA8D2996500F00BBAC23 /* hidrd.h */,
+				2520FA8E2996500F00BBAC23 /* meson.build */,
+				2520FA8F2996500F00BBAC23 /* hidrd.c */,
+			);
+			path = shim;
+			sourceTree = "<group>";
+		};
+		2520FA902996500F00BBAC23 /* container */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA912996500F00BBAC23 /* ops.hpp */,
+				2520FA922996500F00BBAC23 /* image.hpp */,
+				2520FA932996500F00BBAC23 /* kernel.hpp */,
+			);
+			path = container;
+			sourceTree = "<group>";
+		};
+		2520FA942996500F00BBAC23 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA952996500F00BBAC23 /* access.hpp */,
+				2520FA962996500F00BBAC23 /* cwrap.hpp */,
+				2520FA972996500F00BBAC23 /* signal.hpp */,
+				2520FA982996500F00BBAC23 /* cerror.hpp */,
+				2520FA992996500F00BBAC23 /* types.hpp */,
+			);
+			path = common;
+			sourceTree = "<group>";
+		};
+		2520FA9A2996500F00BBAC23 /* math */ = {
+			isa = PBXGroup;
+			children = (
+				2520FA9B2996500F00BBAC23 /* vec6.hpp */,
+				2520FA9C2996500F00BBAC23 /* vec2.hpp */,
+				2520FA9D2996500F00BBAC23 /* sle6.hpp */,
+				2520FA9E2996500F00BBAC23 /* mat6.hpp */,
+				2520FA9F2996500F00BBAC23 /* mat2.hpp */,
+				2520FAA02996500F00BBAC23 /* poly2.hpp */,
+				2520FAA12996500F00BBAC23 /* num.hpp */,
+			);
+			path = math;
+			sourceTree = "<group>";
+		};
+		2520FAA22996500F00BBAC23 /* ipts */ = {
+			isa = PBXGroup;
+			children = (
+				2520FAA32996500F00BBAC23 /* protocol.hpp */,
+				2520FAA42996500F00BBAC23 /* parser.hpp */,
+				2520FAA52996500F00BBAC23 /* reader.hpp */,
+				2520FAA62996500F00BBAC23 /* device.cpp */,
+				2520FAA82996500F00BBAC23 /* reader.cpp */,
+				2520FAA92996500F00BBAC23 /* device.hpp */,
+				2520FAAA2996500F00BBAC23 /* parser.cpp */,
+			);
+			path = ipts;
+			sourceTree = "<group>";
+		};
+		2520FAAB2996500F00BBAC23 /* config */ = {
+			isa = PBXGroup;
+			children = (
+				2520FAAC2996500F00BBAC23 /* config.hpp */,
+				2520FAAE2996500F00BBAC23 /* config.cpp */,
+			);
+			path = config;
+			sourceTree = "<group>";
+		};
+		2520FAC72996510000BBAC23 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2520FAC82996510000BBAC23 /* IOKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2520F9C329964EA300BBAC23 /* IPTSDaemon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2520F9CB29964EA300BBAC23 /* Build configuration list for PBXNativeTarget "IPTSDaemon" */;
+			buildPhases = (
+				2520F9C029964EA300BBAC23 /* Sources */,
+				2520F9C129964EA300BBAC23 /* Frameworks */,
+				2520F9C229964EA300BBAC23 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IPTSDaemon;
+			productName = IPTSDaemon;
+			productReference = 2520F9C429964EA300BBAC23 /* IPTSDaemon */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2520F9BC29964EA300BBAC23 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					2520F9C329964EA300BBAC23 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+				};
+			};
+			buildConfigurationList = 2520F9BF29964EA300BBAC23 /* Build configuration list for PBXProject "IPTSDaemon" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2520F9BB29964EA300BBAC23;
+			productRefGroup = 2520F9C529964EA300BBAC23 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2520F9C329964EA300BBAC23 /* IPTSDaemon */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2520F9C029964EA300BBAC23 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2520FAC42996500F00BBAC23 /* reader.cpp in Sources */,
+				2520FAAF2996500F00BBAC23 /* visualization.cpp in Sources */,
+				2520FABF2996500F00BBAC23 /* dump.cpp in Sources */,
+				2520FABB2996500F00BBAC23 /* plot.cpp in Sources */,
+				2520FAB82996500F00BBAC23 /* touch.cpp in Sources */,
+				2520FAB42996500F00BBAC23 /* stylus.cpp in Sources */,
+				2520FAB12996500F00BBAC23 /* detector.cpp in Sources */,
+				2520FABE2996500F00BBAC23 /* calibrate.cpp in Sources */,
+				2520FAB92996500F00BBAC23 /* main.cpp in Sources */,
+				2520FAB72996500F00BBAC23 /* devices.cpp in Sources */,
+				2520FAB52996500F00BBAC23 /* dft.cpp in Sources */,
+				2520FAC12996500F00BBAC23 /* device.cpp in Sources */,
+				2520FAC52996500F00BBAC23 /* parser.cpp in Sources */,
+				2520FAC22996500F00BBAC23 /* hidrd.c in Sources */,
+				2520FABD2996500F00BBAC23 /* show.cpp in Sources */,
+				2520FABC2996500F00BBAC23 /* perf.cpp in Sources */,
+				2520FAB32996500F00BBAC23 /* finder.cpp in Sources */,
+				2520FAC62996500F00BBAC23 /* config.cpp in Sources */,
+				2520FAC32996500F00BBAC23 /* device.cpp in Sources */,
+				2520FABA2996500F00BBAC23 /* uinput-device.cpp in Sources */,
+				2520FAC02996500F00BBAC23 /* descriptor.cpp in Sources */,
+				2520FAB22996500F00BBAC23 /* cluster.cpp in Sources */,
+				2520FAB62996500F00BBAC23 /* cone.cpp in Sources */,
+				2520FAB02996500F00BBAC23 /* detector.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2520F9C929964EA300BBAC23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2520F9CA29964EA300BBAC23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		2520F9CC29964EA300BBAC23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = IPTSDaemon/IPTSDaemon.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = K8RXBXZGN4;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xavier;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2520F9CD29964EA300BBAC23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = IPTSDaemon/IPTSDaemon.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = K8RXBXZGN4;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xavier;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2520F9BF29964EA300BBAC23 /* Build configuration list for PBXProject "IPTSDaemon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2520F9C929964EA300BBAC23 /* Debug */,
+				2520F9CA29964EA300BBAC23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2520F9CB29964EA300BBAC23 /* Build configuration list for PBXNativeTarget "IPTSDaemon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2520F9CC29964EA300BBAC23 /* Debug */,
+				2520F9CD29964EA300BBAC23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2520F9BC29964EA300BBAC23 /* Project object */;
+}

@@ -1,78 +1,55 @@
-# IPTSD
+# IPTSDaemon
 
-This is the userspace touch processing daemon for Microsoft Surface devices using Intel Precise Touch technology.
+This is the user space IPTS daemon for Surface touch screen process
 
-The daemon will read incoming HID reports containing raw capacitive touch data, and create standard input events from it using uinput devices.
+It is supposed to be used with `BigSurface.kext` to enable touch screen & stylus support on macOS.
 
-The following kernel drivers are supported:
- * ipts
- * ithc
- * spi-hid
+Raw touching data is sent by the kernel driver to be processed in user space then touch & stylus hid events are sent back to the kernel.
 
-At the moment, only systemd based distributions are properly supported. The daemon itself does not depend on the service manager in any ways, but it needs to know which hidraw device corresponds to the touchscreen. The easiest way to do this is with udev and a parameterized service file, which only systemd seems to support.
+The code is ported from linux-surface/iptsd and quo/iptsd
 
-### Installing
+**Warning, the processing algorithm is NOT optimised enough yet and it consumes around 10% cpu usage when fingers are detected, 4% or less when stylus is detected**
 
-IPTSD is included in the linux-surface repository. This is the recommended way of installing it.
+Use this under your own consideration! Touching process is very energy consuming.
 
-**Important:** Support on Debian based distributions only goes back to the latest LTS release (Debian 11 and Ubuntu 22.04).
+## Installation Steps
+#### 1. Download the latest release version
 
-If you want to try out changes that are not yet released, GitHub Actions builds Arch Linux, Debian and Fedora packages for every commit. You'll need to be signed-in to Github, then go to https://github.com/linux-surface/iptsd/actions, select the latest successful workflow and download the artifact named `<your distro>-latest`.
+#### 2. Install two `dylib`(`fmt` and `inih`) for IPTSDaemon to run properly.
 
-### Building
+`Homebrew` is recommended to install them:
 
-To build IPTSD from source, you need to install the following dependencies:
+- Install [Homebrew](https://brew.sh)
 
- * A C and a C++ compiler
- * meson
- * ninja
- * CLI11
- * fmt
- * gsl
- * hidrd
- * inih
- * spdlog
+- in `Terminal`, execute `brew install fmt inih`
 
-To build the debugging tools you need to install a few more dependencies. The debugging tools will be enabled automatically when these are detected:
+#### 3. Finally, run the script `install_daemon.sh` in the zip file you just downloaded and all files needed will be copied to desired locations. 
 
- * cairomm
- * SDL2
+Normally there will be no output, indicating success. After installation IPTSDaemon will start automatically at boot.
 
-Most of the dependencies can be downloaded and included automatically by meson, should your distribution not include them.
+If you want to disable touch when palm is detected or stylus is detected or near the stylus, go to config folder and find your device's config, add this:
 
-```bash
-$ git clone https://github.com/linux-surface/iptsd
-$ cd iptsd
-$ meson build
-$ ninja -C build
+```
+[Touch]
+DisableOnPalm = true
+
+[Stylus]
+# disable touch when using stylus
+DisableTouch = true
+# disable touch near the stylus
+Cone = true
 ```
 
-To run iptsd, you need to determine the ID of the hidraw device of your touchscreen:
+### Enable on screen keyboard on login screen
 
-```bash
-$ sudo ./etc/iptsd-find-hidraw
-```
+To enable the on screen keyboard to show up on the login screen you need to change your Accessibility settings in the `System Preferences>Users & Groups>Login Options>Accessibility Options` put a checkbox on the `Accessibility Keyboard`.
 
-You can then run iptsd with the device path as a launch argument:
+### Trouble shooting
 
-```bash
-$ sudo ./build/src/daemon/iptsd /dev/hidrawN
-```
+- Make sure you are using the latest version of `BigSurface` and `IPTSDaemon`
 
-Alternatively, you can install the files you just built to the system. After a reboot, iptsd will be automatically started by udev:
+- Check the output of the script, there should NOT be any
 
-```bash
-$ sudo ninja -C build install
-```
+- If touchscreen still fails to function, then run `IPTSDaemon` manually to see what is going wrong
 
-On Fedora (or any other SELinux enabled distribution) you also need to fix the SELinux contexts:
-
-```bash
-$ sudo semanage fcontext -a -t systemd_unit_file_t -s system_u /usr/lib/systemd/system/iptsd@.service
-$ sudo semanage fcontext -a -t usr_t -s system_u '/usr/local/bin/ipts.*'
-
-$ sudo restorecon -vF /usr/lib/systemd/system/iptsd@.service
-$ sudo restorecon -vF /usr/local/bin/ipts*
-```
-
-This is only neccessary when using `ninja install`. When you install one of the packages from GitHub Actions, or build your own package, everything will just work.
+  ​	Then create an issue telling me **what is your device**, attaching your **ioreg** and output of `sudo dmesg | grep -E "SurfaceS|SurfaceH|SurfaceM|IntelP"` (remember to install `DebugEnhancer.kext` on macOS 12 and newer)
