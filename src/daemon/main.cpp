@@ -72,9 +72,20 @@ static int main(gsl::span<char *> args)
 	spdlog::info("Connected to device {:04X}:{:04X}", device.vendor(), device.product());
 
 	ipts::Parser parser {};
-	parser.on_stylus = [&](const auto &data) { iptsd_stylus_input(ctx, data); };
-	parser.on_heatmap = [&](const auto &data) { iptsd_touch_input(ctx, data); };
-	parser.on_dft = [&](const auto &dft, auto &stylus) { iptsd_dft_input(ctx, dft, stylus); };
+
+	if (!config.touch_disable)
+		parser.on_heatmap = [&](const auto &data) { iptsd_touch_input(ctx, data); };
+	else
+		spdlog::warn("Touchscreen is disabled!");
+
+	if (!config.stylus_disable) {
+		parser.on_stylus = [&](const auto &data) { iptsd_stylus_input(ctx, data); };
+		parser.on_dft = [&](const auto &dft, auto &stylus) {
+			iptsd_dft_input(ctx, dft, stylus);
+		};
+	} else {
+		spdlog::warn("Stylus is disabled!");
+	}
 
 	// Get the buffer size from the HID descriptor
 	std::size_t buffer_size = device.buffer_size();

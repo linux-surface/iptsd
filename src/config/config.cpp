@@ -69,6 +69,9 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	if (section == "Config" && name == "Height")
 		config->height = std::stof(value);
 
+	if (section == "Touch" && name == "Disable")
+		config->touch_disable = to_bool(value);
+
 	if (section == "Touch" && name == "CheckCone")
 		config->touch_check_cone = to_bool(value);
 
@@ -126,6 +129,9 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 
 	if (section == "Contacts" && name == "DistanceThreshold")
 		config->contacts_distance_thresh = std::stof(value);
+
+	if (section == "Stylus" && name == "Disable")
+		config->stylus_disable = to_bool(value);
 
 	if (section == "Cone" && name == "Angle")
 		config->cone_angle = std::stof(value);

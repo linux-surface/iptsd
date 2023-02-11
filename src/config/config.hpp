@@ -26,6 +26,7 @@ public:
 	f32 height = 0;
 
 	// [Touch]
+	bool touch_disable = false;
 	bool touch_check_cone = true;
 	bool touch_check_stability = true;
 	bool touch_disable_on_palm = false;
@@ -46,6 +47,9 @@ public:
 	f32 contacts_position_thresh_min = 0.2;
 	f32 contacts_position_thresh_max = 2;
 	f32 contacts_distance_thresh = 1;
+
+	// [Stylus]
+	bool stylus_disable = false;
 
 	// [Cone]
 	f32 cone_angle = 30;
