@@ -125,13 +125,17 @@ const std::vector<Contact> &ContactFinder::search()
 		contact.minor *= 2;
 
 		math::Vec2<f64> v = eigen.v[0].cast<f64>() * s1;
-		f64 angle = (math::num<f64>::pi / 2) - std::atan2(v.x, v.y);
+		f64 angle = std::atan2(v.x, v.y) + (math::num<f64>::pi / 2);
 
-		// Make sure that the angle is always a positive number
+		// It is not possible to say if the contact faces up or down,
+		// so we make sure the angle is between 0° and 180° to be consistent
 		if (angle < 0)
 			angle += math::num<f64>::pi;
-		else if (angle > math::num<f64>::pi)
+		else if (angle >= math::num<f64>::pi)
 			angle -= math::num<f64>::pi;
+
+		if (this->config.invert_x != this->config.invert_y)
+			angle = math::num<f64>::pi - angle;
 
 		contact.angle = angle;
 
