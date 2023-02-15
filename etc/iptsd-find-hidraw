@@ -12,8 +12,12 @@ check_ithc() {
 	check_hid_name "$1" 'Intel Touch Host Controller'
 }
 
+check_spihid() {
+	check_hid_name "$1" 'spi [A-F0-9]{4}:[A-F0-9]{4}'
+}
+
 check_uevent() {
-	check_ipts "$1" || check_ithc "$1"
+	check_ipts "$1" || check_ithc "$1" || check_spihid "$1"
 }
 
 find_devices() {
