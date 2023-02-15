@@ -25,7 +25,8 @@ check_device() {
 }
 
 find_devices() {
-	DEVICES="$(find '/sys/class/hidraw' -mindepth 1 -maxdepth 1)"
+	DEVICES="$(find '/sys/class/hidraw' -type l -print0 | xargs -0 stat -c "%y %n")"
+	DEVICES="$(echo "$DEVICES" | sort | cut -d' ' -f4)"
 
 	for dev in $DEVICES; do
 		check_device "$dev" && echo "$dev"
