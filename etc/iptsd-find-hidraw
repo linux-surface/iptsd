@@ -16,15 +16,19 @@ check_spihid() {
 	check_hid_name "$1" 'spi [A-F0-9]{4}:[A-F0-9]{4}'
 }
 
-check_uevent() {
-	check_ipts "$1" || check_ithc "$1" || check_spihid "$1"
+check_udev() {
+	udevadm info -q property --property==CURRENT_TAGS "$1/device" | grep ':iptsd:'
+}
+
+check_device() {
+	check_udev "$1" || check_ipts "$1" || check_ithc "$1" || check_spihid "$1"
 }
 
 find_devices() {
 	DEVICES="$(find '/sys/class/hidraw' -mindepth 1 -maxdepth 1)"
 
 	for dev in $DEVICES; do
-		check_uevent "$dev" && echo "$dev"
+		check_device "$dev" && echo "$dev"
 	done
 }
 
