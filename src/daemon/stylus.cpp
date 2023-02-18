@@ -42,15 +42,9 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 
 void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
 {
-	StylusDevice &stylus = ctx.devices.get_stylus(data.serial);
+	StylusDevice &stylus = *ctx.devices.stylus;
 
-	if (!stylus.active && data.proximity) {
-		stylus.active = true;
-		ctx.devices.active_styli++;
-	} else if (stylus.active && !data.proximity) {
-		stylus.active = false;
-		ctx.devices.active_styli--;
-	}
+	stylus.active = data.proximity;
 
 	if (data.proximity) {
 		// Convert logical to physical coordinates

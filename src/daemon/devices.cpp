@@ -32,8 +32,8 @@ static i32 res(i32 virt, f64 phys)
 	return gsl::narrow<i32>(std::round(res));
 }
 
-StylusDevice::StylusDevice(const config::Config &conf, u32 serial, std::shared_ptr<Cone> cone)
-	: UinputDevice(), serial(serial), cone(std::move(cone))
+StylusDevice::StylusDevice(const config::Config &conf, std::shared_ptr<Cone> cone)
+	: UinputDevice(), cone(std::move(cone))
 {
 	this->name = "IPTS Stylus";
 	this->vendor = conf.vendor;
@@ -66,8 +66,8 @@ StylusDevice::StylusDevice(const config::Config &conf, u32 serial, std::shared_p
 	this->create();
 }
 
-TouchDevice::TouchDevice(const config::Config &conf)
-	: UinputDevice(), cones {}, finder {conf.contacts()}
+TouchDevice::TouchDevice(const config::Config &conf, std::shared_ptr<Cone> cone)
+	: UinputDevice(), cone {std::move(cone)}, finder {conf.contacts()}
 {
 	this->name = "IPTS Touch";
 	this->vendor = conf.vendor;
@@ -97,39 +97,12 @@ TouchDevice::TouchDevice(const config::Config &conf)
 	this->create();
 }
 
-DeviceManager::DeviceManager(const config::Config &conf) : conf {conf}, touch {conf}
+DeviceManager::DeviceManager(const config::Config &conf) : touch {nullptr}, stylus {nullptr}
 {
-	this->create_stylus(0);
-}
+	auto cone = std::make_shared<Cone>(conf.cone_angle, conf.cone_distance);
 
-StylusDevice &DeviceManager::create_stylus(u32 serial)
-{
-	std::shared_ptr<Cone> cone = std::make_shared<Cone>(conf.cone_angle, conf.cone_distance);
-	this->touch.cones.push_back(cone);
-	return this->styli.emplace_back(this->conf, serial, std::move(cone));
-}
-
-StylusDevice &DeviceManager::get_stylus(u32 serial)
-{
-	StylusDevice &stylus = this->styli.back();
-
-	if (stylus.serial == serial)
-		return stylus;
-
-	if (stylus.serial == 0) {
-		stylus.serial = serial;
-		return stylus;
-	}
-
-	for (StylusDevice &s : this->styli) {
-		if (s.serial != serial)
-			continue;
-
-		std::swap(s, stylus);
-		return s;
-	}
-
-	return this->create_stylus(serial);
+	this->touch = std::make_unique<TouchDevice>(conf, cone);
+	this->stylus = std::make_unique<StylusDevice>(conf, cone);
 }
 
 } // namespace iptsd::daemon
