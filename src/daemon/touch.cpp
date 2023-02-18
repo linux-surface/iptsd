@@ -30,6 +30,9 @@ static void update_cone(Context &ctx, const contacts::Contact &contact)
 {
 	TouchDevice &touch = *ctx.devices.touch;
 
+	if (contact.valid)
+		return;
+
 	// Convert relative to physical coordinates
 	f64 x = contact.x * ctx.config.width;
 	f64 y = contact.y * ctx.config.height;
