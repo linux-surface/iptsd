@@ -30,12 +30,12 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		2520F9C229964EA300BBAC23 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		25526E4C2996D1A300F61021 /* Embed Libraries */ = {
 			isa = PBXCopyFilesBuildPhase;

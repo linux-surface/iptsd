@@ -62,11 +62,32 @@ static int start()
 	spdlog::info("Connected to device {:04X}:{:04X}", device.vendor_id, device.product_id);
 
 	ipts::Parser parser {};
-	parser.on_stylus = [&](const auto &data) { iptsd_stylus_input(ctx, data); };
-	parser.on_heatmap = [&](const auto &data) { iptsd_touch_input(ctx, data); };
-	parser.on_dft = [&](const auto &dft, auto &stylus) { iptsd_dft_input(ctx, dft, stylus); };
+    parser.on_dft = [&](const auto &dft, auto &stylus) {
+        device.process_end();
+        
+        iptsd_dft_input(ctx, dft, stylus);
+    };
+	parser.on_stylus = [&](const auto &data) {
+        device.process_end();
+        
+        IPTSHIDReport report;
+        memset(&report, 0, sizeof(IPTSHIDReport));
+        iptsd_stylus_input(ctx, data, report);
+        device.send_hid_report(report);
+    };
+	parser.on_heatmap = [&](const auto &data) {
+        device.process_end();
+        
+        if (ctx.devices.active_styli > 0 && ctx.config.touch_disable_on_stylus)
+            return;
+        
+        IPTSHIDReport report;
+        memset(&report, 0, sizeof(IPTSHIDReport));
+        if (iptsd_touch_input(ctx, data, report))
+            device.send_hid_report(report);
+        };
 
-	// Count errors, if we receive 50 continuous errors, chances are pretty good that
+	// Count errors, if we receive 10 continuous errors, chances are pretty good that
 	// something is broken beyond repair and the program should exit.
 	i32 errors = 0;
 	while (!should_exit) {
@@ -77,13 +98,17 @@ static int start()
 
 		try {
             gsl::span<u8> buffer = device.read();
-
-//			// Does this report contain touch data?
-//			if (!device.is_touch_data(buffer[0]))
-//				continue;
-
+            
+            device.process_begin();
 			parser.parse(buffer);
-		} catch (std::exception &e) {
+            device.process_end();
+		} catch (std::system_error &e) {
+            if (device.should_reinit)
+                device.reset();
+            errors++;
+            spdlog::warn(e.what());
+            continue;
+        } catch (std::exception &e) {
 			spdlog::warn(e.what());
 			errors++;
 

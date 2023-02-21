@@ -94,7 +94,7 @@ bool ContactFinder::check_dist(const Contact &from, const Contact &to)
 const std::vector<Contact> &ContactFinder::search()
 {
 	const std::vector<Blob> &blobs = this->detector->search();
-	std::size_t count = std::min<std::size_t>(blobs.size(), this->config.max_contacts);
+	u32 count = std::min<u32>(gsl::narrow_cast<u32>(blobs.size()), this->config.max_contacts);
 
 	for (u32 i = 0; i < count; i++) {
 		const auto &blob = blobs[i];
@@ -142,7 +142,7 @@ const std::vector<Contact> &ContactFinder::search()
 		contact.active = true;
 	}
 
-	for (u32 i = (u32)count; i < this->config.max_contacts; i++) {
+	for (u32 i = count; i < this->config.max_contacts; i++) {
 		auto &contact = this->frames[0][i];
 
 		contact.index = i;

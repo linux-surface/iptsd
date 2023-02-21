@@ -39,7 +39,7 @@ static std::tuple<i32, i32> get_tilt(u32 altitude, u32 azimuth)
 	return {tx, ty};
 }
 
-void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
+void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data, IPTSHIDReport &report)
 {
 	StylusDevice &stylus = ctx.devices.get_stylus(data.serial);
 
@@ -58,27 +58,21 @@ void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data)
 
 		stylus.cone->update_position(x, y);
 	}
-
-	bool btn_pen = data.proximity && !data.rubber;
-	bool btn_rubber = data.proximity && data.rubber;
-
 	const auto [tx, ty] = get_tilt(data.altitude, data.azimuth);
 
-//TODO: stylus here
-//	stylus.emit(EV_KEY, BTN_TOUCH, data.contact);
-//	stylus.emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
-//	stylus.emit(EV_KEY, BTN_TOOL_RUBBER, btn_rubber);
-//	stylus.emit(EV_KEY, BTN_STYLUS, data.button);
-//
-//	stylus.emit(EV_ABS, ABS_X, data.x);
-//	stylus.emit(EV_ABS, ABS_Y, data.y);
-//	stylus.emit(EV_ABS, ABS_PRESSURE, data.pressure);
-//	stylus.emit(EV_ABS, ABS_MISC, data.timestamp);
-//
-//	stylus.emit(EV_ABS, ABS_TILT_X, tx);
-//	stylus.emit(EV_ABS, ABS_TILT_Y, ty);
-//
-//	stylus.emit(EV_SYN, SYN_REPORT, 0);
+    report.report_id = IPTS_STYLUS_REPORT_ID;
+    IPTSStylusHIDReport &rpt = report.report.stylus;
+    rpt.in_range = data.proximity;
+    rpt.touch = data.contact;
+    rpt.side_button = data.contact && data.button;
+    rpt.inverted = data.rubber;
+    rpt.eraser = data.rubber;
+    rpt.x = data.x;
+    rpt.y = data.y;
+    rpt.tip_pressure = data.pressure;
+    rpt.x_tilt = tx;
+    rpt.y_tilt = ty;
+    rpt.scan_time = data.timestamp;
 }
 
 } // namespace iptsd::daemon

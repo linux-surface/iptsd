@@ -28,18 +28,22 @@ public:
     
     void send_hid_report(IPTSHIDReport &report);
     
+    void process_begin();
+    void process_end();
+    
     IOVirtualAddress input_buffer;
     bool should_reinit {false};
     
     i16 vendor_id  {0};
     i16 product_id {0};
     std::optional<IPTSDeviceMetaData> meta_data {std::nullopt};
-private:
-    void connect_to_kernel();
-    void disconnect_from_kernel();
-    
+private:    
     io_connect_t connect;
     io_service_t service;
+    bool processing {false};
+    
+    void connect_to_kernel();
+    void disconnect_from_kernel();
 };
 
 } // namespace iptsd::ipts

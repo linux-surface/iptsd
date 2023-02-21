@@ -9,7 +9,7 @@
 
 namespace iptsd::daemon {
 
-void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data);
+void iptsd_stylus_input(Context &ctx, const ipts::StylusData &data, IPTSHIDReport &report);
 
 } /* namespace iptsd::daemon */
 

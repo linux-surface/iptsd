@@ -68,37 +68,37 @@ private:
 	struct ipts_dimensions dim {};
 	struct ipts_timestamp time {};
 
-	void parse_with_header(gsl::span<u8> data, std::size_t header);
+	void parse_with_header(gsl::span<u8> &data, std::size_t header);
 
-	void parse_frame(Reader reader);
-	void parse_raw(Reader reader);
-	void parse_hid(Reader reader);
-	void parse_reports(Reader reader);
+	void parse_frame(Reader &reader);
+	void parse_raw(Reader &reader);
+	void parse_hid(Reader &reader);
+	void parse_reports(Reader &reader);
 
-	void parse_stylus_v1(Reader reader);
-	void parse_stylus_v2(Reader reader);
+	void parse_stylus_v1(Reader &reader);
+	void parse_stylus_v2(Reader &reader);
 
-	void parse_dimensions(Reader reader);
-	void parse_timestamp(Reader reader);
-	void parse_heatmap_data(Reader reader);
-	void parse_heatmap_frame(Reader reader);
-	void parse_dft_window(Reader reader);
+	void parse_dimensions(Reader &reader);
+	void parse_timestamp(Reader &reader);
+	void parse_heatmap_data(Reader &reader);
+	void parse_heatmap_frame(Reader &reader);
+	void parse_dft_window(Reader &reader);
 
 public:
 	std::function<void(const StylusData &)> on_stylus;
 	std::function<void(const Heatmap &)> on_heatmap;
 	std::function<void(const DftWindow &, StylusData &)> on_dft;
 
-	void parse(gsl::span<u8> data);
-	template <class T> void parse(gsl::span<u8> data);
+	void parse(gsl::span<u8> &data);
+	template <class T> void parse(gsl::span<u8> &data);
 };
 
-inline void Parser::parse(gsl::span<u8> data)
+inline void Parser::parse(gsl::span<u8> &data)
 {
 	this->parse_with_header(data, sizeof(struct ipts_header));
 }
 
-template <class T> inline void Parser::parse(gsl::span<u8> data)
+template <class T> inline void Parser::parse(gsl::span<u8> &data)
 {
 	this->parse_with_header(data, sizeof(T));
 }

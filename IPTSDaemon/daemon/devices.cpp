@@ -19,15 +19,6 @@
 
 namespace iptsd::daemon {
 
-static i32 res(i32 virt, f64 phys)
-{
-	// The kernel expects the resolution of an axis in units/mm.
-	// We store width and height in centimeters, so they need to be converted.
-
-	f64 res = virt / (phys * 10.0);
-	return gsl::narrow<i32>(std::round(res));
-}
-
 DeviceManager::DeviceManager(const config::Config &conf) : conf {conf}, touch {conf}
 {
 	this->create_stylus(0);

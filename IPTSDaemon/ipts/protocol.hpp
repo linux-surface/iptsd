@@ -7,19 +7,6 @@
 
 #include <array>
 
-/* clang-format off */
-
-/*
- * If a report contains both of these usages, the report is used to send touch data
- */
-constexpr u8 IPTS_HID_REPORT_USAGE_SCAN_TIME = 0x56;
-constexpr u8 IPTS_HID_REPORT_USAGE_GESTURE_DATA = 0x61;
-
-/*
- * If a feature report contains only this usage, it contains touch/pen metadata.
- */
-constexpr u8 IPTS_HID_REPORT_USAGE_METADATA = 0x63;
-
 constexpr u8 IPTS_RAW_FRAME_TYPE_STYLUS   = 0x6;
 constexpr u8 IPTS_RAW_FRAME_TYPE_HEATMAP  = 0x8;
 
@@ -72,6 +59,8 @@ constexpr u8  IPTS_MAX_CONTACTS = 16;
  * sqrt(IPTS_MAX_X² + IPTS_MAX_Y²)
  */
 constexpr u32 IPTS_DIAGONAL = 12000;
+
+constexpr u16 IPTS_TOUCH_MAX_VALUE = 1 << 15;
 
 /* clang-format on */
 

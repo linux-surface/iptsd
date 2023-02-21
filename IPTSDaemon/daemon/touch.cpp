@@ -69,9 +69,6 @@ static bool check_blocked(const Context &ctx, const std::vector<contacts::Contac
 	for (const auto &p : contacts)
 		blocked |= !p.valid && ctx.config.touch_disable_on_palm;
 
-	if (ctx.devices.active_styli > 0 && ctx.config.touch_disable_on_stylus)
-		blocked = true;
-
 	return blocked;
 }
 
@@ -92,84 +89,7 @@ static bool check_lift(const Context &ctx, const contacts::Contact &contact)
 	return false;
 }
 
-static void lift_multi(const TouchDevice &dev)
-{
-//	dev.emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
-}
-
-static void emit_multi(const TouchDevice &dev, const contacts::Contact &contact)
-{
-	i32 index = gsl::narrow<i32>(contact.index);
-	i32 x = gsl::narrow<i32>(std::round(contact.x * IPTS_MAX_X));
-	i32 y = gsl::narrow<i32>(std::round(contact.y * IPTS_MAX_Y));
-
-	i32 angle = gsl::narrow<i32>(std::round(contact.angle * (180 / math::num<f64>::pi)));
-	i32 major = gsl::narrow<i32>(std::round(contact.major * IPTS_DIAGONAL));
-	i32 minor = gsl::narrow<i32>(std::round(contact.minor * IPTS_DIAGONAL));
-
-//	dev.emit(EV_ABS, ABS_MT_TRACKING_ID, index);
-//	dev.emit(EV_ABS, ABS_MT_POSITION_X, x);
-//	dev.emit(EV_ABS, ABS_MT_POSITION_Y, y);
-//
-//	dev.emit(EV_ABS, ABS_MT_ORIENTATION, angle);
-//	dev.emit(EV_ABS, ABS_MT_TOUCH_MAJOR, major);
-//	dev.emit(EV_ABS, ABS_MT_TOUCH_MINOR, minor);
-}
-
-static void lift_single(const TouchDevice &dev)
-{
-//	dev.emit(EV_KEY, BTN_TOUCH, 0);
-}
-
-static void emit_single(const TouchDevice &dev, const contacts::Contact &contact)
-{
-	i32 x = gsl::narrow<i32>(std::round(contact.x * IPTS_MAX_X));
-	i32 y = gsl::narrow<i32>(std::round(contact.y * IPTS_MAX_Y));
-
-//	dev.emit(EV_KEY, BTN_TOUCH, 1);
-//	dev.emit(EV_ABS, ABS_X, x);
-//	dev.emit(EV_ABS, ABS_Y, y);
-}
-
-static void handle_single(const Context &ctx, const std::vector<contacts::Contact> &contacts)
-{
-	const TouchDevice &touch = ctx.devices.touch;
-	bool blocked = check_blocked(ctx, contacts);
-
-	for (const auto &contact : contacts) {
-//		if (contact.active && !contact.stable && ctx.config.touch_check_stability)
-//			return;
-//
-//		if (check_lift(ctx, contact) || blocked)
-//			continue;
-//
-//		emit_single(touch, contact);
-//		return;
-	}
-
-//	lift_single(touch);
-}
-
-static void handle_multi(const Context &ctx, const std::vector<contacts::Contact> &contacts)
-{
-	const TouchDevice &touch = ctx.devices.touch;
-	bool blocked = check_blocked(ctx, contacts);
-
-	for (const auto &contact : contacts) {
-//		touch.emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(contact.index));
-//
-//		if (contact.active && !contact.stable && ctx.config.touch_check_stability)
-//			continue;
-//
-//		if (check_lift(ctx, contact) || blocked) {
-//			lift_multi(touch);
-//		} else {
-//			emit_multi(touch, contact);
-//		}
-	}
-}
-
-void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data)
+bool iptsd_touch_input(Context &ctx, const ipts::Heatmap &data, IPTSHIDReport &report)
 {
 	TouchDevice &touch = ctx.devices.touch;
 
@@ -192,8 +112,27 @@ void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data)
 	for (const auto &contact : contacts)
 		update_cones(ctx, contact);
 
-	handle_multi(ctx, contacts);
-	handle_single(ctx, contacts);
+    if (check_blocked(ctx, contacts))
+        return false;
+    
+    int contact_cnt = 0;
+    for (const auto &contact : contacts) {
+        if (contact.active && !contact.stable && ctx.config.touch_check_stability)
+            continue;
+        if (check_lift(ctx, contact))
+            continue;
+        IPTSFingerReport &finger = report.report.touch.fingers[contact_cnt];
+        finger.touch = true;
+        finger.contact_id = contact.index;
+        finger.x = gsl::narrow_cast<u16>(contact.x * IPTS_TOUCH_MAX_VALUE);
+        finger.y = gsl::narrow_cast<u16>(contact.y * IPTS_TOUCH_MAX_VALUE);
+        
+        contact_cnt++;
+    }
+    report.report_id = IPTS_TOUCH_REPORT_ID;
+    report.report.touch.contact_num = contact_cnt;
+    
+    return true;
 }
 
 } // namespace iptsd::daemon

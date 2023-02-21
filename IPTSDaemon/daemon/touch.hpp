@@ -9,7 +9,7 @@
 
 namespace iptsd::daemon {
 
-void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data);
+bool iptsd_touch_input(Context &ctx, const ipts::Heatmap &data, IPTSHIDReport &report);
 
 } /* namespace iptsd::daemon */
 

@@ -67,7 +67,7 @@ void Device::disconnect_from_kernel()
 
 gsl::span<u8> Device::read() {
     UInt64 input_size = 0;
-    UInt32 cnt;
+    UInt32 cnt = 1;
     kern_return_t ret = IOConnectCallScalarMethod(connect, kMethodReceiveInput, nullptr, 0, &input_size, &cnt);
     should_reinit = input_size == -1;
     if (ret != kIOReturnSuccess || should_reinit) {
@@ -81,6 +81,26 @@ void Device::send_hid_report(IPTSHIDReport &report) {
     kern_return_t ret = IOConnectCallStructMethod(connect, kMethodSendHIDReport, &report, sizeof(IPTSHIDReport), nullptr, nullptr);
     if (ret != kIOReturnSuccess)
         throw common::cerror("Failed to send HID report!");
+}
+
+void Device::process_begin() {
+    if (!processing) {
+        processing = true;
+        UInt64 status = 1;
+        kern_return_t ret = IOConnectCallScalarMethod(connect, kMethodToggleProcessingStatus, &status, 1, nullptr, nullptr);
+        if (ret != kIOReturnSuccess)
+            throw common::cerror("Failed to acquire input lock!");
+    }
+}
+
+void Device::process_end() {
+    if (processing) {
+        processing = false;
+        UInt64 status = 0;
+        kern_return_t ret = IOConnectCallScalarMethod(connect, kMethodToggleProcessingStatus, &status, 1, nullptr, nullptr);
+        if (ret != kIOReturnSuccess)
+            throw common::cerror("Failed to release input lock!");
+    }
 }
 
 } // namespace iptsd::ipts
