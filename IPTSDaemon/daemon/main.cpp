@@ -62,30 +62,37 @@ static int start()
 	spdlog::info("Connected to device {:04X}:{:04X}", device.vendor_id, device.product_id);
 
 	ipts::Parser parser {};
-    parser.on_dft = [&](const auto &dft, auto &stylus) {
-        device.process_end();
-        
-        iptsd_dft_input(ctx, dft, stylus);
-    };
-	parser.on_stylus = [&](const auto &data) {
-        device.process_end();
-        
-        IPTSHIDReport report;
-        memset(&report, 0, sizeof(IPTSHIDReport));
-        iptsd_stylus_input(ctx, data, report);
-        device.send_hid_report(report);
-    };
-	parser.on_heatmap = [&](const auto &data) {
-        device.process_end();
-        
-        if (ctx.devices.active_styli > 0 && ctx.config.touch_disable_on_stylus)
-            return;
-        
-        IPTSHIDReport report;
-        memset(&report, 0, sizeof(IPTSHIDReport));
-        if (iptsd_touch_input(ctx, data, report))
+    if (!config.stylus_disable) {
+        parser.on_dft = [&](const auto &dft, auto &stylus) {
+            device.process_end();
+            
+            iptsd_dft_input(ctx, dft, stylus);
+        };
+        parser.on_stylus = [&](const auto &data) {
+            device.process_end();
+            
+            IPTSHIDReport report;
+            memset(&report, 0, sizeof(IPTSHIDReport));
+            iptsd_stylus_input(ctx, data, report);
             device.send_hid_report(report);
         };
+    } else
+        spdlog::warn("Stylus is disabled!");
+    
+    if (!config.touch_disable)
+        parser.on_heatmap = [&](const auto &data) {
+            device.process_end();
+            
+            if (ctx.devices.stylus->active && ctx.config.touch_disable_on_stylus)
+                return;
+            
+            IPTSHIDReport report;
+            memset(&report, 0, sizeof(IPTSHIDReport));
+            if (iptsd_touch_input(ctx, data, report))
+                device.send_hid_report(report);
+            };
+    else
+        spdlog::warn("Touchscreen is disabled!");
 
 	// Count errors, if we receive 10 continuous errors, chances are pretty good that
 	// something is broken beyond repair and the program should exit.

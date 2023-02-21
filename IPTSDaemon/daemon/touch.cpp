@@ -13,53 +13,36 @@
 
 namespace iptsd::daemon {
 
-static bool check_cones(const Context &ctx, const contacts::Contact &contact)
+static bool check_cone(const Context &ctx, const contacts::Contact &contact)
 {
-	const TouchDevice &touch = ctx.devices.touch;
+	const TouchDevice &touch = *ctx.devices.touch;
 
 	// Convert relative to physical coordinates
 	f64 x = contact.x * ctx.config.width;
 	f64 y = contact.y * ctx.config.height;
 
-	for (const auto &cone : touch.cones) {
-		if (cone->check(x, y))
-			return true;
-	}
-
-	return false;
+	return touch.cone->check(x, y);
 }
 
-static void update_cones(Context &ctx, const contacts::Contact &contact)
+static void update_cone(Context &ctx, const contacts::Contact &contact)
 {
-	TouchDevice &touch = ctx.devices.touch;
+	TouchDevice &touch = *ctx.devices.touch;
 
-	std::shared_ptr<Cone> cone = nullptr;
-	f64 distance = INFINITY;
+	if (contact.valid)
+		return;
 
 	// Convert relative to physical coordinates
 	f64 x = contact.x * ctx.config.width;
 	f64 y = contact.y * ctx.config.height;
 
-	// find closest cone (by center)
-	for (auto &current : touch.cones) {
-		// This cone has never seen a position update, so its inactive
-		if (!current->alive())
-			continue;
-
-		if (!current->active())
-			continue;
-
-		f64 d = std::hypot(current->x - x, current->y - y);
-		if (d < distance) {
-			distance = d;
-			cone = current;
-		}
-	}
-
-	if (!cone)
+	// The cone has never seen a position update, so its inactive
+	if (!touch.cone->alive())
 		return;
 
-	cone->update_direction(x, y);
+	if (!touch.cone->active())
+		return;
+
+	touch.cone->update_direction(x, y);
 }
 
 static bool check_blocked(const Context &ctx, const std::vector<contacts::Contact> &contacts)
@@ -68,7 +51,7 @@ static bool check_blocked(const Context &ctx, const std::vector<contacts::Contac
 
 	for (const auto &p : contacts)
 		blocked |= !p.valid && ctx.config.touch_disable_on_palm;
-
+    
 	return blocked;
 }
 
@@ -83,7 +66,7 @@ static bool check_lift(const Context &ctx, const contacts::Contact &contact)
 		return true;
 
 	// Lift contacts that are blocked by a rejection cone
-	if (ctx.config.touch_check_cone && check_cones(ctx, contact))
+	if (ctx.config.touch_check_cone && check_cone(ctx, contact))
 		return true;
 
 	return false;
@@ -91,7 +74,7 @@ static bool check_lift(const Context &ctx, const contacts::Contact &contact)
 
 bool iptsd_touch_input(Context &ctx, const ipts::Heatmap &data, IPTSHIDReport &report)
 {
-	TouchDevice &touch = ctx.devices.touch;
+	TouchDevice &touch = *ctx.devices.touch;
 
 	// Make sure that all buffers have the correct size
 	touch.finder.resize(index2_t {data.dim.width, data.dim.height});
@@ -110,7 +93,7 @@ bool iptsd_touch_input(Context &ctx, const ipts::Heatmap &data, IPTSHIDReport &r
 
 	// Update stylus rejection cones
 	for (const auto &contact : contacts)
-		update_cones(ctx, contact);
+		update_cone(ctx, contact);
 
     if (check_blocked(ctx, contacts))
         return false;

@@ -10,8 +10,8 @@
 #include <container/ops.hpp>
 #include <math/mat2.hpp>
 #include <math/vec2.hpp>
-#include <gsl/gsl>
 
+#include <gsl/gsl>
 #include <vector>
 
 namespace iptsd::contacts {

@@ -16,36 +16,34 @@ namespace iptsd::daemon {
 
 class StylusDevice {
 public:
-	u32 serial;
 	bool active = false;
 	std::shared_ptr<Cone> cone;
 
 public:
-    StylusDevice(u32 serial, std::shared_ptr<Cone> cone): serial(serial), cone(std::move(cone)) {};
+    StylusDevice(std::shared_ptr<Cone> cone): cone{std::move(cone)} {}
 };
 
 class TouchDevice {
 public:
-	std::vector<std::shared_ptr<Cone>> cones;
+	std::shared_ptr<Cone> cone;
 	contacts::ContactFinder finder;
 
 public:
-    TouchDevice(const config::Config &conf): finder(conf.contacts()) {};
+    TouchDevice(const config::Config &conf, std::shared_ptr<Cone> cone): finder{conf.contacts()}, cone{std::move(cone)} {}
 };
 
 class DeviceManager {
 public:
-	const config::Config &conf;
-	TouchDevice touch;
-
-	std::vector<StylusDevice> styli;
-	u32 active_styli = 0;
+	std::unique_ptr<TouchDevice> touch;
+	std::unique_ptr<StylusDevice> stylus;
 
 public:
-	DeviceManager(const config::Config &conf);
+	DeviceManager(const config::Config &conf) {
+        auto cone = std::make_shared<Cone>(conf.cone_angle, conf.cone_distance);
 
-	StylusDevice &create_stylus(u32 serial);
-	StylusDevice &get_stylus(u32 serial);
+        this->touch = std::make_unique<TouchDevice>(conf, cone);
+        this->stylus = std::make_unique<StylusDevice>(conf, cone);
+    }
 };
 
 } /* namespace iptsd::daemon */

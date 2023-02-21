@@ -14,7 +14,6 @@
 		2520FAB42996500F00BBAC23 /* stylus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA702996500F00BBAC23 /* stylus.cpp */; };
 		2520FAB52996500F00BBAC23 /* dft.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA742996500F00BBAC23 /* dft.cpp */; };
 		2520FAB62996500F00BBAC23 /* cone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA782996500F00BBAC23 /* cone.cpp */; };
-		2520FAB72996500F00BBAC23 /* devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7A2996500F00BBAC23 /* devices.cpp */; };
 		2520FAB82996500F00BBAC23 /* touch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7C2996500F00BBAC23 /* touch.cpp */; };
 		2520FAB92996500F00BBAC23 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FA7D2996500F00BBAC23 /* main.cpp */; };
 		2520FAC42996500F00BBAC23 /* reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAA82996500F00BBAC23 /* reader.cpp */; };
@@ -87,7 +86,6 @@
 		2520FA772996500F00BBAC23 /* context.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = context.hpp; sourceTree = "<group>"; };
 		2520FA782996500F00BBAC23 /* cone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cone.cpp; sourceTree = "<group>"; };
 		2520FA792996500F00BBAC23 /* dft.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = dft.hpp; sourceTree = "<group>"; };
-		2520FA7A2996500F00BBAC23 /* devices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = devices.cpp; sourceTree = "<group>"; };
 		2520FA7B2996500F00BBAC23 /* stylus.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stylus.hpp; sourceTree = "<group>"; };
 		2520FA7C2996500F00BBAC23 /* touch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = touch.cpp; sourceTree = "<group>"; };
 		2520FA7D2996500F00BBAC23 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -251,7 +249,6 @@
 				2520FA782996500F00BBAC23 /* cone.cpp */,
 				2520FA732996500F00BBAC23 /* cone.hpp */,
 				2520FA772996500F00BBAC23 /* context.hpp */,
-				2520FA7A2996500F00BBAC23 /* devices.cpp */,
 				2520FA752996500F00BBAC23 /* devices.hpp */,
 				2520FA742996500F00BBAC23 /* dft.cpp */,
 				2520FA792996500F00BBAC23 /* dft.hpp */,
@@ -409,7 +406,6 @@
 				2520FAB42996500F00BBAC23 /* stylus.cpp in Sources */,
 				2520FAB12996500F00BBAC23 /* detector.cpp in Sources */,
 				2520FAB92996500F00BBAC23 /* main.cpp in Sources */,
-				2520FAB72996500F00BBAC23 /* devices.cpp in Sources */,
 				2520FAB52996500F00BBAC23 /* dft.cpp in Sources */,
 				2520FAC52996500F00BBAC23 /* parser.cpp in Sources */,
 				2520FAB32996500F00BBAC23 /* finder.cpp in Sources */,

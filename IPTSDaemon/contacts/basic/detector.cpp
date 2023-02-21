@@ -71,6 +71,4 @@ const std::vector<Blob> &BlobDetector::search()
 	return this->blobs;
 }
 
-
-
 } // namespace iptsd::contacts::basic
