@@ -42,7 +42,7 @@ public:
         auto cone = std::make_shared<Cone>(conf.cone_angle, conf.cone_distance);
 
         this->touch = std::make_unique<TouchDevice>(conf, cone);
-        this->stylus = std::make_unique<StylusDevice>(conf, cone);
+        this->stylus = std::make_unique<StylusDevice>(cone);
     }
 };
 
