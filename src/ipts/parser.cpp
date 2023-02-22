@@ -137,57 +137,53 @@ void Parser::parse_reports(Reader reader)
 
 void Parser::parse_stylus_v1(Reader reader)
 {
-	StylusData stylus;
-
 	const auto stylus_report = reader.read<struct ipts_stylus_report>();
-	stylus.serial = stylus_report.serial;
+	this->stylus.serial = stylus_report.serial;
 
 	for (u8 i = 0; i < stylus_report.elements; i++) {
 		const auto data = reader.read<struct ipts_stylus_data_v1>();
 
 		const std::bitset<8> mode(data.mode);
-		stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
-		stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
-		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
-		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
+		this->stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
+		this->stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
+		this->stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
+		this->stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
-		stylus.x = data.x;
-		stylus.y = data.y;
-		stylus.pressure = data.pressure * 4;
-		stylus.azimuth = 0;
-		stylus.altitude = 0;
-		stylus.timestamp = 0;
+		this->stylus.x = data.x;
+		this->stylus.y = data.y;
+		this->stylus.pressure = data.pressure * 4;
+		this->stylus.azimuth = 0;
+		this->stylus.altitude = 0;
+		this->stylus.timestamp = 0;
 
 		if (this->on_stylus)
-			this->on_stylus(stylus);
+			this->on_stylus(this->stylus);
 	}
 }
 
 void Parser::parse_stylus_v2(Reader reader)
 {
-	StylusData stylus;
-
 	const auto stylus_report = reader.read<struct ipts_stylus_report>();
-	stylus.serial = stylus_report.serial;
+	this->stylus.serial = stylus_report.serial;
 
 	for (u8 i = 0; i < stylus_report.elements; i++) {
 		const auto data = reader.read<struct ipts_stylus_data_v2>();
 
 		const std::bitset<16> mode(data.mode);
-		stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
-		stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
-		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
-		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
+		this->stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
+		this->stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
+		this->stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
+		this->stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
-		stylus.x = data.x;
-		stylus.y = data.y;
-		stylus.pressure = data.pressure;
-		stylus.azimuth = data.azimuth;
-		stylus.altitude = data.altitude;
-		stylus.timestamp = data.timestamp;
+		this->stylus.x = data.x;
+		this->stylus.y = data.y;
+		this->stylus.pressure = data.pressure;
+		this->stylus.azimuth = data.azimuth;
+		this->stylus.altitude = data.altitude;
+		this->stylus.timestamp = data.timestamp;
 
 		if (this->on_stylus)
-			this->on_stylus(stylus);
+			this->on_stylus(this->stylus);
 	}
 }
 
