@@ -17,7 +17,7 @@ check_spihid() {
 }
 
 check_udev() {
-	udevadm info -q property --property=TAGS "$1/device" | grep ':iptsd:'
+	udevadm info -q property "$1/device" | grep -E '^TAGS=' | grep ':iptsd:'
 }
 
 check_device() {
