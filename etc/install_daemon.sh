@@ -9,6 +9,7 @@ sudo rm -rf /usr/local/ipts_config 2>/dev/null
 # install new/updated IPTSDaemon and set permissions
 sudo mkdir -p /usr/local/bin/
 sudo cp $DIR/IPTSDaemon /usr/local/bin/
+sudo cp $DIR/lib*.dylib /usr/local/lib/
 sudo chmod 755 /usr/local/bin/IPTSDaemon
 sudo chown root:wheel /usr/local/bin/IPTSDaemon
 sudo xattr -d com.apple.quarantine /usr/local/bin/IPTSDaemon 2>/dev/null
