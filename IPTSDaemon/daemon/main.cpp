@@ -130,6 +130,7 @@ static int start()
 	}
 
     spdlog::info("Stopping");
+    device.process_end();
 	// If iptsd was stopped from outside, return no error
 	if (!should_exit)
 		return EXIT_FAILURE;

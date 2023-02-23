@@ -24,8 +24,9 @@ struct Contact {
 
 	u32 index = 0;
 	bool valid = true;
-	bool stable = false;
 	bool active = false;
+    u8 instability = 0;
+    bool tracked = false;
 };
 
 enum BlobDetection {
@@ -59,6 +60,8 @@ struct Config {
 	f32 position_thresh_min;
 	f32 position_thresh_max;
 	f32 dist_thresh;
+    
+    u8 instability_tolerance;
 };
 
 class ContactFinder {
@@ -73,6 +76,9 @@ private:
 
 	f64 data_diag = 0;
 	f64 phys_diag = 0;
+    
+    bool touching = false;
+    u32 last_touch_cnt = 0;
 
 public:
 	ContactFinder(Config config);
@@ -86,7 +92,7 @@ private:
 	bool check_valid(const Contact &contact);
 	bool check_dist(const Contact &from, const Contact &to);
 
-	void track();
+	void track(u32 &touch_cnt);
 };
 
 inline container::Image<f32> &ContactFinder::data()

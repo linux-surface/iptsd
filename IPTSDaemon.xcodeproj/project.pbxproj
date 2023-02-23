@@ -20,10 +20,11 @@
 		2520FAC52996500F00BBAC23 /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAAA2996500F00BBAC23 /* parser.cpp */; };
 		2520FAC62996500F00BBAC23 /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2520FAAE2996500F00BBAC23 /* config.cpp */; };
 		2520FAC92996510000BBAC23 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2520FAC82996510000BBAC23 /* IOKit.framework */; };
-		25526E482996D17A00F61021 /* libfmt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 25526E472996D16B00F61021 /* libfmt.a */; };
 		25526E4A2996D1A300F61021 /* libinih.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 25526E492996D1A300F61021 /* libinih.0.dylib */; };
 		25526E4B2996D1A300F61021 /* libinih.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 25526E492996D1A300F61021 /* libinih.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		25E6114229967DEF005A9966 /* device.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 25E6114029967DEF005A9966 /* device.cpp */; };
+		25E667D829A7CCBE000B9DC3 /* libfmt.9.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 25E667D729A7CCBE000B9DC3 /* libfmt.9.1.0.dylib */; };
+		25E667D929A7CCBE000B9DC3 /* libfmt.9.1.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 25E667D729A7CCBE000B9DC3 /* libfmt.9.1.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,6 +43,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				25E667D929A7CCBE000B9DC3 /* libfmt.9.1.0.dylib in Embed Libraries */,
 				25526E4B2996D1A300F61021 /* libinih.0.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
@@ -116,11 +118,11 @@
 		2520FAAC2996500F00BBAC23 /* config.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = config.hpp; sourceTree = "<group>"; };
 		2520FAAE2996500F00BBAC23 /* config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = config.cpp; sourceTree = "<group>"; };
 		2520FAC82996510000BBAC23 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		25526E472996D16B00F61021 /* libfmt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfmt.a; path = ../../../../usr/local/Cellar/fmt/9.0.0/lib/libfmt.a; sourceTree = "<group>"; };
 		25526E492996D1A300F61021 /* libinih.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libinih.0.dylib; path = ../../../../usr/local/Cellar/inih/56/lib/libinih.0.dylib; sourceTree = "<group>"; };
 		25E6114029967DEF005A9966 /* device.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = device.cpp; sourceTree = "<group>"; };
 		25E6114129967DEF005A9966 /* device.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = device.hpp; sourceTree = "<group>"; };
 		25E6114329967E30005A9966 /* IPTSKenerlUserShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPTSKenerlUserShared.h; sourceTree = "<group>"; };
+		25E667D729A7CCBE000B9DC3 /* libfmt.9.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfmt.9.1.0.dylib; path = ../../../../usr/local/Cellar/fmt/9.1.0/lib/libfmt.9.1.0.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,9 +130,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25E667D829A7CCBE000B9DC3 /* libfmt.9.1.0.dylib in Frameworks */,
 				2520FAC92996510000BBAC23 /* IOKit.framework in Frameworks */,
 				25526E4A2996D1A300F61021 /* libinih.0.dylib in Frameworks */,
-				25526E482996D17A00F61021 /* libfmt.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,8 +337,8 @@
 		2520FAC72996510000BBAC23 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				25E667D729A7CCBE000B9DC3 /* libfmt.9.1.0.dylib */,
 				25526E492996D1A300F61021 /* libinih.0.dylib */,
-				25526E472996D16B00F61021 /* libfmt.a */,
 				2520FAC82996510000BBAC23 /* IOKit.framework */,
 			);
 			name = Frameworks;
@@ -459,7 +461,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -553,6 +555,7 @@
 					"$(inherited)",
 					/usr/local/Cellar/fmt/9.0.0/lib,
 					/usr/local/Cellar/inih/56/lib,
+					/usr/local/Cellar/fmt/9.1.0/lib,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.xavier;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -571,6 +574,7 @@
 					"$(inherited)",
 					/usr/local/Cellar/fmt/9.0.0/lib,
 					/usr/local/Cellar/inih/56/lib,
+					/usr/local/Cellar/fmt/9.1.0/lib,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.xavier;
 				PRODUCT_NAME = "$(TARGET_NAME)";

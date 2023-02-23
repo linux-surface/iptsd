@@ -28,7 +28,7 @@ public:
 	// [Touch]
 	bool touch_disable = false;
 	bool touch_check_cone = true;
-	bool touch_check_stability = true;
+	u8   touch_instability_tolerance = 3;
 	bool touch_disable_on_palm = false;
 	bool touch_disable_on_stylus = false;
 

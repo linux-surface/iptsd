@@ -74,8 +74,8 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	if (section == "Touch" && name == "CheckCone")
 		config->touch_check_cone = to_bool(value);
 
-	if (section == "Touch" && name == "CheckStability")
-		config->touch_check_stability = to_bool(value);
+	if (section == "Touch" && name == "InstabilityTolerance")
+        config->touch_instability_tolerance = std::stoi(value);
 
 	if (section == "Touch" && name == "DisableOnPalm")
 		config->touch_disable_on_palm = to_bool(value);
@@ -239,6 +239,8 @@ contacts::Config Config::contacts() const
 	config.position_thresh_min = this->contacts_position_thresh_min;
 	config.position_thresh_max = this->contacts_position_thresh_max;
 	config.dist_thresh = this->contacts_distance_thresh;
+    
+    config.instability_tolerance = this->touch_instability_tolerance;
 
 	return config;
 }

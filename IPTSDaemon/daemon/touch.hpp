@@ -7,6 +7,8 @@
 
 #include <ipts/parser.hpp>
 
+#include <spdlog/spdlog.h>
+
 namespace iptsd::daemon {
 
 bool iptsd_touch_input(Context &ctx, const ipts::Heatmap &data, IPTSHIDReport &report);

@@ -47,28 +47,12 @@ static void update_cone(Context &ctx, const contacts::Contact &contact)
 
 static bool check_blocked(const Context &ctx, const std::vector<contacts::Contact> &contacts)
 {
-	bool blocked = false;
-
-	for (const auto &p : contacts)
-		blocked |= !p.valid && ctx.config.touch_disable_on_palm;
+    if (ctx.config.touch_disable_on_palm) {
+        for (const auto &p : contacts)
+            if (!p.valid)
+                return true;
+    }
     
-	return blocked;
-}
-
-static bool check_lift(const Context &ctx, const contacts::Contact &contact)
-{
-	// Lift inactive contacts
-	if (!contact.active)
-		return true;
-
-	// Lift invalid contacts
-	if (!contact.valid)
-		return true;
-
-	// Lift contacts that are blocked by a rejection cone
-	if (ctx.config.touch_check_cone && check_cone(ctx, contact))
-		return true;
-
 	return false;
 }
 
@@ -100,12 +84,13 @@ bool iptsd_touch_input(Context &ctx, const ipts::Heatmap &data, IPTSHIDReport &r
     
     int contact_cnt = 0;
     for (const auto &contact : contacts) {
-        if (contact.active && !contact.stable && ctx.config.touch_check_stability)
+        if (!contact.active || !contact.valid)
             continue;
-        if (check_lift(ctx, contact))
+        // Lift contacts that are blocked by a rejection cone
+        if (ctx.config.touch_check_cone && check_cone(ctx, contact))
             continue;
         IPTSFingerReport &finger = report.report.touch.fingers[contact_cnt];
-        finger.touch = true;
+        finger.touch = contact.instability < ctx.config.touch_instability_tolerance;
         finger.contact_id = contact.index;
         finger.x = gsl::narrow_cast<u16>(contact.x * IPTS_TOUCH_MAX_VALUE);
         finger.y = gsl::narrow_cast<u16>(contact.y * IPTS_TOUCH_MAX_VALUE);

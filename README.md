@@ -4,41 +4,28 @@ This is the user space IPTS daemon for Surface touch screen process
 
 It is supposed to be used with `BigSurface.kext` to enable touch screen & stylus support on macOS.
 
-Raw touching data is sent by the kernel driver to be processed in user space then touch & stylus hid events are sent back to the kernel.
+Multitouch heatmap & stylus data is sent by the kernel driver to be processed in user space then touch & stylus hid reports are sent back to the kernel.
 
-The code is ported from linux-surface/iptsd and quo/iptsd
+The code is ported from linux-surface/iptsd
 
-**Warning, the processing algorithm is NOT optimised enough yet and it consumes around 10% cpu usage when fingers are detected, 4% or less when stylus is detected**
+**Warning, processing heatmap will add a non-negligible load on CPU (around 5%) **
 
-Use this under your own consideration! Touching process is very energy consuming.
+Use this under your own consideration!
 
 ## Installation Steps
-#### 1. Download the latest release version
+#### 1. Download the latest release version **from Release section**
 
-#### 2. Install two `dylib`(`fmt` and `inih`) for IPTSDaemon to run properly.
-
-`Homebrew` is recommended to install them:
-
-- Install [Homebrew](https://brew.sh)
-
-- in `Terminal`, execute `brew install fmt inih`
-
-#### 3. Finally, run the script `install_daemon.sh` in the zip file you just downloaded and all files needed will be copied to desired locations. 
+#### 2. Run `install_daemon.sh` in the zip file you just downloaded and all files needed will be copied to desired locations. 
 
 Normally there will be no output, indicating success. After installation IPTSDaemon will start automatically at boot.
 
-If you want to disable touch when palm is detected or stylus is detected or near the stylus, go to config folder and find your device's config, add this:
+## Uninstallation Step
 
-```
-[Touch]
-DisableOnPalm = true
+#### Run `uninstall_daemon.sh`
 
-[Stylus]
-# disable touch when using stylus
-DisableTouch = true
-# disable touch near the stylus
-Cone = true
-```
+## Custom Configuration
+
+All possible configurations are in `iptsd.conf`, you can tweak IPTSDaemon according to your needs. After changement, **remember to delete `#` in the front and re-run the installation script to update the file**, or you can directly change that file (`/usr/local/iptsd/iptsd.conf`)
 
 ### Enable on screen keyboard on login screen
 
@@ -48,7 +35,7 @@ To enable the on screen keyboard to show up on the login screen you need to chan
 
 - Make sure you are using the latest version of `BigSurface` and `IPTSDaemon`
 
-- Check the output of the script, there should NOT be any
+- Check the output of the script, there should NOT be any errors
 
 - If touchscreen still fails to function, then run `IPTSDaemon` manually to see what is going wrong
 
