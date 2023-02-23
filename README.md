@@ -40,3 +40,6 @@ To enable the on screen keyboard to show up on the login screen you need to chan
 - If touchscreen still fails to function, then run `IPTSDaemon` manually to see what is going wrong
 
   ​	Then create an issue telling me **what is your device**, attaching your **ioreg** and output of `sudo dmesg | grep -E "SurfaceS|SurfaceH|SurfaceM|IntelP"` (remember to install `DebugEnhancer.kext` on macOS 12 and newer)
+  
+## If you like my project, please consider to star this project, thanks!
+### If you appreciate my effort and would like to pay me a coffee, here is my PayPal address: `ritchiexia@163.com`
