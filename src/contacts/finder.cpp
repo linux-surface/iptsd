@@ -62,6 +62,16 @@ void ContactFinder::resize(index2_t size)
 		this->detector = std::make_unique<advanced::BlobDetector>(size, config);
 }
 
+void ContactFinder::reset()
+{
+	for (std::size_t i = 0; i < config.temporal_window; i++) {
+		std::size_t size = this->frames[i].size();
+
+		for (std::size_t j = 0; j < size; j++)
+			this->frames[i][j].active = false;
+	}
+}
+
 bool ContactFinder::check_valid(const Contact &contact)
 {
 	f64 aspect = contact.major / contact.minor;

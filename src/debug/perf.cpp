@@ -125,17 +125,17 @@ static int main(gsl::span<char *> args)
 	bool reader_finished_successfully = false;
 
 	// Parser is idempotent but ContactFinder is not
-	std::optional<contacts::ContactFinder> finder {std::nullopt};
+	contacts::ContactFinder finder {config.contacts()};
 	ipts::Parser parser {};
 	parser.on_heatmap = [&](const auto &data) {
-		iptsd_perf_handle_input(*finder, data);
+		iptsd_perf_handle_input(finder, data);
 		// Don't track time for non-heatmap
 		had_heatmap = true;
 	};
 
 	static constexpr u32 LOOP_COUNT = 10;
 	for (u32 i = 0; i < LOOP_COUNT; i++) {
-		finder.emplace(config.contacts());
+		finder.reset();
 		reader_finished_successfully = false;
 		gsl::span<u8> reader(buffer.data(), buffer.size());
 		while (true) {
@@ -184,7 +184,6 @@ static int main(gsl::span<char *> args)
 				continue;
 			}
 		}
-		finder.reset();
 	}
 	// This is outside the loop to not spam the user
 	// as it will be set to the same value every iteration of the loop

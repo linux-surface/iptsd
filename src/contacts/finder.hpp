@@ -81,6 +81,7 @@ public:
 	const std::vector<Contact> &search();
 
 	void resize(index2_t size);
+	void reset();
 
 private:
 	bool check_valid(const Contact &contact);
