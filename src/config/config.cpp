@@ -200,10 +200,20 @@ Config::Config(i16 vendor, i16 product, std::optional<const ipts::Metadata> meta
 	this->load_dir(IPTSD_PRESET_DIR, true);
 	this->load_dir("./etc/presets", true);
 
-	if (std::filesystem::exists(IPTSD_CONFIG_FILE))
-		ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
+	if (const char *config_file_path = std::getenv("IPTSD_CONFIG_FILE")) {
+		// Load configuration file from custom location
+		// Mainly for developers to debug their work
+		// without touching their known working main system configuration
+		if (!std::filesystem::exists(config_file_path))
+			throw std::runtime_error("IPTSD_CONFIG_FILE not found");
+		if (ini_parse(config_file_path, parse_conf, this))
+			throw std::runtime_error("IPTSD_CONFIG_FILE is corrupt");
+	} else {
+		if (std::filesystem::exists(IPTSD_CONFIG_FILE))
+			ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
 
-	this->load_dir(IPTSD_CONFIG_DIR, false);
+		this->load_dir(IPTSD_CONFIG_DIR, false);
+	}
 }
 
 contacts::Config Config::contacts() const
