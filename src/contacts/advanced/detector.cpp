@@ -66,6 +66,36 @@ BlobDetector::BlobDetector(index2_t size, BlobDetectorConfig config)
     alg::gfit::reserve(m_gf_params, 32, size);
 }
 
+class WdtCost {
+public:
+    WdtCost(Image<std::array<f32, 2>> const& m_img_stev_,
+        Image<f32> const& m_img_rdg_) : m_img_stev{m_img_stev_}
+    , m_img_rdg{m_img_rdg_} {}
+
+    template<index_t DX, index_t DY>
+    [[gnu::always_inline]] [[nodiscard]] f32 get_cost(index_t i) const
+    {
+        f32 constexpr c_dist = 0.1f;
+        f32 constexpr c_ridge = 9.0f;
+        f32 constexpr c_grad = 1.0f;
+
+        static_assert(DX == -1 || DX == 0 || DX == 1);
+        static_assert(DY == -1 || DY == 0 || DY == 1);
+        // auto const dist = std::hypotf(gsl::narrow<f32>(d.x), gsl::narrow<f32>(d.y));
+        f32 constexpr dist = DX * DY == 0 ? 1 : M_SQRT2;
+
+        auto const [ev1, ev2] = common::unchecked<std::array<f32, 2>>(m_img_stev.get(), i);
+        auto const grad = std::max(ev1, 0.0f) + std::max(ev2, 0.0f);
+        auto const ridge = common::unchecked<f32>(m_img_rdg.get(), i);
+
+        return c_ridge * ridge + c_grad * grad + c_dist * dist;
+    }
+
+private:
+    std::reference_wrapper<const Image<std::array<f32, 2>>> m_img_stev;
+    std::reference_wrapper<const Image<f32>> m_img_rdg;
+};
+
 auto BlobDetector::process(Image<f32> const& hm) -> std::vector<Blob> const&
 {
     // preprocessing
@@ -193,30 +223,20 @@ auto BlobDetector::process(Image<f32> const& hm) -> std::vector<Blob> const&
     // distance transform
     {
         auto const th_inc = 0.6f;
-
-        auto const wdt_cost = [&](index_t i, index2_t d) -> f32 {
-            f32 const c_dist = 0.1f;
-            f32 const c_ridge = 9.0f;
-            f32 const c_grad = 1.0f;
-
-            auto const [ev1, ev2] = m_img_stev[i];
-            auto const grad = std::max(ev1, 0.0f) + std::max(ev2, 0.0f);
-            auto const ridge = m_img_rdg[i];
-            auto const dist = std::hypotf(gsl::narrow<f32>(d.x), gsl::narrow<f32>(d.y));
-
-            return c_ridge * ridge + c_grad * grad + c_dist * dist;
-        };
+        const WdtCost wdt_cost {m_img_stev, m_img_rdg};
 
         auto const wdt_mask = [&](index_t i) -> bool {
-            return m_img_pp[i] > 0.0f && m_img_lbl[i] == 0;
+            return common::unchecked<f32>(m_img_pp, i) > 0.0f && common::unchecked<u16>(m_img_lbl, i) == 0;
         };
 
         auto const wdt_inc_bin = [&](index_t i) -> bool {
-            return m_img_lbl[i] > 0 && m_cscore.at(m_img_lbl[i] - 1) > th_inc;
+            u16 const lbl = common::unchecked<u16>(m_img_lbl, i);
+            return lbl > 0 && common::unchecked<f32>(m_cscore, lbl - 1) > th_inc;
         };
 
         auto const wdt_exc_bin = [&](index_t i) -> bool {
-            return m_img_lbl[i] > 0 && m_cscore.at(m_img_lbl[i] - 1) <= th_inc;
+            u16 const lbl = common::unchecked<u16>(m_img_lbl, i);
+            return lbl && common::unchecked<f32>(m_cscore, lbl - 1) <= th_inc;
         };
 
         alg::weighted_distance_transform<4>(m_img_dm1, wdt_inc_bin, wdt_mask, wdt_cost, m_wdt_queue, 6.0f);
