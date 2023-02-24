@@ -52,10 +52,13 @@ static int main(gsl::span<char *> args)
 {
 	CLI::App app {};
 	std::filesystem::path path;
+	u32 runs = 10;
 
 	app.add_option("DATA", path, "The binary data file containing the data to test.")
 		->type_name("FILE")
 		->required();
+	app.add_option("RUNS", runs, "Repeat this number of runs through the data.")
+		->check(CLI::Range(1, 1000));
 
 	CLI11_PARSE(app, args.size(), args.data());
 
@@ -105,50 +108,100 @@ static int main(gsl::span<char *> args)
 	if (config.width == 0 || config.height == 0)
 		throw std::runtime_error("No display config for this device was found!");
 
+	// Read the file into memory to eliminate filesystem access as a variable
+	std::noskipws(ifs);
+	std::vector<u8> buffer {std::istream_iterator<u8>(ifs), std::istream_iterator<u8>()};
+	ifs = {};
+
+	using clock = std::chrono::high_resolution_clock;
+	using std::chrono::duration_cast;
+	using micros_u64 = std::chrono::duration<u64, std::micro>;
+	using micros_f64 = std::chrono::duration<f64, std::micro>;
+
+	u64 total = 0;
+	u64 total_of_squares = 0;
+	u32 count = 0;
+
+	auto min = clock::duration::max();
+	auto max = clock::duration::min();
+	bool had_heatmap = false;
+	bool reader_finished_successfully = false;
+
+	// Parser is idempotent but ContactFinder is not
 	contacts::ContactFinder finder {config.contacts()};
-
 	ipts::Parser parser {};
-	parser.on_heatmap = [&](const auto &data) { iptsd_perf_handle_input(finder, data); };
+	parser.on_heatmap = [&](const auto &data) {
+		iptsd_perf_handle_input(finder, data);
+		// Don't track time for non-heatmap
+		had_heatmap = true;
+	};
 
-	std::vector<u8> buffer(header.buffer_size);
-	std::vector<f64> measurements {};
+	for (u32 i = 0; i < runs; i++) {
+		finder.reset();
+		reader_finished_successfully = false;
+		gsl::span<u8> reader(buffer.data(), buffer.size());
+		while (true) {
+			try {
+				if (reader.empty()) {
+					reader_finished_successfully = true;
+					break;
+				}
 
-	while (ifs.peek() != EOF) {
-		try {
-			ssize_t size = 0;
+				size_t size = 0;
+				if (reader.size() < sizeof(size))
+					break;
+				std::memcpy(&size, reader.data(), sizeof(size));
+				reader = reader.subspan(sizeof(size));
 
-			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-			ifs.read(reinterpret_cast<char *>(&size), sizeof(size));
+				if (reader.size() < size)
+					break;
+				if (size > header.buffer_size)
+					break;
+				gsl::span<u8> data = reader.subspan(0, size);
+				reader = reader.subspan(header.buffer_size);
 
-			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-			ifs.read(reinterpret_cast<char *>(buffer.data()),
-				 gsl::narrow<std::streamsize>(buffer.size()));
+				// Take start time
+				auto start = clock::now();
 
-			// Take start time
-			auto start = std::chrono::high_resolution_clock::now();
+				// Send the report to the finder through the parser for processing
+				// Cannot put this in a loop because it is not a pure function
+				// as it has things like temporal averaging
+				parser.parse(data);
 
-			parser.parse(gsl::span<u8>(buffer.data(), size));
+				if (std::exchange(had_heatmap, false)) {
+					// Take end time
+					auto end = clock::now();
 
-			// Take end time
-			auto end = std::chrono::high_resolution_clock::now();
-
-			// Save measurement
-			measurements.push_back(gsl::narrow<f64>((end - start).count()));
-		} catch (std::exception &e) {
-			spdlog::warn(e.what());
-			continue;
+					clock::duration x_ns = end - start;
+					// Divide early for x and x**2 because they are overflowing
+					u64 x_us = duration_cast<micros_u64>(x_ns).count();
+					total += x_us;
+					total_of_squares += x_us * x_us;
+					min = std::min(min, x_ns);
+					max = std::max(max, x_ns);
+					++count;
+				}
+			} catch (std::exception &e) {
+				spdlog::warn(e.what());
+				continue;
+			}
 		}
 	}
+	// This is outside the loop to not spam the user
+	// as it will be set to the same value every iteration of the loop
+	if (!reader_finished_successfully)
+		spdlog::warn("Leftover data at end of input");
 
-	auto total = container::ops::sum(measurements);
-	auto [min, max] = container::ops::minmax(measurements);
+	f64 n = gsl::narrow<f64>(count);
+	f64 mean = gsl::narrow<f64>(total) / n;
+	f64 stddev = std::sqrt(gsl::narrow<f64>(total_of_squares) / n - mean * mean);
 
-	f64 average = total / gsl::narrow<f64>(measurements.size());
-
-	spdlog::info("Total:   {:.3f}μs", total / 1000);
-	spdlog::info("Average: {:.3f}μs", average / 1000);
-	spdlog::info("Minimum: {:.3f}μs", min / 1000);
-	spdlog::info("Maximum: {:.3f}μs", max / 1000);
+	spdlog::info("Ran {} times", count);
+	spdlog::info("Total: {}μs", total);
+	spdlog::info("Mean: {:.2f}μs", mean);
+	spdlog::info("Standard Deviation: {:.2f}μs", stddev);
+	spdlog::info("Minimum: {:.3f}μs", duration_cast<micros_f64>(min).count());
+	spdlog::info("Maximum: {:.3f}μs", duration_cast<micros_f64>(max).count());
 
 	return 0;
 }
