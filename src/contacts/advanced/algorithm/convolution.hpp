@@ -59,7 +59,7 @@ inline constexpr Kernel<T, 3, 3> sobel3_xy {
 
 
 template<class T, index_t Nx, index_t Ny>
-auto gaussian(T sigma) -> Kernel<T, Nx, Ny>
+constexpr auto gaussian(T sigma) -> Kernel<T, Nx, Ny>
 {
     static_assert(Nx % 2 == 1);
     static_assert(Ny % 2 == 1);

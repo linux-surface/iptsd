@@ -2,7 +2,6 @@
 
 #include <common/types.hpp>
 
-#include "algorithm/distance_transform.hpp"
 #include "algorithm/gaussian_fitting.hpp"
 
 #include <container/image.hpp>
@@ -17,10 +16,21 @@
 #include <bit>
 #include <vector>
 #include <queue>
+#include "arrayvec.hpp"
 
 using namespace iptsd::container;
 using namespace iptsd::math;
 
+namespace iptsd::contacts::advanced::alg {
+namespace wdt {
+
+template<typename T>
+struct QItem {
+    index_t idx;
+    T cost;
+};
+}
+}
 
 namespace iptsd::contacts::advanced {
 
@@ -199,7 +209,7 @@ public:
     auto data() -> Image<f32> & override;
     auto search() -> std::vector<Blob> const& override;
 
-private:
+public:
     auto process(Image<f32> const& hm) -> std::vector<Blob> const&;
 
     BlobDetectorConfig config;
@@ -219,16 +229,11 @@ private:
     Image<f64> m_img_gftmp;
 
     MyQueue m_wdt_queue;
-    std::vector<alg::gfit::Parameters<f64>> m_gf_params;
+    ArrayVec<alg::gfit::Parameters<f64>, 32> m_gf_params;
 
-    std::vector<index_t> m_maximas;
-    std::vector<ComponentStats> m_cstats;
-    std::vector<f32> m_cscore;
-
-    // gauss kernels
-    Kernel<f32, 5, 5> m_kern_pp;
-    Kernel<f32, 5, 5> m_kern_st;
-    Kernel<f32, 5, 5> m_kern_hs;
+    ArrayVec<index_t, 32> m_maximas;
+    ArrayVec<ComponentStats, 32> m_cstats;
+    ArrayVec<f32, 32> m_cscore;
 
     // parameters
     index2_t m_gf_window;

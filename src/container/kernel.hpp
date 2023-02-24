@@ -40,17 +40,17 @@ public:
 	auto data() -> pointer;
 	[[nodiscard]] auto data() const -> const_pointer;
 
-	auto operator[](index2_t const &i) const -> const_reference;
-	auto operator[](index2_t const &i) -> reference;
+	constexpr auto operator[](index2_t const &i) const -> const_reference;
+	constexpr auto operator[](index2_t const &i) -> reference;
 
 	auto operator[](index_t const &i) const -> const_reference;
 	auto operator[](index_t const &i) -> reference;
 
-	auto begin() -> iterator;
-	auto end() -> iterator;
+	constexpr auto begin() -> iterator;
+	constexpr auto end() -> iterator;
 
-	[[nodiscard]] auto begin() const -> const_iterator;
-	[[nodiscard]] auto end() const -> const_iterator;
+	[[nodiscard]] constexpr auto begin() const -> const_iterator;
+	[[nodiscard]] constexpr auto end() const -> const_iterator;
 
 	[[nodiscard]] auto cbegin() const -> const_iterator;
 	[[nodiscard]] auto cend() const -> const_iterator;
@@ -100,13 +100,13 @@ template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::data() const 
 }
 
 template <class T, index_t Nx, index_t Ny>
-auto Kernel<T, Nx, Ny>::operator[](index2_t const &i) const -> const_reference
+constexpr auto Kernel<T, Nx, Ny>::operator[](index2_t const &i) const -> const_reference
 {
 	return this->buf[ravel({Nx, Ny}, i)];
 }
 
 template <class T, index_t Nx, index_t Ny>
-auto Kernel<T, Nx, Ny>::operator[](index2_t const &i) -> reference
+constexpr auto Kernel<T, Nx, Ny>::operator[](index2_t const &i) -> reference
 {
 	return this->buf[ravel({Nx, Ny}, i)];
 }
@@ -123,22 +123,22 @@ auto Kernel<T, Nx, Ny>::operator[](index_t const &i) -> reference
 	return this->buf[i];
 }
 
-template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::begin() -> iterator
+template <class T, index_t Nx, index_t Ny> constexpr auto Kernel<T, Nx, Ny>::begin() -> iterator
 {
 	return this->buf.begin();
 }
 
-template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::end() -> iterator
+template <class T, index_t Nx, index_t Ny> constexpr auto Kernel<T, Nx, Ny>::end() -> iterator
 {
 	return this->buf.end();
 }
 
-template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::begin() const -> const_iterator
+template <class T, index_t Nx, index_t Ny> constexpr auto Kernel<T, Nx, Ny>::begin() const -> const_iterator
 {
 	return this->buf.begin();
 }
 
-template <class T, index_t Nx, index_t Ny> auto Kernel<T, Nx, Ny>::end() const -> const_iterator
+template <class T, index_t Nx, index_t Ny> constexpr auto Kernel<T, Nx, Ny>::end() const -> const_iterator
 {
 	return this->buf.end();
 }

@@ -15,6 +15,7 @@
 #include <spdlog/spdlog.h>
 
 #include <array>
+#include "../arrayvec.hpp"
 
 using namespace iptsd::container;
 using namespace iptsd::math;
@@ -160,7 +161,7 @@ bool extract_params(Vec6<T> const& chi, T& scale, Vec2<T>& mean, Mat2s<T>& prec,
 
 
 template<class T>
-inline void update_weight_maps(std::vector<Parameters<T>>& params, Image<T>& total)
+inline void update_weight_maps(ArrayVec<Parameters<T>, 32>& params, Image<T>& total)
 {
     auto const scale = Vec2<T> {
         static_cast<T>(2) * range<T>.x / static_cast<T>(total.size().x),
@@ -222,7 +223,7 @@ inline void update_weight_maps(std::vector<Parameters<T>>& params, Image<T>& tot
 // TODO: vector as parameter container is not good... drops image memory when resized
 
 template<class T>
-void reserve(std::vector<Parameters<T>>& params, std::size_t n, index2_t size)
+void reserve(ArrayVec<Parameters<T>, 32>& params, std::size_t n, index2_t size)
 {
     if (n > params.size()) {
         params.resize(n, Parameters<T> {
@@ -241,7 +242,7 @@ void reserve(std::vector<Parameters<T>>& params, std::size_t n, index2_t size)
 }
 
 template<class T, class S>
-void fit(std::vector<Parameters<S>>& params, Image<T> const& data,
+void fit(ArrayVec<Parameters<S>, 32>& params, Image<T> const& data,
          Image<S>& tmp, unsigned int n_iter, S eps=math::num<S>::eps)
 {
     auto const scale = Vec2<S> {

@@ -14,7 +14,7 @@ namespace iptsd::container {
 
 template <class T> class Image {
 public:
-	static constexpr index_t max_array_size = 4096;
+	static constexpr index_t max_array_size = 2816;
 	using array_type = std::array<T, max_array_size>;
 	using iterator = typename array_type::iterator;
 	using const_iterator = typename array_type::const_iterator;

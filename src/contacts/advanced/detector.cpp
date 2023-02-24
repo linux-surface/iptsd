@@ -33,6 +33,11 @@ using namespace iptsd::math;
 
 namespace iptsd::contacts::advanced {
 
+// gauss kernels
+constexpr Kernel<f32, 5, 5> m_kern_pp{alg::conv::kernels::gaussian<f32, 5, 5>(0.9f)};
+constexpr Kernel<f32, 5, 5> m_kern_st{alg::conv::kernels::gaussian<f32, 5, 5>(1.0f)};
+constexpr Kernel<f32, 5, 5> m_kern_hs{alg::conv::kernels::gaussian<f32, 5, 5>(1.0f)};
+
 BlobDetector::BlobDetector(index2_t size, BlobDetectorConfig config)
     : config{config}
     , m_hm{size}
@@ -49,47 +54,14 @@ BlobDetector::BlobDetector(index2_t size, BlobDetectorConfig config)
     , m_img_gftmp{size}
     , m_wdt_queue{}
     , m_gf_params{}
-    , m_maximas{32}
-    , m_cstats{32}
-    , m_cscore{32}
-    , m_kern_pp{alg::conv::kernels::gaussian<f32, 5, 5>(0.9f)}
-    , m_kern_st{alg::conv::kernels::gaussian<f32, 5, 5>(1.0f)}
-    , m_kern_hs{alg::conv::kernels::gaussian<f32, 5, 5>(1.0f)}
+    , m_maximas{}
+    , m_cstats{}
+    , m_cscore{}
     , m_gf_window{11, 11}
     , m_touchpoints{}
 {
     alg::gfit::reserve(m_gf_params, 32, size);
 }
-
-class WdtCost {
-public:
-    WdtCost(Image<std::array<f32, 2>> const& m_img_stev_,
-        Image<f32> const& m_img_rdg_) : m_img_stev{m_img_stev_}
-    , m_img_rdg{m_img_rdg_} {}
-
-    template<index_t DX, index_t DY>
-    [[gnu::always_inline]] [[nodiscard]] f32 get_cost(index_t i) const
-    {
-        f32 constexpr c_dist = 0.1f;
-        f32 constexpr c_ridge = 9.0f;
-        f32 constexpr c_grad = 1.0f;
-
-        static_assert(DX == -1 || DX == 0 || DX == 1);
-        static_assert(DY == -1 || DY == 0 || DY == 1);
-        // auto const dist = std::hypotf(gsl::narrow<f32>(d.x), gsl::narrow<f32>(d.y));
-        f32 constexpr dist = DX * DY == 0 ? 1 : M_SQRT2;
-
-        auto const [ev1, ev2] = common::unchecked<std::array<f32, 2>>(m_img_stev.get(), i);
-        auto const grad = std::max(ev1, 0.0f) + std::max(ev2, 0.0f);
-        auto const ridge = common::unchecked<f32>(m_img_rdg.get(), i);
-
-        return c_ridge * ridge + c_grad * grad + c_dist * dist;
-    }
-
-private:
-    std::reference_wrapper<const Image<std::array<f32, 2>>> m_img_stev;
-    std::reference_wrapper<const Image<f32>> m_img_rdg;
-};
 
 auto BlobDetector::process(Image<f32> const& hm) -> std::vector<Blob> const&
 {
@@ -217,25 +189,9 @@ auto BlobDetector::process(Image<f32> const& hm) -> std::vector<Blob> const&
 
     // distance transform
     {
-        auto const th_inc = 0.6f;
-        const WdtCost wdt_cost {m_img_stev, m_img_rdg};
 
-        auto const wdt_mask = [&](index_t i) -> bool {
-            return common::unchecked<f32>(m_img_pp, i) > 0.0f && common::unchecked<u16>(m_img_lbl, i) == 0;
-        };
-
-        auto const wdt_inc_bin = [&](index_t i) -> bool {
-            u16 const lbl = common::unchecked<u16>(m_img_lbl, i);
-            return lbl > 0 && common::unchecked<f32>(m_cscore, lbl - 1) > th_inc;
-        };
-
-        auto const wdt_exc_bin = [&](index_t i) -> bool {
-            u16 const lbl = common::unchecked<u16>(m_img_lbl, i);
-            return lbl && common::unchecked<f32>(m_cscore, lbl - 1) <= th_inc;
-        };
-
-        alg::weighted_distance_transform<4>(m_img_dm1, wdt_inc_bin, wdt_mask, wdt_cost, m_wdt_queue, 6.0f);
-        alg::weighted_distance_transform<4>(m_img_dm2, wdt_exc_bin, wdt_mask, wdt_cost, m_wdt_queue, 6.0f);
+        alg::weighted_distance_transform<4, true>(m_img_dm1, this, m_wdt_queue, 6.0f);
+        alg::weighted_distance_transform<4, false>(m_img_dm2, this, m_wdt_queue, 6.0f);
     }
 
     // filter
