@@ -14,7 +14,8 @@ namespace iptsd::container {
 
 template <class T> class Image {
 public:
-	using array_type = std::vector<T>;
+	static constexpr index_t max_array_size = 4096;
+	using array_type = std::array<T, max_array_size>;
 	using iterator = typename array_type::iterator;
 	using const_iterator = typename array_type::const_iterator;
 	using reverse_iterator = typename array_type::reverse_iterator;
@@ -63,8 +64,10 @@ template <class T> Image<T>::Image() : m_size {0, 0}
 {
 }
 
-template <class T> Image<T>::Image(index2_t size) : m_size {size}, m_data(size.span())
+template <class T> Image<T>::Image(index2_t size) : m_size {size}
 {
+	if (size.span() > max_array_size)
+		throw std::runtime_error("image size overflow");
 }
 
 template <class T> inline auto Image<T>::size() const -> index2_t
@@ -89,22 +92,22 @@ template <class T> inline auto Image<T>::data() const -> const_pointer
 
 template <class T> inline auto Image<T>::operator[](index2_t const &i) const -> const_reference
 {
-	return m_data[ravel(m_size, i)];
+	return data()[ravel(m_size, i)];
 }
 
 template <class T> inline auto Image<T>::operator[](index2_t const &i) -> reference
 {
-	return m_data[ravel(m_size, i)];
+	return data()[ravel(m_size, i)];
 }
 
 template <class T> inline auto Image<T>::operator[](index_t const &i) const -> const_reference
 {
-	return m_data[i];
+	return data()[i];
 }
 
 template <class T> inline auto Image<T>::operator[](index_t const &i) -> reference
 {
-	return m_data[i];
+	return data()[i];
 }
 
 template <class T> inline auto Image<T>::begin() -> iterator
@@ -114,7 +117,7 @@ template <class T> inline auto Image<T>::begin() -> iterator
 
 template <class T> inline auto Image<T>::end() -> iterator
 {
-	return m_data.end();
+	return begin() + m_size.span();
 }
 
 template <class T> inline auto Image<T>::begin() const -> const_iterator
@@ -134,7 +137,7 @@ template <class T> inline auto Image<T>::cbegin() const -> const_iterator
 
 template <class T> inline auto Image<T>::cend() const -> const_iterator
 {
-	return m_data.cend();
+	return cbegin() + m_size.span();
 }
 
 template <class T> inline constexpr auto Image<T>::ravel(index2_t size, index2_t i) -> index_t

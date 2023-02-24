@@ -15,7 +15,7 @@ private:
 	BlobDetectorConfig config;
 
 	container::Image<f32> heatmap;
-	container::Image<bool> visited;
+	container::Image<char> visited;
 
 	std::vector<Blob> blobs {};
 

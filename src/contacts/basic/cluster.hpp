@@ -20,14 +20,14 @@ public:
 	f64 w = 0;
 
 public:
-	Cluster(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t center);
+	Cluster(container::Image<f32> &heatmap, container::Image<char> &visited, index2_t center);
 
 	math::Vec2<f64> mean();
 	math::Mat2s<f64> cov();
 
 private:
 	void add(index2_t pos, f64 val);
-	void check(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t pos);
+	void check(container::Image<f32> &heatmap, container::Image<char> &visited, index2_t pos);
 };
 
 } /* namespace iptsd::contacts::basic */

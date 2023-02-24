@@ -196,7 +196,7 @@ static int main(gsl::span<char *> args)
 			const gsl::span<const u8> buf(buffer.data(), size);
 
 			spdlog::info("== Size: {} ==", size);
-			spdlog::info("{:ox}", buf);
+//			spdlog::info("{:ox}", buf);
 		} catch (std::exception &e) {
 			spdlog::warn(e.what());
 			errors++;

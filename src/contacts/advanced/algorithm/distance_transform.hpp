@@ -57,23 +57,9 @@ auto operator> (struct QItem<T> const& a, struct QItem<T> const& b) noexcept -> 
 
 namespace impl {
 
-template<typename T>
-auto is_masked(T& mask, index_t i) -> bool
-{
-    return !mask(i);
-}
-
-template<typename T>
-auto is_foreground(T& bin, index_t i) -> bool
-{
-    return bin(i);
-}
-
-template<typename B, typename M>
-auto is_compute(B& bin, M& mask, index_t i) -> bool
-{
-    return !is_foreground(bin, i) && !is_masked(mask, i);
-}
+#define is_masked(mask, i) !mask(i)
+#define is_foreground(bin, i) bin(i)
+#define is_compute(bin, mask, i) (!is_foreground(bin, i) && !is_masked(mask, i))
 
 template<index_t DX, index_t DY, typename T, typename Q, typename B, typename M, typename C>
 inline void evaluate(Image<T>& out, Q& queue, B& bin, M& mask, C& cost, index_t i,
@@ -92,14 +78,11 @@ inline void evaluate(Image<T>& out, Q& queue, B& bin, M& mask, C& cost, index_t 
 } /* namespace impl */
 } /* namespace wdt */
 
-
 template<int N=8, typename T, typename F, typename M, typename C, typename Q>
-void weighted_distance_transform(Image<T>& out, F& bin, M& mask, C& cost, Q& q,
+[[gnu::always_inline]] inline void weighted_distance_transform_1(Image<T>& out, F& bin, M& mask, C& cost, Q& q,
                                  T limit=std::numeric_limits<T>::max())
 {
     using wdt::impl::evaluate;
-    using wdt::impl::is_foreground;
-    using wdt::impl::is_masked;
 
     static_assert(N == 4 || N == 8);
 
@@ -436,6 +419,25 @@ void weighted_distance_transform(Image<T>& out, F& bin, M& mask, C& cost, Q& q,
     } else {
         out[i] = static_cast<T>(0);
     }
+}
+
+template<int N=8, typename T, typename F, typename M, typename C, typename Q>
+[[gnu::always_inline]] inline void weighted_distance_transform_2(Image<T>& out, F& bin, M& mask, C& cost, Q& q,
+                                 T limit=std::numeric_limits<T>::max())
+{
+    using wdt::impl::evaluate;
+
+    static_assert(N == 4 || N == 8);
+
+    // strides
+    index_t const s_left      = -1;
+    index_t const s_right     =  1;
+    index_t const s_top       = -out.stride();
+    index_t const s_top_left  = s_top + s_left;
+    index_t const s_top_right = s_top + s_right;
+    index_t const s_bot       = -s_top;
+    index_t const s_bot_left  = s_bot + s_left;
+    index_t const s_bot_right = s_bot + s_right;
 
     // step 2: while queue is not empty, get next pixel, write down cost, and add neighbors
     while (!q.empty()) {
@@ -485,6 +487,14 @@ void weighted_distance_transform(Image<T>& out, F& bin, M& mask, C& cost, Q& q,
             }
         }
     }
+}
+
+template<int N=8, typename T, typename F, typename M, typename C, typename Q>
+[[gnu::always_inline]] inline void weighted_distance_transform(Image<T>& out, F& bin, M& mask, C& cost, Q& q,
+                                 T limit=std::numeric_limits<T>::max())
+{
+    weighted_distance_transform_1<N>(out, bin, mask, cost, q, limit);
+    weighted_distance_transform_2<N>(out, bin, mask, cost, q, limit);
 }
 
 } /* namespace iptsd::contacts::advanced::alg */

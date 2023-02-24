@@ -9,7 +9,7 @@
 
 namespace iptsd::contacts::basic {
 
-Cluster::Cluster(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t center)
+Cluster::Cluster(container::Image<f32> &heatmap, container::Image<char> &visited, index2_t center)
 {
 	this->check(heatmap, visited, center);
 }
@@ -38,7 +38,7 @@ math::Mat2s<f64> Cluster::cov()
 	return math::Mat2s<f64> {r1, r3, r2};
 }
 
-void Cluster::check(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t pos)
+void Cluster::check(container::Image<f32> &heatmap, container::Image<char> &visited, index2_t pos)
 {
 	index2_t size = heatmap.size();
 

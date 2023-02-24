@@ -3,7 +3,7 @@ project('iptsd', 'cpp', 'c',
         license: 'GPL-2.0-or-later',
         meson_version: '>=0.56.0',
         default_options: [
-          'cpp_std=c++17',
+          'cpp_std=c++20',
           'warning_level=3',
           'werror=true',
           'sysconfdir=/etc',
