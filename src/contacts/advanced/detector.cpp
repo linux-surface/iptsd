@@ -190,8 +190,8 @@ auto BlobDetector::process(Image<f32> const& hm) -> std::vector<Blob> const&
     // distance transform
     {
 
-        alg::weighted_distance_transform<4, true>(m_img_dm1, this, m_wdt_queue, 6.0f);
-        alg::weighted_distance_transform<4, false>(m_img_dm2, this, m_wdt_queue, 6.0f);
+        alg::weighted_distance_transform<4, true>(this);
+        alg::weighted_distance_transform<4, false>(this);
     }
 
     // filter

@@ -53,9 +53,35 @@ constexpr bool wdt_exc_bin(BlobDetector *d, index_t i) {
 #define is_foreground(i) (INC_OR_EXC ? wdt_inc_bin(d, i) : wdt_exc_bin(d, i))
 #define is_compute(i) (!is_foreground(i) && !is_masked(i))
 
-template<index_t DX, index_t DY, bool INC_OR_EXC, typename T, typename Q>
-inline void evaluate(BlobDetector *d, Image<T>& out, Q& queue, index_t i,
-                     index_t stride, T limit)
+constexpr f32 limit = 6.0f;
+
+#define qpush(i, c) do { \
+if (INC_OR_EXC)  {       \
+if ((c) < limit) {       \
+if ((c) < young_limit) { \
+if ((c) < eden_limit) {  \
+eq.push_back ({ i, c});  \
+} else {                 \
+yq.push_back ({ i, c});  \
+}                        \
+} else {                 \
+q.push({i, c});          \
+}                        \
+}                        \
+} else {                 \
+if ((c) < limit) {       \
+if (c < 1 || (c > 1 && i & 1)) {    \
+eq.push_back({ i, c});   \
+} else {                 \
+yq.push_back({i, c});    \
+}                        \
+}                        \
+}                        \
+} while (0)
+index2_t constexpr out_size = { 64, 44 };
+
+template<index_t DX, index_t DY, bool INC_OR_EXC, index_t stride, typename T, typename Q>
+inline void evaluate(BlobDetector *d, Image<T>& out, Q& queue, index_t i)
 {
     if (!is_compute(i + stride))
         return;
@@ -67,21 +93,27 @@ inline void evaluate(BlobDetector *d, Image<T>& out, Q& queue, index_t i,
     }
 }
 
-template<int N=8, bool INC_OR_EXC, typename Q, typename T>
-[[gnu::always_inline]] inline void weighted_distance_transform_1(Image<T>& out, BlobDetector *d, Q& q,
-T limit=std::numeric_limits<T>::max())
+template<int N=8, bool INC_OR_EXC>
+[[gnu::always_inline]] inline void weighted_distance_transform_1(BlobDetector *d)
 {
     static_assert(N == 4 || N == 8);
+    auto &q = d->m_wdt_queue;
+    auto &yq = d->m_wdt_queue_young_gen;
+    auto &eq = d->m_wdt_queue_eden_gen;
+    auto& out = INC_OR_EXC ? d->m_img_dm1 : d->m_img_dm2;
+    constexpr f64 young_limit = 0.2f;
+    constexpr f64 eden_limit = 0.15f;
+    using T = f32;
 
     // strides
-    index_t const s_left      = -1;
-    index_t const s_right     =  1;
-    index_t const s_top       = -out.stride();
-    index_t const s_top_left  = s_top + s_left;
-    index_t const s_top_right = s_top + s_right;
-    index_t const s_bot       = -s_top;
-    index_t const s_bot_left  = s_bot + s_left;
-    index_t const s_bot_right = s_bot + s_right;
+    index_t constexpr s_left      = -1;
+    index_t constexpr s_right     =  1;
+    index_t constexpr s_top       = -64;
+    index_t constexpr s_top_left  = s_top + s_left;
+    index_t constexpr s_top_right = s_top + s_right;
+    index_t constexpr s_bot       = -s_top;
+    index_t constexpr s_bot_left  = s_bot + s_left;
+    index_t constexpr s_bot_right = s_bot + s_right;
 
     // step 1: initialize output, queue all non-masked pixels
     index_t i = 0;
@@ -105,9 +137,7 @@ T limit=std::numeric_limits<T>::max())
                 c = std::min(c, get_cost<-1, -1>(d, i + s_bot_right));
             }
 
-            if (c < limit) {
-                q.push({ i, c });
-            }
+            qpush(i, c);
         }
     } else {
         out[i] = static_cast<T>(0);
@@ -115,7 +145,7 @@ T limit=std::numeric_limits<T>::max())
     ++i;
 
     // 0 < x < n - 1, y = 0
-    for (; i < out.size().x - 1; ++i) {
+    for (; i < out_size.x - 1; ++i) {
         if (is_foreground(i)) {
             out[i] = static_cast<T>(0);
             continue;
@@ -148,9 +178,7 @@ T limit=std::numeric_limits<T>::max())
             c = std::min(c, get_cost<-1, -1>(d, i + s_bot_right));
         }
 
-        if (c < limit) {
-            q.push({ i, c });
-        }
+        qpush(i, c);
     }
 
     // x = n - 1, y = 0
@@ -172,9 +200,7 @@ T limit=std::numeric_limits<T>::max())
                 c = std::min(c, get_cost<0, -1>(d, i + s_bot));
             }
 
-            if (c < limit) {
-                q.push({ i, c });
-            }
+            qpush(i, c);
         }
     } else {
         out[i] = static_cast<T>(0);
@@ -182,7 +208,7 @@ T limit=std::numeric_limits<T>::max())
     ++i;
 
     // 0 < y < n - 1
-    while (i < out.size().x * (out.size().y - 1)) {
+    while (i < out_size.x * (out_size.y - 1)) {
         // x = 0
         if (!is_foreground(i)) {
             out[i] = std::numeric_limits<T>::max();
@@ -210,9 +236,7 @@ T limit=std::numeric_limits<T>::max())
                     c = std::min(c, get_cost<-1, -1>(d, i + s_bot_right));
                 }
 
-                if (c < limit) {
-                    q.push({ i, c });
-                }
+                qpush(i, c);
             }
         } else {
             out[i] = static_cast<T>(0);
@@ -220,7 +244,7 @@ T limit=std::numeric_limits<T>::max())
         ++i;
 
         // 0 < x < n - 1
-        auto const limit = i + out.size().x - 2;
+        auto const limit = i + out_size.x - 2;
         for (; i < limit; ++i) {
             // if this is a foreground pixel, set it to zero and skip the rest
             if (is_foreground(i)) {
@@ -271,9 +295,7 @@ T limit=std::numeric_limits<T>::max())
             }
 
             // if we have a finite projected cost, add this pixel
-            if (c < limit) {
-                q.push({ i, c });
-            }
+            qpush(i, c);
         }
 
         // x = n - 1
@@ -303,9 +325,7 @@ T limit=std::numeric_limits<T>::max())
                     c = std::min(c, get_cost<0, -1>(d, i + s_bot));
                 }
 
-                if (c < limit) {
-                    q.push({ i, c });
-                }
+                qpush(i, c);
             }
         } else {
             out[i] = static_cast<T>(0);
@@ -332,9 +352,7 @@ T limit=std::numeric_limits<T>::max())
                 c = std::min(c, get_cost<-1, 1>(d, i + s_top_right));
             }
 
-            if (c < limit) {
-                q.push({ i, c });
-            }
+            qpush(i, c);
         }
     } else {
         out[i] = static_cast<T>(0);
@@ -342,7 +360,7 @@ T limit=std::numeric_limits<T>::max())
     ++i;
 
     // 0 < x < n - 1, y = n - 1
-    for (; i < out.size().span() - 1; ++i) {
+    for (; i < out_size.span() - 1; ++i) {
         if (is_foreground(i)) {
             out[i] = static_cast<T>(0);
             continue;
@@ -375,9 +393,7 @@ T limit=std::numeric_limits<T>::max())
             c = std::min(c, get_cost<-1, 1>(d, i + s_top_right));
         }
 
-        if (c < limit) {
-            q.push({ i, c });
-        }
+        qpush(i, c);
     }
 
     // x = n - 1, y = n - 1
@@ -399,30 +415,30 @@ T limit=std::numeric_limits<T>::max())
                 c = std::min(c, get_cost<0, 1>(d, i + s_top));
             }
 
-            if (c < limit) {
-                q.push({ i, c });
-            }
+            qpush(i, c);
         }
     } else {
         out[i] = static_cast<T>(0);
     }
 }
 
-template<int N=8, bool INC_OR_EXC, typename Q, typename T>
-[[gnu::always_inline]] inline void weighted_distance_transform_2(Image<T>& out, BlobDetector *d, Q& q,
-T limit=std::numeric_limits<T>::max())
+template<int N=8, bool INC_OR_EXC>
+[[gnu::always_inline]] inline void weighted_distance_transform_2(BlobDetector *d)
 {
     static_assert(N == 4 || N == 8);
+    auto &q = d->m_wdt_queue;
+    auto& out = INC_OR_EXC ? d->m_img_dm1 : d->m_img_dm2;
+    using T = f32;
 
     // strides
-    index_t const s_left      = -1;
-    index_t const s_right     =  1;
-    index_t const s_top       = -out.stride();
-    index_t const s_top_left  = s_top + s_left;
-    index_t const s_top_right = s_top + s_right;
-    index_t const s_bot       = -s_top;
-    index_t const s_bot_left  = s_bot + s_left;
-    index_t const s_bot_right = s_bot + s_right;
+    index_t constexpr s_left      = -1;
+    index_t constexpr s_right     =  1;
+    index_t constexpr s_top       = -64;
+    index_t constexpr s_top_left  = s_top + s_left;
+    index_t constexpr s_top_right = s_top + s_right;
+    index_t constexpr s_bot       = -s_top;
+    index_t constexpr s_bot_left  = s_bot + s_left;
+    index_t constexpr s_bot_right = s_bot + s_right;
 
     // step 2: while queue is not empty, get next pixel, write down cost, and add neighbors
     while (!q.empty()) {
@@ -438,48 +454,63 @@ T limit=std::numeric_limits<T>::max())
         out[pixel.idx] = pixel.cost;
 
         // evaluate neighbors
-        auto const [x, y] = Image<T>::unravel(out.size(), pixel.idx);
+        auto const [x, y] = Image<T>::unravel(out_size, pixel.idx);
 
         if (x > 0) {
-            evaluate<-1, 0, INC_OR_EXC>(d, out, q, pixel.idx, s_left, limit);
+            evaluate<-1, 0, INC_OR_EXC, s_left>(d, out, q, pixel.idx);
         }
 
-        if (x < out.size().x - 1) {
-            evaluate<1, 0, INC_OR_EXC>(d, out, q, pixel.idx, s_right, limit);
+        if (x < out_size.x - 1) {
+            evaluate<1, 0, INC_OR_EXC, s_right>(d, out, q, pixel.idx);
         }
 
         if (y > 0) {
             if (N == 8 && x > 0) {
-                evaluate<-1, -1, INC_OR_EXC>(d, out, q, pixel.idx, s_top_left, limit);
+                evaluate<-1, -1, INC_OR_EXC, s_top_left>(d, out, q, pixel.idx);
             }
 
-            evaluate<0, -1, INC_OR_EXC>(d, out, q, pixel.idx, s_top, limit);
+            evaluate<0, -1, INC_OR_EXC, s_top>(d, out, q, pixel.idx);
 
-            if (N == 8 && x < out.size().x - 1) {
-                evaluate<1, -1, INC_OR_EXC>(d, out, q, pixel.idx, s_top_right, limit);
+            if (N == 8 && x < out_size.x - 1) {
+                evaluate<1, -1, INC_OR_EXC, s_top_right>(d, out, q, pixel.idx);
             }
         }
 
-        if (y < out.size().y - 1) {
+        if (y < out_size.y - 1) {
             if (N == 8 && x > 0) {
-                evaluate<-1, 1, INC_OR_EXC>(d, out, q, pixel.idx, s_bot_left, limit);
+                evaluate<-1, 1, INC_OR_EXC, s_bot_left>(d, out, q, pixel.idx);
             }
 
-            evaluate<0, 1, INC_OR_EXC>(d, out, q, pixel.idx, s_bot, limit);
+            evaluate<0, 1, INC_OR_EXC, s_bot>(d, out, q, pixel.idx);
 
-            if (N == 8 && x < out.size().x - 1) {
-                evaluate<1, 1, INC_OR_EXC>(d, out, q, pixel.idx, s_bot_right, limit);
+            if (N == 8 && x < out_size.x - 1) {
+                evaluate<1, 1, INC_OR_EXC, s_bot_right>(d, out, q, pixel.idx);
             }
         }
     }
 }
 
-template<int N=8, bool INC_OR_EXC, typename Q, typename T>
-[[gnu::always_inline]] inline void weighted_distance_transform(Image<T>& out, BlobDetector *d, Q& q,
-                                 T limit=std::numeric_limits<T>::max())
+template<int N=8, bool INC_OR_EXC>
+[[gnu::always_inline]] inline void weighted_distance_transform(BlobDetector *d)
 {
-    weighted_distance_transform_1<N, INC_OR_EXC>(out, d, q, limit);
-    weighted_distance_transform_2<N, INC_OR_EXC>(out, d, q, limit);
+    weighted_distance_transform_1<N, INC_OR_EXC>(d);
+    printf("%lu, %lu, %lu\n", d->m_wdt_queue.size(), d->m_wdt_queue_young_gen.size(), d->m_wdt_queue_eden_gen.size());
+    weighted_distance_transform_2<N, INC_OR_EXC>(d);
+    auto& out = INC_OR_EXC ? d->m_img_dm1 : d->m_img_dm2;
+    for (auto &pixel : d->m_wdt_queue_young_gen) {
+        if (out[pixel.idx] <= pixel.cost)
+            continue;
+        d->m_wdt_queue.push(pixel);
+    }
+    d->m_wdt_queue_young_gen.clear();
+    weighted_distance_transform_2<N, INC_OR_EXC>(d);
+    for (auto &pixel : d->m_wdt_queue_eden_gen) {
+        if (out[pixel.idx] <= pixel.cost)
+            continue;
+        d->m_wdt_queue.push(pixel);
+    }
+    d->m_wdt_queue_eden_gen.clear();
+    weighted_distance_transform_2<N, INC_OR_EXC>(d);
 }
 
 } /* namespace iptsd::contacts::advanced::alg */

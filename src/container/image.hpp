@@ -68,6 +68,8 @@ template <class T> Image<T>::Image(index2_t size) : m_size {size}
 {
 	if (size.span() > max_array_size)
 		throw std::runtime_error("image size overflow");
+	if (size.x != 64)
+		throw std::runtime_error("image is currently specialized");
 }
 
 template <class T> inline auto Image<T>::size() const -> index2_t
@@ -77,7 +79,7 @@ template <class T> inline auto Image<T>::size() const -> index2_t
 
 template <class T> inline auto Image<T>::stride() const -> index_t
 {
-	return m_size.x;
+	return 64;
 }
 
 template <class T> inline auto Image<T>::data() -> pointer
@@ -142,12 +144,12 @@ template <class T> inline auto Image<T>::cend() const -> const_iterator
 
 template <class T> inline constexpr auto Image<T>::ravel(index2_t size, index2_t i) -> index_t
 {
-	return i.y * size.x + i.x;
+	return i.y * 64 + i.x;
 }
 
 template <class T> inline constexpr auto Image<T>::unravel(index2_t size, index_t i) -> index2_t
 {
-	return {i % size.x, i / size.x};
+	return {i % 64, i / 64};
 }
 
 } /* namespace iptsd::container */

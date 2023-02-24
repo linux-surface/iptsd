@@ -57,6 +57,10 @@ public:
         return {ind[delay_pop], std::bit_cast<f32>(cost[delay_pop])};
     }
 
+    size_t size() {
+        return length;
+    }
+
     void push(alg::wdt::QItem<f32> item) {
         if (length == QUEUE_MAX) {
             throw std::runtime_error("MyQueue overflow");
@@ -229,6 +233,8 @@ public:
     Image<f64> m_img_gftmp;
 
     MyQueue m_wdt_queue;
+    ArrayVec<alg::wdt::QItem<f32>, 1024> m_wdt_queue_young_gen;
+    ArrayVec<alg::wdt::QItem<f32>, 1024> m_wdt_queue_eden_gen;
     ArrayVec<alg::gfit::Parameters<f64>, 32> m_gf_params;
 
     ArrayVec<index_t, 32> m_maximas;
