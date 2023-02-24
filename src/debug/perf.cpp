@@ -52,10 +52,13 @@ static int main(gsl::span<char *> args)
 {
 	CLI::App app {};
 	std::filesystem::path path;
+	u32 runs = 10;
 
 	app.add_option("DATA", path, "The binary data file containing the data to test.")
 		->type_name("FILE")
 		->required();
+	app.add_option("RUNS", runs, "Repeat this number of runs through the data.")
+		->check(CLI::Range(1, 1000));
 
 	CLI11_PARSE(app, args.size(), args.data());
 
@@ -133,8 +136,7 @@ static int main(gsl::span<char *> args)
 		had_heatmap = true;
 	};
 
-	static constexpr u32 LOOP_COUNT = 10;
-	for (u32 i = 0; i < LOOP_COUNT; i++) {
+	for (u32 i = 0; i < runs; i++) {
 		finder.reset();
 		reader_finished_successfully = false;
 		gsl::span<u8> reader(buffer.data(), buffer.size());
