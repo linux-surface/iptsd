@@ -96,12 +96,13 @@ static int main(gsl::span<char *> args)
 	spdlog::info("Buffer Size:  {}", header.buffer_size);
 
 	if (meta.has_value()) {
-		auto &t = meta->transform;
-		auto &u = meta->unknown.unknown;
+		const auto &m = meta;
+		auto &t = m->transform;
+		auto &u = m->unknown.unknown;
 
 		spdlog::info("Metadata:");
-		spdlog::info("rows={}, columns={}", meta->size.rows, meta->size.columns);
-		spdlog::info("width={}, height={}", meta->size.width, meta->size.height);
+		spdlog::info("rows={}, columns={}", m->size.rows, m->size.columns);
+		spdlog::info("width={}, height={}", m->size.width, m->size.height);
 		spdlog::info("transform=[{},{},{},{},{},{}]", t.xx, t.yx, t.tx, t.xy, t.yy, t.ty);
 		spdlog::info("unknown={}, [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]",
 			     meta->unknown_byte, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7],
