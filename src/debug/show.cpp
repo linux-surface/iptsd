@@ -27,7 +27,7 @@ static void iptsd_show_handle_input(const Cairo::RefPtr<Cairo::Context> &cairo, 
 
 	// Normalize and invert the heatmap data.
 	std::transform(data.data.begin(), data.data.end(), finder.data().begin(), [&](f32 v) {
-		f32 val = static_cast<f32>(v - data.dim.z_min) /
+		f32 val = (v - static_cast<f32>(data.dim.z_min)) /
 			  static_cast<f32>(data.dim.z_max - data.dim.z_min);
 
 		return 1.0f - val;
