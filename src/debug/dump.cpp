@@ -58,25 +58,25 @@ template <> struct fmt::formatter<gsl::span<const u8>> {
 			size_t j = 0;
 
 			if (prefix != 'n')
-				it = format_to(it, pfxstr, i);
+				it = format_to(it, fmt::runtime(pfxstr), i);
 
 			for (; j < 8 && i + j < buf.size(); j++)
-				it = format_to(it, fmtstr, buf[i + j]);
+				it = format_to(it, fmt::runtime(fmtstr), buf[i + j]);
 
 			it = format_to(it, " ");
 
 			for (; j < 16 && i + j < buf.size(); j++)
-				it = format_to(it, fmtstr, buf[i + j]);
+				it = format_to(it, fmt::runtime(fmtstr), buf[i + j]);
 
 			it = format_to(it, " ");
 
 			for (; j < 24 && i + j < buf.size(); j++)
-				it = format_to(it, fmtstr, buf[i + j]);
+				it = format_to(it, fmt::runtime(fmtstr), buf[i + j]);
 
 			it = format_to(it, " ");
 
 			for (; j < 32 && i + j < buf.size(); j++)
-				it = format_to(it, fmtstr, buf[i + j]);
+				it = format_to(it, fmt::runtime(fmtstr), buf[i + j]);
 
 			it = format_to(it, "\n");
 		}
