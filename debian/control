@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Dorian Stoll <dorian.stoll@tmsp.io>
 Build-Depends:
  build-essential,
+ clang-13,
  debhelper-compat (= 12),
  meson,
  pkg-config,

@@ -14,7 +14,7 @@ depends=(
 )
 makedepends=(
 	'meson'
-	'gcc'
+	'clang'
 	'cmake'
 	'microsoft-gsl'
 	'systemd'
@@ -23,6 +23,10 @@ makedepends=(
 
 build() {
 	cd $startdir
+
+	# Build with clang since it produces faster binaries
+	export CC="clang"
+	export CXX="clang++"
 
 	export CFLAGS="$(echo "$CFLAGS" | sed 's|-O2||g' | sed 's|-mtune=generic||g' | sed 's|-march=x86_64||g')"
 	export CXXFLAGS="$(echo "$CXXFLAGS" | sed 's|-O2||g' | sed 's|-mtune=generic||g' | sed 's|-march=x86_64||g')"

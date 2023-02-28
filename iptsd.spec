@@ -1,5 +1,8 @@
 %global debug_package %{nil}
 
+# Build with clang since it produces faster binaries
+%global toolchain clang
+
 Name: iptsd
 Version: 1.1.1
 Release: 1%{?dist}
@@ -10,7 +13,12 @@ URL: https://github.com/linux-surface/iptsd
 Source: {{{ create_tarball }}}
 
 BuildRequires: meson
+
+%if "%{toolchain}" == "gcc"
 BuildRequires: gcc-g++
+%else
+BuildRequires: clang
+%endif
 
 # Some of our dependencies can only be resolved with cmake
 BuildRequires: cmake
