@@ -1,3 +1,9 @@
+// Disable access checks for the entire advanced detector,
+// unless the user forces access checks to be enabled.
+#if defined(_GLIBCXX_ASSERTIONS) && !defined(IPTSD_CONFIG_FORCE_ACCESS_CHECKS)
+#undef _GLIBCXX_ASSERTIONS
+#endif
+
 #include "detector.hpp"
 
 #include "../neutral.hpp"
