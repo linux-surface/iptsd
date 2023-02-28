@@ -9,7 +9,7 @@
 
 namespace iptsd::common {
 
-inline auto cerror(const std::string &msg) -> std::system_error
+inline std::system_error cerror(const std::string &msg)
 {
 	return std::system_error {std::error_code {errno, std::system_category()}, msg};
 }

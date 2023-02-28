@@ -126,7 +126,7 @@ static int main(gsl::span<char *> args)
 	std::vector<u8> buffer(buffer_size);
 
 	// Get device metadata
-	auto meta = dev.get_metadata();
+	std::optional<const ipts::Metadata> meta = dev.get_metadata();
 
 	if (file) {
 		struct iptsd_dump_header header {};
@@ -141,7 +141,7 @@ static int main(gsl::span<char *> args)
 		file.write(&has_meta, sizeof(has_meta));
 
 		if (meta.has_value()) {
-			auto m = meta.value();
+			ipts::Metadata m = meta.value();
 
 			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 			file.write(reinterpret_cast<char *>(&m), sizeof(m));

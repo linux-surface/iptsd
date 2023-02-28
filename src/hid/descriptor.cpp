@@ -64,7 +64,7 @@ std::vector<u8> Descriptor::reports(hidrd_item_main_tag type) const
 	u8 current = 0;
 	std::vector<u8> reports {};
 
-	for (auto item : this->items()) {
+	for (const hidrd_item *item : this->items()) {
 		if (is_report(item)) {
 			current = hidrd_item_report_id_get_value(item);
 			continue;
@@ -90,7 +90,7 @@ std::vector<hidrd_usage> Descriptor::usage(u8 report) const
 	u8 current = 0;
 	std::vector<hidrd_usage> usage {};
 
-	for (auto item : this->items()) {
+	for (const hidrd_item *item : this->items()) {
 		if (is_report(item)) {
 			current = hidrd_item_report_id_get_value(item);
 			continue;
@@ -115,7 +115,7 @@ hidrd_usage_page Descriptor::usage_page(u8 report) const
 {
 	hidrd_usage_page current = HIDRD_USAGE_PAGE_MAX;
 
-	for (auto item : this->items()) {
+	for (const hidrd_item *item : this->items()) {
 		if (is_report(item) && report == hidrd_item_report_id_get_value(item))
 			return current;
 
@@ -139,7 +139,7 @@ u64 Descriptor::size(u8 report) const
 	u32 report_size = 0;
 	u64 total_size = 0;
 
-	for (auto item : this->items()) {
+	for (const hidrd_item *item : this->items()) {
 		if (is_report(item)) {
 			current = hidrd_item_report_id_get_value(item);
 			continue;

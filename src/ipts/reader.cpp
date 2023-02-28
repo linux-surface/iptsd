@@ -39,7 +39,7 @@ Reader Reader::sub(std::size_t size)
 	if (size > this->size())
 		throw std::runtime_error("Tried to read more data than available!");
 
-	const auto sub = this->data.subspan(this->index, size);
+	const gsl::span<u8> sub = this->data.subspan(this->index, size);
 	this->skip(size);
 
 	return Reader {sub};

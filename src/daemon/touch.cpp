@@ -162,13 +162,12 @@ void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data)
 	touch.finder.resize(index2_t {data.dim.width, data.dim.height});
 
 	// Normalize and invert the heatmap data.
-	std::transform(data.data.begin(), data.data.end(), touch.finder.data().begin(),
-		       [&](auto v) {
-			       f32 val = static_cast<f32>(v - data.dim.z_min) /
-					 static_cast<f32>(data.dim.z_max - data.dim.z_min);
+	std::transform(data.data.begin(), data.data.end(), touch.finder.data().begin(), [&](f32 v) {
+		f32 val = static_cast<f32>(v - data.dim.z_min) /
+			  static_cast<f32>(data.dim.z_max - data.dim.z_min);
 
-			       return 1.0f - val;
-		       });
+		return 1.0f - val;
+	});
 
 	// Search for contacts
 	const std::vector<contacts::Contact> &contacts = touch.finder.search();

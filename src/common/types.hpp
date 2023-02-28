@@ -27,72 +27,72 @@ public:
 	index_t x, y;
 
 public:
-	constexpr auto operator+=(index2_t const &v) -> index2_t &;
-	constexpr auto operator-=(index2_t const &v) -> index2_t &;
+	constexpr index2_t &operator+=(index2_t const &v);
+	constexpr index2_t &operator-=(index2_t const &v);
 
-	[[nodiscard]] constexpr auto span() const -> index_t;
+	[[nodiscard]] constexpr index_t span() const;
 };
 
-inline constexpr auto index2_t::operator+=(index2_t const &v) -> index2_t &
+inline constexpr index2_t &index2_t::operator+=(index2_t const &v)
 {
 	this->x += v.x;
 	this->y += v.y;
 	return *this;
 }
 
-inline constexpr auto index2_t::operator-=(index2_t const &v) -> index2_t &
+inline constexpr index2_t &index2_t::operator-=(index2_t const &v)
 {
 	this->x -= v.x;
 	this->y -= v.y;
 	return *this;
 }
 
-inline constexpr auto index2_t::span() const -> index_t
+inline constexpr index_t index2_t::span() const
 {
 	return this->x * this->y;
 }
 
-inline auto operator<<(std::ostream &os, index2_t const &i) -> std::ostream &
+inline std::ostream &operator<<(std::ostream &os, index2_t const &i)
 {
 	return os << "[" << i.x << ", " << i.y << "]";
 }
 
-inline constexpr auto operator==(index2_t const &a, index2_t const &b) -> bool
+inline constexpr bool operator==(index2_t const &a, index2_t const &b)
 {
 	return a.x == b.x && a.y == b.y;
 }
 
-inline constexpr auto operator!=(index2_t const &a, index2_t const &b) -> bool
+inline constexpr bool operator!=(index2_t const &a, index2_t const &b)
 {
 	return !(a == b);
 }
 
-inline constexpr auto operator>(index2_t const &a, index2_t const &b) -> bool
+inline constexpr bool operator>(index2_t const &a, index2_t const &b)
 {
 	return a.x > b.x && a.y > b.y;
 }
 
-inline constexpr auto operator>=(index2_t const &a, index2_t const &b) -> bool
+inline constexpr bool operator>=(index2_t const &a, index2_t const &b)
 {
 	return a.x >= b.x && a.y >= b.y;
 }
 
-inline constexpr auto operator<(index2_t const &a, index2_t const &b) -> bool
+inline constexpr bool operator<(index2_t const &a, index2_t const &b)
 {
 	return a.x < b.x && a.y < b.y;
 }
 
-inline constexpr auto operator<=(index2_t const &a, index2_t const &b) -> bool
+inline constexpr bool operator<=(index2_t const &a, index2_t const &b)
 {
 	return a.x <= b.x && a.y <= b.y;
 }
 
-inline constexpr auto operator+(index2_t const &a, index2_t const &b) -> index2_t
+inline constexpr index2_t operator+(index2_t const &a, index2_t const &b)
 {
 	return {a.x + b.x, a.y + b.y};
 }
 
-inline constexpr auto operator-(index2_t const &a, index2_t const &b) -> index2_t
+inline constexpr index2_t operator-(index2_t const &a, index2_t const &b)
 {
 	return {a.x - b.x, a.y - b.y};
 }

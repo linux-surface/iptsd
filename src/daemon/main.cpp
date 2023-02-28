@@ -22,6 +22,7 @@
 #include <filesystem>
 #include <functional>
 #include <iostream>
+#include <optional>
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <thread>
@@ -48,7 +49,7 @@ static int main(gsl::span<char *> args)
 
 	ipts::Device device {path};
 
-	auto meta = device.get_metadata();
+	std::optional<const ipts::Metadata> meta = device.get_metadata();
 	if (meta.has_value()) {
 		auto &t = meta->transform;
 		auto &u = meta->unknown.unknown;
@@ -73,14 +74,20 @@ static int main(gsl::span<char *> args)
 
 	ipts::Parser parser {};
 
-	if (!config.touch_disable)
-		parser.on_heatmap = [&](const auto &data) { iptsd_touch_input(ctx, data); };
-	else
+	if (!config.touch_disable) {
+		parser.on_heatmap = [&](const ipts::Heatmap &data) {
+			iptsd_touch_input(ctx, data);
+		};
+	} else {
 		spdlog::warn("Touchscreen is disabled!");
+	}
 
 	if (!config.stylus_disable) {
-		parser.on_stylus = [&](const auto &data) { iptsd_stylus_input(ctx, data); };
-		parser.on_dft = [&](const auto &dft, auto &stylus) {
+		parser.on_stylus = [&](const ipts::StylusData &data) {
+			iptsd_stylus_input(ctx, data);
+		};
+
+		parser.on_dft = [&](const ipts::DftWindow &dft, ipts::StylusData &stylus) {
 			iptsd_dft_input(ctx, dft, stylus);
 		};
 	} else {

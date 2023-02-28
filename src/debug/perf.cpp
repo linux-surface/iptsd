@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include "container/ops.hpp"
-
 #include <common/types.hpp>
 #include <config/config.hpp>
 #include <contacts/finder.hpp>
 #include <container/image.hpp>
+#include <container/ops.hpp>
 #include <ipts/parser.hpp>
 
 #include <CLI/CLI.hpp>
@@ -37,7 +36,7 @@ static void iptsd_perf_handle_input(contacts::ContactFinder &finder, const ipts:
 	finder.resize(index2_t {data.dim.width, data.dim.height});
 
 	// Normalize and invert the heatmap data.
-	std::transform(data.data.begin(), data.data.end(), finder.data().begin(), [&](auto v) {
+	std::transform(data.data.begin(), data.data.end(), finder.data().begin(), [&](f32 v) {
 		f32 val = static_cast<f32>(v - data.dim.z_min) /
 			  static_cast<f32>(data.dim.z_max - data.dim.z_min);
 
@@ -89,17 +88,16 @@ static int main(gsl::span<char *> args)
 	spdlog::info("Buffer Size:  {}", header.buffer_size);
 
 	if (meta.has_value()) {
-		const auto &m = meta;
-		auto &t = m->transform;
-		auto &u = m->unknown.unknown;
+		auto &t = meta->transform;
+		auto &u = meta->unknown.unknown;
 
 		spdlog::info("Metadata:");
-		spdlog::info("rows={}, columns={}", m->size.rows, m->size.columns);
-		spdlog::info("width={}, height={}", m->size.width, m->size.height);
+		spdlog::info("rows={}, columns={}", meta->size.rows, meta->size.columns);
+		spdlog::info("width={}, height={}", meta->size.width, meta->size.height);
 		spdlog::info("transform=[{},{},{},{},{},{}]", t.xx, t.yx, t.tx, t.xy, t.yy, t.ty);
 		spdlog::info("unknown={}, [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]",
-			     m->unknown_byte, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8],
-			     u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
+			     meta->unknown_byte, u[0], u[1], u[2], u[3], u[4], u[5], u[6], u[7],
+			     u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
 	}
 
 	config::Config config {header.vendor, header.product, meta};
@@ -122,15 +120,15 @@ static int main(gsl::span<char *> args)
 	u64 total_of_squares = 0;
 	u32 count = 0;
 
-	auto min = clock::duration::max();
-	auto max = clock::duration::min();
+	clock::duration min = clock::duration::max();
+	clock::duration max = clock::duration::min();
 	bool had_heatmap = false;
 	bool reader_finished_successfully = false;
 
 	// Parser is idempotent but ContactFinder is not
 	contacts::ContactFinder finder {config.contacts()};
 	ipts::Parser parser {};
-	parser.on_heatmap = [&](const auto &data) {
+	parser.on_heatmap = [&](const ipts::Heatmap &data) {
 		iptsd_perf_handle_input(finder, data);
 		// Don't track time for non-heatmap
 		had_heatmap = true;
@@ -161,7 +159,7 @@ static int main(gsl::span<char *> args)
 				reader = reader.subspan(header.buffer_size);
 
 				// Take start time
-				auto start = clock::now();
+				clock::time_point start = clock::now();
 
 				// Send the report to the finder through the parser for processing
 				// Cannot put this in a loop because it is not a pure function
@@ -170,7 +168,7 @@ static int main(gsl::span<char *> args)
 
 				if (std::exchange(had_heatmap, false)) {
 					// Take end time
-					auto end = clock::now();
+					clock::time_point end = clock::now();
 
 					clock::duration x_ns = end - start;
 					// Divide early for x and x**2 because they are overflowing

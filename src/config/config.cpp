@@ -14,6 +14,8 @@
 #include <ini.h>
 #include <string>
 
+namespace filesystem = std::filesystem;
+
 namespace iptsd::config {
 
 struct iptsd_config_device {
@@ -168,10 +170,10 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 
 void Config::load_dir(const std::string &name, bool check_device)
 {
-	if (!std::filesystem::exists(name))
+	if (!filesystem::exists(name))
 		return;
 
-	for (auto &p : std::filesystem::directory_iterator(name)) {
+	for (const filesystem::directory_entry &p : filesystem::directory_iterator(name)) {
 		if (!p.is_regular_file())
 			continue;
 
@@ -204,12 +206,13 @@ Config::Config(i16 vendor, i16 product, std::optional<const ipts::Metadata> meta
 		// Load configuration file from custom location
 		// Mainly for developers to debug their work
 		// without touching their known working main system configuration
-		if (!std::filesystem::exists(config_file_path))
+		if (!filesystem::exists(config_file_path))
 			throw std::runtime_error("IPTSD_CONFIG_FILE not found");
+
 		if (ini_parse(config_file_path, parse_conf, this))
 			throw std::runtime_error("IPTSD_CONFIG_FILE is corrupt");
 	} else {
-		if (std::filesystem::exists(IPTSD_CONFIG_FILE))
+		if (filesystem::exists(IPTSD_CONFIG_FILE))
 			ini_parse(IPTSD_CONFIG_FILE, parse_conf, this);
 
 		this->load_dir(IPTSD_CONFIG_DIR, false);

@@ -110,8 +110,8 @@ static f64 iptsd_dft_interpolate_frequency(const Context &ctx, const ipts::DftWi
 		imag.at(i) = 0;
 
 		for (u8 j = 0; j < IPTS_DFT_NUM_COMPONENTS; j++) {
-			const auto &x = dft.x.at(maxi + i - 1);
-			const auto &y = dft.y.at(maxi + i - 1);
+			const struct ipts_pen_dft_window_row &x = dft.x.at(maxi + i - 1);
+			const struct ipts_pen_dft_window_row &y = dft.y.at(maxi + i - 1);
 
 			real.at(i) += gsl::at(x.real, j) + gsl::at(y.real, j);
 			imag.at(i) += gsl::at(x.imag, j) + gsl::at(y.imag, j);
@@ -193,8 +193,9 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 
 				if (ctx.config.dft_tip_distance > 0) {
 					// correct tip position using tilt data
-					auto r = ctx.config.dft_tip_distance /
-						 ctx.config.dft_tilt_distance;
+					f32 r = ctx.config.dft_tip_distance /
+						ctx.config.dft_tilt_distance;
+
 					x -= xt * r;
 					y -= yt * r;
 				}
@@ -202,9 +203,10 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 				xt *= ctx.config.width / ctx.config.dft_tilt_distance;
 				yt *= ctx.config.height / ctx.config.dft_tilt_distance;
 
-				auto azm = std::fmod(std::atan2(-yt, xt) / M_PI + 2, 2) * 18000;
-				auto alt =
+				f64 azm = std::fmod(std::atan2(-yt, xt) / M_PI + 2, 2) * 18000;
+				f64 alt =
 					std::asin(std::min(1.0, std::hypot(xt, yt))) / M_PI * 18000;
+
 				stylus.azimuth = gsl::narrow<u16>(std::round(azm));
 				stylus.altitude = gsl::narrow<u16>(std::round(alt));
 			}

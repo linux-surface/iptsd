@@ -107,8 +107,8 @@ const std::vector<Contact> &ContactFinder::search()
 	std::size_t count = std::min(blobs.size(), static_cast<u64>(this->config.max_contacts));
 
 	for (std::size_t i = 0; i < count; i++) {
-		const auto &blob = blobs[i];
-		auto &contact = this->frames[0][i];
+		const Blob &blob = blobs[i];
+		Contact &contact = this->frames[0][i];
 
 		contact.x = blob.mean.x / gsl::narrow<f32>(this->size.x);
 		contact.y = blob.mean.y / gsl::narrow<f32>(this->size.y);
@@ -157,7 +157,7 @@ const std::vector<Contact> &ContactFinder::search()
 	}
 
 	for (std::size_t i = count; i < this->config.max_contacts; i++) {
-		auto &contact = this->frames[0][i];
+		Contact &contact = this->frames[0][i];
 
 		contact.index = i;
 		contact.active = false;
@@ -170,11 +170,11 @@ const std::vector<Contact> &ContactFinder::search()
 	}
 
 	// Mark contacts that are very close to an invalid contact as invalid too
-	for (const auto &contact : this->frames[0]) {
+	for (const Contact &contact : this->frames[0]) {
 		if (contact.valid)
 			continue;
 
-		for (auto &other : this->frames[0]) {
+		for (Contact &other : this->frames[0]) {
 			if (!this->check_dist(contact, other))
 				continue;
 
@@ -195,8 +195,8 @@ void ContactFinder::track()
 	// Calculate the distances between current and previous inputs
 	for (u32 i = 0; i < this->config.max_contacts; i++) {
 		for (u32 j = 0; j < this->config.max_contacts; j++) {
-			const auto &in = this->frames[0][i];
-			const auto &last = this->frames[1][j];
+			const Contact &in = this->frames[0][i];
+			const Contact &last = this->frames[1][j];
 
 			u32 idx = i * this->config.max_contacts + j;
 
@@ -226,8 +226,8 @@ void ContactFinder::track()
 		u32 i = idx / this->config.max_contacts;
 		u32 j = idx % this->config.max_contacts;
 
-		auto &contact = this->frames[0][i];
-		const auto &last = this->frames[1][j];
+		Contact &contact = this->frames[0][i];
+		const Contact &last = this->frames[1][j];
 
 		contact.index = last.index;
 		if (contact.active)
@@ -243,7 +243,7 @@ void ContactFinder::track()
 		// Check if there was an active contact with the same index in all stored frames.
 		// If this is not the case the contact is not temporally stable and will be ignored.
 		for (std::size_t i = 1; i < this->frames.size(); i++) {
-			for (auto &c : this->frames.at(i)) {
+			for (Contact &c : this->frames.at(i)) {
 				if (contact.index != c.index)
 					continue;
 

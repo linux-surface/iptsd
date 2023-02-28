@@ -6,7 +6,7 @@
 namespace iptsd::common {
 
 template <class V, class I, class T>
-[[gnu::always_inline]] inline constexpr auto unchecked(T &data, I index) -> V &
+[[gnu::always_inline]] inline constexpr V &unchecked(T &data, I index)
 {
 #ifdef IPTSD_CONFIG_FORCE_ACCESS_CHECKS
 	return data[index];
@@ -16,7 +16,7 @@ template <class V, class I, class T>
 }
 
 template <class V, class I, class T>
-[[gnu::always_inline]] inline constexpr auto unchecked(const T &data, I index) -> const V &
+[[gnu::always_inline]] inline constexpr const V &unchecked(const T &data, I index)
 {
 #ifdef IPTSD_CONFIG_FORCE_ACCESS_CHECKS
 	return data[index];

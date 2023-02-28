@@ -32,7 +32,7 @@ static void iptsd_calibrate_handle_input(const config::Config &config,
 	finder.resize(index2_t {data.dim.width, data.dim.height});
 
 	// Normalize and invert the heatmap data.
-	std::transform(data.data.begin(), data.data.end(), finder.data().begin(), [&](auto v) {
+	std::transform(data.data.begin(), data.data.end(), finder.data().begin(), [&](f32 v) {
 		f32 val = static_cast<f32>(v - data.dim.z_min) /
 			  static_cast<f32>(data.dim.z_max - data.dim.z_min);
 
@@ -43,7 +43,7 @@ static void iptsd_calibrate_handle_input(const config::Config &config,
 	const std::vector<contacts::Contact> &contacts = finder.search();
 
 	// Calculate size and aspect of all stable contacts
-	for (const auto &contact : contacts) {
+	for (const contacts::Contact &contact : contacts) {
 		if (!contact.active || !contact.stable)
 			continue;
 
@@ -103,7 +103,7 @@ static int main(gsl::span<char *> args)
 
 	ipts::Device device {path};
 
-	auto meta = device.get_metadata();
+	std::optional<const ipts::Metadata> meta = device.get_metadata();
 	if (meta.has_value()) {
 		auto &t = meta->transform;
 		auto &u = meta->unknown.unknown;
@@ -131,7 +131,7 @@ static int main(gsl::span<char *> args)
 	contacts::ContactFinder finder {config.contacts()};
 
 	ipts::Parser parser {};
-	parser.on_heatmap = [&](const auto &data) {
+	parser.on_heatmap = [&](const ipts::Heatmap &data) {
 		iptsd_calibrate_handle_input(config, finder, data);
 	};
 

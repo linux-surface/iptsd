@@ -14,7 +14,7 @@ namespace detail {
 
 template <int s> class SignalStub {
 public:
-	template <class F> static auto setup(F &&callback);
+	template <class F> static void setup(F &&callback);
 
 	static void clear();
 
@@ -42,7 +42,7 @@ template <int s> void SignalStub<s>::handler(int signum)
 	s_seat.m_handler(signum);
 }
 
-template <int s> template <class F> auto SignalStub<s>::setup(F &&callback)
+template <int s> template <class F> void SignalStub<s>::setup(F &&callback)
 {
 	struct sigaction sig {};
 	sig.sa_handler = SignalStub<s>::handler;
@@ -85,7 +85,7 @@ template <int s> SignalGuard<s>::~SignalGuard()
 
 } /* namespace detail */
 
-template <int s, class F> [[nodiscard]] auto signal(F &&callback) -> detail::SignalGuard<s>
+template <int s, class F> [[nodiscard]] detail::SignalGuard<s> signal(F &&callback)
 {
 	detail::SignalStub<s>::setup(std::forward<F>(callback));
 	return {};
