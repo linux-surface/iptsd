@@ -2,9 +2,25 @@
  * Optimized version of structure_tensor.hpp. Do not include directly.
  */
 
-#include "../structure_tensor.hpp"
+#pragma once
+
+#include <common/types.hpp>
+
+#include "../border.hpp"
+#include "../convolution.hpp"
+
+#include <container/image.hpp>
+#include <container/kernel.hpp>
+
+#include <math/num.hpp>
+#include <math/mat2.hpp>
+
+#include <cassert>
 
 #include <common/access.hpp>
+
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 namespace iptsd::contacts::advanced::alg::stensor::impl {
 

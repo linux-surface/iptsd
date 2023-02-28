@@ -2,9 +2,23 @@
  * Optimized version of hessian.hpp. Do not include directly.
  */
 
-#include "../hessian.hpp"
+#pragma once
+
+#include <common/types.hpp>
+
+#include <container/image.hpp>
+#include <container/kernel.hpp>
+
+#include "../border.hpp"
+#include "../convolution.hpp"
+
+#include <math/num.hpp>
+#include <math/mat2.hpp>
 
 #include <common/access.hpp>
+
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 namespace iptsd::contacts::advanced::alg::hess::impl {
 

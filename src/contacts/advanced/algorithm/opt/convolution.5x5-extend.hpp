@@ -2,9 +2,23 @@
  * Optimized version of convolution.hpp. Do not include directly.
  */
 
-#include "../convolution.hpp"
+#pragma once
+
+#include <common/types.hpp>
+
+#include "../border.hpp"
+
+#include <container/image.hpp>
+#include <container/kernel.hpp>
+#include <container/ops.hpp>
+
+#include <math/num.hpp>
+#include <math/vec2.hpp>
 
 #include <common/access.hpp>
+
+using namespace iptsd::container;
+using namespace iptsd::math;
 
 namespace iptsd::contacts::advanced::alg::conv::impl {
 
