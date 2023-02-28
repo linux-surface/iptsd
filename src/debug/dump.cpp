@@ -119,14 +119,14 @@ static int main(gsl::span<char *> args)
 		file.open(filename, std::ios::out | std::ios::binary);
 	}
 
-	ipts::Device dev {path};
+	const ipts::Device dev {path};
 
 	// Get the buffer size from the HID descriptor
-	std::size_t buffer_size = dev.buffer_size();
+	const std::size_t buffer_size = dev.buffer_size();
 	std::vector<u8> buffer(buffer_size);
 
 	// Get device metadata
-	std::optional<const ipts::Metadata> meta = dev.get_metadata();
+	const std::optional<const ipts::Metadata> meta = dev.get_metadata();
 
 	if (file) {
 		struct iptsd_dump_header header {};
@@ -136,15 +136,15 @@ static int main(gsl::span<char *> args)
 
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 		file.write(reinterpret_cast<char *>(&header), sizeof(header));
-		char has_meta = meta.has_value() ? 1 : 0;
+		const char has_meta = meta.has_value() ? 1 : 0;
 
 		file.write(&has_meta, sizeof(has_meta));
 
 		if (meta.has_value()) {
-			ipts::Metadata m = meta.value();
+			const ipts::Metadata m = meta.value();
 
 			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-			file.write(reinterpret_cast<char *>(&m), sizeof(m));
+			file.write(reinterpret_cast<const char *>(&m), sizeof(m));
 		}
 	}
 
@@ -153,8 +153,8 @@ static int main(gsl::span<char *> args)
 	spdlog::info("Buffer Size:  {}", buffer_size);
 
 	if (meta.has_value()) {
-		auto &t = meta->transform;
-		auto &u = meta->unknown.unknown;
+		const auto &t = meta->transform;
+		const auto &u = meta->unknown.unknown;
 
 		spdlog::info("Metadata:");
 		spdlog::info("rows={}, columns={}", meta->size.rows, meta->size.columns);
@@ -179,14 +179,14 @@ static int main(gsl::span<char *> args)
 		}
 
 		try {
-			ssize_t size = dev.read(buffer);
+			const ssize_t size = dev.read(buffer);
 
 			if (!dev.is_touch_data(buffer[0]))
 				continue;
 
 			if (file) {
 				// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-				file.write(reinterpret_cast<char *>(&size), sizeof(size));
+				file.write(reinterpret_cast<const char *>(&size), sizeof(size));
 
 				// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 				file.write(reinterpret_cast<char *>(buffer.data()),

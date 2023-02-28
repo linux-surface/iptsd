@@ -28,7 +28,7 @@ static i32 res(i32 virt, f64 phys)
 	// The kernel expects the resolution of an axis in units/mm.
 	// We store width and height in centimeters, so they need to be converted.
 
-	f64 res = virt / (phys * 10.0);
+	const f64 res = virt / (phys * 10.0);
 	return gsl::narrow<i32>(std::round(res));
 }
 
@@ -50,11 +50,11 @@ StylusDevice::StylusDevice(const config::Config &conf, std::shared_ptr<Cone> con
 	this->set_keybit(BTN_TOOL_PEN);
 	this->set_keybit(BTN_TOOL_RUBBER);
 
-	i32 res_x = res(IPTS_MAX_X, conf.width);
-	i32 res_y = res(IPTS_MAX_Y, conf.height);
+	const i32 res_x = res(IPTS_MAX_X, conf.width);
+	const i32 res_y = res(IPTS_MAX_Y, conf.height);
 
 	// Resolution for tilt is expected to be units/radian.
-	i32 res_tilt = gsl::narrow<i32>(std::round(18000 / math::num<f32>::pi));
+	const i32 res_tilt = gsl::narrow<i32>(std::round(18000 / math::num<f32>::pi));
 
 	this->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
 	this->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
@@ -79,10 +79,10 @@ TouchDevice::TouchDevice(const config::Config &conf, std::shared_ptr<Cone> cone)
 	this->set_propbit(INPUT_PROP_DIRECT);
 	this->set_keybit(BTN_TOUCH);
 
-	f64 diag = std::hypot(conf.width, conf.height);
-	i32 res_x = res(IPTS_MAX_X, conf.width);
-	i32 res_y = res(IPTS_MAX_Y, conf.height);
-	i32 res_d = res(IPTS_DIAGONAL, diag);
+	const f64 diag = std::hypot(conf.width, conf.height);
+	const i32 res_x = res(IPTS_MAX_X, conf.width);
+	const i32 res_y = res(IPTS_MAX_Y, conf.height);
+	const i32 res_d = res(IPTS_DIAGONAL, diag);
 
 	this->set_absinfo(ABS_MT_SLOT, 0, IPTS_MAX_CONTACTS, 0);
 	this->set_absinfo(ABS_MT_TRACKING_ID, 0, IPTS_MAX_CONTACTS, 0);

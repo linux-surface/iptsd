@@ -19,18 +19,18 @@ namespace iptsd::ipts {
 
 class Device : public hid::Device {
 private:
-	bool is_set_mode(u8 report);
-	u8 get_set_mode();
-	bool is_metadata_report(u8 report);
-	u8 get_metadata_report_id();
+	[[nodiscard]] bool is_set_mode(u8 report) const;
+	[[nodiscard]] u8 get_set_mode() const;
+	[[nodiscard]] bool is_metadata_report(u8 report) const;
+	[[nodiscard]] u8 get_metadata_report_id() const;
 
 public:
 	Device(const std::string &path) : hid::Device(path) {};
 
-	bool is_touch_data(u8 report);
-	std::size_t buffer_size();
-	void set_mode(bool multitouch);
-	std::optional<const Metadata> get_metadata();
+	void set_mode(bool multitouch) const;
+	[[nodiscard]] bool is_touch_data(u8 report) const;
+	[[nodiscard]] std::size_t buffer_size() const;
+	[[nodiscard]] std::optional<const Metadata> get_metadata() const;
 };
 
 } // namespace iptsd::ipts

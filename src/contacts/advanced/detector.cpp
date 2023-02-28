@@ -58,8 +58,8 @@ BlobDetector::BlobDetector(index2_t size, BlobDetectorConfig config)
     , m_gf_window{11, 11}
     , m_touchpoints{}
 {
-    std::less<alg::wdt::QItem<f32>> op {};
-    std::vector<alg::wdt::QItem<f32>> buf {512};
+    const std::less<alg::wdt::QItem<f32>> op {};
+    const std::vector<alg::wdt::QItem<f32>> buf {512};
 
     m_wdt_queue = std::priority_queue { op, buf };
 

@@ -24,23 +24,23 @@ void Cluster::add(index2_t pos, f64 val)
 	this->w += val;
 }
 
-math::Vec2<f64> Cluster::mean()
+math::Vec2<f64> Cluster::mean() const
 {
 	return math::Vec2<f64> {this->x / this->w, this->y / this->w};
 }
 
-math::Mat2s<f64> Cluster::cov()
+math::Mat2s<f64> Cluster::cov() const
 {
-	f64 r1 = (this->xx - (this->x * this->x / this->w)) / this->w;
-	f64 r2 = (this->yy - (this->y * this->y / this->w)) / this->w;
-	f64 r3 = (this->xy - (this->x * this->y / this->w)) / this->w;
+	const f64 r1 = (this->xx - (this->x * this->x / this->w)) / this->w;
+	const f64 r2 = (this->yy - (this->y * this->y / this->w)) / this->w;
+	const f64 r3 = (this->xy - (this->x * this->y / this->w)) / this->w;
 
 	return math::Mat2s<f64> {r1, r3, r2};
 }
 
 void Cluster::check(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t pos)
 {
-	index2_t size = heatmap.size();
+	const index2_t size = heatmap.size();
 
 	if (pos.x < 0 || pos.x >= size.x)
 		return;

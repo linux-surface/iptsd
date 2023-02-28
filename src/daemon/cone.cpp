@@ -29,16 +29,16 @@ bool Cone::active()
 
 void Cone::update_direction(f64 x, f64 y)
 {
-	clock::time_point timestamp = clock::now();
+	const clock::time_point timestamp = clock::now();
 
-	auto time_diff = timestamp - this->direction_update;
-	auto diff = std::chrono::duration_cast<std::chrono::seconds>(time_diff);
+	const auto time_diff = timestamp - this->direction_update;
+	const auto diff = std::chrono::duration_cast<std::chrono::seconds>(time_diff);
 
-	f64 weight = std::exp2(-diff.count());
+	const f64 weight = std::exp2(-diff.count());
 	f64 dist = std::hypot(this->x - x, this->y - y);
 
-	f64 dx = (x - this->x) / (dist + 1E-6);
-	f64 dy = (y - this->y) / (dist + 1E-6);
+	const f64 dx = (x - this->x) / (dist + 1E-6);
+	const f64 dy = (y - this->y) / (dist + 1E-6);
 
 	this->dx = weight * this->dx + dx;
 	this->dy = weight * this->dy + dy;
@@ -56,9 +56,9 @@ bool Cone::check(f64 x, f64 y)
 	if (!this->active())
 		return false;
 
-	f64 dx = x - this->x;
-	f64 dy = y - this->y;
-	f64 dist = std::hypot(dx, dy);
+	const f64 dx = x - this->x;
+	const f64 dy = y - this->y;
+	const f64 dist = std::hypot(dx, dy);
 
 	if (dist > this->distance)
 		return false;

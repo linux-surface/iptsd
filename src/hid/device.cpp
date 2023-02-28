@@ -43,40 +43,40 @@ Device::Device(const std::string &path)
 	this->desc.load(gsl::span<u8>(&hidraw_desc.value[0], desc_size));
 }
 
-i16 Device::product()
+i16 Device::product() const
 {
 	return this->devinfo.product;
 }
 
-i16 Device::vendor()
+i16 Device::vendor() const
 {
 	return this->devinfo.vendor;
 }
 
-const Descriptor &Device::descriptor()
+const Descriptor &Device::descriptor() const
 {
 	return this->desc;
 }
 
-ssize_t Device::read(gsl::span<u8> buffer)
+ssize_t Device::read(gsl::span<u8> buffer) const
 {
-	ssize_t ret = common::read(this->device, buffer);
+	const ssize_t ret = common::read(this->device, buffer);
 	if (ret == -1)
 		throw common::cerror("Failed to read from HID device");
 
 	return ret;
 }
 
-void Device::get_feature(gsl::span<u8> report)
+void Device::get_feature(gsl::span<u8> report) const
 {
-	int ret = common::ioctl(this->device, HIDIOCGFEATURE(report.size()), report.data());
+	const int ret = common::ioctl(this->device, HIDIOCGFEATURE(report.size()), report.data());
 	if (ret == -1)
 		throw common::cerror("Failed to get feature");
 }
 
-void Device::set_feature(gsl::span<u8> report)
+void Device::set_feature(gsl::span<u8> report) const
 {
-	int ret = common::ioctl(this->device, HIDIOCSFEATURE(report.size()), report.data());
+	const int ret = common::ioctl(this->device, HIDIOCSFEATURE(report.size()), report.data());
 	if (ret == -1)
 		throw common::cerror("Failed to set feature");
 }

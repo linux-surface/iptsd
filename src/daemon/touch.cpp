@@ -20,22 +20,22 @@ static bool check_cone(const Context &ctx, const contacts::Contact &contact)
 	const TouchDevice &touch = *ctx.devices.touch;
 
 	// Convert relative to physical coordinates
-	f64 x = contact.x * ctx.config.width;
-	f64 y = contact.y * ctx.config.height;
+	const f64 x = contact.x * ctx.config.width;
+	const f64 y = contact.y * ctx.config.height;
 
 	return touch.cone->check(x, y);
 }
 
 static void update_cone(Context &ctx, const contacts::Contact &contact)
 {
-	TouchDevice &touch = *ctx.devices.touch;
+	const TouchDevice &touch = *ctx.devices.touch;
 
 	if (contact.valid)
 		return;
 
 	// Convert relative to physical coordinates
-	f64 x = contact.x * ctx.config.width;
-	f64 y = contact.y * ctx.config.height;
+	const f64 x = contact.x * ctx.config.width;
+	const f64 y = contact.y * ctx.config.height;
 
 	// The cone has never seen a position update, so its inactive
 	if (!touch.cone->alive())
@@ -84,13 +84,13 @@ static void lift_multi(const TouchDevice &dev)
 
 static void emit_multi(const TouchDevice &dev, const contacts::Contact &contact)
 {
-	i32 index = gsl::narrow<i32>(contact.index);
-	i32 x = gsl::narrow<i32>(std::round(contact.x * IPTS_MAX_X));
-	i32 y = gsl::narrow<i32>(std::round(contact.y * IPTS_MAX_Y));
+	const i32 index = gsl::narrow<i32>(contact.index);
+	const i32 x = gsl::narrow<i32>(std::round(contact.x * IPTS_MAX_X));
+	const i32 y = gsl::narrow<i32>(std::round(contact.y * IPTS_MAX_Y));
 
-	i32 angle = gsl::narrow<i32>(std::round(contact.angle * (180 / math::num<f64>::pi)));
-	i32 major = gsl::narrow<i32>(std::round(contact.major * IPTS_DIAGONAL));
-	i32 minor = gsl::narrow<i32>(std::round(contact.minor * IPTS_DIAGONAL));
+	const i32 angle = gsl::narrow<i32>(std::round(contact.angle * (180 / math::num<f64>::pi)));
+	const i32 major = gsl::narrow<i32>(std::round(contact.major * IPTS_DIAGONAL));
+	const i32 minor = gsl::narrow<i32>(std::round(contact.minor * IPTS_DIAGONAL));
 
 	dev.emit(EV_ABS, ABS_MT_TRACKING_ID, index);
 	dev.emit(EV_ABS, ABS_MT_POSITION_X, x);
@@ -108,8 +108,8 @@ static void lift_single(const TouchDevice &dev)
 
 static void emit_single(const TouchDevice &dev, const contacts::Contact &contact)
 {
-	i32 x = gsl::narrow<i32>(std::round(contact.x * IPTS_MAX_X));
-	i32 y = gsl::narrow<i32>(std::round(contact.y * IPTS_MAX_Y));
+	const i32 x = gsl::narrow<i32>(std::round(contact.x * IPTS_MAX_X));
+	const i32 y = gsl::narrow<i32>(std::round(contact.y * IPTS_MAX_Y));
 
 	dev.emit(EV_KEY, BTN_TOUCH, 1);
 	dev.emit(EV_ABS, ABS_X, x);
@@ -119,7 +119,7 @@ static void emit_single(const TouchDevice &dev, const contacts::Contact &contact
 static void handle_single(const Context &ctx, const std::vector<contacts::Contact> &contacts)
 {
 	const TouchDevice &touch = *ctx.devices.touch;
-	bool blocked = check_blocked(ctx, contacts);
+	const bool blocked = check_blocked(ctx, contacts);
 
 	for (const auto &contact : contacts) {
 		if (contact.active && !contact.stable && ctx.config.touch_check_stability)
@@ -138,7 +138,7 @@ static void handle_single(const Context &ctx, const std::vector<contacts::Contac
 static void handle_multi(const Context &ctx, const std::vector<contacts::Contact> &contacts)
 {
 	const TouchDevice &touch = *ctx.devices.touch;
-	bool blocked = check_blocked(ctx, contacts);
+	const bool blocked = check_blocked(ctx, contacts);
 
 	for (const auto &contact : contacts) {
 		touch.emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(contact.index));
@@ -163,8 +163,8 @@ void iptsd_touch_input(Context &ctx, const ipts::Heatmap &data)
 
 	// Normalize and invert the heatmap data.
 	std::transform(data.data.begin(), data.data.end(), touch.finder.data().begin(), [&](f32 v) {
-		f32 val = (v - static_cast<f32>(data.dim.z_min)) /
-			  static_cast<f32>(data.dim.z_max - data.dim.z_min);
+		const f32 val = (v - static_cast<f32>(data.dim.z_min)) /
+				static_cast<f32>(data.dim.z_max - data.dim.z_min);
 
 		return 1.0f - val;
 	});

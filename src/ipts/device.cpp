@@ -12,10 +12,10 @@
 
 namespace iptsd::ipts {
 
-bool Device::is_touch_data(u8 report)
+bool Device::is_touch_data(u8 report) const
 {
 	const hid::Descriptor &desc = this->descriptor();
-	std::vector<hidrd_usage> usage = desc.usage(report);
+	const std::vector<hidrd_usage> usage = desc.usage(report);
 
 	if (usage.size() != 2)
 		return false;
@@ -29,10 +29,10 @@ bool Device::is_touch_data(u8 report)
 	return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
 }
 
-bool Device::is_set_mode(u8 report)
+bool Device::is_set_mode(u8 report) const
 {
 	const hid::Descriptor &desc = this->descriptor();
-	std::vector<hidrd_usage> usage = desc.usage(report);
+	const std::vector<hidrd_usage> usage = desc.usage(report);
 
 	if (usage.size() != 1)
 		return false;
@@ -46,11 +46,11 @@ bool Device::is_set_mode(u8 report)
 	return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
 }
 
-u8 Device::get_set_mode()
+u8 Device::get_set_mode() const
 {
 	const hid::Descriptor &desc = this->descriptor();
 
-	for (u8 report : desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE)) {
+	for (const u8 report : desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE)) {
 		if (this->is_set_mode(report))
 			return report;
 	}
@@ -58,10 +58,10 @@ u8 Device::get_set_mode()
 	return 0;
 }
 
-bool Device::is_metadata_report(u8 report)
+bool Device::is_metadata_report(u8 report) const
 {
 	const hid::Descriptor &desc = this->descriptor();
-	std::vector<hidrd_usage> usage = desc.usage(report);
+	const std::vector<hidrd_usage> usage = desc.usage(report);
 
 	if (usage.size() != 1)
 		return false;
@@ -72,11 +72,11 @@ bool Device::is_metadata_report(u8 report)
 	return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
 }
 
-u8 Device::get_metadata_report_id()
+u8 Device::get_metadata_report_id() const
 {
 	const hid::Descriptor &desc = this->descriptor();
 
-	for (u8 report : desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE)) {
+	for (const u8 report : desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE)) {
 		if (this->is_metadata_report(report))
 			return report;
 	}
@@ -84,18 +84,18 @@ u8 Device::get_metadata_report_id()
 	return 0;
 }
 
-std::size_t Device::buffer_size()
+std::size_t Device::buffer_size() const
 {
 	std::size_t size = 0;
 	const hid::Descriptor &desc = this->descriptor();
 
-	for (u8 report : desc.reports(HIDRD_ITEM_MAIN_TAG_INPUT))
+	for (const u8 report : desc.reports(HIDRD_ITEM_MAIN_TAG_INPUT))
 		size = std::max(size, desc.size(report));
 
 	return size;
 }
 
-void Device::set_mode(bool multitouch)
+void Device::set_mode(bool multitouch) const
 {
 	std::vector<u8> report;
 
@@ -109,12 +109,12 @@ void Device::set_mode(bool multitouch)
 	this->set_feature(report);
 }
 
-std::optional<const Metadata> Device::get_metadata()
+std::optional<const Metadata> Device::get_metadata() const
 {
 	std::optional<Metadata> metadata = std::nullopt;
 	const hid::Descriptor &desc = this->descriptor();
 
-	u8 id = this->get_metadata_report_id();
+	const u8 id = this->get_metadata_report_id();
 	if (!id)
 		return std::nullopt;
 

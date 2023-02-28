@@ -47,7 +47,7 @@ static int main(gsl::span<char *> args)
 	auto const _sigterm = common::signal<SIGTERM>([&](int) { should_exit = true; });
 	auto const _sigint = common::signal<SIGINT>([&](int) { should_exit = true; });
 
-	ipts::Device device {path};
+	const ipts::Device device {path};
 
 	std::optional<const ipts::Metadata> meta = device.get_metadata();
 	if (meta.has_value()) {
@@ -63,7 +63,7 @@ static int main(gsl::span<char *> args)
 			     u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
 	}
 
-	config::Config config {device.vendor(), device.product(), meta};
+	const config::Config config {device.vendor(), device.product(), meta};
 
 	// Check if a config was found
 	if (config.width == 0 || config.height == 0)
@@ -95,7 +95,7 @@ static int main(gsl::span<char *> args)
 	}
 
 	// Get the buffer size from the HID descriptor
-	std::size_t buffer_size = device.buffer_size();
+	const std::size_t buffer_size = device.buffer_size();
 	std::vector<u8> buffer(buffer_size);
 
 	// Count errors, if we receive 50 continuous errors, chances are pretty good that
@@ -112,7 +112,7 @@ static int main(gsl::span<char *> args)
 		}
 
 		try {
-			ssize_t size = device.read(buffer);
+			const ssize_t size = device.read(buffer);
 
 			// Does this report contain touch data?
 			if (!device.is_touch_data(buffer[0]))

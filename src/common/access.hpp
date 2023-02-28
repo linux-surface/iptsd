@@ -11,7 +11,7 @@ template <class V, class I, class T>
 #ifdef IPTSD_CONFIG_FORCE_ACCESS_CHECKS
 	return data[index];
 #else
-	return data.data()[index];
+	return data.data()[index]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 #endif
 }
 
@@ -21,7 +21,7 @@ template <class V, class I, class T>
 #ifdef IPTSD_CONFIG_FORCE_ACCESS_CHECKS
 	return data[index];
 #else
-	return data.data()[index];
+	return data.data()[index]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 #endif
 }
 

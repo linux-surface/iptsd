@@ -37,8 +37,8 @@ static void iptsd_perf_handle_input(contacts::ContactFinder &finder, const ipts:
 
 	// Normalize and invert the heatmap data.
 	std::transform(data.data.begin(), data.data.end(), finder.data().begin(), [&](f32 v) {
-		f32 val = (v - static_cast<f32>(data.dim.z_min)) /
-			  static_cast<f32>(data.dim.z_max - data.dim.z_min);
+		const f32 val = (v - static_cast<f32>(data.dim.z_min)) /
+				static_cast<f32>(data.dim.z_max - data.dim.z_min);
 
 		return 1.0f - val;
 	});
@@ -100,7 +100,7 @@ static int main(gsl::span<char *> args)
 			     u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
 	}
 
-	config::Config config {header.vendor, header.product, meta};
+	const config::Config config {header.vendor, header.product, meta};
 
 	// Check if a config was found
 	if (config.width == 0 || config.height == 0)
@@ -148,18 +148,21 @@ static int main(gsl::span<char *> args)
 				size_t size = 0;
 				if (reader.size() < sizeof(size))
 					break;
+
 				std::memcpy(&size, reader.data(), sizeof(size));
 				reader = reader.subspan(sizeof(size));
 
 				if (reader.size() < size)
 					break;
+
 				if (size > header.buffer_size)
 					break;
-				gsl::span<u8> data = reader.subspan(0, size);
+
+				const gsl::span<u8> data = reader.subspan(0, size);
 				reader = reader.subspan(header.buffer_size);
 
 				// Take start time
-				clock::time_point start = clock::now();
+				const clock::time_point start = clock::now();
 
 				// Send the report to the finder through the parser for processing
 				// Cannot put this in a loop because it is not a pure function
@@ -168,15 +171,18 @@ static int main(gsl::span<char *> args)
 
 				if (std::exchange(had_heatmap, false)) {
 					// Take end time
-					clock::time_point end = clock::now();
+					const clock::time_point end = clock::now();
+					const clock::duration x_ns = end - start;
 
-					clock::duration x_ns = end - start;
 					// Divide early for x and x**2 because they are overflowing
-					u64 x_us = duration_cast<micros_u64>(x_ns).count();
+					const u64 x_us = duration_cast<micros_u64>(x_ns).count();
+
 					total += x_us;
 					total_of_squares += x_us * x_us;
+
 					min = std::min(min, x_ns);
 					max = std::max(max, x_ns);
+
 					++count;
 				}
 			} catch (std::exception &e) {
@@ -190,9 +196,9 @@ static int main(gsl::span<char *> args)
 	if (!reader_finished_successfully)
 		spdlog::warn("Leftover data at end of input");
 
-	f64 n = gsl::narrow<f64>(count);
-	f64 mean = gsl::narrow<f64>(total) / n;
-	f64 stddev = std::sqrt(gsl::narrow<f64>(total_of_squares) / n - mean * mean);
+	const f64 n = gsl::narrow<f64>(count);
+	const f64 mean = gsl::narrow<f64>(total) / n;
+	const f64 stddev = std::sqrt(gsl::narrow<f64>(total_of_squares) / n - mean * mean);
 
 	spdlog::info("Ran {} times", count);
 	spdlog::info("Total: {}μs", total);

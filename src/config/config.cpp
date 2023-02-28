@@ -34,9 +34,9 @@ static int parse_dev(void *user, const char *c_section, const char *c_name, cons
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 	auto *dev = reinterpret_cast<struct iptsd_config_device *>(user);
 
-	std::string section(c_section);
-	std::string name(c_name);
-	std::string value(c_value);
+	const std::string section(c_section);
+	const std::string name(c_name);
+	const std::string value(c_value);
 
 	if (section != "Device")
 		return 1;
@@ -55,8 +55,8 @@ static int parse_conf(void *user, const char *c_section, const char *c_name, con
 	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 	auto *config = reinterpret_cast<Config *>(user);
 
-	std::string section(c_section);
-	std::string name(c_name);
+	const std::string section(c_section);
+	const std::string name(c_name);
 	std::string value(c_value);
 
 	if (section == "Config" && name == "InvertX")

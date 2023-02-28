@@ -41,7 +41,7 @@ void Visualization::draw_heatmap(const Cairo::RefPtr<Cairo::Context> &cairo, ind
 	cmap::grayscale.map_into(*this->data, heatmap, {{0, 1}});
 
 	// Create Cairo surface based on data buffer
-	Cairo::RefPtr<Cairo::ImageSurface> source = image_surface_create(*this->data);
+	const Cairo::RefPtr<Cairo::ImageSurface> source = image_surface_create(*this->data);
 
 	f64 sx = heatmap.size().x / static_cast<f64>(window.x);
 	f64 sy = heatmap.size().y / static_cast<f64>(window.y);
@@ -64,7 +64,7 @@ void Visualization::draw_heatmap(const Cairo::RefPtr<Cairo::Context> &cairo, ind
 	matrix.scale(sx, sy);
 
 	// Upscale surface to window dimensions
-	Cairo::RefPtr<Cairo::SurfacePattern> pattern = Cairo::SurfacePattern::create(source);
+	const Cairo::RefPtr<Cairo::SurfacePattern> pattern = Cairo::SurfacePattern::create(source);
 	pattern->set_matrix(matrix);
 	pattern->set_filter(Cairo::FILTER_NEAREST);
 
@@ -77,7 +77,7 @@ void Visualization::draw_heatmap(const Cairo::RefPtr<Cairo::Context> &cairo, ind
 void Visualization::draw_contacts(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t window,
 				  const std::vector<contacts::Contact> &contacts)
 {
-	f64 diag = std::hypot(window.x, window.y);
+	const f64 diag = std::hypot(window.x, window.y);
 
 	// Select Font
 	cairo->select_font_face("monospace", Cairo::FONT_SLANT_NORMAL, Cairo::FONT_WEIGHT_NORMAL);
@@ -95,13 +95,13 @@ void Visualization::draw_contacts(const Cairo::RefPtr<Cairo::Context> &cairo, in
 		else
 			cairo->set_source_rgb(0, 1, 0);
 
-		std::string index = fmt::format("{:02}", contact.index);
+		const std::string index = fmt::format("{:02}", contact.index);
 
 		Cairo::TextExtents extends {};
 		cairo->get_text_extents(index, extends);
 
-		f64 x = contact.x * window.x;
-		f64 y = contact.y * window.y;
+		const f64 x = contact.x * window.x;
+		const f64 y = contact.y * window.y;
 
 		// Center the text at the mean point of the contact
 		cairo->move_to(x - (extends.x_bearing + extends.width / 2),

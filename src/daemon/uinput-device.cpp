@@ -17,7 +17,7 @@ namespace iptsd::daemon {
 
 UinputDevice::UinputDevice()
 {
-	int ret = common::open("/dev/uinput", O_WRONLY | O_NONBLOCK);
+	const int ret = common::open("/dev/uinput", O_WRONLY | O_NONBLOCK);
 	if (ret == -1)
 		throw common::cerror("Failed to open uinput device");
 
@@ -32,21 +32,21 @@ UinputDevice::~UinputDevice()
 
 void UinputDevice::set_evbit(i32 ev) const
 {
-	int ret = common::ioctl(this->fd, UI_SET_EVBIT, (int)ev);
+	const int ret = common::ioctl(this->fd, UI_SET_EVBIT, (int)ev);
 	if (ret == -1)
 		throw common::cerror("UI_SET_EVBIT failed");
 }
 
 void UinputDevice::set_keybit(i32 key) const
 {
-	int ret = common::ioctl(this->fd, UI_SET_KEYBIT, (int)key);
+	const int ret = common::ioctl(this->fd, UI_SET_KEYBIT, (int)key);
 	if (ret == -1)
 		throw common::cerror("UI_SET_KEYBIT failed");
 }
 
 void UinputDevice::set_propbit(i32 prop) const
 {
-	int ret = common::ioctl(this->fd, UI_SET_PROPBIT, (int)prop);
+	const int ret = common::ioctl(this->fd, UI_SET_PROPBIT, (int)prop);
 	if (ret == -1)
 		throw common::cerror("UI_SET_PROPBIT failed");
 }
@@ -60,7 +60,7 @@ void UinputDevice::set_absinfo(u16 code, i32 min, i32 max, i32 res) const
 	abs.absinfo.maximum = max;
 	abs.absinfo.resolution = res;
 
-	int ret = iptsd::common::ioctl(this->fd, UI_ABS_SETUP, &abs);
+	const int ret = iptsd::common::ioctl(this->fd, UI_ABS_SETUP, &abs);
 	if (ret == -1)
 		throw common::cerror("UI_ABS_SETUP failed");
 }
@@ -94,7 +94,7 @@ void UinputDevice::emit(u16 type, u16 key, i32 value) const
 	ie.code = key;
 	ie.value = value;
 
-	ssize_t ret = write(this->fd, &ie, sizeof(ie));
+	const ssize_t ret = write(this->fd, &ie, sizeof(ie));
 	if (ret == -1)
 		throw common::cerror("Failed to write input event");
 }

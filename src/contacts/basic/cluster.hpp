@@ -22,8 +22,8 @@ public:
 public:
 	Cluster(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t center);
 
-	math::Vec2<f64> mean();
-	math::Mat2s<f64> cov();
+	[[nodiscard]] math::Vec2<f64> mean() const;
+	[[nodiscard]] math::Mat2s<f64> cov() const;
 
 private:
 	void add(index2_t pos, f64 val);

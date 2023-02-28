@@ -24,16 +24,16 @@ const std::vector<Blob> &BlobDetector::search()
 	std::fill(this->visited.begin(), this->visited.end(), false);
 	this->blobs.clear();
 
-	index2_t size = this->heatmap.size();
+	const index2_t size = this->heatmap.size();
 
-	f32 nval = neutral(this->config, this->heatmap);
-	f32 activate = nval + (this->config.activation_threshold / 255);
-	f32 deactivate = nval + (this->config.deactivation_threshold / 255);
+	const f32 nval = neutral(this->config, this->heatmap);
+	const f32 activate = nval + (this->config.activation_threshold / 255);
+	const f32 deactivate = nval + (this->config.deactivation_threshold / 255);
 
 	// Mark positions where the blob detection should not be active as visited.
 	for (index_t x = 0; x < size.x; x++) {
 		for (index_t y = 0; y < size.y; y++) {
-			index2_t pos {x, y};
+			const index2_t pos {x, y};
 
 			if (this->heatmap[pos] > deactivate)
 				continue;
@@ -44,7 +44,7 @@ const std::vector<Blob> &BlobDetector::search()
 
 	for (index_t x = 0; x < size.x; x++) {
 		for (index_t y = 0; y < size.y; y++) {
-			index2_t pos {x, y};
+			const index2_t pos {x, y};
 
 			if (this->visited[pos])
 				continue;
@@ -52,10 +52,10 @@ const std::vector<Blob> &BlobDetector::search()
 			if (this->heatmap[pos] < activate)
 				continue;
 
-			Cluster cluster {this->heatmap, this->visited, pos};
+			const Cluster cluster {this->heatmap, this->visited, pos};
 
-			math::Mat2s<f64> cov = cluster.cov();
-			math::Eigen2<f64> eigen = cov.eigen();
+			const math::Mat2s<f64> cov = cluster.cov();
+			const math::Eigen2<f64> eigen = cov.eigen();
 
 			if (eigen.w[0] <= 0 || eigen.w[1] <= 0)
 				continue;

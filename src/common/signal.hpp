@@ -49,7 +49,7 @@ template <int s> template <class F> void SignalStub<s>::setup(F &&callback)
 
 	// unregister handler before we replace it
 	if (s_seat.m_handler) {
-		int ret = sigaction(s, nullptr, nullptr);
+		const int ret = sigaction(s, nullptr, nullptr);
 		if (ret == -1)
 			throw iptsd::common::cerror("Failed to unregister signal handler");
 	}
@@ -58,7 +58,7 @@ template <int s> template <class F> void SignalStub<s>::setup(F &&callback)
 	s_seat.m_handler = std::function {std::forward<F>(callback)};
 
 	// register new handler
-	int ret = sigaction(s, &sig, nullptr);
+	const int ret = sigaction(s, &sig, nullptr);
 	if (ret == -1) {
 		s_seat.m_handler = {};
 		throw iptsd::common::cerror("Failed to register signal handler");

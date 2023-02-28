@@ -440,7 +440,7 @@ void weighted_distance_transform(Image<T>& out, F& bin, M& mask, C& cost, Q& q,
     // step 2: while queue is not empty, get next pixel, write down cost, and add neighbors
     while (!q.empty()) {
         // get next pixel and remove it from queue
-        wdt::QItem<T> pixel = q.top();
+        const wdt::QItem<T> pixel = q.top();
         q.pop();
 
         // check if someone has been here before; if so, skip this one

@@ -39,12 +39,12 @@ iptsd_dft_interpolate_position(const Context &ctx, const struct ipts_pen_dft_win
 	}
 
 	// get phase-aligned amplitudes of the three center components
-	f64 amp = std::hypot(gsl::at(row.real, maxi), gsl::at(row.imag, maxi));
+	const f64 amp = std::hypot(gsl::at(row.real, maxi), gsl::at(row.imag, maxi));
 	if (amp < ctx.config.dft_position_min_amp)
 		return std::tuple {false, 0};
 
-	f64 sin = gsl::at(row.real, maxi) / amp;
-	f64 cos = gsl::at(row.imag, maxi) / amp;
+	const f64 sin = gsl::at(row.real, maxi) / amp;
+	const f64 cos = gsl::at(row.imag, maxi) / amp;
 
 	std::array<f64, 3> x = {
 		sin * gsl::at(row.real, maxi - 1) + cos * gsl::at(row.imag, maxi - 1),
@@ -61,7 +61,7 @@ iptsd_dft_interpolate_position(const Context &ctx, const struct ipts_pen_dft_win
 		return std::tuple {false, 0};
 
 	// find critical point of fitted parabola
-	f64 d = (x[0] - x[2]) / (2 * (x[0] - 2 * x[1] + x[2]));
+	const f64 d = (x[0] - x[2]) / (2 * (x[0] - 2 * x[1] + x[2]));
 
 	if (std::isnan(d))
 		return std::tuple {false, 0};
@@ -79,7 +79,8 @@ static f64 iptsd_dft_interpolate_frequency(const Context &ctx, const ipts::DftWi
 	u64 maxm = 0;
 
 	for (u8 i = 0; i < rows; i++) {
-		u64 m = dft.x.at(i).magnitude + dft.y.at(i).magnitude;
+		const u64 m = dft.x.at(i).magnitude + dft.y.at(i).magnitude;
+
 		if (m > maxm) {
 			maxm = m;
 			maxi = i;
@@ -119,12 +120,12 @@ static f64 iptsd_dft_interpolate_frequency(const Context &ctx, const ipts::DftWi
 	}
 
 	// interpolate using Eric Jacobsen's modified quadratic estimator
-	i32 ra = real[0] - real[2];
-	i32 rb = 2 * real[1] - real[0] - real[2];
-	i32 ia = imag[0] - imag[2];
-	i32 ib = 2 * imag[1] - imag[0] - imag[2];
+	const i32 ra = real[0] - real[2];
+	const i32 rb = 2 * real[1] - real[0] - real[2];
+	const i32 ia = imag[0] - imag[2];
+	const i32 ib = 2 * imag[1] - imag[0] - imag[2];
 
-	f64 d = (ra * rb + ia * ib) / static_cast<f64>(rb * rb + ib * ib);
+	const f64 d = (ra * rb + ia * ib) / static_cast<f64>(rb * rb + ib * ib);
 
 	return (maxi + std::clamp(d, mind, maxd)) / (rows - 1);
 }
@@ -193,8 +194,8 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 
 				if (ctx.config.dft_tip_distance > 0) {
 					// correct tip position using tilt data
-					f32 r = ctx.config.dft_tip_distance /
-						ctx.config.dft_tilt_distance;
+					const f32 r = ctx.config.dft_tip_distance /
+						      ctx.config.dft_tilt_distance;
 
 					x -= xt * r;
 					y -= yt * r;
@@ -203,8 +204,10 @@ static void iptsd_dft_handle_position(Context &ctx, const ipts::DftWindow &dft,
 				xt *= ctx.config.width / ctx.config.dft_tilt_distance;
 				yt *= ctx.config.height / ctx.config.dft_tilt_distance;
 
-				f64 azm = std::fmod(std::atan2(-yt, xt) / M_PI + 2, 2) * 18000;
-				f64 alt =
+				const f64 azm =
+					std::fmod(std::atan2(-yt, xt) / M_PI + 2, 2) * 18000;
+
+				const f64 alt =
 					std::asin(std::min(1.0, std::hypot(xt, yt))) / M_PI * 18000;
 
 				stylus.azimuth = gsl::narrow<u16>(std::round(azm));
@@ -233,13 +236,13 @@ static void iptsd_dft_handle_button(Context &ctx, const ipts::DftWindow &dft,
 
 	if (dft.x[0].magnitude > ctx.config.dft_button_min_mag &&
 	    dft.y[0].magnitude > ctx.config.dft_button_min_mag) {
-		i32 real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
-			   dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
-		i32 imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
-			   dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
+		const i32 real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
+				 dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
+		const i32 imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
+				 dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
 
 		// same phase as position signal = eraser, opposite phase = button
-		i32 val = stylus.real * real + stylus.imag * imag;
+		const i32 val = stylus.real * real + stylus.imag * imag;
 
 		button = val < 0;
 		rubber = val > 0;

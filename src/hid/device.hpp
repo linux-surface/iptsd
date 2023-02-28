@@ -18,14 +18,14 @@ class Device {
 public:
 	Device(const std::string &path);
 
-	i16 product();
-	i16 vendor();
+	[[nodiscard]] i16 product() const;
+	[[nodiscard]] i16 vendor() const;
 
-	const Descriptor &descriptor();
+	[[nodiscard]] const Descriptor &descriptor() const;
 
-	ssize_t read(gsl::span<u8> buffer);
-	void get_feature(gsl::span<u8> report);
-	void set_feature(gsl::span<u8> report);
+	[[nodiscard]] ssize_t read(gsl::span<u8> buffer) const;
+	void get_feature(gsl::span<u8> report) const;
+	void set_feature(gsl::span<u8> report) const;
 
 private:
 	int device = -1;
