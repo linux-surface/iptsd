@@ -77,20 +77,20 @@ private:
 
 	void parse_with_header(gsl::span<u8> data, std::size_t header);
 
-	void parse_frame(Reader reader);
-	void parse_raw(Reader reader);
-	void parse_hid(Reader reader);
-	void parse_metadata(Reader reader);
-	void parse_reports(Reader reader);
+	void parse_frame(Reader &reader);
+	void parse_raw(Reader &reader);
+	void parse_hid(Reader &reader);
+	void parse_metadata(Reader &reader);
+	void parse_reports(Reader &reader);
 
-	void parse_stylus_v1(Reader reader);
-	void parse_stylus_v2(Reader reader);
+	void parse_stylus_v1(Reader &reader);
+	void parse_stylus_v2(Reader &reader);
 
-	void parse_dimensions(Reader reader);
-	void parse_timestamp(Reader reader);
-	void parse_heatmap_data(Reader reader);
-	void parse_heatmap_frame(Reader reader);
-	void parse_dft_window(Reader reader);
+	void parse_dimensions(Reader &reader);
+	void parse_timestamp(Reader &reader);
+	void parse_heatmap_data(Reader &reader);
+	void parse_heatmap_frame(Reader &reader);
+	void parse_dft_window(Reader &reader);
 
 public:
 	std::function<void(const StylusData &)> on_stylus;

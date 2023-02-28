@@ -31,7 +31,7 @@ void Parser::parse_with_header(const gsl::span<u8> data, std::size_t header)
 	this->parse_frame(reader);
 }
 
-void Parser::parse_frame(Reader reader)
+void Parser::parse_frame(Reader &reader)
 {
 	const auto header = reader.read<struct ipts_hid_frame>();
 	Reader sub = reader.sub(header.size - sizeof(header));
@@ -47,7 +47,7 @@ void Parser::parse_frame(Reader reader)
 	}
 }
 
-void Parser::parse_raw(Reader reader)
+void Parser::parse_raw(Reader &reader)
 {
 	const auto header = reader.read<struct ipts_raw_header>();
 
@@ -64,7 +64,7 @@ void Parser::parse_raw(Reader reader)
 	}
 }
 
-void Parser::parse_hid(Reader reader)
+void Parser::parse_hid(Reader &reader)
 {
 	while (reader.size() > 0) {
 		const auto frame = reader.read<struct ipts_hid_frame>();
@@ -93,7 +93,7 @@ void Parser::parse_hid(Reader reader)
 	}
 }
 
-void Parser::parse_metadata(Reader reader)
+void Parser::parse_metadata(Reader &reader)
 {
 	Metadata m;
 
@@ -106,7 +106,7 @@ void Parser::parse_metadata(Reader reader)
 		this->on_metadata(m);
 }
 
-void Parser::parse_reports(Reader reader)
+void Parser::parse_reports(Reader &reader)
 {
 	while (reader.size() > 0) {
 		const auto report = reader.read<struct ipts_report>();
@@ -135,7 +135,7 @@ void Parser::parse_reports(Reader reader)
 	}
 }
 
-void Parser::parse_stylus_v1(Reader reader)
+void Parser::parse_stylus_v1(Reader &reader)
 {
 	const auto stylus_report = reader.read<struct ipts_stylus_report>();
 	this->stylus.serial = stylus_report.serial;
@@ -161,7 +161,7 @@ void Parser::parse_stylus_v1(Reader reader)
 	}
 }
 
-void Parser::parse_stylus_v2(Reader reader)
+void Parser::parse_stylus_v2(Reader &reader)
 {
 	const auto stylus_report = reader.read<struct ipts_stylus_report>();
 	this->stylus.serial = stylus_report.serial;
@@ -187,7 +187,7 @@ void Parser::parse_stylus_v2(Reader reader)
 	}
 }
 
-void Parser::parse_dimensions(Reader reader)
+void Parser::parse_dimensions(Reader &reader)
 {
 	this->dim = reader.read<struct ipts_dimensions>();
 
@@ -196,12 +196,12 @@ void Parser::parse_dimensions(Reader reader)
 		this->dim.z_max = 255;
 }
 
-void Parser::parse_timestamp(Reader reader)
+void Parser::parse_timestamp(Reader &reader)
 {
 	this->time = reader.read<struct ipts_timestamp>();
 }
 
-void Parser::parse_heatmap_data(Reader reader)
+void Parser::parse_heatmap_data(Reader &reader)
 {
 	if (!this->heatmap)
 		this->heatmap = std::make_unique<Heatmap>();
@@ -217,7 +217,7 @@ void Parser::parse_heatmap_data(Reader reader)
 		this->on_heatmap(*this->heatmap);
 }
 
-void Parser::parse_heatmap_frame(Reader reader)
+void Parser::parse_heatmap_frame(Reader &reader)
 {
 	const auto header = reader.read<struct ipts_heatmap_header>();
 	Reader sub = reader.sub(header.size);
@@ -225,7 +225,7 @@ void Parser::parse_heatmap_frame(Reader reader)
 	this->parse_heatmap_data(sub);
 }
 
-void Parser::parse_dft_window(Reader reader)
+void Parser::parse_dft_window(Reader &reader)
 {
 	DftWindow dft {};
 	const auto window = reader.read<struct ipts_pen_dft_window>();
