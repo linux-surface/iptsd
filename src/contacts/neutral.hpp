@@ -46,13 +46,13 @@ inline f32 neutral(const BlobDetectorConfig &config, const container::Image<f32>
 {
 	switch (config.neutral_mode) {
 	case NeutralMode::MODE:
-		return neutral_mode(data);
+		return neutral_mode(data) + (config.neutral_value / 255);
 	case NeutralMode::AVERAGE:
-		return neutral_average(data);
+		return neutral_average(data) + (config.neutral_value / 255);
 	case NeutralMode::CONSTANT:
 		return config.neutral_value / 255;
 	default:
-		throw std::runtime_error("Invalid threshold_mode!");
+		throw std::runtime_error("Invalid neutral mode!");
 	}
 }
 
