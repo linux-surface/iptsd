@@ -1,6 +1,7 @@
 sources = [
   'finder.cpp',
   'advanced/detector.cpp',
+  'basic/algorithms.cpp',
   'basic/cluster.cpp',
   'basic/detector.cpp',
 ]

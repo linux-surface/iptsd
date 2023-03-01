@@ -8,6 +8,8 @@
 #include <common/types.hpp>
 #include <container/image.hpp>
 
+#include <vector>
+
 namespace iptsd::contacts::basic {
 
 class BlobDetector : public IBlobDetector {
@@ -15,13 +17,13 @@ private:
 	BlobDetectorConfig config;
 
 	container::Image<f32> heatmap;
-	container::Image<bool> visited;
 
-	std::vector<Blob> blobs {};
+	std::vector<index2_t> maximas;
+	std::vector<Blob> blobs;
 
 public:
-	BlobDetector(index2_t size, BlobDetectorConfig config)
-		: config {config}, heatmap {size}, visited {size} {};
+	BlobDetector(const index2_t size, const BlobDetectorConfig config)
+		: config {config}, heatmap {size}, maximas {64}, blobs {64} {};
 
 	container::Image<f32> &data() override;
 	const std::vector<Blob> &search() override;

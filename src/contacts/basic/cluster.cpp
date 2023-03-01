@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "cluster.hpp"
@@ -9,19 +8,9 @@
 
 namespace iptsd::contacts::basic {
 
-Cluster::Cluster(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t center)
+Cluster::Cluster(index2_t size) : visited {size}
 {
-	this->check(heatmap, visited, center);
-}
-
-void Cluster::add(index2_t pos, f64 val)
-{
-	this->x += val * pos.x;
-	this->y += val * pos.y;
-	this->xx += val * pos.x * pos.x;
-	this->yy += val * pos.y * pos.y;
-	this->xy += val * pos.x * pos.y;
-	this->w += val;
+	std::fill(this->visited.begin(), this->visited.end(), false);
 }
 
 math::Vec2<f64> Cluster::mean() const
@@ -38,26 +27,21 @@ math::Mat2s<f64> Cluster::cov() const
 	return math::Mat2s<f64> {r1, r3, r2};
 }
 
-void Cluster::check(container::Image<f32> &heatmap, container::Image<bool> &visited, index2_t pos)
+void Cluster::add(index2_t position, f64 value)
 {
-	const index2_t size = heatmap.size();
+	this->x += value * position.x;
+	this->y += value * position.y;
+	this->xx += value * position.x * position.x;
+	this->yy += value * position.y * position.y;
+	this->xy += value * position.x * position.y;
+	this->w += value;
 
-	if (pos.x < 0 || pos.x >= size.x)
-		return;
+	this->visited[position] = true;
+}
 
-	if (pos.y < 0 || pos.y >= size.y)
-		return;
-
-	if (visited[pos])
-		return;
-
-	this->add(pos, heatmap[pos]);
-	visited[pos] = true;
-
-	this->check(heatmap, visited, index2_t {pos.x + 1, pos.y});
-	this->check(heatmap, visited, index2_t {pos.x - 1, pos.y});
-	this->check(heatmap, visited, index2_t {pos.x, pos.y + 1});
-	this->check(heatmap, visited, index2_t {pos.x, pos.y - 1});
+bool Cluster::contains(index2_t position)
+{
+	return this->visited[position];
 }
 
 } // namespace iptsd::contacts::basic
