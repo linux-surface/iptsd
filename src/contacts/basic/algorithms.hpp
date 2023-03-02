@@ -18,6 +18,8 @@ void find_local_maximas(const container::Image<f32> &data, const f32 threshold,
 Cluster span_cluster(const container::Image<f32> &data, const f32 athresh, const f32 dthresh,
 		     const index2_t center);
 
+void merge_overlaps(std::vector<Cluster> &clusters, std::vector<Cluster> &temp, i32 iterations);
+
 } /* namespace iptsd::contacts::basic::algorithms */
 
 #endif /* IPTSD_CONTACTS_BASIC_ALGORITHMS_HPP */

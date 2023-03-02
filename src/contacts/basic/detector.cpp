@@ -8,7 +8,6 @@
 #include "cluster.hpp"
 
 #include <common/types.hpp>
-#include <container/image.hpp>
 #include <container/ops.hpp>
 #include <math/mat2.hpp>
 #include <math/vec2.hpp>
@@ -23,6 +22,7 @@ namespace iptsd::contacts::basic {
 const std::vector<Blob> &BlobDetector::search()
 {
 	this->maximas.clear();
+	this->clusters.clear();
 	this->blobs.clear();
 
 	const f32 nval = neutral(this->config, this->heatmap);
@@ -34,20 +34,13 @@ const std::vector<Blob> &BlobDetector::search()
 
 	// Iterate over the maximas and start building clusters
 	for (const index2_t point : this->maximas) {
-		const Cluster cluster = algorithms::span_cluster(this->heatmap, athresh, dthresh, point);
+		Cluster cluster = algorithms::span_cluster(this->heatmap, athresh, dthresh, point);
 
-		const math::Mat2s<f64> cov = cluster.cov();
-		const math::Eigen2<f64> eigen = cov.eigen();
-
-		if (eigen.w[0] <= 0 || eigen.w[1] <= 0)
-			continue;
-
-		if (std::isnan(eigen.v[0].x) || std::isnan(eigen.v[0].y) ||
-		    std::isnan(eigen.v[1].x) || std::isnan(eigen.v[1].x))
-			continue;
-
-		this->blobs.push_back(Blob {cluster.mean() + 0.5, cov});
+		this->clusters.push_back(std::move(cluster));
 	}
+
+	// Merge overlapping clusters
+	algorithms::merge_overlaps(this->clusters, this->temp, 5);
 
 	return this->blobs;
 }

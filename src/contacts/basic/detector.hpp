@@ -4,6 +4,7 @@
 #define IPTSD_CONTACTS_BASIC_DETECTOR_HPP
 
 #include "../interface.hpp"
+#include "cluster.hpp"
 
 #include <common/types.hpp>
 #include <container/image.hpp>
@@ -18,12 +19,15 @@ private:
 
 	container::Image<f32> heatmap;
 
-	std::vector<index2_t> maximas;
-	std::vector<Blob> blobs;
+	std::vector<index2_t> maximas {64};
+	std::vector<Cluster> clusters {};
+	std::vector<Cluster> temp {};
+
+	std::vector<Blob> blobs {64};
 
 public:
 	BlobDetector(const index2_t size, const BlobDetectorConfig config)
-		: config {config}, heatmap {size}, maximas {64}, blobs {64} {};
+		: config {config}, heatmap {size} {};
 
 	container::Image<f32> &data() override;
 	const std::vector<Blob> &search() override;

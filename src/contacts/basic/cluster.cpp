@@ -4,6 +4,7 @@
 
 #include <common/types.hpp>
 
+#include <algorithm>
 #include <gsl/gsl>
 
 namespace iptsd::contacts::basic {
@@ -13,35 +14,53 @@ Cluster::Cluster(index2_t size) : visited {size}
 	std::fill(this->visited.begin(), this->visited.end(), false);
 }
 
-math::Vec2<f64> Cluster::mean() const
+void Cluster::add(index2_t position)
 {
-	return math::Vec2<f64> {this->x / this->w, this->y / this->w};
-}
+	this->min_x = std::min(this->min_x, position.x);
+	this->min_y = std::min(this->min_y, position.y);
 
-math::Mat2s<f64> Cluster::cov() const
-{
-	const f64 r1 = (this->xx - (this->x * this->x / this->w)) / this->w;
-	const f64 r2 = (this->yy - (this->y * this->y / this->w)) / this->w;
-	const f64 r3 = (this->xy - (this->x * this->y / this->w)) / this->w;
-
-	return math::Mat2s<f64> {r1, r3, r2};
-}
-
-void Cluster::add(index2_t position, f64 value)
-{
-	this->x += value * position.x;
-	this->y += value * position.y;
-	this->xx += value * position.x * position.x;
-	this->yy += value * position.y * position.y;
-	this->xy += value * position.x * position.y;
-	this->w += value;
+	this->max_x = std::max(this->max_x, position.x);
+	this->max_y = std::max(this->max_y, position.y);
 
 	this->visited[position] = true;
 }
 
-bool Cluster::contains(index2_t position)
+void Cluster::merge(const Cluster &other)
+{
+	this->min_x = std::min(this->min_x, other.min_x);
+	this->min_y = std::min(this->min_y, other.min_y);
+
+	this->max_x = std::max(this->max_x, other.max_x);
+	this->max_y = std::max(this->max_y, other.max_y);
+}
+
+bool Cluster::contains(index2_t position) const
 {
 	return this->visited[position];
+}
+
+index2_t Cluster::min() const
+{
+	const index_t x = std::max(this->min_x - 1, 0);
+	const index_t y = std::max(this->min_y - 1, 0);
+
+	return index2_t {x, y};
+}
+
+index2_t Cluster::max() const
+{
+	const index2_t size = this->visited.size();
+
+	const index_t x = std::min(this->max_x + 1, size.x - 1);
+	const index_t y = std::min(this->max_y + 1, size.y - 1);
+
+	return index2_t {x, y};
+}
+
+index2_t Cluster::size() const
+{
+	// min() and max() are inclusive so we need to add one
+	return (this->max() - this->min()) + index2_t {1, 1};
 }
 
 } // namespace iptsd::contacts::basic

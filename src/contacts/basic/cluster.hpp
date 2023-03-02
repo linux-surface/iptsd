@@ -8,30 +8,35 @@
 #include <math/mat2.hpp>
 #include <math/vec2.hpp>
 
+#include <limits>
+#include <type_traits>
 #include <vector>
 
 namespace iptsd::contacts::basic {
 
 class Cluster {
 public:
-	f64 x = 0;
-	f64 y = 0;
-	f64 xx = 0;
-	f64 yy = 0;
-	f64 xy = 0;
-	f64 w = 0;
+	index_t max_x = 0;
+	index_t max_y = 0;
+	index_t min_x = std::numeric_limits<index_t>::max();
+	index_t min_y = std::numeric_limits<index_t>::max();
 
 private:
 	container::Image<bool> visited;
 
 public:
 	Cluster(index2_t size);
+	Cluster(const Cluster &other) = default;
+	Cluster(Cluster &&other) noexcept = default;
 
-	[[nodiscard]] math::Vec2<f64> mean() const;
-	[[nodiscard]] math::Mat2s<f64> cov() const;
+	void add(index2_t position);
+	void merge(const Cluster &other);
 
-	void add(index2_t position, f64 value);
-	bool contains(index2_t position);
+	[[nodiscard]] bool contains(index2_t position) const;
+
+	[[nodiscard]] index2_t min() const;
+	[[nodiscard]] index2_t max() const;
+	[[nodiscard]] index2_t size() const;
 };
 
 } /* namespace iptsd::contacts::basic */
