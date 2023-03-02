@@ -121,8 +121,8 @@ const std::vector<Contact> &ContactFinder::search()
 			contact.y = 1 - contact.y;
 
 		const math::Eigen2<f64> eigen = blob.cov.eigen();
-		const f64 s1 = std::sqrt(eigen.w[0]);
-		const f64 s2 = std::sqrt(eigen.w[1]);
+		const f64 s1 = std::sqrt(std::abs(eigen.w[0]));
+		const f64 s2 = std::sqrt(std::abs(eigen.w[1]));
 
 		const f64 d1 = s1 / this->data_diag;
 		const f64 d2 = s2 / this->data_diag;

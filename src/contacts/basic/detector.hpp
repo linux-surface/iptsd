@@ -3,6 +3,7 @@
 #ifndef IPTSD_CONTACTS_BASIC_DETECTOR_HPP
 #define IPTSD_CONTACTS_BASIC_DETECTOR_HPP
 
+#include "../advanced/algorithm/gaussian_fitting.hpp"
 #include "../interface.hpp"
 #include "cluster.hpp"
 
@@ -23,11 +24,14 @@ private:
 	std::vector<Cluster> clusters {};
 	std::vector<Cluster> temp {};
 
+	container::Image<f64> gfit_temp;
+	std::vector<advanced::alg::gfit::Parameters<f64>> gfit_params {};
+
 	std::vector<Blob> blobs {64};
 
 public:
 	BlobDetector(const index2_t size, const BlobDetectorConfig config)
-		: config {config}, heatmap {size} {};
+		: config {config}, heatmap {size}, gfit_temp {size} {};
 
 	container::Image<f32> &data() override;
 	const std::vector<Blob> &search() override;

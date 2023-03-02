@@ -8,6 +8,7 @@
 
 #include <cstddef>
 #include <gsl/gsl>
+#include <gsl/narrow>
 #include <limits>
 #include <stdexcept>
 #include <utility>
