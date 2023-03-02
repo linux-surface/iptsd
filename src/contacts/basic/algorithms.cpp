@@ -76,7 +76,8 @@ void find_local_maximas(const container::Image<f32> &data, const f32 threshold,
 }
 
 static void span_cluster_recursive(const container::Image<f32> &data, Cluster &cluster,
-				   const f32 thresh, const index2_t position, const f32 previous)
+				   const f32 athresh, const f32 dthresh, const index2_t position,
+				   const f32 previous)
 {
 	const index2_t size = data.size();
 
@@ -88,10 +89,11 @@ static void span_cluster_recursive(const container::Image<f32> &data, Cluster &c
 
 	const f32 value = data[position];
 
-	if (value <= thresh)
+	if (value <= dthresh)
 		return;
 
-	if (value > previous)
+	// Once we left the activation area, don't allow the value to increase again
+	if (previous <= athresh && value > previous)
 		return;
 
 	if (cluster.contains(position))
@@ -99,17 +101,20 @@ static void span_cluster_recursive(const container::Image<f32> &data, Cluster &c
 
 	cluster.add(position, value);
 
-	span_cluster_recursive(data, cluster, thresh, position + index2_t {1, 0}, value);
-	span_cluster_recursive(data, cluster, thresh, position + index2_t {0, 1}, value);
-	span_cluster_recursive(data, cluster, thresh, position + index2_t {-1, 0}, value);
-	span_cluster_recursive(data, cluster, thresh, position + index2_t {0, -1}, value);
+	span_cluster_recursive(data, cluster, athresh, dthresh, position + index2_t {1, 0}, value);
+	span_cluster_recursive(data, cluster, athresh, dthresh, position + index2_t {0, 1}, value);
+	span_cluster_recursive(data, cluster, athresh, dthresh, position + index2_t {-1, 0}, value);
+	span_cluster_recursive(data, cluster, athresh, dthresh, position + index2_t {0, -1}, value);
 }
 
-Cluster span_cluster(const container::Image<f32> &data, const f32 threshold, const index2_t center)
+Cluster span_cluster(const container::Image<f32> &data, const f32 athresh, const f32 dthresh,
+		     const index2_t center)
 {
 	Cluster cluster {data.size()};
 
-	span_cluster_recursive(data, cluster, threshold, center, std::numeric_limits<f32>::max());
+	span_cluster_recursive(data, cluster, athresh, dthresh, center,
+			       std::numeric_limits<f32>::max());
+
 	return cluster;
 }
 

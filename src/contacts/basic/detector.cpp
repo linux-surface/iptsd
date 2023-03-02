@@ -34,7 +34,7 @@ const std::vector<Blob> &BlobDetector::search()
 
 	// Iterate over the maximas and start building clusters
 	for (const index2_t point : this->maximas) {
-		const Cluster cluster = algorithms::span_cluster(this->heatmap, dthresh, point);
+		const Cluster cluster = algorithms::span_cluster(this->heatmap, athresh, dthresh, point);
 
 		const math::Mat2s<f64> cov = cluster.cov();
 		const math::Eigen2<f64> eigen = cov.eigen();
