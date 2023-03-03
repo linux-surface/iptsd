@@ -19,19 +19,19 @@ private:
 	BlobDetectorConfig config;
 
 	container::Image<f32> heatmap;
+	container::Image<f32> neutralized;
+	container::Image<f64> fitting;
 
 	std::vector<index2_t> maximas {64};
 	std::vector<Cluster> clusters {};
 	std::vector<Cluster> temp {};
-
-	container::Image<f64> gfit_temp;
-	std::vector<advanced::alg::gfit::Parameters<f64>> gfit_params {};
+	std::vector<advanced::alg::gfit::Parameters<f64>> params {};
 
 	std::vector<Blob> blobs {64};
 
 public:
 	BlobDetector(const index2_t size, const BlobDetectorConfig config)
-		: config {config}, heatmap {size}, gfit_temp {size} {};
+		: config {config}, heatmap {size}, neutralized {size}, fitting {size} {};
 
 	container::Image<f32> &data() override;
 	const std::vector<Blob> &search() override;
