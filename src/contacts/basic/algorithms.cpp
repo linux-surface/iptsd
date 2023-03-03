@@ -133,6 +133,14 @@ static f32 overlap_area(const Cluster &a, const Cluster &b)
 	const index2_t max_a = a.max();
 	const index2_t max_b = b.max();
 
+	// Check if the two boxes are identical
+	if (min_a.x == min_b.x && min_a.y == min_b.y && max_a.x == max_b.x && max_a.y == max_b.y)
+		return 1.0f;
+
+	// Check if the two boxes overlap
+	if (min_a.x > max_b.x || min_b.x > max_a.x || min_a.y > max_b.y || min_b.y > max_a.y)
+		return 0.0f;
+
 	// Detewrminte the coordinates of the intersection rectangle
 	const index_t x_left = std::max(min_a.x, min_b.x);
 	const index_t y_top = std::max(min_a.y, min_b.y);
