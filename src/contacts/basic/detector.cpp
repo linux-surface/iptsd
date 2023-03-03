@@ -2,6 +2,7 @@
 
 #include "detector.hpp"
 
+#include "../advanced/algorithm/convolution.hpp"
 #include "../advanced/algorithm/gaussian_fitting.hpp"
 #include "../interface.hpp"
 #include "../neutral.hpp"
@@ -34,16 +35,18 @@ const std::vector<Blob> &BlobDetector::search()
 	container::ops::transform(this->heatmap, this->neutralized,
 				  [&](f32 value) { return std::max(value - nval, 0.0f); });
 
+	convolve(this->blurred, this->neutralized, this->gaussian);
+
 	const f32 athresh = this->config.activation_threshold / 255;
 	const f32 dthresh = this->config.deactivation_threshold / 255;
 
 	// Search for local maxima
-	algorithms::find_local_maximas(this->neutralized, athresh, this->maximas);
+	algorithms::find_local_maximas(this->blurred, athresh, this->maximas);
 
 	// Iterate over the maximas and start building clusters
 	for (const index2_t point : this->maximas) {
 		Cluster cluster =
-			algorithms::span_cluster(this->neutralized, athresh, dthresh, point);
+			algorithms::span_cluster(this->blurred, athresh, dthresh, point);
 
 		this->clusters.push_back(std::move(cluster));
 	}
@@ -79,7 +82,7 @@ const std::vector<Blob> &BlobDetector::search()
 		this->params.push_back(std::move(params));
 	}
 
-	gfit::fit(this->params, this->neutralized, this->fitting, 3);
+	gfit::fit(this->params, this->blurred, this->fitting, 3);
 
 	for (const auto &p : this->params) {
 		if (!p.valid)
