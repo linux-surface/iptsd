@@ -14,6 +14,8 @@
 
 namespace iptsd::contacts::basic {
 
+using namespace iptsd::contacts::advanced::alg;
+
 class BlobDetector : public IBlobDetector {
 private:
 	BlobDetectorConfig config;
@@ -25,7 +27,7 @@ private:
 	std::vector<index2_t> maximas {64};
 	std::vector<Cluster> clusters {};
 	std::vector<Cluster> temp {};
-	std::vector<advanced::alg::gfit::Parameters<f64>> params {};
+	std::vector<gfit::Parameters<f64>> params {};
 
 	std::vector<Blob> blobs {64};
 

@@ -31,9 +31,8 @@ const std::vector<Blob> &BlobDetector::search()
 	const f32 nval = neutral(this->config, this->heatmap);
 
 	// Subtract the neutral value from the whole heatmap
-	container::ops::transform(this->heatmap, this->neutralized, [&](f32 value) {
-		return std::max(value - nval, 0.0f);
-	});
+	container::ops::transform(this->heatmap, this->neutralized,
+				  [&](f32 value) { return std::max(value - nval, 0.0f); });
 
 	const f32 athresh = this->config.activation_threshold / 255;
 	const f32 dthresh = this->config.deactivation_threshold / 255;
@@ -43,7 +42,8 @@ const std::vector<Blob> &BlobDetector::search()
 
 	// Iterate over the maximas and start building clusters
 	for (const index2_t point : this->maximas) {
-		Cluster cluster = algorithms::span_cluster(this->neutralized, athresh, dthresh, point);
+		Cluster cluster =
+			algorithms::span_cluster(this->neutralized, athresh, dthresh, point);
 
 		this->clusters.push_back(std::move(cluster));
 	}
@@ -65,21 +65,21 @@ const std::vector<Blob> &BlobDetector::search()
 		const math::Vec2<f64> mean {x, y};
 		const math::Mat2s<f64> prec {1.0, 0.0, 1.0};
 
-		const advanced::alg::gfit::BBox box {
+		const gfit::BBox box {
 			min.x,
 			max.x,
 			min.y,
 			max.y,
 		};
 
-		advanced::alg::gfit::Parameters<f64> params {
+		gfit::Parameters<f64> params {
 			true, 1, mean, prec, box, std::move(weights),
 		};
 
 		this->params.push_back(std::move(params));
 	}
 
-	advanced::alg::gfit::fit(this->params, this->neutralized, this->fitting, 3);
+	gfit::fit(this->params, this->neutralized, this->fitting, 3);
 
 	for (const auto &p : this->params) {
 		if (!p.valid)
