@@ -100,8 +100,8 @@ void conv_generic(Image<T>& out, Image<T> const& in, Kernel<S, Nx, Ny> const& k)
     index_t const dx = (Nx - 1) / 2;
     index_t const dy = (Ny - 1) / 2;
 
-    for (index_t cy = 0; cy < in.shape().y; ++cy) {
-        for (index_t cx = 0; cx < in.shape().x; ++cx) {
+    for (index_t cy = 0; cy < in.size().y; ++cy) {
+        for (index_t cx = 0; cx < in.size().x; ++cx) {
             out[{cx, cy}] = math::num<T>::zero;
 
             for (index_t iy = 0; iy < Ny; ++iy) {
