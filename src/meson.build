@@ -25,6 +25,16 @@ if target_cpu == 'aarch64'
   optflags += '-march=armv8.2-a+crypto+fp16+rcpc+dotprod' # Surface Pro X
 endif
 
+if get_option('access_checks')
+  cxxflags += '-D_GLIBCXX_ASSERTIONS'
+endif
+
+if get_option('force_access_checks')
+  cxxflags += '-DIPTSD_CONFIG_FORCE_ACCESS_CHECKS'
+endif
+
+cxxflags += '-DSPDLOG_FMT_EXTERNAL'
+
 cxxflags = cpp.get_supported_arguments(cxxflags)
 add_project_arguments(cxxflags, language: 'cpp')
 
@@ -32,16 +42,6 @@ if get_option('optimization') in ['2', '3']
   optflags = cpp.get_supported_arguments(optflags)
   add_project_arguments(optflags, language: 'cpp')
 endif
-
-if get_option('access_checks')
-  add_project_arguments('-D_GLIBCXX_ASSERTIONS', language: 'cpp')
-endif
-
-if get_option('force_access_checks')
-  add_project_arguments('-DIPTSD_CONFIG_FORCE_ACCESS_CHECKS', language: 'cpp')
-endif
-
-add_project_arguments('-DSPDLOG_FMT_EXTERNAL', language: 'cpp')
 
 # Dependencies
 cli11 = dependency('CLI11',
