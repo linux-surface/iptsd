@@ -7,19 +7,10 @@ includes = [
 ]
 
 cxxflags = [
-  '-Wuninitialized',
-  '-Wno-unused-result',
   '-Wlogical-op',
   '-Wmissing-include-dirs',
-  '-Wpointer-arith',
   '-Winit-self',
-  '-Wimplicit-fallthrough=2',
-  '-Wendif-labels',
-  '-Wstrict-aliasing=2',
-  '-Woverflow',
-  '-Wno-missing-braces',
-  '-Wno-missing-field-initializers',
-  '-Wno-unused-parameter',
+  '-Wimplicit-fallthrough',
 ]
 
 optflags = []
