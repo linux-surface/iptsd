@@ -175,6 +175,8 @@ static bool find_overlaps(const std::vector<Cluster> &clusters,
 	bool found_overlap = false;
 	const i32 size = gsl::narrow<i32>(clusters.size());
 
+	overlaps.clear();
+
 	for (i32 i = size - 1; i >= 0; i--) {
 		const Cluster &a = clusters[i];
 
