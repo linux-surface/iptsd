@@ -1,6 +1,5 @@
 sources = [
   'cone.cpp',
-  'devices.cpp',
   'dft.cpp',
   'main.cpp',
   'uinput-device.cpp',
