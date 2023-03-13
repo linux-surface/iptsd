@@ -10,18 +10,19 @@
 #include <ipts/parser.hpp>
 
 #include <linux/input-event-codes.h>
+#include <memory>
 
 namespace iptsd::daemon {
 
 class StylusDevice {
 private:
-	UinputDevice m_uinput {};
+	std::shared_ptr<UinputDevice> m_uinput = std::make_shared<UinputDevice>();
 
 	// The daemon configuration.
 	config::Config m_config;
 
 	// The touch rejection cone.
-	std::shared_ptr<Cone> m_cone;
+	std::shared_ptr<Cone> m_cone = nullptr;
 
 	// Whether the device is enabled.
 	bool m_enabled = true;
@@ -30,24 +31,22 @@ private:
 	bool m_active = false;
 
 public:
-	StylusDevice(const config::Config &config, std::shared_ptr<Cone> cone)
-		: m_config {config},
-		  m_cone {std::move(cone)}
+	StylusDevice(const config::Config &config) : m_config {config}
 	{
-		m_uinput.set_name("IPTS Stylus");
-		m_uinput.set_vendor(config.vendor);
-		m_uinput.set_product(config.product);
+		m_uinput->set_name("IPTS Stylus");
+		m_uinput->set_vendor(config.vendor);
+		m_uinput->set_product(config.product);
 
-		m_uinput.set_evbit(EV_KEY);
-		m_uinput.set_evbit(EV_ABS);
+		m_uinput->set_evbit(EV_KEY);
+		m_uinput->set_evbit(EV_ABS);
 
-		m_uinput.set_propbit(INPUT_PROP_DIRECT);
-		m_uinput.set_propbit(INPUT_PROP_POINTER);
+		m_uinput->set_propbit(INPUT_PROP_DIRECT);
+		m_uinput->set_propbit(INPUT_PROP_POINTER);
 
-		m_uinput.set_keybit(BTN_TOUCH);
-		m_uinput.set_keybit(BTN_STYLUS);
-		m_uinput.set_keybit(BTN_TOOL_PEN);
-		m_uinput.set_keybit(BTN_TOOL_RUBBER);
+		m_uinput->set_keybit(BTN_TOUCH);
+		m_uinput->set_keybit(BTN_STYLUS);
+		m_uinput->set_keybit(BTN_TOOL_PEN);
+		m_uinput->set_keybit(BTN_TOOL_RUBBER);
 
 		const i32 res_x = gsl::narrow<i32>(std::round(IPTS_MAX_X / (config.width * 10)));
 		const i32 res_y = gsl::narrow<i32>(std::round(IPTS_MAX_Y / (config.height * 10)));
@@ -55,14 +54,24 @@ public:
 		// Resolution for tilt is expected to be units/radian.
 		const i32 res_tilt = gsl::narrow<i32>(std::round(18000.0f / M_PIf));
 
-		m_uinput.set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
-		m_uinput.set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
-		m_uinput.set_absinfo(ABS_PRESSURE, 0, IPTS_MAX_PRESSURE, 0);
-		m_uinput.set_absinfo(ABS_TILT_X, -9000, 9000, res_tilt);
-		m_uinput.set_absinfo(ABS_TILT_Y, -9000, 9000, res_tilt);
-		m_uinput.set_absinfo(ABS_MISC, 0, USHRT_MAX, 0);
+		m_uinput->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
+		m_uinput->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
+		m_uinput->set_absinfo(ABS_PRESSURE, 0, IPTS_MAX_PRESSURE, 0);
+		m_uinput->set_absinfo(ABS_TILT_X, -9000, 9000, res_tilt);
+		m_uinput->set_absinfo(ABS_TILT_Y, -9000, 9000, res_tilt);
+		m_uinput->set_absinfo(ABS_MISC, 0, USHRT_MAX, 0);
 
-		m_uinput.create();
+		m_uinput->create();
+	}
+
+	/*!
+	 * Updates the touch rejection cone.
+	 *
+	 * @param[in] cone The new shared reference to the cone object.
+	 */
+	void set_cone(std::shared_ptr<Cone> cone)
+	{
+		m_cone = std::move(cone);
 	}
 
 	/*!
@@ -87,18 +96,18 @@ public:
 
 			const Vector2<i32> tilt = this->calculate_tilt(data.altitude, data.azimuth);
 
-			m_uinput.emit(EV_KEY, BTN_TOUCH, data.contact);
-			m_uinput.emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
-			m_uinput.emit(EV_KEY, BTN_TOOL_RUBBER, btn_rubber);
-			m_uinput.emit(EV_KEY, BTN_STYLUS, data.button);
+			m_uinput->emit(EV_KEY, BTN_TOUCH, data.contact);
+			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
+			m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, btn_rubber);
+			m_uinput->emit(EV_KEY, BTN_STYLUS, data.button);
 
-			m_uinput.emit(EV_ABS, ABS_X, data.x);
-			m_uinput.emit(EV_ABS, ABS_Y, data.y);
-			m_uinput.emit(EV_ABS, ABS_PRESSURE, data.pressure);
-			m_uinput.emit(EV_ABS, ABS_MISC, data.timestamp);
+			m_uinput->emit(EV_ABS, ABS_X, data.x);
+			m_uinput->emit(EV_ABS, ABS_Y, data.y);
+			m_uinput->emit(EV_ABS, ABS_PRESSURE, data.pressure);
+			m_uinput->emit(EV_ABS, ABS_MISC, data.timestamp);
 
-			m_uinput.emit(EV_ABS, ABS_TILT_X, tilt.x());
-			m_uinput.emit(EV_ABS, ABS_TILT_Y, tilt.y());
+			m_uinput->emit(EV_ABS, ABS_TILT_X, tilt.x());
+			m_uinput->emit(EV_ABS, ABS_TILT_Y, tilt.y());
 		} else {
 			this->lift();
 		}
@@ -181,10 +190,10 @@ private:
 	 */
 	void lift() const
 	{
-		m_uinput.emit(EV_KEY, BTN_TOUCH, 0);
-		m_uinput.emit(EV_KEY, BTN_TOOL_PEN, 0);
-		m_uinput.emit(EV_KEY, BTN_TOOL_RUBBER, 0);
-		m_uinput.emit(EV_KEY, BTN_STYLUS, 0);
+		m_uinput->emit(EV_KEY, BTN_TOUCH, 0);
+		m_uinput->emit(EV_KEY, BTN_TOOL_PEN, 0);
+		m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, 0);
+		m_uinput->emit(EV_KEY, BTN_STYLUS, 0);
 	}
 
 	/*!
@@ -192,7 +201,7 @@ private:
 	 */
 	void sync() const
 	{
-		m_uinput.emit(EV_SYN, SYN_REPORT, 0);
+		m_uinput->emit(EV_SYN, SYN_REPORT, 0);
 	}
 };
 

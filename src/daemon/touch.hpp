@@ -23,7 +23,7 @@ namespace iptsd::daemon {
 
 class TouchDevice {
 private:
-	UinputDevice m_uinput {};
+	std::shared_ptr<UinputDevice> m_uinput = std::make_shared<UinputDevice>();
 
 	// The daemon configuration.
 	config::Config m_config;
@@ -47,7 +47,7 @@ private:
 	std::set<usize> m_lift {};
 
 	// The touch rejection cone.
-	std::shared_ptr<Cone> m_cone;
+	std::shared_ptr<Cone> m_cone = nullptr;
 
 	// The index of the contact that is emitted through the singletouch API.
 	usize m_single_index = 0;
@@ -56,38 +56,45 @@ private:
 	bool m_enabled = true;
 
 public:
-	TouchDevice(const config::Config &config, std::shared_ptr<Cone> cone)
-		: m_config {config},
-		  m_finder {config.contacts()},
-		  m_cone {std::move(cone)}
+	TouchDevice(const config::Config &config) : m_config {config}, m_finder {config.contacts()}
 	{
-		m_uinput.set_name("IPTS Touch");
-		m_uinput.set_vendor(config.vendor);
-		m_uinput.set_product(config.product);
+		m_uinput->set_name("IPTS Touch");
+		m_uinput->set_vendor(config.vendor);
+		m_uinput->set_product(config.product);
 
-		m_uinput.set_evbit(EV_ABS);
-		m_uinput.set_evbit(EV_KEY);
+		m_uinput->set_evbit(EV_ABS);
+		m_uinput->set_evbit(EV_KEY);
 
-		m_uinput.set_propbit(INPUT_PROP_DIRECT);
-		m_uinput.set_keybit(BTN_TOUCH);
+		m_uinput->set_propbit(INPUT_PROP_DIRECT);
+		m_uinput->set_keybit(BTN_TOUCH);
 
 		const f32 diag = std::hypot(config.width, config.height);
 		const i32 res_x = gsl::narrow<i32>(std::round(IPTS_MAX_X / (config.width * 10)));
 		const i32 res_y = gsl::narrow<i32>(std::round(IPTS_MAX_Y / (config.height * 10)));
 		const i32 res_d = gsl::narrow<i32>(std::round(IPTS_DIAGONAL / (diag * 10)));
 
-		m_uinput.set_absinfo(ABS_MT_SLOT, 0, IPTS_MAX_CONTACTS, 0);
-		m_uinput.set_absinfo(ABS_MT_TRACKING_ID, 0, IPTS_MAX_CONTACTS, 0);
-		m_uinput.set_absinfo(ABS_MT_POSITION_X, 0, IPTS_MAX_X, res_x);
-		m_uinput.set_absinfo(ABS_MT_POSITION_Y, 0, IPTS_MAX_Y, res_y);
-		m_uinput.set_absinfo(ABS_MT_ORIENTATION, 0, 180, 0);
-		m_uinput.set_absinfo(ABS_MT_TOUCH_MAJOR, 0, IPTS_DIAGONAL, res_d);
-		m_uinput.set_absinfo(ABS_MT_TOUCH_MINOR, 0, IPTS_DIAGONAL, res_d);
-		m_uinput.set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
-		m_uinput.set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
+		m_uinput->set_absinfo(ABS_MT_SLOT, 0, IPTS_MAX_CONTACTS, 0);
+		m_uinput->set_absinfo(ABS_MT_TRACKING_ID, 0, IPTS_MAX_CONTACTS, 0);
+		m_uinput->set_absinfo(ABS_MT_POSITION_X, 0, IPTS_MAX_X, res_x);
+		m_uinput->set_absinfo(ABS_MT_POSITION_Y, 0, IPTS_MAX_Y, res_y);
+		m_uinput->set_absinfo(ABS_MT_ORIENTATION, 0, 180, 0);
+		m_uinput->set_absinfo(ABS_MT_TOUCH_MAJOR, 0, IPTS_DIAGONAL, res_d);
+		m_uinput->set_absinfo(ABS_MT_TOUCH_MINOR, 0, IPTS_DIAGONAL, res_d);
+		m_uinput->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
+		m_uinput->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
 
-		m_uinput.create();
-	};
+		m_uinput->create();
+	}
+
+	/*!
+	 * Updates the touch rejection cone.
+	 *
+	 * @param[in] cone The new shared reference to the cone object.
+	 */
+	void set_cone(std::shared_ptr<Cone> cone)
+	{
+		m_cone = std::move(cone);
+	}
 
 	/*!
 	 * Converts IPTS heatmap data into touch events and passes them to the linux kernel.
@@ -297,7 +304,7 @@ private:
 				continue;
 
 			const usize index = contact.index.value();
-			m_uinput.emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
+			m_uinput->emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
 
 			if (this->should_lift(contact))
 				this->lift_multitouch();
@@ -306,7 +313,7 @@ private:
 		}
 
 		for (const usize &index : m_lift) {
-			m_uinput.emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
+			m_uinput->emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
 			this->lift_multitouch();
 		}
 	}
@@ -316,7 +323,7 @@ private:
 	 */
 	void lift_multitouch() const
 	{
-		m_uinput.emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
+		m_uinput->emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
 	}
 
 	/*!
@@ -349,13 +356,13 @@ private:
 		const i32 major = gsl::narrow<i32>(std::round(size.maxCoeff() * IPTS_DIAGONAL));
 		const i32 minor = gsl::narrow<i32>(std::round(size.minCoeff() * IPTS_DIAGONAL));
 
-		m_uinput.emit(EV_ABS, ABS_MT_TRACKING_ID, index);
-		m_uinput.emit(EV_ABS, ABS_MT_POSITION_X, x);
-		m_uinput.emit(EV_ABS, ABS_MT_POSITION_Y, y);
+		m_uinput->emit(EV_ABS, ABS_MT_TRACKING_ID, index);
+		m_uinput->emit(EV_ABS, ABS_MT_POSITION_X, x);
+		m_uinput->emit(EV_ABS, ABS_MT_POSITION_Y, y);
 
-		m_uinput.emit(EV_ABS, ABS_MT_ORIENTATION, angle);
-		m_uinput.emit(EV_ABS, ABS_MT_TOUCH_MAJOR, major);
-		m_uinput.emit(EV_ABS, ABS_MT_TOUCH_MINOR, minor);
+		m_uinput->emit(EV_ABS, ABS_MT_ORIENTATION, angle);
+		m_uinput->emit(EV_ABS, ABS_MT_TOUCH_MAJOR, major);
+		m_uinput->emit(EV_ABS, ABS_MT_TOUCH_MINOR, minor);
 	}
 
 	/*!
@@ -406,7 +413,7 @@ private:
 	 */
 	void lift_singletouch() const
 	{
-		m_uinput.emit(EV_KEY, BTN_TOUCH, 0);
+		m_uinput->emit(EV_KEY, BTN_TOUCH, 0);
 	}
 
 	/*!
@@ -427,9 +434,9 @@ private:
 		const i32 x = gsl::narrow<i32>(std::round(mean.x() * IPTS_MAX_X));
 		const i32 y = gsl::narrow<i32>(std::round(mean.y() * IPTS_MAX_Y));
 
-		m_uinput.emit(EV_KEY, BTN_TOUCH, 1);
-		m_uinput.emit(EV_ABS, ABS_X, x);
-		m_uinput.emit(EV_ABS, ABS_Y, y);
+		m_uinput->emit(EV_KEY, BTN_TOUCH, 1);
+		m_uinput->emit(EV_ABS, ABS_X, x);
+		m_uinput->emit(EV_ABS, ABS_Y, y);
 	}
 
 	/*!
@@ -438,12 +445,12 @@ private:
 	void lift_all() const
 	{
 		for (const usize index : m_current) {
-			m_uinput.emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
+			m_uinput->emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
 			this->lift_multitouch();
 		}
 
 		for (const usize index : m_last) {
-			m_uinput.emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
+			m_uinput->emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
 			this->lift_multitouch();
 		}
 
@@ -455,7 +462,7 @@ private:
 	 */
 	void sync() const
 	{
-		m_uinput.emit(EV_SYN, SYN_REPORT, 0);
+		m_uinput->emit(EV_SYN, SYN_REPORT, 0);
 	}
 };
 

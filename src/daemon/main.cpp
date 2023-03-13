@@ -75,19 +75,19 @@ static int main(gsl::span<char *> args)
 
 	if (!config.touch_disable) {
 		parser.on_heatmap = [&](const ipts::Heatmap &data) {
-			if (ctx.stylus->active() && config.touch_disable_on_stylus)
-				ctx.touch->disable();
+			if (ctx.stylus.active() && config.touch_disable_on_stylus)
+				ctx.touch.disable();
 			else
-				ctx.touch->enable();
+				ctx.touch.enable();
 
-			ctx.touch->input(data);
+			ctx.touch.input(data);
 		};
 	} else {
 		spdlog::warn("Touchscreen is disabled!");
 	}
 
 	if (!config.stylus_disable) {
-		parser.on_stylus = [&](const ipts::StylusData &data) { ctx.stylus->input(data); };
+		parser.on_stylus = [&](const ipts::StylusData &data) { ctx.stylus.input(data); };
 
 		parser.on_dft = [&](const ipts::DftWindow &dft, ipts::StylusData &stylus) {
 			iptsd_dft_input(ctx, dft, stylus);
