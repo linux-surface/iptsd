@@ -70,6 +70,12 @@ gsl = dependency('Microsoft.GSL',
   default_options: ['default_library=static'],
 )
 
+eigen = dependency('eigen3',
+  fallback: ['eigen', 'eigen_dep'],
+  default_options: ['default_library=static'],
+   include_type: 'system',
+)
+
 forcefallback = get_option('wrap_mode') == 'forcefallback'
 
 hidrd_item = cpp.find_library('hidrd_item', required: false)
@@ -87,6 +93,7 @@ stdcppfs = cpp.find_library('stdc++fs')
 
 # Default dependencies
 dependencies = [
+  eigen,
   fmt,
   gsl,
   spdlog,
@@ -95,7 +102,6 @@ dependencies = [
 
 subdir('hid')
 subdir('ipts')
-subdir('contacts')
 
 subdir('config')
 subdir('daemon')

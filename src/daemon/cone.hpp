@@ -27,7 +27,8 @@ public:
 
 public:
 	Cone(f32 angle, f32 distance)
-		: angle {std::cos(angle / 180 * math::num<f32>::pi)}, distance {distance} {};
+		: angle {std::cos(angle / 180 * math::num<f32>::pi)},
+		  distance {distance} {};
 
 	bool alive();
 	bool active();

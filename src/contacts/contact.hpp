@@ -1,0 +1,77 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+#ifndef IPTSD_CONTACTS_CONTACT_HPP
+#define IPTSD_CONTACTS_CONTACT_HPP
+
+#include <common/constants.hpp>
+#include <common/types.hpp>
+
+#include <optional>
+#include <vector>
+
+namespace iptsd::contacts {
+
+template <class T> class Contact {
+public:
+	static_assert(std::is_floating_point_v<T>);
+
+public:
+	/*
+	 * The center position of the contact.
+	 *
+	 * Range: [0, 1] if normalized, [0, <input dimensions>] if not.
+	 */
+	Vector2<T> mean {Zero<T>(), Zero<T>()};
+
+	/*
+	 * The size of the contact (diameter of major and minor axis).
+	 *
+	 * Range: [0, 1] if normalized, [0, <hypot of input dimensions>] if not.
+	 */
+	Vector2<T> size {Zero<T>(), Zero<T>()};
+
+	/*
+	 * The orientation of the contact.
+	 *
+	 * Range: [0, 1) if normalized, [0, pi) if not.
+	 */
+	T orientation = Zero<T>();
+
+	/*
+	 * Whether the stored values are normalized.
+	 */
+	bool normalized = false;
+
+	/*
+	 * A temporally stable index to track contacts over multiple frames.
+	 */
+	std::optional<usize> index = std::nullopt;
+
+	/*
+	 * Whether the contact is valid.
+	 */
+	std::optional<bool> valid = std::nullopt;
+
+	/*
+	 * Whether the contact is stable.
+	 */
+	std::optional<bool> stable = std::nullopt;
+};
+
+template <class T>
+std::optional<std::reference_wrapper<const Contact<T>>>
+find_in_frame(usize index, const std::vector<Contact<T>> &frame)
+{
+	for (const Contact<T> &contact : frame) {
+		if (contact.index != index)
+			continue;
+
+		return contact;
+	}
+
+	return std::nullopt;
+}
+
+} // namespace iptsd::contacts
+
+#endif // IPTSD_CONTACTS_CONTACT_HPP

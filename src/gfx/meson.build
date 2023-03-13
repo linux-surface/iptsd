@@ -5,7 +5,6 @@ sources = [
 deps = dependencies + [
   cairomm,
   iptsd_config,
-  iptsd_contacts,
 ]
 
 if cairomm.found()

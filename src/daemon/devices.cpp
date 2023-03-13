@@ -33,7 +33,8 @@ static i32 res(i32 virt, f64 phys)
 }
 
 StylusDevice::StylusDevice(const config::Config &conf, std::shared_ptr<Cone> cone)
-	: UinputDevice(), cone(std::move(cone))
+	: UinputDevice(),
+	  cone(std::move(cone))
 {
 	this->name = "IPTS Stylus";
 	this->vendor = conf.vendor;
@@ -67,7 +68,9 @@ StylusDevice::StylusDevice(const config::Config &conf, std::shared_ptr<Cone> con
 }
 
 TouchDevice::TouchDevice(const config::Config &conf, std::shared_ptr<Cone> cone)
-	: UinputDevice(), cone {std::move(cone)}, finder {conf.contacts()}
+	: UinputDevice(),
+	  finder {conf.contacts()},
+	  cone {std::move(cone)}
 {
 	this->name = "IPTS Touch";
 	this->vendor = conf.vendor;

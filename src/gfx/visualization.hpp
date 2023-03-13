@@ -30,7 +30,7 @@ public:
 			  const container::Image<f32> &heatmap);
 
 	void draw_contacts(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t window,
-			   const std::vector<contacts::Contact> &contacts);
+			   const std::vector<contacts::Contact<f32>> &contacts);
 };
 
 } /* namespace iptsd::gfx */

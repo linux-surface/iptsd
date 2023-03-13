@@ -23,7 +23,9 @@ public:
 
 public:
 	Context(const config::Config &config, std::optional<const ipts::Metadata> meta)
-		: config {config}, devices {config}, meta {std::move(meta)} {};
+		: config {config},
+		  devices {config},
+		  meta {std::move(meta)} {};
 };
 
 } /* namespace iptsd::daemon */

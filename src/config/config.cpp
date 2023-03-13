@@ -2,6 +2,8 @@
 
 #include "config.hpp"
 
+#include "contacts/detection/algorithms/neutral.hpp"
+
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
 #include <ipts/protocol.hpp>
@@ -12,6 +14,7 @@
 #include <configure.h>
 #include <filesystem>
 #include <ini.h>
+#include <spdlog/spdlog.h>
 #include <string>
 
 namespace filesystem = std::filesystem;
@@ -190,7 +193,8 @@ void Config::load_dir(const std::string &name, bool check_device)
 }
 
 Config::Config(i16 vendor, i16 product, std::optional<const ipts::Metadata> metadata)
-	: vendor {vendor}, product {product}
+	: vendor {vendor},
+	  product {product}
 {
 	if (metadata.has_value()) {
 		this->width = gsl::narrow<f32>(metadata->size.width) / 1e3f;
@@ -219,43 +223,46 @@ Config::Config(i16 vendor, i16 product, std::optional<const ipts::Metadata> meta
 	}
 }
 
-contacts::Config Config::contacts() const
+contacts::Config<f32> Config::contacts() const
 {
-	contacts::Config config {};
+	contacts::Config<f32> config {};
 
-	config.max_contacts = IPTS_MAX_CONTACTS;
-	config.temporal_window = this->contacts_temporal_window;
+	config.detection.normalize = true;
+	config.detection.activation_threshold = this->contacts_activation_threshold / 255;
+	config.detection.deactivation_threshold = this->contacts_deactivation_threshold / 255;
 
-	config.width = this->width;
-	config.height = this->height;
-	config.invert_x = this->invert_x;
-	config.invert_y = this->invert_y;
-
-	if (this->contacts_detection == "basic")
-		config.detection_mode = contacts::BlobDetection::BASIC;
-	else if (this->contacts_detection == "advanced")
-		config.detection_mode = contacts::BlobDetection::ADVANCED;
+	using Algorithm = contacts::detection::neutral::Algorithm;
 
 	if (this->contacts_neutral == "mode")
-		config.neutral_mode = contacts::NeutralMode::MODE;
+		config.detection.neutral_value_algorithm = Algorithm::MODE;
 	else if (this->contacts_neutral == "average")
-		config.neutral_mode = contacts::NeutralMode::AVERAGE;
+		config.detection.neutral_value_algorithm = Algorithm::AVERAGE;
 	else if (this->contacts_neutral == "constant")
-		config.neutral_mode = contacts::NeutralMode::CONSTANT;
+		config.detection.neutral_value_algorithm = Algorithm::CONSTANT;
 
-	config.neutral_value = this->contacts_neutral_value;
-	config.activation_threshold = this->contacts_activation_threshold;
-	config.deactivation_threshold = this->contacts_deactivation_threshold;
+	config.detection.neutral_value_offset = this->contacts_neutral_value;
+	config.detection.neutral_value_backoff = 16; // TODO: config option
 
-	config.aspect_min = this->contacts_aspect_min;
-	config.aspect_max = this->contacts_aspect_max;
-	config.size_min = this->contacts_size_min;
-	config.size_max = this->contacts_size_max;
+	const f32 diagonal = std::hypot(this->width, this->height);
 
-	config.size_thresh = this->contacts_size_thresh;
-	config.position_thresh_min = this->contacts_position_thresh_min;
-	config.position_thresh_max = this->contacts_position_thresh_max;
-	config.dist_thresh = this->contacts_distance_thresh;
+	config.validation.track_validity = true;
+	config.validation.size_limits = Vector2<f32> {
+		this->contacts_size_min / diagonal,
+		this->contacts_size_max / diagonal,
+	};
+	config.validation.aspect_limits = Vector2<f32> {
+		this->contacts_aspect_min,
+		this->contacts_aspect_max,
+	};
+
+	config.stability.check_temporal_stability = true;
+	config.stability.temporal_window = this->contacts_temporal_window;
+	config.stability.size_difference_threshold = this->contacts_size_thresh;
+	config.stability.distance_threshold = this->contacts_distance_thresh;
+	config.stability.movement_limits = Vector2<f32> {
+		this->contacts_position_thresh_min / diagonal,
+		this->contacts_position_thresh_max / diagonal,
+	};
 
 	return config;
 }

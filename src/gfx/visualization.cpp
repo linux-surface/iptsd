@@ -6,7 +6,6 @@
 #include "color.hpp"
 
 #include <common/types.hpp>
-#include <contacts/advanced/detector.hpp>
 #include <contacts/finder.hpp>
 #include <container/image.hpp>
 
@@ -75,7 +74,7 @@ void Visualization::draw_heatmap(const Cairo::RefPtr<Cairo::Context> &cairo, ind
 }
 
 void Visualization::draw_contacts(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t window,
-				  const std::vector<contacts::Contact> &contacts)
+				  const std::vector<contacts::Contact<f32>> &contacts)
 {
 	const f64 diag = std::hypot(window.x, window.y);
 
@@ -84,24 +83,29 @@ void Visualization::draw_contacts(const Cairo::RefPtr<Cairo::Context> &cairo, in
 	cairo->set_font_size(24.0);
 
 	for (const auto &contact : contacts) {
-		if (!contact.active)
-			continue;
-
 		// Color invalid contacts red, instable contacts yellow, and stable contacts green
-		if (!contact.valid)
+		if (!contact.valid.value_or(true))
 			cairo->set_source_rgb(1, 0, 0);
-		else if (!contact.stable)
+		else if (!contact.stable.value_or(true))
 			cairo->set_source_rgb(1, 1, 0);
 		else
 			cairo->set_source_rgb(0, 1, 0);
 
-		const std::string index = fmt::format("{:02}", contact.index);
+		const std::string index = fmt::format("{:02}", contact.index.value_or(0));
 
 		Cairo::TextExtents extends {};
 		cairo->get_text_extents(index, extends);
 
-		const f64 x = contact.x * window.x;
-		const f64 y = contact.y * window.y;
+		Vector<f32> mean = contact.mean;
+
+		if (this->config.invert_x)
+			mean.x() = 1 - mean.x();
+
+		if (this->config.invert_y)
+			mean.y() = 1 - mean.y();
+
+		const f64 x = mean.x() * window.x;
+		const f64 y = mean.y() * window.y;
 
 		// Center the text at the mean point of the contact
 		cairo->move_to(x - (extends.x_bearing + extends.width / 2),
@@ -116,8 +120,8 @@ void Visualization::draw_contacts(const Cairo::RefPtr<Cairo::Context> &cairo, in
 		cairo->save();
 
 		cairo->translate(x, y);
-		cairo->rotate(-contact.angle);
-		cairo->scale(contact.major * diag, contact.minor * diag);
+		cairo->rotate(-contact.orientation * M_PI);
+		cairo->scale(contact.size.maxCoeff() * diag, contact.size.minCoeff() * diag);
 		cairo->begin_new_sub_path();
 		cairo->arc(0, 0, 1, 0, 2 * math::num<f64>::pi);
 

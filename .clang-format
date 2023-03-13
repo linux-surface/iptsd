@@ -34,5 +34,6 @@ IncludeCategories:
   - Regex: '^<(common|config|contacts|container|gfx|hid|ipts|math)/'
     Priority: 2
 KeepEmptyLinesAtTheStartOfBlocks: false
+PackConstructorInitializers: CurrentLine
 SpacesInContainerLiterals: false
 SpaceBeforeCpp11BracedList: true

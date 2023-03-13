@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include "contacts/contact.hpp"
+
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
 #include <container/image.hpp>
@@ -27,31 +29,6 @@ struct iptsd_dump_header {
 	i16 product;
 	std::size_t buffer_size;
 };
-
-static void iptsd_plot_handle_input(const Cairo::RefPtr<Cairo::Context> &cairo, index2_t rsize,
-				    gfx::Visualization &vis, contacts::ContactFinder &finder,
-				    const ipts::Heatmap &data)
-{
-	// Make sure that all buffers have the correct size
-	finder.resize(index2_t {data.dim.width, data.dim.height});
-
-	// Normalize and invert the heatmap data.
-	std::transform(data.data.begin(), data.data.end(), finder.data().begin(), [&](f32 v) {
-		const f32 val = (v - static_cast<f32>(data.dim.z_min)) /
-				static_cast<f32>(data.dim.z_max - data.dim.z_min);
-
-		return 1.0f - val;
-	});
-
-	// Search for a contact
-	const std::vector<contacts::Contact> &contacts = finder.search();
-
-	// Draw the raw heatmap
-	vis.draw_heatmap(cairo, rsize, finder.data());
-
-	// Draw the contacts
-	vis.draw_contacts(cairo, rsize, contacts);
-}
 
 static int main(gsl::span<char *> args)
 {
@@ -116,7 +93,11 @@ static int main(gsl::span<char *> args)
 		throw std::runtime_error("No display config for this device was found!");
 
 	gfx::Visualization vis {config};
-	contacts::ContactFinder finder {config.contacts()};
+
+	Image<f32> heatmap {};
+	std::vector<contacts::Contact<f32>> contacts {};
+
+	contacts::Finder<f32, f64> finder {config.contacts()};
 
 	index2_t rsize {};
 	const f64 aspect = config.width / config.height;
@@ -134,7 +115,38 @@ static int main(gsl::span<char *> args)
 
 	ipts::Parser parser {};
 	parser.on_heatmap = [&](const ipts::Heatmap &data) {
-		iptsd_plot_handle_input(cairo, rsize, vis, finder, data);
+		const Eigen::Index rows = index_cast(data.dim.height);
+		const Eigen::Index cols = index_cast(data.dim.width);
+
+		// Make sure the heatmap buffer has the right size
+		if (heatmap.rows() != rows || heatmap.cols() != cols)
+			heatmap.conservativeResize(data.dim.height, data.dim.width);
+
+		// Map the buffer to an Eigen container
+		Eigen::Map<const Image<u8>> mapped {data.data.data(), rows, cols};
+
+		const f32 range = static_cast<f32>(data.dim.z_max - data.dim.z_min);
+
+		// Normalize and invert the heatmap.
+		heatmap = 1.0f - (mapped.cast<f32>() - static_cast<f32>(data.dim.z_min)) / range;
+
+		// Search for contacts
+		finder.find(heatmap, contacts);
+
+		container::Image<f32> img {
+			{gsl::narrow<index_t>(cols), gsl::narrow<index_t>(rows)}};
+		for (Eigen::Index y = 0; y < rows; y++) {
+			for (Eigen::Index x = 0; x < cols; x++) {
+				img[{gsl::narrow<index_t>(x), gsl::narrow<index_t>(y)}] =
+					heatmap(y, x);
+			}
+		}
+
+		// Draw the raw heatmap
+		vis.draw_heatmap(cairo, rsize, img);
+
+		// Draw the contacts
+		vis.draw_contacts(cairo, rsize, contacts);
 	};
 
 	std::vector<u8> buffer(header.buffer_size);

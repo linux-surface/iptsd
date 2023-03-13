@@ -3,98 +3,76 @@
 #ifndef IPTSD_CONTACTS_FINDER_HPP
 #define IPTSD_CONTACTS_FINDER_HPP
 
-#include "interface.hpp"
+#include "config.hpp"
+#include "contact.hpp"
+#include "detection/detector.hpp"
+#include "stability/checker.hpp"
+#include "tracking/tracker.hpp"
+#include "validation/validator.hpp"
 
 #include <common/types.hpp>
-#include <math/mat2.hpp>
 
-#include <memory>
-#include <tuple>
+#include <type_traits>
 #include <vector>
 
 namespace iptsd::contacts {
 
-struct Contact {
-	f64 x = 0;
-	f64 y = 0;
+template <class T, class TFit = T> class Finder {
+public:
+	static_assert(std::is_floating_point_v<T>);
+	static_assert(std::is_floating_point_v<TFit>);
 
-	f64 angle = 0;
-	f64 major = 0;
-	f64 minor = 0;
-
-	u32 index = 0;
-	bool valid = true;
-	bool stable = false;
-	bool active = false;
-};
-
-enum BlobDetection {
-	BASIC,
-	ADVANCED,
-};
-
-struct Config {
-	u32 max_contacts;
-	u32 temporal_window;
-
-	f32 width;
-	f32 height;
-
-	bool invert_x;
-	bool invert_y;
-
-	enum BlobDetection detection_mode;
-
-	enum NeutralMode neutral_mode;
-	f32 neutral_value;
-	f32 activation_threshold;
-	f32 deactivation_threshold;
-
-	f32 aspect_min;
-	f32 aspect_max;
-	f32 size_min;
-	f32 size_max;
-
-	f32 size_thresh;
-	f32 position_thresh_min;
-	f32 position_thresh_max;
-	f32 dist_thresh;
-};
-
-class ContactFinder {
 private:
-	Config config;
+	// Detects contacts in a capacitive heatmap.
+	detection::Detector<T, TFit> m_detector;
 
-	index2_t size {};
-	std::unique_ptr<IBlobDetector> detector = nullptr;
+	// Tracks contacts over multiple frames.
+	tracking::Tracker<T> m_tracker {};
 
-	std::vector<std::vector<Contact>> frames {};
-	std::vector<f64> distances {};
+	// Validates size and aspect ratio of contacts.
+	validation::Validator<T> m_validator;
 
-	f64 data_diag = 0;
-	f64 phys_diag = 0;
+	// Check the temporal stability of contacts.
+	stability::Checker<T> m_stability;
 
 public:
-	ContactFinder(Config config);
+	Finder(Config<T> config)
+		: m_detector {config.detection},
+		  m_validator {config.validation},
+		  m_stability {config.stability} {};
 
-	container::Image<f32> &data();
-	const std::vector<Contact> &search();
+	/*!
+	 * Resets the contact finder by clearing all stored previous frames.
+	 */
+	void reset()
+	{
+		m_tracker.reset();
+		m_validator.reset();
+		m_stability.reset();
+	}
 
-	void resize(index2_t size);
-	void reset();
-
-private:
-	bool check_valid(const Contact &contact);
-	bool check_dist(const Contact &from, const Contact &to);
-
-	void track();
+	/*!
+	 * Extracts contacts from a capacitive heatmap.
+	 *
+	 * After the initial detection phase, every contact will be assigned a uniqe
+	 * index that identifies them over multiple consecutive frames.
+	 *
+	 * Then the size and aspect ratio of the contact is validated, and it is
+	 * checked if the changes to the contact over the last frames have been stable.
+	 *
+	 * @param[in] heatmap The capacitive heatmap to process.
+	 * @param[out] contacts The list of found contacts.
+	 */
+	template <int Rows, int Cols>
+	void find(const ImageBase<T, Rows, Cols> &heatmap, std::vector<Contact<T>> &contacts)
+	{
+		m_detector.detect(heatmap, contacts);
+		m_tracker.track(contacts);
+		m_validator.validate(contacts);
+		m_stability.check(contacts);
+	}
 };
 
-inline container::Image<f32> &ContactFinder::data()
-{
-	return this->detector->data();
-}
+} // namespace iptsd::contacts
 
-} /* namespace iptsd::contacts */
-
-#endif /* IPTSD_CONTACTS_FINDER_HPP */
+#endif // IPTSD_CONTACTS_FINDER_HPP

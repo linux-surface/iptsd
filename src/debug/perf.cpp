@@ -30,21 +30,27 @@ struct iptsd_dump_header {
 	std::size_t buffer_size;
 };
 
-static void iptsd_perf_handle_input(contacts::ContactFinder &finder, const ipts::Heatmap &data)
+static void iptsd_perf_handle_input(contacts::Finder<f32, f64> &finder, const ipts::Heatmap &data,
+				    Image<f32> &heatmap,
+				    std::vector<contacts::Contact<f32>> &contacts)
 {
-	// Make sure that all buffers have the correct size
-	finder.resize(index2_t {data.dim.width, data.dim.height});
+	const Eigen::Index rows = index_cast(data.dim.height);
+	const Eigen::Index cols = index_cast(data.dim.width);
 
-	// Normalize and invert the heatmap data.
-	std::transform(data.data.begin(), data.data.end(), finder.data().begin(), [&](f32 v) {
-		const f32 val = (v - static_cast<f32>(data.dim.z_min)) /
-				static_cast<f32>(data.dim.z_max - data.dim.z_min);
+	// Make sure the heatmap buffer has the right size
+	if (heatmap.rows() != rows || heatmap.cols() != cols)
+		heatmap.conservativeResize(data.dim.height, data.dim.width);
 
-		return 1.0f - val;
-	});
+	// Map the buffer to an Eigen container
+	Eigen::Map<const Image<u8>> mapped {data.data.data(), rows, cols};
 
-	// Search for a contact
-	finder.search();
+	const f32 range = static_cast<f32>(data.dim.z_max - data.dim.z_min);
+
+	// Normalize and invert the heatmap.
+	heatmap = 1.0f - (mapped.cast<f32>() - static_cast<f32>(data.dim.z_min)) / range;
+
+	// Search for contacts
+	finder.find(heatmap, contacts);
 }
 
 static int main(gsl::span<char *> args)
@@ -126,11 +132,14 @@ static int main(gsl::span<char *> args)
 	bool had_heatmap = false;
 	bool reader_finished_successfully = false;
 
-	// Parser is idempotent but ContactFinder is not
-	contacts::ContactFinder finder {config.contacts()};
+	Image<f32> heatmap {};
+	std::vector<contacts::Contact<f32>> contacts {};
+
+	contacts::Finder<f32, f64> finder {config.contacts()};
+
 	ipts::Parser parser {};
 	parser.on_heatmap = [&](const ipts::Heatmap &data) {
-		iptsd_perf_handle_input(finder, data);
+		iptsd_perf_handle_input(finder, data, heatmap, contacts);
 		// Don't track time for non-heatmap
 		had_heatmap = true;
 	};

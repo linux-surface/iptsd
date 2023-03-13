@@ -4,7 +4,6 @@ sources = [
 
 deps = dependencies + [
   inih,
-  iptsd_contacts,
   iptsd_ipts,
 ]
 

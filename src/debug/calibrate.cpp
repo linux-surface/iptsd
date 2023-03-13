@@ -3,6 +3,7 @@
 #include <common/signal.hpp>
 #include <common/types.hpp>
 #include <config/config.hpp>
+#include <contacts/contact.hpp>
 #include <contacts/finder.hpp>
 #include <container/ops.hpp>
 #include <ipts/device.hpp>
@@ -25,30 +26,36 @@ namespace iptsd::debug::calibrate {
 static std::vector<f64> size {};   // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 static std::vector<f64> aspect {}; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
-static void iptsd_calibrate_handle_input(const config::Config &config,
-					 contacts::ContactFinder &finder, const ipts::Heatmap &data)
+static void iptsd_calibrate_handle_input(const config::Config &config, const ipts::Heatmap &data,
+					 Image<f32> &heatmap,
+					 std::vector<contacts::Contact<f32>> &contacts,
+					 contacts::Finder<f32, f64> &finder)
 {
-	// Make sure that all buffers have the correct size
-	finder.resize(index2_t {data.dim.width, data.dim.height});
+	const Eigen::Index rows = index_cast(data.dim.height);
+	const Eigen::Index cols = index_cast(data.dim.width);
 
-	// Normalize and invert the heatmap data.
-	std::transform(data.data.begin(), data.data.end(), finder.data().begin(), [&](f32 v) {
-		const f32 val = (v - static_cast<f32>(data.dim.z_min)) /
-				static_cast<f32>(data.dim.z_max - data.dim.z_min);
+	// Make sure the heatmap buffer has the right size
+	if (heatmap.rows() != rows || heatmap.cols() != cols)
+		heatmap.conservativeResize(data.dim.height, data.dim.width);
 
-		return 1.0f - val;
-	});
+	// Map the buffer to an Eigen container
+	Eigen::Map<const Image<u8>> mapped {data.data.data(), rows, cols};
 
-	// Search contacts
-	const std::vector<contacts::Contact> &contacts = finder.search();
+	const f32 range = static_cast<f32>(data.dim.z_max - data.dim.z_min);
+
+	// Normalize and invert the heatmap.
+	heatmap = 1.0f - (mapped.cast<f32>() - static_cast<f32>(data.dim.z_min)) / range;
+
+	// Search for contacts
+	finder.find(heatmap, contacts);
 
 	// Calculate size and aspect of all stable contacts
-	for (const contacts::Contact &contact : contacts) {
-		if (!contact.active || !contact.stable)
+	for (const contacts::Contact<f32> &contact : contacts) {
+		if (!contact.stable)
 			continue;
 
-		size.push_back(contact.major * std::hypot(config.width, config.height));
-		aspect.push_back(contact.major / contact.minor);
+		size.push_back(contact.size.maxCoeff() * std::hypot(config.width, config.height));
+		aspect.push_back(contact.size.maxCoeff() / contact.size.minCoeff());
 	}
 
 	if (size.size() == 0)
@@ -128,11 +135,14 @@ static int main(gsl::span<char *> args)
 	spdlog::info("Size:    0.000 (Min: 0.000; Max: 0.000)");
 	spdlog::info("Aspect:  0.000 (Min: 0.000; Max: 0.000)");
 
-	contacts::ContactFinder finder {config.contacts()};
+	Image<f32> heatmap {};
+	std::vector<contacts::Contact<f32>> contacts {};
+
+	contacts::Finder<f32, f64> finder {config.contacts()};
 
 	ipts::Parser parser {};
 	parser.on_heatmap = [&](const ipts::Heatmap &data) {
-		iptsd_calibrate_handle_input(config, finder, data);
+		iptsd_calibrate_handle_input(config, data, heatmap, contacts, finder);
 	};
 
 	// Get the buffer size from the HID descriptor
