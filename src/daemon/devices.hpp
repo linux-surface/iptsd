@@ -4,6 +4,7 @@
 #define IPTSD_DAEMON_DEVICES_HPP
 
 #include "cone.hpp"
+#include "stylus.hpp"
 #include "touch.hpp"
 #include "uinput-device.hpp"
 
@@ -17,15 +18,6 @@
 #include <vector>
 
 namespace iptsd::daemon {
-
-class StylusDevice : public UinputDevice {
-public:
-	bool active = false;
-	std::shared_ptr<Cone> cone;
-
-public:
-	StylusDevice(const config::Config &conf, std::shared_ptr<Cone> cone);
-};
 
 class DeviceManager {
 public:

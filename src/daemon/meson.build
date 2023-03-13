@@ -3,7 +3,6 @@ sources = [
   'devices.cpp',
   'dft.cpp',
   'main.cpp',
-  'stylus.cpp',
   'uinput-device.cpp',
 ]
 

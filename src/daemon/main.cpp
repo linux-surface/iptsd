@@ -76,7 +76,7 @@ static int main(gsl::span<char *> args)
 
 	if (!config.touch_disable) {
 		parser.on_heatmap = [&](const ipts::Heatmap &data) {
-			if (ctx.devices.stylus->active && config.touch_disable_on_stylus)
+			if (ctx.devices.stylus->active() && config.touch_disable_on_stylus)
 				ctx.devices.touch->disable();
 			else
 				ctx.devices.touch->enable();
@@ -89,7 +89,7 @@ static int main(gsl::span<char *> args)
 
 	if (!config.stylus_disable) {
 		parser.on_stylus = [&](const ipts::StylusData &data) {
-			iptsd_stylus_input(ctx, data);
+			ctx.devices.stylus->input(data);
 		};
 
 		parser.on_dft = [&](const ipts::DftWindow &dft, ipts::StylusData &stylus) {
