@@ -1,5 +1,4 @@
 sources = [
-  'cone.cpp',
   'dft.cpp',
   'main.cpp',
 ]

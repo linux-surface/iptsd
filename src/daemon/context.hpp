@@ -34,7 +34,8 @@ public:
 		: config {std::move(config)},
 		  meta {std::move(meta)}
 	{
-		auto cone = std::make_shared<Cone>(config.cone_angle, config.cone_distance);
+		const f32 angle = std::cos(config.cone_angle / 180.0f * M_PIf);
+		auto cone = std::make_shared<Cone>(angle, config.cone_distance);
 
 		this->touch = std::make_unique<TouchDevice>(config, cone);
 		this->stylus = std::make_unique<StylusDevice>(config, cone);
