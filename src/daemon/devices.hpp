@@ -4,7 +4,7 @@
 #define IPTSD_DAEMON_DEVICES_HPP
 
 #include "cone.hpp"
-#include "contacts/contact.hpp"
+#include "touch.hpp"
 #include "uinput-device.hpp"
 
 #include <common/types.hpp>
@@ -25,23 +25,6 @@ public:
 
 public:
 	StylusDevice(const config::Config &conf, std::shared_ptr<Cone> cone);
-};
-
-class TouchDevice : public UinputDevice {
-public:
-	Image<f32> heatmap {};
-
-	contacts::Finder<f32, f64> finder;
-	std::vector<contacts::Contact<f32>> contacts {};
-
-	std::set<usize> current {};
-	std::set<usize> last {};
-	std::set<usize> lift {};
-
-	std::shared_ptr<Cone> cone;
-
-public:
-	TouchDevice(const config::Config &conf, std::shared_ptr<Cone> cone);
 };
 
 class DeviceManager {

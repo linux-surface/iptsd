@@ -76,7 +76,12 @@ static int main(gsl::span<char *> args)
 
 	if (!config.touch_disable) {
 		parser.on_heatmap = [&](const ipts::Heatmap &data) {
-			iptsd_touch_input(ctx, data);
+			if (ctx.devices.stylus->active && config.touch_disable_on_stylus)
+				ctx.devices.touch->disable();
+			else
+				ctx.devices.touch->enable();
+
+			ctx.devices.touch->input(data);
 		};
 	} else {
 		spdlog::warn("Touchscreen is disabled!");
