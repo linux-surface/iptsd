@@ -2,7 +2,6 @@ sources = [
   'cone.cpp',
   'dft.cpp',
   'main.cpp',
-  'uinput-device.cpp',
 ]
 
 deps = dependencies + [

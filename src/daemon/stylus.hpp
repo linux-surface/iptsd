@@ -34,9 +34,9 @@ public:
 		: m_config {config},
 		  m_cone {std::move(cone)}
 	{
-		m_uinput.name = "IPTS Stylus";
-		m_uinput.vendor = config.vendor;
-		m_uinput.product = config.product;
+		m_uinput.set_name("IPTS Stylus");
+		m_uinput.set_vendor(config.vendor);
+		m_uinput.set_product(config.product);
 
 		m_uinput.set_evbit(EV_KEY);
 		m_uinput.set_evbit(EV_ABS);

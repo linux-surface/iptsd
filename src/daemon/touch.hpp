@@ -61,9 +61,9 @@ public:
 		  m_finder {config.contacts()},
 		  m_cone {std::move(cone)}
 	{
-		m_uinput.name = "IPTS Touch";
-		m_uinput.vendor = config.vendor;
-		m_uinput.product = config.product;
+		m_uinput.set_name("IPTS Touch");
+		m_uinput.set_vendor(config.vendor);
+		m_uinput.set_product(config.product);
 
 		m_uinput.set_evbit(EV_ABS);
 		m_uinput.set_evbit(EV_KEY);
