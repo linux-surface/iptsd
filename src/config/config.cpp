@@ -240,7 +240,7 @@ contacts::Config<f32> Config::contacts() const
 	else if (this->contacts_neutral == "constant")
 		config.detection.neutral_value_algorithm = Algorithm::CONSTANT;
 
-	config.detection.neutral_value_offset = this->contacts_neutral_value;
+	config.detection.neutral_value_offset = this->contacts_neutral_value / 255;
 	config.detection.neutral_value_backoff = 16; // TODO: config option
 
 	const f32 diagonal = std::hypot(this->width, this->height);
@@ -257,8 +257,8 @@ contacts::Config<f32> Config::contacts() const
 
 	config.stability.check_temporal_stability = true;
 	config.stability.temporal_window = this->contacts_temporal_window;
-	config.stability.size_difference_threshold = this->contacts_size_thresh;
-	config.stability.distance_threshold = this->contacts_distance_thresh;
+	config.stability.size_difference_threshold = this->contacts_size_thresh / diagonal;
+	config.stability.distance_threshold = this->contacts_distance_thresh / diagonal;
 	config.stability.movement_limits = Vector2<f32> {
 		this->contacts_position_thresh_min / diagonal,
 		this->contacts_position_thresh_max / diagonal,
