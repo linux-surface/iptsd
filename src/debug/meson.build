@@ -9,7 +9,6 @@ dbg_show = tools.contains('show')
 if dbg_calibrate
   deps = dependencies + [
     cli11,
-    iptsd_config,
     iptsd_ipts,
   ]
 
@@ -28,7 +27,6 @@ endif
 if dbg_perf
   deps = dependencies + [
     cli11,
-    iptsd_config,
     iptsd_ipts,
   ]
 
@@ -39,7 +37,6 @@ if dbg_plot and cairomm.found()
   deps = dependencies + [
     cairomm,
     cli11,
-    iptsd_config,
     iptsd_gfx,
     iptsd_ipts,
   ]

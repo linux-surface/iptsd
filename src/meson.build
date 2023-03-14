@@ -54,8 +54,8 @@ fmt = dependency('fmt',
   default_options: ['default_library=static'],
 )
 
-inih = dependency('inih',
-  fallback: ['inih', 'inih_dep'],
+inih = dependency('INIReader',
+  fallback: ['inih', 'INIReader_dep'],
   default_options: ['default_library=static'],
 )
 
@@ -95,6 +95,7 @@ stdcppfs = cpp.find_library('stdc++fs')
 dependencies = [
   eigen,
   fmt,
+  inih,
   gsl,
   spdlog,
   stdcppfs,
@@ -103,7 +104,6 @@ dependencies = [
 subdir('hid')
 subdir('ipts')
 
-subdir('config')
 subdir('daemon')
 
 if get_option('debug_tools').length() > 0

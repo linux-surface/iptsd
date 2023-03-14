@@ -2,7 +2,7 @@
 
 #include <common/signal.hpp>
 #include <common/types.hpp>
-#include <config/config.hpp>
+#include <config/loader.hpp>
 #include <contacts/contact.hpp>
 #include <contacts/finder.hpp>
 #include <container/ops.hpp>
@@ -124,7 +124,8 @@ static int main(gsl::span<char *> args)
 			     u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
 	}
 
-	const config::Config config {device.vendor(), device.product(), meta};
+	config::Loader loader {device.vendor(), device.product(), meta};
+	const config::Config config = loader.config();
 
 	// Check if a config was found
 	if (config.width == 0 || config.height == 0)
@@ -138,7 +139,7 @@ static int main(gsl::span<char *> args)
 	Image<f32> heatmap {};
 	std::vector<contacts::Contact<f32>> contacts {};
 
-	contacts::Finder<f32, f64> finder {config.contacts()};
+	contacts::Finder<f32, f64> finder {config.contacts<f32>()};
 
 	ipts::Parser parser {};
 	parser.on_heatmap = [&](const ipts::Heatmap &data) {

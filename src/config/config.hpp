@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #ifndef IPTSD_CONFIG_CONFIG_HPP
 #define IPTSD_CONFIG_CONFIG_HPP
@@ -66,15 +66,62 @@ public:
 	f32 dft_tip_distance = 0;
 
 public:
-	Config(i16 vendor, i16 product,
-	       std::optional<const ipts::Metadata> metadata = std::nullopt);
+	template <class T> [[nodiscard]] contacts::Config<T> contacts() const
+	{
+		contacts::Config<T> config {};
 
-	[[nodiscard]] contacts::Config<f32> contacts() const;
+		const T athresh = static_cast<T>(this->contacts_activation_threshold);
+		const T dthresh = static_cast<T>(this->contacts_deactivation_threshold);
 
-private:
-	void load_dir(const std::string &name, bool check_device);
+		config.detection.normalize = true;
+		config.detection.activation_threshold = athresh / static_cast<T>(255);
+		config.detection.deactivation_threshold = dthresh / static_cast<T>(255);
+
+		using Algorithm = contacts::detection::neutral::Algorithm;
+
+		if (this->contacts_neutral == "mode")
+			config.detection.neutral_value_algorithm = Algorithm::MODE;
+		else if (this->contacts_neutral == "average")
+			config.detection.neutral_value_algorithm = Algorithm::AVERAGE;
+		else if (this->contacts_neutral == "constant")
+			config.detection.neutral_value_algorithm = Algorithm::CONSTANT;
+
+		const T nval_offset = static_cast<T>(this->contacts_neutral_value);
+
+		config.detection.neutral_value_offset = nval_offset / static_cast<T>(255);
+		config.detection.neutral_value_backoff = 16; // TODO: config option
+
+		const T width = static_cast<T>(this->width);
+		const T height = static_cast<T>(this->height);
+
+		const T diagonal = std::hypot(width, height);
+
+		config.validation.track_validity = true;
+		config.validation.size_limits = Vector2<T> {
+			static_cast<T>(this->contacts_size_min) / diagonal,
+			static_cast<T>(this->contacts_size_max) / diagonal,
+		};
+		config.validation.aspect_limits = Vector2<f32> {
+			static_cast<T>(this->contacts_aspect_min),
+			static_cast<T>(this->contacts_aspect_max),
+		};
+
+		const T size_thresh = static_cast<T>(this->contacts_size_thresh);
+		const T dist_thresh = static_cast<T>(this->contacts_distance_thresh);
+
+		config.stability.check_temporal_stability = true;
+		config.stability.temporal_window = this->contacts_temporal_window;
+		config.stability.size_difference_threshold = size_thresh / diagonal;
+		config.stability.distance_threshold = dist_thresh / diagonal;
+		config.stability.movement_limits = Vector2<T> {
+			static_cast<T>(this->contacts_position_thresh_min) / diagonal,
+			static_cast<T>(this->contacts_position_thresh_max) / diagonal,
+		};
+
+		return config;
+	}
 };
 
-} /* namespace iptsd::config */
+} // namespace iptsd::config
 
-#endif /* IPTSD_CONFIG_CONFIG_HPP */
+#endif // IPTSD_CONFIG_CONFIG_HPP

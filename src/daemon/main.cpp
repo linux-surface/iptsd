@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include "config/loader.hpp"
 #include "context.hpp"
 #include "dft.hpp"
 #include "stylus.hpp"
@@ -62,7 +63,8 @@ static int main(gsl::span<char *> args)
 			     u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
 	}
 
-	const config::Config config {device.vendor(), device.product(), meta};
+	config::Loader loader {device.vendor(), device.product(), meta};
+	const config::Config config = loader.config();
 
 	// Check if a config was found
 	if (config.width == 0 || config.height == 0)

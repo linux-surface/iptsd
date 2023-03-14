@@ -56,7 +56,9 @@ private:
 	bool m_enabled = true;
 
 public:
-	TouchDevice(const config::Config &config) : m_config {config}, m_finder {config.contacts()}
+	TouchDevice(const config::Config &config)
+		: m_config {config},
+		  m_finder {config.contacts<f32>()}
 	{
 		m_uinput->set_name("IPTS Touch");
 		m_uinput->set_vendor(config.vendor);
