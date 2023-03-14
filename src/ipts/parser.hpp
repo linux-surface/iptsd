@@ -35,8 +35,6 @@ public:
 	std::function<void(const Metadata &)> on_metadata;
 
 private:
-	std::unique_ptr<Heatmap> m_heatmap = nullptr;
-
 	struct ipts_dimensions m_dim {};
 	struct ipts_timestamp m_time {};
 
@@ -352,21 +350,16 @@ private:
 	 */
 	void parse_heatmap_data(Reader &reader)
 	{
-		if (!m_heatmap)
-			m_heatmap = std::make_unique<Heatmap>();
+		Heatmap heatmap {};
 
 		const usize size = static_cast<usize>(m_dim.width) * m_dim.height;
 
-		if (m_heatmap->data.size() != size)
-			m_heatmap->data.resize(size);
-
-		reader.read(gsl::span(m_heatmap->data));
-
-		m_heatmap->dim = m_dim;
-		m_heatmap->time = m_time;
+		heatmap.data = reader.subspan(size);
+		heatmap.dim = m_dim;
+		heatmap.time = m_time;
 
 		if (this->on_heatmap)
-			this->on_heatmap(*m_heatmap);
+			this->on_heatmap(heatmap);
 	}
 
 	/*!

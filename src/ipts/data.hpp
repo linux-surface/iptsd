@@ -7,6 +7,8 @@
 
 #include <common/types.hpp>
 
+#include <gsl/gsl>
+
 namespace iptsd::ipts {
 
 struct StylusData {
@@ -28,7 +30,7 @@ struct Heatmap {
 	struct ipts_dimensions dim {};
 	struct ipts_timestamp time {};
 
-	std::vector<u8> data {};
+	gsl::span<u8> data {};
 };
 
 struct DftWindow {

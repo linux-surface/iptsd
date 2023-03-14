@@ -66,9 +66,9 @@ public:
 	 * Takes a chunk of bytes from the current position and splits it off.
 	 *
 	 * @param[in] size How many bytes to take.
-	 * @return A new reader instance for the chunk of data.
+	 * @return The raw chunk of data.
 	 */
-	Reader sub(usize size)
+	gsl::span<u8> subspan(usize size)
 	{
 		if (size > this->size())
 			throw std::runtime_error("Tried to read more data than available!");
@@ -76,7 +76,18 @@ public:
 		const gsl::span<u8> sub = m_data.subspan(m_index, size);
 		this->skip(size);
 
-		return Reader {sub};
+		return sub;
+	}
+
+	/*!
+	 * Takes a chunk of bytes from the current position and splits it off.
+	 *
+	 * @param[in] size How many bytes to take.
+	 * @return A new reader instance for the chunk of data.
+	 */
+	Reader sub(usize size)
+	{
+		return Reader {this->subspan(size)};
 	}
 
 	/*!
