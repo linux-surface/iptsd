@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #ifndef IPTSD_IPTS_PROTOCOL_HPP
 #define IPTSD_IPTS_PROTOCOL_HPP
@@ -7,7 +7,7 @@
 
 #include <array>
 
-/* clang-format off */
+// clang-format off
 
 /*
  * If a report contains both of these usages, the report is used to send touch data
@@ -78,7 +78,7 @@ constexpr u8  IPTS_MAX_CONTACTS = 16;
  */
 constexpr u32 IPTS_DIAGONAL = 12000;
 
-/* clang-format on */
+// clang-format on
 
 struct [[gnu::packed]] ipts_header {
 	u8 report;
@@ -195,4 +195,4 @@ struct [[gnu::packed]] ipts_touch_metadata_unknown {
 	f32 unknown[16]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 };
 
-#endif /* IPTSD_IPTS_PROTOCOL_HPP */
+#endif // IPTSD_IPTS_PROTOCOL_HPP
