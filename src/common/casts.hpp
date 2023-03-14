@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #ifndef IPTSD_COMMON_CASTS_HPP
 #define IPTSD_COMMON_CASTS_HPP
@@ -35,4 +35,4 @@ template <class T> constexpr inline Eigen::Index index_cast(T value)
 		return unsigned_cast(value);
 }
 
-#endif /* IPTSD_COMMON_CASTS_HPP */
+#endif // IPTSD_COMMON_CASTS_HPP

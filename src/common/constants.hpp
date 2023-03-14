@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #ifndef IPTSD_COMMON_CONSTANTS_HPP
 #define IPTSD_COMMON_CONSTANTS_HPP
@@ -23,4 +23,4 @@ template <class T> constexpr inline T One()
 		return T::Ones();
 }
 
-#endif /* IPTSD_COMMON_TYPES_HPP */
+#endif // IPTSD_COMMON_TYPES_HPP

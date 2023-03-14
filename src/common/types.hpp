@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #ifndef IPTSD_COMMON_TYPES_HPP
 #define IPTSD_COMMON_TYPES_HPP
@@ -29,7 +29,7 @@ using f64 = std::double_t;
 using isize = std::ptrdiff_t;
 using usize = std::size_t;
 
-/* clang-format off */
+// clang-format off
 
 template <class T, int Size = Eigen::Dynamic>
 using Vector = Eigen::Vector<T, Size>;
@@ -55,7 +55,7 @@ using MatrixBase = Eigen::MatrixBase<Matrix<T, Rows, Cols>>;
 template <class T, int Rows = Eigen::Dynamic, int Cols = Eigen::Dynamic>
 using ImageBase = Eigen::ArrayBase<Image<T, Rows, Cols>>;
 
-/* clang-format on */
+// clang-format on
 
 template <class T> using DenseBase = Eigen::DenseBase<T>;
 template <class T> using Scalar = typename DenseBase<T>::Scalar;
@@ -152,4 +152,4 @@ inline constexpr index2_t operator-(index2_t const &a, index2_t const &b)
 	return {a.x - b.x, a.y - b.y};
 }
 
-#endif /* IPTSD_COMMON_TYPES_HPP */
+#endif // IPTSD_COMMON_TYPES_HPP
