@@ -32,9 +32,6 @@ public:
 	u16 altitude = 0;
 	u16 azimuth = 0;
 	u32 serial = 0;
-
-	i32 real = 0;
-	i32 imag = 0;
 };
 
 class Heatmap {
@@ -71,7 +68,6 @@ class Parser {
 private:
 	std::unique_ptr<Heatmap> heatmap = nullptr;
 
-	StylusData stylus {};
 	struct ipts_dimensions dim {};
 	struct ipts_timestamp time {};
 
@@ -95,7 +91,7 @@ private:
 public:
 	std::function<void(const StylusData &)> on_stylus;
 	std::function<void(const Heatmap &)> on_heatmap;
-	std::function<void(const DftWindow &, StylusData &)> on_dft;
+	std::function<void(const DftWindow &)> on_dft;
 	std::function<void(const Metadata &)> on_metadata;
 
 	void parse(gsl::span<u8> data);

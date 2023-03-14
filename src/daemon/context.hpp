@@ -3,6 +3,7 @@
 #ifndef IPTSD_DAEMON_CONTEXT_HPP
 #define IPTSD_DAEMON_CONTEXT_HPP
 
+#include "dft.hpp"
 #include "stylus.hpp"
 #include "touch.hpp"
 
@@ -26,6 +27,9 @@ public:
 	// The stylus device.
 	StylusDevice stylus;
 
+	// The DFT stylus device.
+	DftStylus dft;
+
 	// The data returned by the metadata HID report, if applicable.
 	std::optional<const ipts::Metadata> meta;
 
@@ -34,6 +38,7 @@ public:
 		: config {config},
 		  touch {config},
 		  stylus {config},
+		  dft {config, meta},
 		  meta {std::move(meta)}
 	{
 		const f32 angle = std::cos(config.cone_angle / 180.0f * M_PIf);

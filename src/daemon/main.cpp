@@ -91,8 +91,9 @@ static int main(gsl::span<char *> args)
 	if (!config.stylus_disable) {
 		parser.on_stylus = [&](const ipts::StylusData &data) { ctx.stylus.input(data); };
 
-		parser.on_dft = [&](const ipts::DftWindow &dft, ipts::StylusData &stylus) {
-			iptsd_dft_input(ctx, dft, stylus);
+		parser.on_dft = [&](const ipts::DftWindow &dft) {
+			ctx.dft.input(dft);
+			ctx.stylus.input(ctx.dft.get_stylus());
 		};
 	} else {
 		spdlog::warn("Stylus is disabled!");
