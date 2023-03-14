@@ -1,7 +1,20 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #ifndef IPTSD_HID_SHIM_HIDRD_H
 #define IPTSD_HID_SHIM_HIDRD_H
+
+/*
+ * This shim is neccessary, because the hidrd library contains code in
+ * its header files that is valid in C but invalid in C++.
+ *
+ * It is therefor required to prevent the C++ compiler from ever seeing
+ * these header files. The only way to do that is to wrap every function
+ * that we want to use using compatible data types, and then use a C compiler
+ * to build this shim and link it into our C++ program.
+ *
+ * Sadly, hidrd is probably the only library that facilitates parsing HID
+ * descriptors, so doing this is easier than writing everything manually.
+ */
 
 #ifdef __cplusplus
 extern "C" {
@@ -73,4 +86,4 @@ int64_t shim_hidrd_usage_page_digitizer(void);
 }
 #endif
 
-#endif /* IPTSD_HID_SHIM_HIDRD_H */
+#endif // IPTSD_HID_SHIM_HIDRD_H
