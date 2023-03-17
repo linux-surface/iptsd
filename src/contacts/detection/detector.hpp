@@ -165,14 +165,14 @@ public:
 			Eigen::SelfAdjointEigenSolver<Matrix2<TFit>> solver {};
 			solver.computeDirect(cov);
 
-			Vector2<TFit> mean = (p.mean.array() + static_cast<TFit>(0.5)).matrix();
+			Vector2<TFit> mean = p.mean;
 			Vector2<TFit> size = ellipse::size(solver.eigenvalues());
 			TFit orientation = ellipse::angle<TFit>(solver.eigenvectors());
 
 			// Normalize dimensions.
 			if (m_config.normalize) {
-				mean.noalias() = mean.cwiseQuotient(dimensions.cast<TFit>());
-				size.noalias() = (size.array() / m_input_diagonal).matrix();
+				mean = mean.cwiseQuotient(dimensions.cast<TFit>());
+				size = (size.array() / m_input_diagonal).matrix();
 				orientation /= static_cast<TFit>(M_PI);
 			}
 
