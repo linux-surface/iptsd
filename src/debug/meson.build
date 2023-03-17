@@ -1,18 +1,8 @@
 tools = get_option('debug_tools')
 
-dbg_dump = tools.contains('dump')
 dbg_perf = tools.contains('perf')
 dbg_plot = tools.contains('plot')
 dbg_show = tools.contains('show')
-
-if dbg_dump
-  deps = dependencies + [
-    cli11,
-    iptsd_ipts,
-  ]
-
-  executable('iptsd-dump', 'dump.cpp', dependencies: deps, include_directories: includes, install: true)
-endif
 
 if dbg_perf
   deps = dependencies + [

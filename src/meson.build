@@ -129,3 +129,12 @@ if tools.contains('calibrate')
             include_directories: includes,
   )
 endif
+
+if tools.contains('dump')
+  executable('iptsd-dump', 'apps/dump/main.cpp',
+            install: true,
+            link_with: hidrd_shim,
+            dependencies: default_deps,
+            include_directories: includes,
+  )
+endif
