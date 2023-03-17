@@ -138,3 +138,11 @@ if tools.contains('dump')
             include_directories: includes,
   )
 endif
+
+if tools.contains('perf')
+  executable('iptsd-perf', 'apps/perf/main.cpp',
+            install: true,
+            dependencies: default_deps,
+            include_directories: includes,
+  )
+endif

@@ -1,17 +1,7 @@
 tools = get_option('debug_tools')
 
-dbg_perf = tools.contains('perf')
 dbg_plot = tools.contains('plot')
 dbg_show = tools.contains('show')
-
-if dbg_perf
-  deps = dependencies + [
-    cli11,
-    iptsd_ipts,
-  ]
-
-  executable('iptsd-perf', 'perf.cpp', dependencies: deps, include_directories: includes, install: true)
-endif
 
 if dbg_plot and cairomm.found()
   deps = dependencies + [
