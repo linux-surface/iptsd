@@ -49,18 +49,19 @@ cli11 = dependency('CLI11',
   default_options: ['default_library=static'],
 )
 
+eigen = dependency('eigen3',
+  fallback: ['eigen', 'eigen_dep'],
+  default_options: ['default_library=static'],
+   include_type: 'system',
+)
+
 fmt = dependency('fmt',
   fallback: ['fmt', 'fmt_dep'],
   default_options: ['default_library=static'],
 )
 
 inih = dependency('INIReader',
-  fallback: ['inih', 'INIReader_dep'],
-  default_options: ['default_library=static'],
-)
-
-spdlog = dependency('spdlog',
-  fallback: ['spdlog', 'spdlog_dep'],
+  fallback: ['inih', 'inireader_dep'],
   default_options: ['default_library=static'],
 )
 
@@ -70,10 +71,9 @@ gsl = dependency('Microsoft.GSL',
   default_options: ['default_library=static'],
 )
 
-eigen = dependency('eigen3',
-  fallback: ['eigen', 'eigen_dep'],
+spdlog = dependency('spdlog',
+  fallback: ['spdlog', 'spdlog_dep'],
   default_options: ['default_library=static'],
-   include_type: 'system',
 )
 
 forcefallback = get_option('wrap_mode') == 'forcefallback'
@@ -92,7 +92,8 @@ endif
 stdcppfs = cpp.find_library('stdc++fs')
 
 # Default dependencies
-dependencies = [
+default_deps = [
+  cli11,
   eigen,
   fmt,
   inih,
@@ -101,15 +102,19 @@ dependencies = [
   stdcppfs,
 ]
 
-subdir('hid')
-subdir('ipts')
+# hidrd dependencies
+hidrd_deps = [
+  hidrd_item,
+  hidrd_usage,
+]
 
-subdir('daemon')
+# Build the hidrd shim with a C compiler
+hidrd_shim = static_library('hidrd_shim', 'hid/shim/hidrd.c', dependencies: hidrd_deps)
 
-if get_option('debug_tools').length() > 0
-  sdl = dependency('sdl2', required: false)
-  cairomm = dependency('cairomm-1.0', required: false)
-
-  subdir('gfx')
-  subdir('debug')
-endif
+# The main iptsd daemon
+executable('iptsd', 'apps/daemon/main.cpp',
+           install: true,
+           link_with: hidrd_shim,
+           dependencies: default_deps,
+           include_directories: includes,
+)

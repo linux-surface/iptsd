@@ -1,41 +1,35 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#ifndef IPTSD_DAEMON_STYLUS_HPP
-#define IPTSD_DAEMON_STYLUS_HPP
+#ifndef IPTSD_APPS_DAEMON_STYLUS_HPP
+#define IPTSD_APPS_DAEMON_STYLUS_HPP
 
-#include "cone.hpp"
 #include "uinput-device.hpp"
 
-#include <config/config.hpp>
+#include <core/generic/config.hpp>
+#include <core/generic/device.hpp>
 #include <ipts/parser.hpp>
 
 #include <linux/input-event-codes.h>
 #include <memory>
 
-namespace iptsd::daemon {
+namespace iptsd::apps::daemon {
 
 class StylusDevice {
 private:
 	std::shared_ptr<UinputDevice> m_uinput = std::make_shared<UinputDevice>();
 
-	// The daemon configuration.
-	config::Config m_config;
-
-	// The touch rejection cone.
-	std::shared_ptr<Cone> m_cone = nullptr;
-
 	// Whether the device is enabled.
 	bool m_enabled = true;
 
-	// Whether the stylus is currently active.
+	// Whether the stylus is currently in proximity and sending data.
 	bool m_active = false;
 
 public:
-	StylusDevice(const config::Config &config) : m_config {config}
+	StylusDevice(const core::Config &config, const core::DeviceInfo &info)
 	{
 		m_uinput->set_name("IPTS Stylus");
-		m_uinput->set_vendor(config.vendor);
-		m_uinput->set_product(config.product);
+		m_uinput->set_vendor(info.vendor);
+		m_uinput->set_product(info.product);
 
 		m_uinput->set_evbit(EV_KEY);
 		m_uinput->set_evbit(EV_ABS);
@@ -48,6 +42,7 @@ public:
 		m_uinput->set_keybit(BTN_TOOL_PEN);
 		m_uinput->set_keybit(BTN_TOOL_RUBBER);
 
+		// Resolution for X / Y is expected to be units/mm.
 		const i32 res_x = gsl::narrow<i32>(std::round(IPTS_MAX_X / (config.width * 10)));
 		const i32 res_y = gsl::narrow<i32>(std::round(IPTS_MAX_Y / (config.height * 10)));
 
@@ -65,40 +60,20 @@ public:
 	}
 
 	/*!
-	 * Updates the touch rejection cone.
+	 * Passes stylus data to the linux kernel.
 	 *
-	 * @param[in] cone The new shared reference to the cone object.
+	 * @param[in] data The current state of the stylus.
 	 */
-	void set_cone(std::shared_ptr<Cone> cone)
-	{
-		m_cone = std::move(cone);
-	}
-
-	/*!
-	 * Passes IPTS stylus data to the linux kernel.
-	 *
-	 * @param[in] data The data received from the IPTS hardware.
-	 */
-	void input(const ipts::StylusData &data)
+	void update(const ipts::StylusData &data)
 	{
 		m_active = data.proximity;
 
 		if (m_active) {
-			// Scale to physical coordinates
-			const f32 x = (static_cast<f32>(data.x) / IPTS_MAX_X) * m_config.width;
-			const f32 y = (static_cast<f32>(data.y) / IPTS_MAX_Y) * m_config.height;
-
-			// Update rejection cone
-			m_cone->update_position(x, y);
-
-			const bool btn_pen = data.proximity && !data.rubber;
-			const bool btn_rubber = data.proximity && data.rubber;
-
 			const Vector2<i32> tilt = this->calculate_tilt(data.altitude, data.azimuth);
 
 			m_uinput->emit(EV_KEY, BTN_TOUCH, data.contact);
-			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, btn_pen);
-			m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, btn_rubber);
+			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, !data.rubber);
+			m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, data.rubber);
 			m_uinput->emit(EV_KEY, BTN_STYLUS, data.button);
 
 			m_uinput->emit(EV_ABS, ABS_X, data.x);
@@ -138,6 +113,7 @@ public:
 
 	/*!
 	 * Whether the stylus is disabled or enabled.
+	 *
 	 * @return true if the stylus is enabled.
 	 */
 	[[nodiscard]] bool enabled() const
@@ -147,6 +123,7 @@ public:
 
 	/*!
 	 * Whether the stylus is currently active.
+	 *
 	 * @return true if the stylus is in proximity.
 	 */
 	[[nodiscard]] bool active() const
@@ -162,7 +139,7 @@ private:
 	 * @param[in] azimuth The azimuth of the stylus.
 	 * @return A Vector containing the tilt on the X and Y axis.
 	 */
-	[[nodiscard]] Vector2<i32> calculate_tilt(u32 altitude, u32 azimuth) const
+	[[nodiscard]] Vector2<i32> calculate_tilt(const u32 altitude, const u32 azimuth) const
 	{
 		if (altitude <= 0)
 			return Vector2<i32>::Zero();
@@ -205,6 +182,6 @@ private:
 	}
 };
 
-} // namespace iptsd::daemon
+} // namespace iptsd::apps::daemon
 
-#endif // IPTSD_DAEMON_STYLUS_HPP
+#endif // IPTSD_APPS_DAEMON_STYLUS_HPP

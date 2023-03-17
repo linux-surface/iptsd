@@ -1,36 +1,32 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#ifndef IPTSD_CONFIG_LOADER_HPP
-#define IPTSD_CONFIG_LOADER_HPP
+#ifndef IPTSD_CORE_LINUX_CONFIG_LOADER_HPP
+#define IPTSD_CORE_LINUX_CONFIG_LOADER_HPP
 
-#include "config.hpp"
+#include "configure.h"
 
 #include <common/types.hpp>
+#include <core/generic/config.hpp>
+#include <core/generic/device.hpp>
 
 #include <INIReader.h>
-#include <configure.h>
 #include <filesystem>
 #include <fmt/format.h>
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
-namespace iptsd::config {
+namespace iptsd::core::linux {
 
-class Loader {
+class ConfigLoader {
 private:
 	Config m_config {};
-
-	// The vendor ID of the device for which the config should be loaded.
-	u16 m_vendor;
-
-	// The product ID of the device for which the config should be loaded.
-	u16 m_product;
+	DeviceInfo m_info;
 
 public:
-	Loader(i16 vendor, i16 product, std::optional<const ipts::Metadata> metadata)
-		: m_vendor {static_cast<u16>(vendor)},
-		  m_product {static_cast<u16>(product)}
+	ConfigLoader(const DeviceInfo &info, std::optional<const ipts::Metadata> metadata)
+		: m_info {info}
 	{
 		namespace filesystem = std::filesystem;
 
@@ -96,7 +92,7 @@ private:
 				this->load_device(p.path(), vendor, product);
 
 				// Ignore this file if it is meant for a different device.
-				if (m_vendor != vendor || m_product != product)
+				if (m_info.vendor != vendor || m_info.product != product)
 					continue;
 			}
 
@@ -113,7 +109,7 @@ private:
 	 */
 	void load_device(const std::string &path, u16 &vendor, u16 &product)
 	{
-		INIReader ini {path};
+		const INIReader ini {path};
 
 		if (ini.ParseError() != 0)
 			throw std::runtime_error(fmt::format("Failed to parse {}", path));
@@ -132,7 +128,7 @@ private:
 	 */
 	void load_file(const std::string &path)
 	{
-		INIReader ini {path};
+		const INIReader ini {path};
 
 		if (ini.ParseError() != 0)
 			throw std::runtime_error(fmt::format("Failed to parse {}", path));
@@ -182,102 +178,31 @@ private:
 		// clang-format on
 	}
 
+	/*!
+	 * Loads a value from a config file.
+	 *
+	 * @param[in] ini The loaded file.
+	 * @param[in] section The section where the option is found.
+	 * @param[in] name The name of the config option.
+	 * @param[in,out] value The default value as well as the destination of the new value.
+	 */
 	template <class T>
-	// NOLINTNEXTLINE(modernize-use-equals-delete)
 	void get(const INIReader &ini, const std::string &section, const std::string &name,
-		 T &value) const = delete;
-
-	/*!
-	 * Loads a boolean value from a config file.
-	 *
-	 * @param[in] ini The loaded file.
-	 * @param[in] section The section where the option is found.
-	 * @param[in] name The name of the config option.
-	 * @param[in,out] value The default value as well as the destination of the new value.
-	 */
-	template <>
-	void get<bool>(const INIReader &ini, const std::string &section, const std::string &name,
-		       bool &value) const
+		 T &value) const
 	{
-		value = ini.GetBoolean(section, name, value);
-	}
-
-	/*!
-	 * Loads an integer value from a config file.
-	 *
-	 * @param[in] ini The loaded file.
-	 * @param[in] section The section where the option is found.
-	 * @param[in] name The name of the config option.
-	 * @param[in,out] value The default value as well as the destination of the new value.
-	 */
-	template <>
-	void get<u16>(const INIReader &ini, const std::string &section, const std::string &name,
-		      u16 &value) const
-	{
-		value = gsl::narrow<u16>(ini.GetInteger(section, name, value));
-	}
-
-	/*!
-	 * Loads an integer value from a config file.
-	 *
-	 * @param[in] ini The loaded file.
-	 * @param[in] section The section where the option is found.
-	 * @param[in] name The name of the config option.
-	 * @param[in,out] value The default value as well as the destination of the new value.
-	 */
-	template <>
-	void get<u32>(const INIReader &ini, const std::string &section, const std::string &name,
-		      u32 &value) const
-	{
-		value = gsl::narrow<u32>(ini.GetInteger(section, name, value));
-	}
-
-	/*!
-	 * Loads a floating point value from a config file.
-	 *
-	 * @param[in] ini The loaded file.
-	 * @param[in] section The section where the option is found.
-	 * @param[in] name The name of the config option.
-	 * @param[in,out] value The default value as well as the destination of the new value.
-	 */
-	template <>
-	void get<f32>(const INIReader &ini, const std::string &section, const std::string &name,
-		      f32 &value) const
-	{
-		value = gsl::narrow_cast<f32>(ini.GetReal(section, name, value));
-	}
-
-	/*!
-	 * Loads a floating point value from a config file.
-	 *
-	 * @param[in] ini The loaded file.
-	 * @param[in] section The section where the option is found.
-	 * @param[in] name The name of the config option.
-	 * @param[in,out] value The default value as well as the destination of the new value.
-	 */
-	template <>
-	void get<f64>(const INIReader &ini, const std::string &section, const std::string &name,
-		      f64 &value) const
-	{
-		value = ini.GetReal(section, name, value);
-	}
-
-	/*!
-	 * Loads a string value from a config file.
-	 *
-	 * @param[in] ini The loaded file.
-	 * @param[in] section The section where the option is found.
-	 * @param[in] name The name of the config option.
-	 * @param[in,out] value The default value as well as the destination of the new value.
-	 */
-	template <>
-	void get<std::string>(const INIReader &ini, const std::string &section,
-			      const std::string &name, std::string &value) const
-	{
-		value = ini.GetString(section, name, value);
+		if constexpr (std::is_same_v<T, bool>)
+			value = ini.GetBoolean(section, name, value);
+		else if constexpr (std::is_integral_v<T>)
+			value = gsl::narrow<T>(ini.GetInteger(section, name, value));
+		else if constexpr (std::is_floating_point_v<T>)
+			value = gsl::narrow_cast<T>(ini.GetReal(section, name, value));
+		else if constexpr (std::is_same_v<T, std::string>)
+			value = ini.GetString(section, name, value);
+		else
+			throw std::runtime_error("Loading this type is not implemented!");
 	}
 };
 
-} // namespace iptsd::config
+} // namespace iptsd::core::linux
 
-#endif // IPTSD_CONFIG_LOADER_HPP
+#endif // IPTSD_CORE_LINUX_CONFIG_LOADER_HPP

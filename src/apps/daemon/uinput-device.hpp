@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#ifndef IPTSD_DAEMON_UINPUT_DEVICE_HPP
-#define IPTSD_DAEMON_UINPUT_DEVICE_HPP
+#ifndef IPTSD_APPS_DAEMON_UINPUT_DEVICE_HPP
+#define IPTSD_APPS_DAEMON_UINPUT_DEVICE_HPP
 
 #include <common/cerror.hpp>
 #include <common/cwrap.hpp>
@@ -10,7 +10,7 @@
 #include <linux/uinput.h>
 #include <string>
 
-namespace iptsd::daemon {
+namespace iptsd::apps::daemon {
 
 class UinputDevice {
 private:
@@ -199,6 +199,6 @@ public:
 	}
 };
 
-} // namespace iptsd::daemon
+} // namespace iptsd::apps::daemon
 
-#endif // IPTSD_DAEMON_UINPUT_DEVICE_HPP
+#endif // IPTSD_APPS_DAEMON_UINPUT_DEVICE_HPP

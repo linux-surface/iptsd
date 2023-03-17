@@ -11,7 +11,7 @@ namespace iptsd::ipts {
 
 class Reader {
 private:
-	const gsl::span<u8> m_data;
+	gsl::span<u8> m_data;
 
 	// The current position in the data.
 	usize m_index = 0;

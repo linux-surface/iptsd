@@ -1,14 +1,10 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #ifndef IPTSD_CONFIGURE_H
 #define IPTSD_CONFIGURE_H
-
-#define IPTSD_BINDIR	 "@bindir@"
-#define IPTSD_DATADIR	 "@datadir@"
-#define IPTSD_SYSCONFDIR "@sysconfdir@"
 
 #define IPTSD_PRESET_DIR  "@presetdir@"
 #define IPTSD_CONFIG_DIR  "@configdir@"
 #define IPTSD_CONFIG_FILE "@configfile@"
 
-#endif /* IPTSD_CONFIGURE_H */
+#endif // IPTSD_CONFIGURE_H

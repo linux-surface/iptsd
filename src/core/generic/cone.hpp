@@ -1,31 +1,33 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#ifndef IPTSD_DAEMON_CONE_HPP
-#define IPTSD_DAEMON_CONE_HPP
+#ifndef IPTSD_CORE_GENERIC_CONE_HPP
+#define IPTSD_CORE_GENERIC_CONE_HPP
 
 #include <common/types.hpp>
 
 #include <chrono>
+#include <type_traits>
 
-namespace iptsd::daemon {
+namespace iptsd::core {
 
 class Cone {
 private:
 	using clock = std::chrono::system_clock;
 
+private:
 	clock::time_point m_position_update {};
 	clock::time_point m_direction_update {};
 
-	f32 m_x = 0;
-	f32 m_y = 0;
-	f32 m_dx = 0;
-	f32 m_dy = 0;
+	f64 m_x = 0;
+	f64 m_y = 0;
+	f64 m_dx = 0;
+	f64 m_dy = 0;
 
-	f32 m_angle;
-	f32 m_distance;
+	f64 m_angle;
+	f64 m_distance;
 
 public:
-	Cone(f32 angle, f32 distance) : m_angle {angle}, m_distance {distance} {};
+	Cone(f64 angle, f64 distance) : m_angle {angle}, m_distance {distance} {};
 
 	/*!
 	 * Checks if the cone is alive.
@@ -55,7 +57,7 @@ public:
 	 * @param[in] x The X coordinate of the new origin of the cone.
 	 * @param[in] y The Y coordinate of the new origin of the cone.
 	 */
-	void update_position(f32 x, f32 y)
+	void update_position(f64 x, f64 y)
 	{
 		m_x = x;
 		m_y = y;
@@ -70,18 +72,18 @@ public:
 	 * @param[in] x The X coordinate of the point the cone should face towards.
 	 * @param[in] x The Y coordinate of the point the cone should face towards.
 	 */
-	void update_direction(f32 x, f32 y)
+	void update_direction(f64 x, f64 y)
 	{
 		const clock::time_point timestamp = clock::now();
 
 		const auto time_diff = timestamp - m_direction_update;
 		const auto diff = std::chrono::duration_cast<std::chrono::seconds>(time_diff);
 
-		const f32 weight = std::exp2(-gsl::narrow<f32>(diff.count()));
-		f32 dist = std::hypot(m_x - x, m_y - y);
+		const f64 weight = std::exp2(-gsl::narrow<f64>(diff.count()));
+		f64 dist = std::hypot(m_x - x, m_y - y);
 
-		const f32 dx = (x - m_x) / (dist + 1E-6f);
-		const f32 dy = (y - m_y) / (dist + 1E-6f);
+		const f64 dx = (x - m_x) / (dist + 1E-6f);
+		const f64 dy = (y - m_y) / (dist + 1E-6f);
 
 		m_dx = weight * m_dx + dx;
 		m_dy = weight * m_dy + dy;
@@ -103,14 +105,14 @@ public:
 	 * @param[in] y The Y coordinate of the point that should be checked.
 	 * @return Whether the point is covered by the cone.
 	 */
-	bool check(f32 x, f32 y)
+	bool check(f64 x, f64 y)
 	{
 		if (!this->active())
 			return false;
 
-		const f32 dx = x - m_x;
-		const f32 dy = y - m_y;
-		const f32 dist = std::hypot(dx, dy);
+		const f64 dx = x - m_x;
+		const f64 dy = y - m_y;
+		const f64 dist = std::hypot(dx, dy);
 
 		if (dist > m_distance)
 			return false;
@@ -122,6 +124,6 @@ public:
 	}
 };
 
-} // namespace iptsd::daemon
+} // namespace iptsd::core
 
-#endif // IPTSD_DAEMON_CONE_HPP
+#endif // IPTSD_CORE_GENERIC_CONE_HPP

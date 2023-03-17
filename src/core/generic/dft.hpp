@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#ifndef IPTSD_DAEMON_DFT_HPP
-#define IPTSD_DAEMON_DFT_HPP
+#ifndef IPTSD_CORE_GENERIC_DFT_HPP
+#define IPTSD_CORE_GENERIC_DFT_HPP
 
-#include <config/config.hpp>
+#include "config.hpp"
+
 #include <ipts/parser.hpp>
 
 #include <optional>
 #include <utility>
 
-namespace iptsd::daemon {
+namespace iptsd::core {
 
 class DftStylus {
 private:
-	// The daemon configuration.
-	config::Config m_config;
+	Config m_config;
+	std::optional<const ipts::Metadata> m_metadata;
 
 	// The current state of the DFT stylus.
 	ipts::StylusData m_stylus;
@@ -22,11 +23,8 @@ private:
 	i32 m_real = 0;
 	i32 m_imag = 0;
 
-	// The IPTS device metadata.
-	std::optional<const ipts::Metadata> m_metadata;
-
 public:
-	DftStylus(config::Config config, std::optional<const ipts::Metadata> metadata)
+	DftStylus(Config config, std::optional<const ipts::Metadata> metadata)
 		: m_config {std::move(config)},
 		  m_metadata {std::move(metadata)} {};
 
@@ -132,7 +130,7 @@ private:
 
 				if (m_config.dft_tip_distance > 0) {
 					// correct tip position using tilt data
-					const f32 r = m_config.dft_tip_distance /
+					const f64 r = m_config.dft_tip_distance /
 						      m_config.dft_tilt_distance;
 
 					x -= xt * r;
@@ -246,7 +244,7 @@ private:
 
 		// get phase-aligned amplitudes of the three center components
 		const f64 amp = std::hypot(gsl::at(row.real, maxi), gsl::at(row.imag, maxi));
-		if (amp < m_config.dft_position_min_amp)
+		if (amp < gsl::narrow<f64>(m_config.dft_position_min_amp))
 			return NAN;
 
 		const f64 sin = gsl::at(row.real, maxi) / amp;
@@ -347,6 +345,6 @@ private:
 	}
 };
 
-} // namespace iptsd::daemon
+} // namespace iptsd::core
 
-#endif // IPTSD_DAEMON_DFT_HPP
+#endif // IPTSD_CORE_GENERIC_DFT_HPP
