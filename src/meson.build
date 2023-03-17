@@ -118,3 +118,14 @@ executable('iptsd', 'apps/daemon/main.cpp',
            dependencies: default_deps,
            include_directories: includes,
 )
+
+tools = get_option('debug_tools')
+
+if tools.contains('calibrate')
+  executable('iptsd-calibrate', 'apps/calibrate/main.cpp',
+            install: true,
+            link_with: hidrd_shim,
+            dependencies: default_deps,
+            include_directories: includes,
+  )
+endif

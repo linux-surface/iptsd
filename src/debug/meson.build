@@ -1,19 +1,9 @@
 tools = get_option('debug_tools')
 
-dbg_calibrate = tools.contains('calibrate')
 dbg_dump = tools.contains('dump')
 dbg_perf = tools.contains('perf')
 dbg_plot = tools.contains('plot')
 dbg_show = tools.contains('show')
-
-if dbg_calibrate
-  deps = dependencies + [
-    cli11,
-    iptsd_ipts,
-  ]
-
-  executable('iptsd-calibrate', 'calibrate.cpp', dependencies: deps, include_directories: includes, install: true)
-endif
 
 if dbg_dump
   deps = dependencies + [
