@@ -47,7 +47,7 @@ public:
 		const i32 res_y = gsl::narrow<i32>(std::round(IPTS_MAX_Y / (config.height * 10)));
 
 		// Resolution for tilt is expected to be units/radian.
-		const i32 res_tilt = gsl::narrow<i32>(std::round(18000.0f / M_PIf));
+		const i32 res_tilt = gsl::narrow<i32>(std::round(18000.0 / M_PI));
 
 		m_uinput->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
 		m_uinput->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
@@ -144,17 +144,17 @@ private:
 		if (altitude <= 0)
 			return Vector2<i32>::Zero();
 
-		const f32 alt = static_cast<f32>(altitude) / 18000.0f * M_PIf;
-		const f32 azm = static_cast<f32>(azimuth) / 18000.0f * M_PIf;
+		const f64 alt = static_cast<f64>(altitude) / 18000.0 * M_PI;
+		const f64 azm = static_cast<f64>(azimuth) / 18000.0 * M_PI;
 
-		const f32 sin_alt = std::sin(alt);
-		const f32 sin_azm = std::sin(azm);
+		const f64 sin_alt = std::sin(alt);
+		const f64 sin_azm = std::sin(azm);
 
-		const f32 cos_alt = std::cos(alt);
-		const f32 cos_azm = std::cos(azm);
+		const f64 cos_alt = std::cos(alt);
+		const f64 cos_azm = std::cos(azm);
 
-		const f32 atan_x = std::atan2(cos_alt, sin_alt * cos_azm);
-		const f32 atan_y = std::atan2(cos_alt, sin_alt * sin_azm);
+		const f64 atan_x = std::atan2(cos_alt, sin_alt * cos_azm);
+		const f64 atan_y = std::atan2(cos_alt, sin_alt * sin_azm);
 
 		const i32 tx = 9000 - gsl::narrow<i32>(std::round(atan_x * 4500 / M_PI_4));
 		const i32 ty = gsl::narrow<i32>(std::round(atan_y * 4500 / M_PI_4)) - 9000;
