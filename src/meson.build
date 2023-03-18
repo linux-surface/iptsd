@@ -76,9 +76,6 @@ spdlog = dependency('spdlog',
   default_options: ['default_library=static'],
 )
 
-cairo = dependency('cairomm-1.0', required: false)
-sdl = dependency('sdl2', required: false)
-
 forcefallback = get_option('wrap_mode') == 'forcefallback'
 
 hidrd_item = cpp.find_library('hidrd_item', required: false)
@@ -150,6 +147,10 @@ if tools.contains('perf')
   )
 endif
 
+if tools.contains('plot') or tools.contains('show')
+  cairo = dependency('cairomm-1.0', required: false)
+endif
+
 if tools.contains('plot')
   if cairo.found()
     executable('iptsd-plot', 'apps/visualization/plot.cpp',
@@ -163,6 +164,8 @@ if tools.contains('plot')
 endif
 
 if tools.contains('show')
+  sdl = dependency('sdl2', required: false)
+
   if cairo.found() and sdl.found()
     executable('iptsd-show', 'apps/visualization/show.cpp',
               install: true,
