@@ -61,7 +61,7 @@ fmt = dependency('fmt',
 )
 
 inih = dependency('INIReader',
-  fallback: ['inih', 'inireader_dep'],
+  fallback: ['inih', 'INIReader_dep'],
   default_options: ['default_library=static'],
 )
 
