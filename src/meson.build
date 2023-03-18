@@ -46,46 +46,46 @@ endif
 # Dependencies
 cli11 = dependency('CLI11',
   fallback: ['cli11', 'CLI11_dep'],
-  default_options: ['default_library=static'],
+  default_options: ['default_library=static','warning_level=0'],
 )
 
 eigen = dependency('eigen3',
   fallback: ['eigen', 'eigen_dep'],
-  default_options: ['default_library=static'],
+  default_options: ['default_library=static','warning_level=0'],
    include_type: 'system',
 )
 
 fmt = dependency('fmt',
   fallback: ['fmt', 'fmt_dep'],
-  default_options: ['default_library=static'],
+  default_options: ['default_library=static','warning_level=0'],
 )
 
 inih = dependency('INIReader',
   fallback: ['inih', 'INIReader_dep'],
-  default_options: ['default_library=static'],
+  default_options: ['default_library=static','warning_level=0'],
 )
 
 gsl = dependency('Microsoft.GSL',
   modules: ['Microsoft.GSL::GSL'],
   fallback: ['microsoft-gsl', 'microsoft_gsl_dep'],
-  default_options: ['default_library=static'],
+  default_options: ['default_library=static','warning_level=0'],
 )
 
 spdlog = dependency('spdlog',
   fallback: ['spdlog', 'spdlog_dep'],
-  default_options: ['default_library=static'],
+  default_options: ['default_library=static','warning_level=0'],
 )
 
 forcefallback = get_option('wrap_mode') == 'forcefallback'
 
 hidrd_item = cpp.find_library('hidrd_item', required: false)
 if forcefallback or not hidrd_item.found()
-  hidrd_item = dependency('hidrd_item', default_options: ['default_library=static'])
+  hidrd_item = dependency('hidrd_item', default_options: ['default_library=static','warning_level=0'])
 endif
 
 hidrd_usage = cpp.find_library('hidrd_usage', required: false)
 if forcefallback or not hidrd_usage.found()
-  hidrd_usage = dependency('hidrd_usage', default_options: ['default_library=static'])
+  hidrd_usage = dependency('hidrd_usage', default_options: ['default_library=static','warning_level=0'])
 endif
 
 # Find libstdc++fs for older GCC
@@ -166,7 +166,7 @@ endif
 if tools.contains('show')
   sdl = dependency('sdl2',
     fallback: ['sdl2', 'sdl2_dep'],
-    default_options: ['default_library=static'],
+    default_options: ['default_library=static','warning_level=0'],
   )
 
   if cairo.found()
