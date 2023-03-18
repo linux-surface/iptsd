@@ -43,49 +43,56 @@ if get_option('optimization') in ['2', '3']
   add_project_arguments(optflags, language: 'cpp')
 endif
 
+# Build wrapped dependencies as static libraries and disable warnings
+dependency_options = [
+  'default_library=static',
+  'warning_level=0',
+  'werror=false',
+]
+
 # Dependencies
 cli11 = dependency('CLI11',
   fallback: ['cli11', 'CLI11_dep'],
-  default_options: ['default_library=static','warning_level=0'],
+  default_options: dependency_options,
 )
 
 eigen = dependency('eigen3',
   fallback: ['eigen', 'eigen_dep'],
-  default_options: ['default_library=static','warning_level=0'],
+  default_options: dependency_options,
    include_type: 'system',
 )
 
 fmt = dependency('fmt',
   fallback: ['fmt', 'fmt_dep'],
-  default_options: ['default_library=static','warning_level=0'],
+  default_options: dependency_options,
 )
 
 inih = dependency('INIReader',
   fallback: ['inih', 'INIReader_dep'],
-  default_options: ['default_library=static','warning_level=0'],
+  default_options: dependency_options,
 )
 
 gsl = dependency('Microsoft.GSL',
   modules: ['Microsoft.GSL::GSL'],
   fallback: ['microsoft-gsl', 'microsoft_gsl_dep'],
-  default_options: ['default_library=static','warning_level=0'],
+  default_options: dependency_options,
 )
 
 spdlog = dependency('spdlog',
   fallback: ['spdlog', 'spdlog_dep'],
-  default_options: ['default_library=static','warning_level=0'],
+  default_options: dependency_options,
 )
 
 forcefallback = get_option('wrap_mode') == 'forcefallback'
 
 hidrd_item = cpp.find_library('hidrd_item', required: false)
 if forcefallback or not hidrd_item.found()
-  hidrd_item = dependency('hidrd_item', default_options: ['default_library=static','warning_level=0'])
+  hidrd_item = dependency('hidrd_item', default_options: dependency_options)
 endif
 
 hidrd_usage = cpp.find_library('hidrd_usage', required: false)
 if forcefallback or not hidrd_usage.found()
-  hidrd_usage = dependency('hidrd_usage', default_options: ['default_library=static','warning_level=0'])
+  hidrd_usage = dependency('hidrd_usage', default_options: dependency_options)
 endif
 
 # Find libstdc++fs for older GCC
@@ -166,7 +173,7 @@ endif
 if tools.contains('show')
   sdl = dependency('sdl2',
     fallback: ['sdl2', 'sdl2_dep'],
-    default_options: ['default_library=static','warning_level=0'],
+    default_options: dependency_options,
   )
 
   if cairo.found()
