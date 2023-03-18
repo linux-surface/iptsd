@@ -5,7 +5,7 @@
 
 #include "visualize.hpp"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <cairomm/cairomm.h>
 #include <chrono>
 #include <memory>

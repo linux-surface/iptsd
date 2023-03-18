@@ -6,10 +6,12 @@ arch=('x86_64' 'aarch64')
 url='https://github.com/linux-surface/iptsd'
 license=('GPL')
 depends=(
+	'cli11'
+	'eigen'
 	'libfmt.so'
-	'libinih'
+	'libINIReader.so'
 	'libspdlog.so'
-	'cairomm'
+	'libcairomm-1.0.so'
 	'sdl2'
 )
 makedepends=(
@@ -31,7 +33,7 @@ build() {
 	export CFLAGS="$(echo "$CFLAGS" | sed 's|-O2||g' | sed 's|-mtune=generic||g' | sed 's|-march=x86_64||g')"
 	export CXXFLAGS="$(echo "$CXXFLAGS" | sed 's|-O2||g' | sed 's|-mtune=generic||g' | sed 's|-march=x86_64||g')"
 
-	arch-meson build --wrap-mode=default --force-fallback-for=hidrd_usage,hidrd_item,cli11 --buildtype=release --debug
+	arch-meson build --wrap-mode=default --force-fallback-for=hidrd_usage,hidrd_item --buildtype=release --debug
 	meson compile -C build
 }
 

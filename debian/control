@@ -9,7 +9,6 @@ Build-Depends:
  meson,
  pkg-config,
  libcairomm-1.0-dev,
- libsdl2-dev,
  systemd,
  udev
 

@@ -156,8 +156,8 @@ private:
 		const f32 atan_x = std::atan2(cos_alt, sin_alt * cos_azm);
 		const f32 atan_y = std::atan2(cos_alt, sin_alt * sin_azm);
 
-		const i32 tx = 9000 - gsl::narrow<i32>(std::round(atan_x * 4500 / M_PI_4f));
-		const i32 ty = gsl::narrow<i32>(std::round(atan_y * 4500 / M_PI_4f)) - 9000;
+		const i32 tx = 9000 - gsl::narrow<i32>(std::round(atan_x * 4500 / M_PI_4));
+		const i32 ty = gsl::narrow<i32>(std::round(atan_y * 4500 / M_PI_4)) - 9000;
 
 		return Vector2<i32> {tx, ty};
 	}

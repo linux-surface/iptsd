@@ -25,6 +25,7 @@ BuildRequires: cmake
 
 # Daemon
 BuildRequires: cmake(CLI11)
+BuildRequires: pkgconfig(eigen3)
 BuildRequires: pkgconfig(fmt)
 BuildRequires: pkgconfig(inih)
 BuildRequires: cmake(Microsoft.GSL)

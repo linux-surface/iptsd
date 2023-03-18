@@ -8,7 +8,6 @@
 
 #include <CLI/CLI.hpp>
 #include <algorithm>
-#include <bits/chrono.h>
 #include <chrono>
 #include <cstdlib>
 #include <gsl/gsl>
