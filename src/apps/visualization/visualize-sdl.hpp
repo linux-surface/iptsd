@@ -7,17 +7,23 @@
 
 #include <SDL2/SDL.h>
 #include <cairomm/cairomm.h>
+#include <chrono>
 #include <memory>
 
 namespace iptsd::apps::visualization {
 
 class VisualizeSDL : public Visualize {
 private:
+	using clock = std::chrono::system_clock;
+
+private:
 	SDL_Window *m_window = nullptr;
 	SDL_Renderer *m_renderer = nullptr;
 
 	SDL_Texture *m_rtex = nullptr;
 	Cairo::RefPtr<Cairo::ImageSurface> m_tex {};
+
+	clock::time_point m_last_draw {};
 
 public:
 	VisualizeSDL(const core::Config &config, const core::DeviceInfo &info,
@@ -51,6 +57,15 @@ public:
 	{
 		Visualize::on_data(data);
 
+		constexpr usize FPS = 60;
+
+		// Limit how many times per seconds the screen is redrawn.
+		const clock::time_point now = clock::now();
+		const clock::time_point next = m_last_draw + std::chrono::milliseconds {1000 / FPS};
+
+		if (now < next)
+			return;
+
 		this->draw();
 
 		void *pixels = nullptr;
@@ -65,6 +80,8 @@ public:
 		SDL_RenderClear(m_renderer);
 		SDL_RenderCopy(m_renderer, m_rtex, nullptr, nullptr);
 		SDL_RenderPresent(m_renderer);
+
+		m_last_draw = now;
 	}
 
 	void on_stop() override
