@@ -164,9 +164,12 @@ if tools.contains('plot')
 endif
 
 if tools.contains('show')
-  sdl = dependency('sdl2', required: false)
+  sdl = dependency('sdl2',
+    fallback: ['sdl2', 'sdl2_dep'],
+    default_options: ['default_library=static'],
+  )
 
-  if cairo.found() and sdl.found()
+  if cairo.found()
     executable('iptsd-show', 'apps/visualization/show.cpp',
               install: true,
               link_with: hidrd_shim,
@@ -174,6 +177,6 @@ if tools.contains('show')
               include_directories: includes,
     )
   else
-    warning('Debug tool "show" is enabled but cairomm or SDL2 was not found!')
+    warning('Debug tool "show" is enabled but cairomm was not found!')
   endif
 endif
