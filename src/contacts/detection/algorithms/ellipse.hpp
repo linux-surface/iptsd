@@ -34,7 +34,7 @@ template <class T> T angle(const Matrix2<T> &eigenvectors)
 	constexpr auto PI = static_cast<T>(M_PIf);
 
 	const Vector2<T> ev1 = eigenvectors.col(0);
-	const T angle = std::atan2(ev1.x(), ev1.y()) + (PI / 2);
+	const T angle = std::atan2(ev1.x(), ev1.y());
 
 	/*
 	 * It is not possible to say if the contact faces up or down,
