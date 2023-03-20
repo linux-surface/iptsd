@@ -13,7 +13,7 @@
 
 namespace iptsd::apps::calibrate {
 
-static int main(const gsl::span<char *> args)
+static int run(const gsl::span<char *> args)
 {
 	CLI::App app {};
 	std::filesystem::path path {};
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 	const gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
 
 	try {
-		return iptsd::apps::calibrate::main(args);
+		return iptsd::apps::calibrate::run(args);
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

@@ -7,6 +7,7 @@
 #include <core/linux/file-runner.hpp>
 
 #include <CLI/CLI.hpp>
+#include <CLI/Validators.hpp>
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
@@ -15,14 +16,14 @@
 
 namespace iptsd::apps::perf {
 
-static int main(const gsl::span<char *> args)
+static int run(const gsl::span<char *> args)
 {
 	using std::chrono::duration_cast;
 	using usecs = std::chrono::duration<f64, std::micro>;
 
 	CLI::App app {};
 
-	usize runs = 10;
+	usize runs {};
 	std::filesystem::path path {};
 
 	app.add_option("DATA", path, "The binary data file containing the data to test.")
@@ -30,7 +31,8 @@ static int main(const gsl::span<char *> args)
 		->required();
 
 	app.add_option("RUNS", runs, "Repeat this number of runs through the data.")
-		->check(CLI::Range(1, 1000));
+		->check(CLI::PositiveNumber)
+		->default_val(10);
 
 	CLI11_PARSE(app, args.size(), args.data());
 
@@ -94,7 +96,7 @@ int main(int argc, char **argv)
 	const gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
 
 	try {
-		return iptsd::apps::perf::main(args);
+		return iptsd::apps::perf::run(args);
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;
