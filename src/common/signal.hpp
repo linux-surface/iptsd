@@ -77,7 +77,7 @@ private:
 	/*!
 	 * Forward calls to the user specified signal handler.
 	 */
-	static void handler(int signum)
+	static void handler(const int signum)
 	{
 		s_seat.m_handler(signum);
 	}

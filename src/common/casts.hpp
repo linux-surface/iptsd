@@ -7,7 +7,7 @@
 #include <gsl/gsl>
 #include <type_traits>
 
-template <class T> constexpr inline std::make_signed_t<T> signed_cast(T value)
+template <class T> constexpr inline std::make_signed_t<T> signed_cast(const T value)
 {
 	using S = std::make_signed_t<T>;
 
@@ -17,7 +17,7 @@ template <class T> constexpr inline std::make_signed_t<T> signed_cast(T value)
 		return gsl::narrow<S>(value);
 }
 
-template <class T> constexpr inline std::make_unsigned_t<T> unsigned_cast(T value)
+template <class T> constexpr inline std::make_unsigned_t<T> unsigned_cast(const T value)
 {
 	using U = std::make_unsigned_t<T>;
 
@@ -27,7 +27,7 @@ template <class T> constexpr inline std::make_unsigned_t<T> unsigned_cast(T valu
 		return gsl::narrow<U>(value);
 }
 
-template <class T> constexpr inline Eigen::Index index_cast(T value)
+template <class T> constexpr inline Eigen::Index index_cast(const T value)
 {
 	if constexpr (std::is_signed_v<Eigen::Index>)
 		return signed_cast(value);
