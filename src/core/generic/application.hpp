@@ -107,7 +107,7 @@ public:
 			throw std::runtime_error("Invalid config: The screen size is 0!");
 
 		if (metadata.has_value()) {
-			auto &u = metadata->unknown.unknown;
+			const auto &u = metadata->unknown.unknown;
 
 			const u32 rows = metadata->size.rows;
 			const u32 cols = metadata->size.columns;
@@ -172,12 +172,12 @@ protected:
 	/*!
 	 * For running application specific code that further processes touch inputs.
 	 */
-	virtual void on_contacts(const std::vector<contacts::Contact<f64>> &) {};
+	virtual void on_contacts(const std::vector<contacts::Contact<f64>> & /* unused */) {};
 
 	/*!
 	 * For running application specific code that futher processes stylus inputs.
 	 */
-	virtual void on_stylus(const ipts::StylusData &) {};
+	virtual void on_stylus(const ipts::StylusData & /* unused */) {};
 
 private:
 	/*!

@@ -31,8 +31,8 @@ public:
 		namespace filesystem = std::filesystem;
 
 		if (metadata.has_value()) {
-			m_config.width = gsl::narrow<f32>(metadata->size.width) / 1e3f;
-			m_config.height = gsl::narrow<f32>(metadata->size.height) / 1e3f;
+			m_config.width = gsl::narrow<f32>(metadata->size.width) / 1e3F;
+			m_config.height = gsl::narrow<f32>(metadata->size.height) / 1e3F;
 			m_config.invert_x = metadata->transform.xx < 0;
 			m_config.invert_y = metadata->transform.yy < 0;
 		}

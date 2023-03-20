@@ -82,14 +82,14 @@ public:
 		const f64 weight = std::exp2(-gsl::narrow<f64>(diff.count()));
 		f64 dist = std::hypot(m_x - x, m_y - y);
 
-		const f64 dx = (x - m_x) / (dist + 1E-6f);
-		const f64 dy = (y - m_y) / (dist + 1E-6f);
+		const f64 dx = (x - m_x) / (dist + 1E-6F);
+		const f64 dy = (y - m_y) / (dist + 1E-6F);
 
 		m_dx = weight * m_dx + dx;
 		m_dy = weight * m_dy + dy;
 
 		// Normalize cone direction vector
-		dist = std::hypot(m_dx, m_dy) + 1E-6f;
+		dist = std::hypot(m_dx, m_dy) + 1E-6F;
 		m_dx /= dist;
 		m_dy /= dist;
 
@@ -105,7 +105,7 @@ public:
 	 * @param[in] y The Y coordinate of the point that should be checked.
 	 * @return Whether the point is covered by the cone.
 	 */
-	bool check(const f64 x, const f64 y)
+	[[nodiscard]] bool check(const f64 x, const f64 y) const
 	{
 		if (!this->active())
 			return false;

@@ -12,7 +12,6 @@
 
 #include <filesystem>
 #include <gsl/gsl>
-#include <gsl/util>
 #include <linux/hidraw.h>
 #include <optional>
 #include <vector>
@@ -148,7 +147,7 @@ public:
 		const hid::Descriptor &desc = this->descriptor();
 
 		const u8 id = this->get_metadata_report_id();
-		if (!id)
+		if (id == 0)
 			return std::nullopt;
 
 		std::vector<u8> report(desc.size(id) + 1);
