@@ -174,7 +174,7 @@ private:
 	 *
 	 * @param[in] reader The chunk of data allocated to the metadata frame.
 	 */
-	void parse_metadata(Reader &reader)
+	void parse_metadata(Reader &reader) const
 	{
 		Metadata m {};
 
@@ -239,7 +239,7 @@ private:
 	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
-	void parse_stylus_v1(Reader &reader)
+	void parse_stylus_v1(Reader &reader) const
 	{
 		StylusData stylus;
 
@@ -279,7 +279,7 @@ private:
 	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
-	void parse_stylus_v2(Reader &reader)
+	void parse_stylus_v2(Reader &reader) const
 	{
 		StylusData stylus;
 
