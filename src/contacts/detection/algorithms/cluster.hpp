@@ -31,7 +31,13 @@ public:
 	std::reference_wrapper<Image<bool>> visited;
 
 public:
-	RecursionState() = delete;
+	RecursionState(const DenseBase<Derived> &heatmap, T activation_threshold,
+		       T deactivation_threshold, Box &cluster, Image<bool> &visited)
+		: heatmap {heatmap},
+		  activation_threshold {activation_threshold},
+		  deactivation_threshold {deactivation_threshold},
+		  cluster {cluster},
+		  visited {visited} {};
 };
 
 /*!
