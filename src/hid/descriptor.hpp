@@ -33,10 +33,12 @@ public:
 		std::copy(raw.begin(), raw.end(), m_descriptor.begin());
 
 		while (size < m_descriptor.size()) {
-			// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-			auto item = reinterpret_cast<const hidrd_item *>(&m_descriptor[size]);
-			size += hidrd_item_get_size(item);
+			// NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
+			const auto *item =
+				reinterpret_cast<const hidrd_item *>(&m_descriptor[size]);
+			// NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
 
+			size += hidrd_item_get_size(item);
 			m_parsed.push_back(item);
 		}
 	}
@@ -67,12 +69,12 @@ public:
 		std::vector<u8> reports {};
 
 		for (const hidrd_item *item : this->items()) {
-			if (this->is_report(item)) {
+			if (is_report(item)) {
 				current = hidrd_item_report_id_get_value(item);
 				continue;
 			}
 
-			if (!this->is_commit(item))
+			if (!is_commit(item))
 				continue;
 
 			if (current == 0)
@@ -99,7 +101,7 @@ public:
 		std::vector<hidrd_usage> usage {};
 
 		for (const hidrd_item *item : this->items()) {
-			if (this->is_report(item)) {
+			if (is_report(item)) {
 				current = hidrd_item_report_id_get_value(item);
 				continue;
 			}
@@ -130,7 +132,7 @@ public:
 		hidrd_usage_page current = HIDRD_USAGE_PAGE_MAX;
 
 		for (const hidrd_item *item : this->items()) {
-			if (this->is_report(item) && report == hidrd_item_report_id_get_value(item))
+			if (is_report(item) && report == hidrd_item_report_id_get_value(item))
 				return current;
 
 			if (hidrd_item_short_get_type(item) != HIDRD_ITEM_SHORT_TYPE_GLOBAL)
@@ -196,7 +198,7 @@ public:
 	 * @param[in] item The item to check.
 	 * @return true if the item is the definition of a Report ID.
 	 */
-	[[nodiscard]] bool is_report(const hidrd_item *item) const
+	static bool is_report(const hidrd_item *item)
 	{
 		if (hidrd_item_basic_get_format(item) != HIDRD_ITEM_BASIC_FORMAT_SHORT)
 			return false;
@@ -219,7 +221,7 @@ public:
 	 * @param[in] item The item to check.
 	 * @return Whether the item is a "committing" tag.
 	 */
-	[[nodiscard]] bool is_commit(const hidrd_item *item) const
+	static bool is_commit(const hidrd_item *item)
 	{
 		if (hidrd_item_basic_get_format(item) != HIDRD_ITEM_BASIC_FORMAT_SHORT)
 			return false;
