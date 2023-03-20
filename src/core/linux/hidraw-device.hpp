@@ -104,7 +104,7 @@ public:
 	 *
 	 * @param[in] multitouch Whether multitouch mode should be enabled.
 	 */
-	void set_mode(bool multitouch) const
+	void set_mode(const bool multitouch) const
 	{
 		std::array<u8, 2> report {
 			this->get_set_mode(),
@@ -120,7 +120,7 @@ public:
 	 * @param[in] report The ID of the HID report to check.
 	 * @return Whether the given report contains touchscreen data.
 	 */
-	[[nodiscard]] bool is_touch_data(u8 report) const
+	[[nodiscard]] bool is_touch_data(const u8 report) const
 	{
 		const hid::Descriptor &desc = this->descriptor();
 		const std::vector<hidrd_usage> usage = desc.usage(report);
@@ -197,7 +197,7 @@ private:
 	 *
 	 * @param[in] report The report ID to set, followed by the new data.
 	 */
-	void set_feature(gsl::span<u8> report) const
+	void set_feature(const gsl::span<u8> &report) const
 	{
 		const int ret = common::ioctl(m_fd, HIDIOCSFEATURE(report.size()), report.data());
 		if (ret == -1)
@@ -210,7 +210,7 @@ private:
 	 * @param[in] report The ID of the HID report to check.
 	 * @return Whether the given report is a modesetting report.
 	 */
-	[[nodiscard]] bool is_set_mode(u8 report) const
+	[[nodiscard]] bool is_set_mode(const u8 report) const
 	{
 		const hid::Descriptor &desc = this->descriptor();
 		const std::vector<hidrd_usage> usage = desc.usage(report);
@@ -250,7 +250,7 @@ private:
 	 * @param[in] report The ID of the HID report to check.
 	 * @return Whether the given report is a metadata report.
 	 */
-	[[nodiscard]] bool is_metadata_report(u8 report) const
+	[[nodiscard]] bool is_metadata_report(const u8 report) const
 	{
 		const hid::Descriptor &desc = this->descriptor();
 		const std::vector<hidrd_usage> usage = desc.usage(report);

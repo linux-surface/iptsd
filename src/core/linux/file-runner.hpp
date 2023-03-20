@@ -60,7 +60,7 @@ public:
 		if (has_meta)
 			meta = m_reader->read<ipts::Metadata>();
 
-		ConfigLoader loader {m_info, meta};
+		const ConfigLoader loader {m_info, meta};
 		m_application.emplace(loader.config(), m_info, meta, args...);
 
 		const u16 vendor = m_info.vendor;
@@ -78,6 +78,9 @@ public:
 	 */
 	T &application()
 	{
+		if (!m_application.has_value())
+			throw std::runtime_error("Error: Application is null");
+
 		return m_application.value();
 	}
 
@@ -100,7 +103,7 @@ public:
 	bool run()
 	{
 		if (!m_application.has_value() || !m_reader.has_value())
-			throw std::runtime_error("Init error: Application / Reader are null");
+			throw std::runtime_error("Error: Application / Reader are null");
 
 		ipts::Reader local = m_reader.value();
 

@@ -74,7 +74,7 @@ private:
 	 * @param[in] path The path to the directory.
 	 * @param[in] check_device If true, check if the config is meant for the current device.
 	 */
-	void load_dir(const std::string &path, bool check_device)
+	void load_dir(const std::string &path, const bool check_device)
 	{
 		namespace filesystem = std::filesystem;
 

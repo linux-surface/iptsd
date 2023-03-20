@@ -270,7 +270,7 @@ private:
 		return row.first + maxi + std::clamp(d, mind, maxd);
 	}
 
-	[[nodiscard]] f64 interpolate_frequency(const ipts::DftWindow &dft, u8 rows) const
+	[[nodiscard]] f64 interpolate_frequency(const ipts::DftWindow &dft, const u8 rows) const
 	{
 		if (rows < 3)
 			return NAN;

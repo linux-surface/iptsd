@@ -27,7 +27,7 @@ private:
 	f64 m_distance;
 
 public:
-	Cone(f64 angle, f64 distance) : m_angle {angle}, m_distance {distance} {};
+	Cone(const f64 angle, const f64 distance) : m_angle {angle}, m_distance {distance} {};
 
 	/*!
 	 * Checks if the cone is alive.
@@ -57,7 +57,7 @@ public:
 	 * @param[in] x The X coordinate of the new origin of the cone.
 	 * @param[in] y The Y coordinate of the new origin of the cone.
 	 */
-	void update_position(f64 x, f64 y)
+	void update_position(const f64 x, const f64 y)
 	{
 		m_x = x;
 		m_y = y;
@@ -72,7 +72,7 @@ public:
 	 * @param[in] x The X coordinate of the point the cone should face towards.
 	 * @param[in] x The Y coordinate of the point the cone should face towards.
 	 */
-	void update_direction(f64 x, f64 y)
+	void update_direction(const f64 x, const f64 y)
 	{
 		const clock::time_point timestamp = clock::now();
 
@@ -105,7 +105,7 @@ public:
 	 * @param[in] y The Y coordinate of the point that should be checked.
 	 * @return Whether the point is covered by the cone.
 	 */
-	bool check(f64 x, f64 y)
+	bool check(const f64 x, const f64 y)
 	{
 		if (!this->active())
 			return false;
