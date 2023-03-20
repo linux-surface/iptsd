@@ -28,11 +28,39 @@ jobs:
         name: workspace
         path: .
 
+  check:
+    name: Check code quality
+    container: fedora:38
+    runs-on: ubuntu-latest
+    needs: [checkout]
+    steps:
+    - name: Restore workspace
+      uses: actions/download-artifact@v3
+      with:
+        name: workspace
+
+    - name: Install build dependencies
+      run: |
+        bash $SCRIPTS/pkg-fedora.sh install
+        dnf install -y clang clang-tools-extra
+
+    - name: Setup meson
+      env:
+        CC: clang
+        CXX: clang++
+      run: meson setup build
+
+    - name: Run clang-format
+      run: bash $SCRIPTS/check-format.sh
+
+    - name: Run clang-tidy
+      run: bash $SCRIPTS/check-tidy.sh
+
   build-arch:
     name: Build Arch Linux Package
     container: archlinux/archlinux
     runs-on: ubuntu-latest
-    needs: [checkout]
+    needs: [check]
     steps:
     - name: Restore workspace
       uses: actions/download-artifact@v3
@@ -64,7 +92,7 @@ jobs:
     name: Build Debian Package
     container: debian:bullseye
     runs-on: ubuntu-latest
-    needs: [checkout]
+    needs: [check]
     steps:
     - name: Restore workspace
       uses: actions/download-artifact@v3
@@ -96,7 +124,7 @@ jobs:
     name: Build Fedora 37 package
     container: fedora:37
     runs-on: ubuntu-latest
-    needs: [checkout]
+    needs: [check]
     steps:
     - name: Restore workspace
       uses: actions/download-artifact@v3
@@ -128,7 +156,7 @@ jobs:
     name: Build Fedora 36 package
     container: fedora:36
     runs-on: ubuntu-latest
-    needs: [checkout]
+    needs: [check]
     steps:
     - name: Restore workspace
       uses: actions/download-artifact@v3
