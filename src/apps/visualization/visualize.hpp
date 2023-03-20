@@ -86,8 +86,8 @@ public:
 		const Cairo::RefPtr<Cairo::ImageSurface> source =
 			Cairo::ImageSurface::create(data, format, cols, rows, stride);
 
-		f64 wx = static_cast<f64>(m_size.x());
-		f64 wy = static_cast<f64>(m_size.y());
+		const f64 wx = static_cast<f64>(m_size.x());
+		const f64 wy = static_cast<f64>(m_size.y());
 
 		f64 sx = static_cast<f64>(cols) / wx;
 		f64 sy = static_cast<f64>(rows) / wy;

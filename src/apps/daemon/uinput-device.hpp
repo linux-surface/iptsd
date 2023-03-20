@@ -57,7 +57,7 @@ public:
 	 *
 	 * @param[in] vendor The vendor ID.
 	 */
-	void set_vendor(u16 vendor)
+	void set_vendor(const u16 vendor)
 	{
 		m_vendor = vendor;
 	}
@@ -69,7 +69,7 @@ public:
 	 *
 	 * @param[in] product The product ID.
 	 */
-	void set_product(u16 product)
+	void set_product(const u16 product)
 	{
 		m_product = product;
 	}
@@ -81,7 +81,7 @@ public:
 	 *
 	 * @param[in] version The firmware or hardware revision.
 	 */
-	void set_version(u32 version)
+	void set_version(const u32 version)
 	{
 		m_version = version;
 	}
@@ -93,7 +93,7 @@ public:
 	 *
 	 * @param[in] ev The event type to enable (e.g. EV_KEY or EV_ABS).
 	 */
-	void set_evbit(i32 ev) const
+	void set_evbit(const i32 ev) const
 	{
 		const int ret = common::ioctl(m_fd, UI_SET_EVBIT, ev);
 		if (ret == -1)
@@ -107,7 +107,7 @@ public:
 	 *
 	 * @param[in] prop The property to enable (e.g. INPUT_PROP_POINTER).
 	 */
-	void set_propbit(i32 prop) const
+	void set_propbit(const i32 prop) const
 	{
 		const int ret = common::ioctl(m_fd, UI_SET_PROPBIT, prop);
 		if (ret == -1)
@@ -121,7 +121,7 @@ public:
 	 *
 	 * @param[in] key They key to enable (e.g. BTN_TOUCH).
 	 */
-	void set_keybit(i32 key) const
+	void set_keybit(const i32 key) const
 	{
 		const int ret = common::ioctl(m_fd, UI_SET_KEYBIT, key);
 		if (ret == -1)
@@ -138,7 +138,7 @@ public:
 	 * @param[in] max The maximal value of the axis.
 	 * @param[in] res The resolution of the axis, for converting virtual to physical units.
 	 */
-	void set_absinfo(u16 code, i32 min, i32 max, i32 res) const
+	void set_absinfo(const u16 code, const i32 min, const i32 max, const i32 res) const
 	{
 		struct uinput_abs_setup abs {};
 
@@ -185,7 +185,7 @@ public:
 	 * @param[in] key The key of the button or axis.
 	 * @param[in] value The value of the button or axis.
 	 */
-	void emit(u16 type, u16 key, i32 value) const
+	void emit(const u16 type, const u16 key, const i32 value) const
 	{
 		struct input_event ie {};
 

@@ -15,7 +15,7 @@
 
 namespace iptsd::apps::perf {
 
-static int main(gsl::span<char *> args)
+static int main(const gsl::span<char *> args)
 {
 	using std::chrono::duration_cast;
 	using usecs = std::chrono::duration<f64, std::micro>;
@@ -37,8 +37,8 @@ static int main(gsl::span<char *> args)
 	// Create a performance testing application that reads from a file.
 	core::linux::FileRunner<Perf> perf {path};
 
-	auto const _sigterm = common::signal<SIGTERM>([&](int) { perf.stop(); });
-	auto const _sigint = common::signal<SIGINT>([&](int) { perf.stop(); });
+	const auto _sigterm = common::signal<SIGTERM>([&](int) { perf.stop(); });
+	const auto _sigint = common::signal<SIGINT>([&](int) { perf.stop(); });
 
 	using clock = std::chrono::high_resolution_clock;
 
@@ -91,7 +91,7 @@ static int main(gsl::span<char *> args)
 int main(int argc, char **argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
-	gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
+	const gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
 
 	try {
 		return iptsd::apps::perf::main(args);

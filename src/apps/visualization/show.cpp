@@ -13,7 +13,7 @@
 
 namespace iptsd::apps::visualization::show {
 
-static int main(gsl::span<char *> args)
+static int main(const gsl::span<char *> args)
 {
 	CLI::App app {};
 	std::filesystem::path path;
@@ -27,8 +27,8 @@ static int main(gsl::span<char *> args)
 	// Create a plotting application that reads from a file.
 	core::linux::DeviceRunner<VisualizeSDL> visualize {path};
 
-	auto const _sigterm = common::signal<SIGTERM>([&](int) { visualize.stop(); });
-	auto const _sigint = common::signal<SIGINT>([&](int) { visualize.stop(); });
+	const auto _sigterm = common::signal<SIGTERM>([&](int) { visualize.stop(); });
+	const auto _sigint = common::signal<SIGINT>([&](int) { visualize.stop(); });
 
 	if (!visualize.run())
 		return EXIT_FAILURE;
@@ -41,7 +41,7 @@ static int main(gsl::span<char *> args)
 int main(int argc, char **argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
-	gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
+	const gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
 
 	try {
 		return iptsd::apps::visualization::show::main(args);

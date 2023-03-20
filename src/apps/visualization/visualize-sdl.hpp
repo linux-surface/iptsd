@@ -36,7 +36,7 @@ public:
 	void on_start() override
 	{
 		// Create an SDL window
-		u32 flags = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_ALLOW_HIGHDPI;
+		const u32 flags = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_ALLOW_HIGHDPI;
 		SDL_CreateWindowAndRenderer(0, 0, flags, &m_window, &m_renderer);
 
 		// Get the screen size.

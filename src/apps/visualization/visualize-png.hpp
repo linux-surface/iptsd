@@ -26,11 +26,11 @@ public:
 
 	void on_start() override
 	{
-		f64 aspect = m_config.width / m_config.height;
+		const f64 aspect = m_config.width / m_config.height;
 
 		// Determine output resolution.
-		f64 y = 1000;
-		f64 x = y * aspect;
+		const f64 y = 1000;
+		const f64 x = y * aspect;
 
 		m_size.x() = gsl::narrow<i32>(std::round(x));
 		m_size.y() = gsl::narrow<i32>(std::round(y));

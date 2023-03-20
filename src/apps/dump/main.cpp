@@ -13,7 +13,7 @@
 
 namespace iptsd::apps::dump {
 
-static int main(gsl::span<char *> args)
+static int main(const gsl::span<char *> args)
 {
 	CLI::App app {};
 	std::filesystem::path path {};
@@ -32,8 +32,8 @@ static int main(gsl::span<char *> args)
 	// Create a dumping application that reads from a device.
 	core::linux::DeviceRunner<Dump> dump {path, output};
 
-	auto const _sigterm = common::signal<SIGTERM>([&](int) { dump.stop(); });
-	auto const _sigint = common::signal<SIGINT>([&](int) { dump.stop(); });
+	const auto _sigterm = common::signal<SIGTERM>([&](int) { dump.stop(); });
+	const auto _sigint = common::signal<SIGINT>([&](int) { dump.stop(); });
 
 	if (!dump.run())
 		return EXIT_FAILURE;
@@ -46,7 +46,7 @@ static int main(gsl::span<char *> args)
 int main(int argc, char **argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
-	gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
+	const gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
 
 	try {
 		return iptsd::apps::dump::main(args);

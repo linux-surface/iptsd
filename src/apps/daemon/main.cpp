@@ -13,7 +13,7 @@
 
 namespace iptsd::apps::daemon {
 
-static int main(gsl::span<char *> args)
+static int main(const gsl::span<char *> args)
 {
 	CLI::App app {};
 	std::filesystem::path path {};
@@ -27,8 +27,8 @@ static int main(gsl::span<char *> args)
 	// Create a daemon application that reads from a device.
 	core::linux::DeviceRunner<Daemon> daemon {path};
 
-	auto const _sigterm = common::signal<SIGTERM>([&](int) { daemon.stop(); });
-	auto const _sigint = common::signal<SIGINT>([&](int) { daemon.stop(); });
+	const auto _sigterm = common::signal<SIGTERM>([&](int) { daemon.stop(); });
+	const auto _sigint = common::signal<SIGINT>([&](int) { daemon.stop(); });
 
 	if (!daemon.run())
 		return EXIT_FAILURE;
@@ -41,7 +41,7 @@ static int main(gsl::span<char *> args)
 int main(int argc, char **argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
-	gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
+	const gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
 
 	try {
 		return iptsd::apps::daemon::main(args);
