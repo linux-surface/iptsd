@@ -69,12 +69,12 @@ public:
 		m_active = data.proximity;
 
 		if (m_active) {
-			const Vector2<i32> tilt = this->calculate_tilt(data.altitude, data.azimuth);
+			const Vector2<i32> tilt = calculate_tilt(data.altitude, data.azimuth);
 
-			m_uinput->emit(EV_KEY, BTN_TOUCH, data.contact);
-			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, !data.rubber);
-			m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, data.rubber);
-			m_uinput->emit(EV_KEY, BTN_STYLUS, data.button);
+			m_uinput->emit(EV_KEY, BTN_TOUCH, data.contact ? 1 : 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, !data.rubber ? 1 : 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, data.rubber ? 1 : 0);
+			m_uinput->emit(EV_KEY, BTN_STYLUS, data.button ? 1 : 0);
 
 			m_uinput->emit(EV_ABS, ABS_X, data.x);
 			m_uinput->emit(EV_ABS, ABS_Y, data.y);
@@ -139,7 +139,7 @@ private:
 	 * @param[in] azimuth The azimuth of the stylus.
 	 * @return A Vector containing the tilt on the X and Y axis.
 	 */
-	[[nodiscard]] Vector2<i32> calculate_tilt(const u32 altitude, const u32 azimuth) const
+	[[nodiscard]] static Vector2<i32> calculate_tilt(const u32 altitude, const u32 azimuth)
 	{
 		if (altitude <= 0)
 			return Vector2<i32>::Zero();

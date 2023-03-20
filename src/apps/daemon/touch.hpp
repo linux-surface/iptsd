@@ -181,12 +181,8 @@ private:
 		if (!m_config.touch_disable_on_palm)
 			return false;
 
-		for (const contacts::Contact<f64> &c : contacts) {
-			if (!c.valid.value_or(true))
-				return true;
-		}
-
-		return false;
+		return std::any_of(contacts.cbegin(), contacts.cend(),
+				   [&](const auto &c) { return !c.valid.value_or(true); });
 	}
 
 	/*!

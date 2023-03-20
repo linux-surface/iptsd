@@ -14,7 +14,7 @@ namespace iptsd::apps::daemon {
 
 class UinputDevice {
 private:
-	std::string m_name = "";
+	std::string m_name;
 	u16 m_vendor = 0;
 	u16 m_product = 0;
 	u32 m_version = 0;

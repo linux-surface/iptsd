@@ -56,7 +56,7 @@ public:
 			m_aspect.push_back(aspect);
 		}
 
-		if (m_size.size() == 0)
+		if (m_size.empty())
 			return;
 
 		std::sort(m_size.begin(), m_size.end());

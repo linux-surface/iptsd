@@ -33,7 +33,7 @@ public:
 		  std::optional<const ipts::Metadata> metadata)
 		: core::Application(config, info, metadata) {};
 
-	void on_contacts(const std::vector<contacts::Contact<f64>> &) override
+	void on_contacts(const std::vector<contacts::Contact<f64>> & /* unused */) override
 	{
 		const Eigen::Index cols = m_heatmap.cols();
 		const Eigen::Index rows = m_heatmap.rows();
@@ -80,7 +80,7 @@ public:
 		const auto stride = Cairo::ImageSurface::format_stride_for_width(format, cols);
 
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-		const auto data = reinterpret_cast<u8 *>(m_argb.data());
+		auto *data = reinterpret_cast<u8 *>(m_argb.data());
 
 		// Create Cairo surface based on data buffer.
 		const Cairo::RefPtr<Cairo::ImageSurface> source =
