@@ -1,3 +1,3 @@
-Checks: 'bugprone-*, -bugprone-easily-swappable-parameters, cert-*, clang-analyzer-*, cppcoreguidelines-*, -cppcoreguidelines-avoid-magic-numbers, -cppcoreguidelines-special-member-functions, misc-*, -misc-no-recursion, -*-non-private-member-variables-in-classes, modernize-*, -modernize-use-trailing-return-type, performance-*'
+Checks: 'bugprone-*, -bugprone-easily-swappable-parameters, cert-*, clang-analyzer-*, cppcoreguidelines-*, -cppcoreguidelines-avoid-magic-numbers, -cppcoreguidelines-special-member-functions, misc-*, -misc-no-recursion, -*-non-private-member-variables-in-classes, modernize-*, -modernize-use-trailing-return-type, performance-*, readability-*, -readability-magic-numbers, -readability-identifier-length, -readability-redundant-access-specifiers, -readability-function-cognitive-complexity, -readability-braces-around-statements'
 HeaderFilterRegex: 'src/.*hpp'
 FormatStyle: file
