@@ -46,7 +46,7 @@ public:
 	 *
 	 * @param[in] data The data to parse.
 	 */
-	void parse(gsl::span<u8> data)
+	void parse(const gsl::span<u8> &data)
 	{
 		this->parse<struct ipts_header>(data);
 	}
@@ -57,13 +57,13 @@ public:
 	 * @tparam T The type (and size) of the header.
 	 * @param[in] data The data to parse.
 	 */
-	template <class T> void parse(gsl::span<u8> data)
+	template <class T> void parse(const gsl::span<u8> &data)
 	{
 		this->parse_with_header(data, sizeof(T));
 	}
 
 private:
-	void parse_with_header(gsl::span<u8> data, usize header)
+	void parse_with_header(const gsl::span<u8> &data, const usize header)
 	{
 		Reader reader(data);
 		reader.skip(header);
