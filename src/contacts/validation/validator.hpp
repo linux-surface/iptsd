@@ -30,7 +30,7 @@ private:
 	std::vector<Contact<T>> m_last {};
 
 public:
-	Validator(Config<T> config) : m_config {config} {};
+	Validator(Config<T> config) : m_config {std::move(config)} {};
 
 	/*!
 	 * Resets the validator by clearing the stored copy of the last frame.
@@ -95,15 +95,17 @@ private:
 		if (!contact.index.has_value())
 			return true;
 
-		const auto last = find_in_frame(contact.index.value(), m_last);
+		const auto wrapper = find_in_frame(contact.index.value(), m_last);
 
-		if (!last.has_value())
+		if (!wrapper.has_value())
 			return true;
 
-		if (!(*last).get().valid.has_value())
+		const Contact<T> &last = wrapper.value();
+
+		if (!last.valid.has_value())
 			return true;
 
-		return (*last).get().valid.value();
+		return last.valid.value();
 	}
 
 	/*!
@@ -114,6 +116,9 @@ private:
 	 */
 	bool check_size(const Contact<T> &contact)
 	{
+		if (!m_config.size_limits.has_value())
+			return true;
+
 		const Vector2<T> &limit = m_config.size_limits.value();
 		const Vector2<T> &size = contact.size;
 
@@ -129,6 +134,9 @@ private:
 	 */
 	bool check_aspect(const Contact<T> &contact)
 	{
+		if (!m_config.aspect_limits.has_value())
+			return true;
+
 		const Vector2<T> &limit = m_config.aspect_limits.value();
 		const Vector2<T> &size = contact.size;
 

@@ -17,7 +17,7 @@ namespace iptsd::contacts::detection::maximas {
  * @param[out] maximas A reference to the vector where the found points will be stored.
  */
 template <class Derived>
-void find(const DenseBase<Derived> &data, typename DenseBase<Derived>::Scalar threshold,
+void find(const DenseBase<Derived> &data, const typename DenseBase<Derived>::Scalar threshold,
 	  std::vector<Point> &maximas)
 {
 	using T = typename DenseBase<Derived>::Scalar;

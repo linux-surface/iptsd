@@ -112,8 +112,8 @@ void span_recursive(const RecursionState<Derived> state, const Point &position,
  */
 template <class Derived>
 Box span(const DenseBase<Derived> &heatmap, const Point &position,
-	 typename DenseBase<Derived>::Scalar activation_threshold,
-	 typename DenseBase<Derived>::Scalar deactivation_threshold)
+	 const typename DenseBase<Derived>::Scalar activation_threshold,
+	 const typename DenseBase<Derived>::Scalar deactivation_threshold)
 {
 	using T = typename DenseBase<Derived>::Scalar;
 

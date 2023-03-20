@@ -60,7 +60,7 @@ public:
 
 template <class T>
 std::optional<std::reference_wrapper<const Contact<T>>>
-find_in_frame(usize index, const std::vector<Contact<T>> &frame)
+find_in_frame(const usize index, const std::vector<Contact<T>> &frame)
 {
 	for (const Contact<T> &contact : frame) {
 		if (contact.index != index)

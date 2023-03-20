@@ -91,18 +91,20 @@ private:
 
 		// Iterate over the last frames and find the contact with the same index
 		for (auto itr = m_frames.crbegin(); itr != m_frames.crend(); itr++) {
-			const auto last = find_in_frame(index, *itr);
+			const auto wrapper = find_in_frame(index, *itr);
 
-			if (should_temp && !last.has_value())
+			if (!wrapper.has_value())
+				return !should_temp;
+
+			const Contact<T> &last = wrapper.value();
+
+			if (should_size && !this->check_size(current, last))
 				return false;
 
-			if (should_size && !this->check_size(current, last.value()))
+			if (should_move && !this->check_movement(current, last))
 				return false;
 
-			if (should_move && !this->check_movement(current, last.value()))
-				return false;
-
-			current = last.value();
+			current = last;
 		}
 
 		return true;
@@ -118,6 +120,9 @@ private:
 	[[nodiscard]] bool check_distance(const Contact<T> &contact,
 					  const std::vector<Contact<T>> &frame) const
 	{
+		if (!contact.index.has_value() || !m_config.distance_threshold.has_value())
+			return true;
+
 		const usize index = contact.index.value();
 		const T distance_thresh = m_config.distance_threshold.value();
 
@@ -155,6 +160,9 @@ private:
 	 */
 	[[nodiscard]] bool check_size(const Contact<T> &current, const Contact<T> &last) const
 	{
+		if (!m_config.size_difference_threshold.has_value())
+			return true;
+
 		const T size_thresh = m_config.size_difference_threshold.value();
 		const Vector2<T> delta = (current.size - last.size).cwiseAbs();
 
@@ -171,6 +179,9 @@ private:
 	 */
 	[[nodiscard]] bool check_movement(const Contact<T> &current, const Contact<T> &last) const
 	{
+		if (!m_config.movement_limits.has_value())
+			return true;
+
 		const Vector2<T> limit = m_config.movement_limits.value();
 
 		const Vector2<T> delta = current.mean - last.mean;

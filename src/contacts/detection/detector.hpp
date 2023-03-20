@@ -59,7 +59,7 @@ private:
 	T m_neutral = Zero<T>();
 
 public:
-	Detector(Config<T> config) : m_config {config} {};
+	Detector(Config<T> config) : m_config {std::move(config)} {};
 
 	/*!
 	 * Search for contacts in a capacitive heatmap.
