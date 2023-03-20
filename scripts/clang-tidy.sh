@@ -5,7 +5,7 @@ set -euo pipefail
 # Find compile_commands.json
 COMPILE_COMMANDS="$(find . -name 'compile_commands.json')"
 
-if [ "$(echo "$COMPILE_COMMANDS" | wc -l)" = "0" ]; then
+if [ "$COMPILE_COMMANDS" = "" ]; then
 	echo "Could not find compile_commands.json, exiting."
 	exit 1
 fi
@@ -22,5 +22,5 @@ BUILDDIR="$(dirname "$COMPILE_COMMANDS")"
 # Find C and C++ files
 find src -name '*.c' -or -name '*.cpp' -print0 | while read -d $'\0' file; do
 	echo "Checking $file..."
-	clang-tidy -p "$BUILDDIR" "$file"
+	clang-tidy "$@" -p "$BUILDDIR" "$file"
 done
