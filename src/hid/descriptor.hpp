@@ -23,7 +23,7 @@ public:
 	 *
 	 * @param[in] raw The raw binary data to load and parse.
 	 */
-	void load(gsl::span<u8> raw)
+	void load(const gsl::span<u8> &raw)
 	{
 		usize size = 0;
 
@@ -61,7 +61,7 @@ public:
 	 * @param[in] type The type of report to search for.
 	 * @return A list of all report IDs of the given type.
 	 */
-	[[nodiscard]] std::vector<u8> reports(hidrd_item_main_tag type) const
+	[[nodiscard]] std::vector<u8> reports(const hidrd_item_main_tag type) const
 	{
 		u8 current = 0;
 		std::vector<u8> reports {};
@@ -93,7 +93,7 @@ public:
 	 * @param[in] report The report ID for which to get the usage tags.
 	 * @return The values of all usage tags that are active for the report.
 	 */
-	[[nodiscard]] std::vector<hidrd_usage> usage(u8 report) const
+	[[nodiscard]] std::vector<hidrd_usage> usage(const u8 report) const
 	{
 		u8 current = 0;
 		std::vector<hidrd_usage> usage {};
@@ -125,7 +125,7 @@ public:
 	 * @param[in] report The report ID for which to get the usage page.
 	 * @return The value of the usage page tag that is active for the report.
 	 */
-	[[nodiscard]] hidrd_usage_page usage_page(u8 report) const
+	[[nodiscard]] hidrd_usage_page usage_page(const u8 report) const
 	{
 		hidrd_usage_page current = HIDRD_USAGE_PAGE_MAX;
 
@@ -151,7 +151,7 @@ public:
 	 * @param[in] report The report ID for which to calculate the size.
 	 * @return The combined size of the HID report in bytes.
 	 */
-	[[nodiscard]] u64 size(u8 report) const
+	[[nodiscard]] u64 size(const u8 report) const
 	{
 		u8 current = 0;
 
