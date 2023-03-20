@@ -49,7 +49,7 @@ public:
 			counter = contact.index.value() + 1;
 		}
 
-		if (m_last.size() > 0) {
+		if (!m_last.empty()) {
 			const usize min = std::min(frame.size(), m_last.size());
 
 			// Calculate the distances between all contacts from the current and last

@@ -38,13 +38,13 @@ inline f32 overlap(const Box &a, const Box &b)
 {
 	// Check if the two boxes are identical
 	if (a.isApprox(b))
-		return 1.0f;
+		return 1.0F;
 
 	const Box intersection = a.intersection(b);
 
 	// Check if the two boxes overlap
 	if (intersection.isEmpty())
-		return 0.0f;
+		return 0.0F;
 
 	// Compute the area of both bounding boxes
 	const isize area_a = area(a);
@@ -56,7 +56,7 @@ inline f32 overlap(const Box &a, const Box &b)
 	// by the sum of both bounding box areas minus the intersection area
 	const f32 iou = gsl::narrow<f32>(area_i) / gsl::narrow<f32>(area_a + area_b - area_i);
 
-	if (iou < 0.0f || iou > 1.0f)
+	if (iou < 0.0F || iou > 1.0F)
 		throw std::runtime_error("Calculated invalid cluster overlap!");
 
 	return iou;
@@ -84,7 +84,7 @@ inline bool search(const std::vector<Box> &clusters, std::vector<Vector2<usize>>
 			const Box &b = clusters[j];
 
 			// Ignore clusters that overlap by less than 50%
-			if (overlap(a, b) < 0.5f)
+			if (overlap(a, b) < 0.5F)
 				continue;
 
 			found_overlap = true;

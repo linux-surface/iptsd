@@ -126,12 +126,12 @@ private:
 		const usize index = contact.index.value();
 		const T distance_thresh = m_config.distance_threshold.value();
 
-		for (const Contact<T> &v : frame) {
+		return std::all_of(frame.cbegin(), frame.cend(), [&](const auto &v) {
 			if (v.index == index)
-				continue;
+				return true;
 
 			if (v.valid.value_or(true))
-				continue;
+				return true;
 
 			/*
 			 * Assumption: All contacts are perfect circles. The radius is major / 2.
@@ -144,11 +144,8 @@ private:
 			const T difference =
 				distance - (contact.size.maxCoeff() / 2) - (v.size.maxCoeff() / 2);
 
-			if (difference < distance_thresh)
-				return false;
-		}
-
-		return true;
+			return difference >= distance_thresh;
+		});
 	}
 
 	/*!

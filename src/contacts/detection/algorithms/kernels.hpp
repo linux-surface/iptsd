@@ -37,7 +37,7 @@ template <class T, int Rows, int Cols> Matrix<T, Rows, Cols> gaussian(const T si
 			const T vx = gsl::narrow_cast<T>(dx);
 
 			const T norm = (Vector2<T> {vy, vx} / sigma).squaredNorm();
-			const T val = std::exp(-0.5f * norm);
+			const T val = std::exp(-0.5F * norm);
 
 			kernel(y, x) = val;
 			sum += val;

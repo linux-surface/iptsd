@@ -42,10 +42,11 @@ template <class T> T angle(const Matrix2<T> &eigenvectors)
 	 */
 	if (angle < 0)
 		return angle + PI;
-	else if (angle >= PI)
+
+	if (angle >= PI)
 		return angle - PI;
-	else
-		return angle;
+
+	return angle;
 }
 
 } // namespace iptsd::contacts::detection::ellipse
