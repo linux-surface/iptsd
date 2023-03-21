@@ -137,27 +137,27 @@ tools = get_option('debug_tools')
 
 if tools.contains('calibrate')
   executable('iptsd-calibrate', 'apps/calibrate/main.cpp',
-            install: true,
-            link_with: hidrd_shim,
-            dependencies: default_deps,
-            include_directories: includes,
+             install: true,
+             link_with: hidrd_shim,
+             dependencies: default_deps,
+             include_directories: includes,
   )
 endif
 
 if tools.contains('dump')
   executable('iptsd-dump', 'apps/dump/main.cpp',
-            install: true,
-            link_with: hidrd_shim,
-            dependencies: default_deps,
-            include_directories: includes,
+             install: true,
+             link_with: hidrd_shim,
+             dependencies: default_deps,
+             include_directories: includes,
   )
 endif
 
 if tools.contains('perf')
   executable('iptsd-perf', 'apps/perf/main.cpp',
-            install: true,
-            dependencies: default_deps,
-            include_directories: includes,
+             install: true,
+             dependencies: default_deps,
+             include_directories: includes,
   )
 endif
 
@@ -168,9 +168,9 @@ endif
 if tools.contains('plot')
   if cairo.found()
     executable('iptsd-plot', 'apps/visualization/plot.cpp',
-              install: true,
-              dependencies: default_deps + [cairo],
-              include_directories: includes,
+               install: true,
+               dependencies: default_deps + [cairo],
+               include_directories: includes,
     )
   else
     warning('Debug tool "plot" is enabled but cairomm was not found!')
@@ -185,10 +185,10 @@ if tools.contains('show')
 
   if cairo.found()
     executable('iptsd-show', 'apps/visualization/show.cpp',
-              install: true,
-              link_with: hidrd_shim,
-              dependencies: default_deps + [cairo, sdl],
-              include_directories: includes,
+               install: true,
+               link_with: hidrd_shim,
+               dependencies: default_deps + [cairo, sdl],
+               include_directories: includes,
     )
   else
     warning('Debug tool "show" is enabled but cairomm was not found!')
