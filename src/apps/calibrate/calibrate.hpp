@@ -3,9 +3,16 @@
 #ifndef IPTSD_APPS_CALIBRATE_CALIBRATE_HPP
 #define IPTSD_APPS_CALIBRATE_CALIBRATE_HPP
 
+#include "configure.h"
+
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
 
+#include <algorithm>
+#include <chrono>
+#include <cmath>
+#include <filesystem>
+#include <fstream>
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <vector>
@@ -63,21 +70,18 @@ public:
 		std::sort(m_size.begin(), m_size.end());
 		std::sort(m_aspect.begin(), m_aspect.end());
 
-		const f64 size_s = gsl::narrow<f64>(m_size.size());
-		const f64 size_a = gsl::narrow<f64>(m_aspect.size());
+		const f64 size = gsl::narrow<f64>(m_size.size());
 
-		const f64 avg_s = m_size_sum / size_s;
-		const f64 avg_a = m_aspect_sum / size_a;
+		const f64 avg_s = m_size_sum / size;
+		const f64 avg_a = m_aspect_sum / size;
 
-		// Determine 1st and 99th percentile
-		const f64 min_idx = std::max(size_s - 1, 0.0) * 0.01;
-		const f64 max_idx = std::max(size_s - 1, 0.0) * 0.99;
+		f64 min_s {};
+		f64 max_s {};
 
-		const f64 min_s = m_size[gsl::narrow<usize>(std::round(min_idx))];
-		const f64 max_s = m_size[gsl::narrow<usize>(std::round(max_idx))];
+		f64 min_a {};
+		f64 max_a {};
 
-		const f64 min_a = m_aspect[gsl::narrow<usize>(std::round(min_idx))];
-		const f64 max_a = m_aspect[gsl::narrow<usize>(std::round(max_idx))];
+		this->calculate_min_max(min_s, max_s, min_a, max_a);
 
 		// Reset console output
 		std::cout << "\033[A"; // Move cursor up one line
@@ -88,9 +92,105 @@ public:
 		std::cout << "\33[2K"; // Erase current line
 		std::cout << "\r";     // Move cursor to the left
 
-		spdlog::info("Samples: {}", m_size.size());
+		spdlog::info("Samples: {}", size);
 		spdlog::info("Size:    {:.3f} (Min: {:.3f}; Max: {:.3f})", avg_s, min_s, max_s);
 		spdlog::info("Aspect:  {:.3f} (Min: {:.3f}; Max: {:.3f})", avg_a, min_a, max_a);
+	}
+
+	void on_stop() override
+	{
+		using clock = std::chrono::system_clock;
+		using seconds = std::chrono::seconds;
+		using std::chrono::duration_cast;
+
+		const auto now = clock::now().time_since_epoch();
+		usize unix = duration_cast<seconds>(now).count();
+
+		const std::string no_slack = fmt::format("iptsd_calib_{}_0mm.conf", unix);
+		const std::string some_slack = fmt::format("iptsd_calib_{}_2mm.conf", unix);
+		const std::string much_slack = fmt::format("iptsd_calib_{}_10mm.conf", unix);
+
+		this->write_file(no_slack, 0.0);
+		this->write_file(some_slack, 0.1);
+		this->write_file(much_slack, 0.5);
+
+		// clang-format off
+
+		spdlog::info("");
+		spdlog::info("To finish the calibration process, apply the determined values to iptsd.");
+		spdlog::info("Three config snippets have been generated for you in the current directory.");
+		spdlog::info("Run the displayed to command to install them, and restart iptsd.");
+		spdlog::info("");
+		spdlog::info("Recommended:");
+		spdlog::info("    sudo cp {} {}/90-calibration.conf", some_slack, IPTSD_CONFIG_DIR);
+		spdlog::info("");
+		spdlog::info("If iptsd misses inputs:");
+		spdlog::info("    sudo cp {} {}/90-calibration.conf", much_slack, IPTSD_CONFIG_DIR);
+		spdlog::info("");
+		spdlog::info("For manual finetuning:");
+		spdlog::info("    sudo cp {} {}/90-calibration.conf", no_slack, IPTSD_CONFIG_DIR);
+		spdlog::info("");
+		spdlog::warn("Running these commands can permanently overwrite a previous calibration!");
+
+		// clang-format on
+	}
+
+	void calculate_min_max(f64 &size_min, f64 &size_max, f64 &aspect_min, f64 &aspect_max) const
+	{
+		const f64 size = gsl::narrow<f64>(m_size.size());
+
+		// Determine 1st and 99th percentile
+		const f64 min_idx = std::max(size - 1, 0.0) * 0.01;
+		const f64 max_idx = std::max(size - 1, 0.0) * 0.99;
+
+		size_min = m_size[gsl::narrow<usize>(std::round(min_idx))];
+		size_max = m_size[gsl::narrow<usize>(std::round(max_idx))];
+
+		aspect_min = m_aspect[gsl::narrow<usize>(std::round(min_idx))];
+		aspect_max = m_aspect[gsl::narrow<usize>(std::round(max_idx))];
+	}
+
+	void write_file(const std::filesystem::path &out, f64 slack) const
+	{
+		std::ofstream writer {out};
+
+		const f64 size = gsl::narrow<f64>(m_size.size());
+
+		f64 size_min {};
+		f64 size_max {};
+
+		f64 aspect_min {};
+		f64 aspect_max {};
+
+		this->calculate_min_max(size_min, size_max, aspect_min, aspect_max);
+
+		// Apply slack
+		if (slack > 0) {
+			size_min -= slack;
+			size_max += slack;
+
+			size_min = std::max(size_min, 0.0);
+			aspect_min = std::max(aspect_min, 1.0);
+
+			size_min = std::floor(size_min * 10) / 10;
+			size_max = std::ceil(size_max * 10) / 10;
+
+			aspect_min = std::floor(aspect_min * 10) / 10;
+			aspect_max = std::ceil(aspect_max * 10) / 10;
+		}
+
+		writer << "#" << std::endl;
+		writer << "# Samples: " << fmt::format("{}", size) << std::endl;
+		writer << "# Slack:   " << fmt::format("{:.3f}", slack) << std::endl;
+		writer << "#" << std::endl;
+		writer << "" << std::endl;
+		writer << "[Contacts]" << std::endl;
+		writer << "SizeMin = " << fmt::format("{:.3f}", size_min) << std::endl;
+		writer << "SizeMax = " << fmt::format("{:.3f}", size_max) << std::endl;
+		writer << "AspectMin = " << fmt::format("{:.3f}", aspect_min) << std::endl;
+		writer << "AspectMax = " << fmt::format("{:.3f}", aspect_max) << std::endl;
+
+		writer.close();
 	}
 };
 
