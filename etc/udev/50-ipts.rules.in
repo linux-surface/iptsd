@@ -1,0 +1,4 @@
+SUBSYSTEM=="hidraw", ACTION=="add", TAG+="systemd", \
+    PROGRAM="@bindir@/iptsd-check-device --quiet $env{DEVNAME}", \
+    PROGRAM="/bin/systemd-escape --path $env{DEVNAME}", \
+    ENV{SYSTEMD_WANTS}+="iptsd@$result.service"
