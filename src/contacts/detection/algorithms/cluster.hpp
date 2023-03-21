@@ -13,7 +13,8 @@ namespace iptsd::contacts::detection::cluster {
 
 namespace impl {
 
-template <class Derived> class RecursionState {
+template <class Derived>
+class RecursionState {
 private:
 	using T = typename DenseBase<Derived>::Scalar;
 

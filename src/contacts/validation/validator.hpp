@@ -18,7 +18,8 @@
 
 namespace iptsd::contacts::validation {
 
-template <class T> class Validator {
+template <class T>
+class Validator {
 public:
 	static_assert(std::is_floating_point_v<T>);
 

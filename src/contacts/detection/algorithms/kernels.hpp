@@ -17,7 +17,8 @@ namespace iptsd::contacts::detection::kernels {
  * @param[in] sigma The strength of the kernel.
  * @return A gaussian kernel with the given dimensions and strength.
  */
-template <class T, int Rows, int Cols> Matrix<T, Rows, Cols> gaussian(const T sigma)
+template <class T, int Rows, int Cols>
+Matrix<T, Rows, Cols> gaussian(const T sigma)
 {
 	static_assert(Rows % 2 == 1);
 	static_assert(Cols % 2 == 1);

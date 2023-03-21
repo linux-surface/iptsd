@@ -11,7 +11,8 @@
 
 namespace iptsd::contacts {
 
-template <class T> class Contact {
+template <class T>
+class Contact {
 public:
 	static_assert(std::is_floating_point_v<T>);
 

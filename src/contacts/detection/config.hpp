@@ -12,7 +12,8 @@
 
 namespace iptsd::contacts::detection {
 
-template <class T> struct Config {
+template <class T>
+struct Config {
 public:
 	static_assert(std::is_floating_point_v<T>);
 

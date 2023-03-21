@@ -15,7 +15,8 @@ namespace iptsd::contacts::detection::ellipse {
  * @param[in] eigenvalues The eigenvalues of the ellipse.
  * @return The diameter of both axes of the ellipse.
  */
-template <class T> Vector2<T> size(const Vector2<T> &eigenvalues)
+template <class T>
+Vector2<T> size(const Vector2<T> &eigenvalues)
 {
 	const Vector2<T> size = eigenvalues.cwiseAbs().cwiseSqrt();
 
@@ -29,7 +30,8 @@ template <class T> Vector2<T> size(const Vector2<T> &eigenvalues)
  * @param[in] eigenvectors The eigenvectors of the ellipse.
  * @return The orientation of the ellipse in radians.
  */
-template <class T> T angle(const Matrix2<T> &eigenvectors)
+template <class T>
+T angle(const Matrix2<T> &eigenvectors)
 {
 	constexpr auto PI = static_cast<T>(M_PI);
 

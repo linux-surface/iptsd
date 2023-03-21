@@ -17,7 +17,8 @@
 
 namespace iptsd::contacts::detection {
 
-template <class T, class TFit = T> class Detector {
+template <class T, class TFit = T>
+class Detector {
 public:
 	static_assert(std::is_floating_point_v<T>);
 	static_assert(std::is_floating_point_v<TFit>);

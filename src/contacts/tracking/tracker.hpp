@@ -14,7 +14,8 @@
 
 namespace iptsd::contacts::tracking {
 
-template <class T> class Tracker {
+template <class T>
+class Tracker {
 public:
 	static_assert(std::is_floating_point_v<T>);
 

@@ -16,7 +16,8 @@
 
 namespace iptsd::contacts::stability {
 
-template <class T> class Checker {
+template <class T>
+class Checker {
 public:
 	static_assert(std::is_floating_point_v<T>);
 

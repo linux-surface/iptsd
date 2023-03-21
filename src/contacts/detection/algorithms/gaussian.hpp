@@ -14,7 +14,8 @@
 
 namespace iptsd::contacts::detection::gaussian {
 
-template <class T> struct Parameters {
+template <class T>
+struct Parameters {
 	// Flag to invalidate parameters.
 	bool valid = false;
 
@@ -240,7 +241,8 @@ void update_weight_maps(std::vector<Parameters<typename DenseBase<Derived>::Scal
  * Solves the system of linear equations Ax = b using Gaussian elimination
  * with partial pivoting.
  */
-template <class T> bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
+template <class T>
+bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
 {
 	constexpr T eps = std::is_same_v<T, f32> ? 1E-20F : 1E-40;
 

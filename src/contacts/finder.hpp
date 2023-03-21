@@ -17,7 +17,8 @@
 
 namespace iptsd::contacts {
 
-template <class T, class TFit = T> class Finder {
+template <class T, class TFit = T>
+class Finder {
 public:
 	static_assert(std::is_floating_point_v<T>);
 	static_assert(std::is_floating_point_v<TFit>);
