@@ -2,7 +2,7 @@ install_subdir('presets', install_dir: presetdir, strip_directory: true)
 install_data('iptsd-find-hidraw', install_dir: bindir, install_mode: 'rwxr-xr-x')
 
 configure_file(input: 'systemd/iptsd@.service.in', output: 'iptsd@.service', configuration: conf)
-configure_file(input: 'udev/50-ipts.rules.in', output: '50-ipts.rules', configuration: conf)
+configure_file(input: 'udev/50-iptsd.rules.in', output: '50-iptsd.rules', configuration: conf)
 
 service_manager = get_option('service_manager')
 if service_manager.contains('systemd')
@@ -16,7 +16,7 @@ if service_manager.contains('systemd')
     rulesdir = join_paths(udevdir, 'rules.d')
 
     unit = join_paths(meson.current_build_dir(), 'iptsd@.service')
-    rule = join_paths(meson.current_build_dir(), '50-ipts.rules')
+    rule = join_paths(meson.current_build_dir(), '50-iptsd.rules')
 
     install_data(unit, install_dir: unitdir)
     install_data(rule, install_dir: rulesdir)

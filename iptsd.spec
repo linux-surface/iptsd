@@ -76,5 +76,5 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %{_bindir}/iptsd-plot
 %{_bindir}/iptsd-show
 %{_unitdir}/iptsd@.service
-%{_udevrulesdir}/50-ipts.rules
+%{_udevrulesdir}/50-iptsd.rules
 %{_datadir}/iptsd/*
