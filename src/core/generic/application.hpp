@@ -94,14 +94,15 @@ protected:
 	Cone m_cone;
 
 public:
-	Application(const Config &config, const DeviceInfo &info,
+	Application(const Config &config,
+		    const DeviceInfo &info,
 		    std::optional<const ipts::Metadata> metadata)
-		: m_config {config},
-		  m_info {info},
-		  m_metadata {metadata},
-		  m_finder {config.contacts()},
-		  m_dft {config, metadata},
-		  m_cone {config.cone_angle, config.cone_distance}
+		: m_config {config}
+		, m_info {info}
+		, m_metadata {metadata}
+		, m_finder {config.contacts()}
+		, m_dft {config, metadata}
+		, m_cone {config.cone_angle, config.cone_distance}
 	{
 		if (m_config.width == 0 || m_config.height == 0)
 			throw std::runtime_error("Invalid config: The screen size is 0!");

@@ -187,7 +187,9 @@ private:
 	 * @param[in,out] value The default value as well as the destination of the new value.
 	 */
 	template <class T>
-	void get(const INIReader &ini, const std::string &section, const std::string &name,
+	void get(const INIReader &ini,
+		 const std::string &section,
+		 const std::string &name,
 		 T &value) const
 	{
 		if constexpr (std::is_same_v<T, bool>)

@@ -25,8 +25,8 @@ private:
 
 public:
 	DftStylus(Config config, std::optional<const ipts::Metadata> metadata)
-		: m_config {std::move(config)},
-		  m_metadata {std::move(metadata)} {};
+		: m_config {std::move(config)}
+		, m_metadata {std::move(metadata)} {};
 
 	/*!
 	 * Loads a DFT window and calculates stylus properties from it.
