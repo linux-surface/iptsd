@@ -28,8 +28,8 @@ private:
 
 public:
 	Checker(Config<T> config)
-		: m_config {config},
-		  m_frames {std::max(config.temporal_window, static_cast<usize>(2)) - 1} {};
+		: m_config {config}
+		, m_frames {std::max(config.temporal_window, static_cast<usize>(2)) - 1} {};
 
 	/*!
 	 * Resets the checker by clearing the stored copies of the last frames.

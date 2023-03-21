@@ -25,7 +25,8 @@ namespace impl {
  * @param[out] out A reference to the matrix where the results of the convolution are stored.
  */
 template <class DerivedData, class DerivedKernel>
-void run_generic(const DenseBase<DerivedData> &in, const DenseBase<DerivedKernel> &kernel,
+void run_generic(const DenseBase<DerivedData> &in,
+		 const DenseBase<DerivedKernel> &kernel,
 		 DenseBase<DerivedData> &out)
 {
 	using T = typename DenseBase<DerivedKernel>::Scalar;
@@ -79,7 +80,8 @@ void run_generic(const DenseBase<DerivedData> &in, const DenseBase<DerivedKernel
  * @param[out] out A reference to the matrix where the results of the convolution are stored.
  */
 template <class DerivedData, class DerivedKernel>
-inline void run(const DenseBase<DerivedData> &in, const DenseBase<DerivedKernel> &kernel,
+inline void run(const DenseBase<DerivedData> &in,
+		const DenseBase<DerivedKernel> &kernel,
 		DenseBase<DerivedData> &out)
 {
 	constexpr usize Rows = DerivedKernel::RowsAtCompileTime;

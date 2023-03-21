@@ -53,8 +53,11 @@ T gaussian_like(const Vector2<T> &x, const Vector2<T> &mean, const Matrix2<T> &p
 }
 
 template <class T, class DerivedData>
-void assemble_system(Matrix6<T> &m, Vector6<T> &rhs, const Box &b,
-		     const DenseBase<DerivedData> &data, const Matrix<T> &w)
+void assemble_system(Matrix6<T> &m,
+		     Vector6<T> &rhs,
+		     const Box &b,
+		     const DenseBase<DerivedData> &data,
+		     const Matrix<T> &w)
 {
 	constexpr T eps = std::is_same_v<T, f32> ? 1E-20F : 1E-40;
 
@@ -318,7 +321,9 @@ template <class T> bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
 
 template <class Derived, class DerivedData>
 void fit(std::vector<Parameters<typename DenseBase<Derived>::Scalar>> &params,
-	 const DenseBase<DerivedData> &data, DenseBase<Derived> &tmp, usize iterations)
+	 const DenseBase<DerivedData> &data,
+	 DenseBase<Derived> &tmp,
+	 usize iterations)
 {
 	using T = typename DenseBase<Derived>::Scalar;
 

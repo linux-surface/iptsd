@@ -31,13 +31,16 @@ public:
 	std::reference_wrapper<Image<bool>> visited;
 
 public:
-	RecursionState(const DenseBase<Derived> &heatmap, T activation_threshold,
-		       T deactivation_threshold, Box &cluster, Image<bool> &visited)
-		: heatmap {heatmap},
-		  activation_threshold {activation_threshold},
-		  deactivation_threshold {deactivation_threshold},
-		  cluster {cluster},
-		  visited {visited} {};
+	RecursionState(const DenseBase<Derived> &heatmap,
+		       T activation_threshold,
+		       T deactivation_threshold,
+		       Box &cluster,
+		       Image<bool> &visited)
+		: heatmap {heatmap}
+		, activation_threshold {activation_threshold}
+		, deactivation_threshold {deactivation_threshold}
+		, cluster {cluster}
+		, visited {visited} {};
 };
 
 /*!
@@ -51,7 +54,8 @@ public:
  * @param[in] previous The value of the pixel that was checked in the step before.
  */
 template <class Derived>
-void span_recursive(const RecursionState<Derived> state, const Point &position,
+void span_recursive(const RecursionState<Derived> state,
+		    const Point &position,
 		    const typename DenseBase<Derived>::Scalar previous)
 {
 	using T = typename DenseBase<Derived>::Scalar;
@@ -117,7 +121,8 @@ void span_recursive(const RecursionState<Derived> state, const Point &position,
  * @return The bounding box of the spanned cluster.
  */
 template <class Derived>
-Box span(const DenseBase<Derived> &heatmap, const Point &position,
+Box span(const DenseBase<Derived> &heatmap,
+	 const Point &position,
 	 const typename DenseBase<Derived>::Scalar activation_threshold,
 	 const typename DenseBase<Derived>::Scalar deactivation_threshold)
 {

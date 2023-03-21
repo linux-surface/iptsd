@@ -17,7 +17,8 @@ namespace iptsd::contacts::detection::convolution::impl {
  * @param[out] out A reference to the matrix where the results of the convolution are stored.
  */
 template <class DerivedData, class DerivedKernel>
-inline void run_3x3(const DenseBase<DerivedData> &in, const DenseBase<DerivedKernel> &kernel,
+inline void run_3x3(const DenseBase<DerivedData> &in,
+		    const DenseBase<DerivedKernel> &kernel,
 		    DenseBase<DerivedData> &out)
 {
 	using T = typename DenseBase<DerivedData>::Scalar;
