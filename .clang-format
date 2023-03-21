@@ -24,7 +24,7 @@ BreakBeforeBraces: WebKit
 
 # Dont add unneccessary breaks, stay on the same line
 AllowAllParametersOfDeclarationOnNextLine: false
-AlwaysBreakTemplateDeclarations: false
+AlwaysBreakTemplateDeclarations: true
 BreakStringLiterals: false
 
 # Except for functions
