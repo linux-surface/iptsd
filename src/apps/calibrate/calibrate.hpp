@@ -58,7 +58,7 @@ public:
 			const auto aspect = contact.size.maxCoeff() / contact.size.minCoeff();
 
 			m_size_sum += size;
-			m_aspect_sum += size;
+			m_aspect_sum += aspect;
 
 			m_size.push_back(size);
 			m_aspect.push_back(aspect);
