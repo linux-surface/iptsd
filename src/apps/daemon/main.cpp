@@ -15,10 +15,11 @@ namespace iptsd::apps::daemon {
 
 static int run(const gsl::span<char *> args)
 {
-	CLI::App app {};
-	std::filesystem::path path {};
+	CLI::App app {"Daemon to translate touchscreen inputs to Linux input events."};
 
-	app.add_option("DEVICE", path, "The hidraw device to read from.")
+	std::filesystem::path path {};
+	app.add_option("DEVICE", path)
+		->description("The hidraw device node of the touchscreen.")
 		->type_name("FILE")
 		->required();
 

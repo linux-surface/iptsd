@@ -21,16 +21,17 @@ static int run(const gsl::span<char *> args)
 	using std::chrono::duration_cast;
 	using usecs = std::chrono::duration<f64, std::micro>;
 
-	CLI::App app {};
+	CLI::App app {"Utility for performance testing of iptsd."};
 
-	usize runs {};
 	std::filesystem::path path {};
-
-	app.add_option("DATA", path, "The binary data file containing the data to test.")
+	app.add_option("DATA", path)
+		->description("A binary data file containing touch reports.")
 		->type_name("FILE")
 		->required();
 
-	app.add_option("RUNS", runs, "Repeat this number of runs through the data.")
+	usize runs {};
+	app.add_option("RUNS", runs)
+		->description("How many times data will be processed.")
 		->check(CLI::PositiveNumber)
 		->default_val(10);
 

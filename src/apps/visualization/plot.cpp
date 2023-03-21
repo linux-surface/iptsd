@@ -15,16 +15,17 @@ namespace iptsd::apps::visualization::plot {
 
 static int run(const gsl::span<char *> args)
 {
-	CLI::App app {};
+	CLI::App app {"Utility for rendering captured touchscreen inputs to PNG frames."};
 
-	std::filesystem::path path;
-	std::filesystem::path output;
-
-	app.add_option("DATA", path, "The binary data file containing the data to plot.")
+	std::filesystem::path path {};
+	app.add_option("DATA", path)
+		->description("A binary data file containing touch reports.")
 		->type_name("FILE")
 		->required();
 
-	app.add_option("OUTPUT", output, "The output directory containg plotted frames.")
+	std::filesystem::path output {};
+	app.add_option("OUTPUT", output)
+		->description("The directory where the rendered frames are saved.")
 		->type_name("DIR")
 		->required();
 

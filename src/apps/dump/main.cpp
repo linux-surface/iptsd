@@ -15,15 +15,17 @@ namespace iptsd::apps::dump {
 
 static int run(const gsl::span<char *> args)
 {
-	CLI::App app {};
-	std::filesystem::path path {};
-	std::filesystem::path output {};
+	CLI::App app {"Utility for saving raw reports from your touchscreen to a binary file."};
 
-	app.add_option("DEVICE", path, "The hidraw device to read from.")
+	std::filesystem::path path {};
+	app.add_option("DEVICE", path)
+		->description("The hidraw device node of the touchscreen.")
 		->type_name("FILE")
 		->required();
 
-	app.add_option("OUTPUT", output, "Output binary data to this file.")
+	std::filesystem::path output {};
+	app.add_option("OUTPUT", output)
+		->description("The file in which the data will be saved.")
 		->type_name("FILE")
 		->required();
 
