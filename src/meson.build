@@ -126,6 +126,13 @@ executable('iptsd', 'apps/daemon/main.cpp',
            include_directories: includes,
 )
 
+executable('iptsd-check-device', 'apps/check-device/main.cpp',
+           install: true,
+           link_with: hidrd_shim,
+           dependencies: default_deps,
+           include_directories: includes,
+)
+
 tools = get_option('debug_tools')
 
 if tools.contains('calibrate')
