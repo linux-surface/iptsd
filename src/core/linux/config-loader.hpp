@@ -146,7 +146,6 @@ private:
 		this->get(ini, "Touch", "DisableOnPalm", m_config.touch_disable_on_palm);
 		this->get(ini, "Touch", "DisableOnStylus", m_config.touch_disable_on_stylus);
 
-		this->get(ini, "Contacts", "Detection", m_config.contacts_detection);
 		this->get(ini, "Contacts", "Neutral", m_config.contacts_neutral);
 		this->get(ini, "Contacts", "NeutralValue", m_config.contacts_neutral_value);
 		this->get(ini, "Contacts", "ActivationThreshold", m_config.contacts_activation_threshold);

@@ -30,7 +30,6 @@ public:
 	bool touch_disable_on_stylus = false;
 
 	// [Contacts]
-	std::string contacts_detection = "basic";
 	std::string contacts_neutral = "mode";
 	f64 contacts_neutral_value = 0;
 	f64 contacts_activation_threshold = 24;
