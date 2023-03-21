@@ -13,7 +13,8 @@ namespace iptsd::common {
 
 namespace impl {
 
-template <int Signal> class SignalStub {
+template <int Signal>
+class SignalStub {
 private:
 	// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 	inline static SignalStub s_seat;
@@ -36,7 +37,8 @@ public:
 	 *
 	 * @param[in] callback The user defined function to call when the signal is received.
 	 */
-	template <class F> static void setup(F &&callback)
+	template <class F>
+	static void setup(F &&callback)
 	{
 		struct sigaction sig {};
 
@@ -86,7 +88,8 @@ private:
 /*
  * Clears a signal handler once it moves out of scope.
  */
-template <int Signal> class SignalGuard {
+template <int Signal>
+class SignalGuard {
 public:
 	~SignalGuard()
 	{
@@ -103,7 +106,8 @@ public:
  * @param[in] callback The user defined function that is called when the signal is received.
  * @return A guard object that will remove the signal handler once it moves out of scope.
  */
-template <int Signal, class F> [[nodiscard]] impl::SignalGuard<Signal> signal(F &&callback)
+template <int Signal, class F>
+[[nodiscard]] impl::SignalGuard<Signal> signal(F &&callback)
 {
 	impl::SignalStub<Signal>::setup(std::forward<F>(callback));
 	return {};

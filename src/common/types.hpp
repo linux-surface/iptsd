@@ -29,8 +29,6 @@ using f64 = std::double_t;
 using isize = std::ptrdiff_t;
 using usize = std::size_t;
 
-// clang-format off
-
 template <class T, int Size = Eigen::Dynamic>
 using Vector = Eigen::Vector<T, Size>;
 
@@ -55,22 +53,41 @@ using MatrixBase = Eigen::MatrixBase<Matrix<T, Rows, Cols>>;
 template <class T, int Rows = Eigen::Dynamic, int Cols = Eigen::Dynamic>
 using ImageBase = Eigen::ArrayBase<Image<T, Rows, Cols>>;
 
-// clang-format on
+template <class T>
+using DenseBase = Eigen::DenseBase<T>;
 
-template <class T> using DenseBase = Eigen::DenseBase<T>;
-template <class T> using Scalar = typename DenseBase<T>::Scalar;
+template <class T>
+using Scalar = typename DenseBase<T>::Scalar;
 
-template <class T> using Vector2 = Vector<T, 2>;
-template <class T> using Vector3 = Vector<T, 3>;
-template <class T> using Vector4 = Vector<T, 4>;
-template <class T> using Vector5 = Vector<T, 5>;
-template <class T> using Vector6 = Vector<T, 6>;
+template <class T>
+using Vector2 = Vector<T, 2>;
 
-template <class T> using Matrix2 = Matrix<T, 2, 2>;
-template <class T> using Matrix3 = Matrix<T, 3, 3>;
-template <class T> using Matrix4 = Matrix<T, 4, 4>;
-template <class T> using Matrix5 = Matrix<T, 5, 5>;
-template <class T> using Matrix6 = Matrix<T, 6, 6>;
+template <class T>
+using Vector3 = Vector<T, 3>;
+
+template <class T>
+using Vector4 = Vector<T, 4>;
+
+template <class T>
+using Vector5 = Vector<T, 5>;
+
+template <class T>
+using Vector6 = Vector<T, 6>;
+
+template <class T>
+using Matrix2 = Matrix<T, 2, 2>;
+
+template <class T>
+using Matrix3 = Matrix<T, 3, 3>;
+
+template <class T>
+using Matrix4 = Matrix<T, 4, 4>;
+
+template <class T>
+using Matrix5 = Matrix<T, 5, 5>;
+
+template <class T>
+using Matrix6 = Matrix<T, 6, 6>;
 
 using Point = Vector2<Eigen::Index>;
 using Box = Eigen::AlignedBox<Eigen::Index, 2>;

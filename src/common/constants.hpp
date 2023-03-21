@@ -7,7 +7,8 @@
 
 #include <type_traits>
 
-template <class T> constexpr inline T Zero()
+template <class T>
+constexpr inline T Zero()
 {
 	if constexpr (std::is_scalar_v<T>)
 		return static_cast<T>(0);
@@ -15,7 +16,8 @@ template <class T> constexpr inline T Zero()
 		return T::Zero();
 }
 
-template <class T> constexpr inline T One()
+template <class T>
+constexpr inline T One()
 {
 	if constexpr (std::is_scalar_v<T>)
 		return static_cast<T>(1);
