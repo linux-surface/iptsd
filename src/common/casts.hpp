@@ -3,6 +3,10 @@
 #ifndef IPTSD_COMMON_CASTS_HPP
 #define IPTSD_COMMON_CASTS_HPP
 
+#ifndef EIGEN_DEFAULT_TO_ROW_MAJOR
+#define EIGEN_DEFAULT_TO_ROW_MAJOR
+#endif
+
 #include <Eigen/Eigen>
 #include <gsl/gsl>
 #include <type_traits>
