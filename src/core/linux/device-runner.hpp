@@ -18,7 +18,8 @@
 
 namespace iptsd::core::linux {
 
-template <class T> class DeviceRunner {
+template <class T>
+class DeviceRunner {
 private:
 	static_assert(std::is_base_of_v<Application, T>);
 

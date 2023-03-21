@@ -19,7 +19,8 @@
 
 namespace iptsd::core::linux {
 
-template <class T> class FileRunner {
+template <class T>
+class FileRunner {
 private:
 	static_assert(std::is_base_of_v<Application, T>);
 
@@ -42,7 +43,8 @@ private:
 	std::optional<ipts::Reader> m_reader = std::nullopt;
 
 public:
-	template <class... Args> FileRunner(const std::filesystem::path &path, Args... args)
+	template <class... Args>
+	FileRunner(const std::filesystem::path &path, Args... args)
 	{
 		std::ifstream ifs {};
 		ifs.open(path, std::ios::in | std::ios::binary);
