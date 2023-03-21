@@ -131,6 +131,13 @@ public:
 			cluster.min() = (cluster.min() - one).cwiseMax(0);
 			cluster.max() = (cluster.max() + one).cwiseMin(dimensions);
 
+			// min() and max() are inclusive so we need to add one
+			const Vector2<Eigen::Index> size = cluster.sizes() + one;
+
+			// For gaussian fitting, the clusters should have at least 3x3 pixels
+			if (size.x() < 3 || size.y() < 3)
+				continue;
+
 			m_clusters.push_back(std::move(cluster));
 		}
 
