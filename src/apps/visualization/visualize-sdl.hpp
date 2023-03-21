@@ -26,7 +26,8 @@ private:
 	clock::time_point m_last_draw {};
 
 public:
-	VisualizeSDL(const core::Config &config, const core::DeviceInfo &info,
+	VisualizeSDL(const core::Config &config,
+		     const core::DeviceInfo &info,
 		     std::optional<const ipts::Metadata> metadata)
 		: Visualize(config, info, metadata)
 	{

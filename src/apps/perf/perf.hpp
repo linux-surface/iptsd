@@ -34,7 +34,8 @@ private:
 	bool m_had_heatmap {};
 
 public:
-	Perf(const core::Config &config, const core::DeviceInfo &info,
+	Perf(const core::Config &config,
+	     const core::DeviceInfo &info,
 	     std::optional<const ipts::Metadata> metadata)
 		: core::Application(config, info, metadata) {};
 

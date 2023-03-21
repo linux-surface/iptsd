@@ -23,10 +23,12 @@ private:
 	std::ofstream m_writer {};
 
 public:
-	Dump(const core::Config &config, const core::DeviceInfo &info,
-	     std::optional<const ipts::Metadata> metadata, std::filesystem::path output)
-		: core::Application(config, info, metadata),
-		  m_out {std::move(output)} {};
+	Dump(const core::Config &config,
+	     const core::DeviceInfo &info,
+	     std::optional<const ipts::Metadata> metadata,
+	     std::filesystem::path output)
+		: core::Application(config, info, metadata)
+		, m_out {std::move(output)} {};
 
 	void on_start() override
 	{

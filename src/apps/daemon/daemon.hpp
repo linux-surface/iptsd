@@ -23,11 +23,12 @@ private:
 	StylusDevice m_stylus;
 
 public:
-	Daemon(const core::Config &config, const core::DeviceInfo &info,
+	Daemon(const core::Config &config,
+	       const core::DeviceInfo &info,
 	       std::optional<const ipts::Metadata> metadata)
-		: core::Application(config, info, metadata),
-		  m_touch {config, info},
-		  m_stylus {config, info} {};
+		: core::Application(config, info, metadata)
+		, m_touch {config, info}
+		, m_stylus {config, info} {};
 
 	void on_start() override
 	{

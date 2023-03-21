@@ -29,7 +29,8 @@ protected:
 	Cairo::RefPtr<Cairo::Context> m_cairo {};
 
 public:
-	Visualize(const core::Config &config, const core::DeviceInfo &info,
+	Visualize(const core::Config &config,
+		  const core::DeviceInfo &info,
 		  std::optional<const ipts::Metadata> metadata)
 		: core::Application(config, info, metadata) {};
 
