@@ -8,8 +8,10 @@
 #include <common/types.hpp>
 #include <core/generic/device.hpp>
 #include <hid/descriptor.hpp>
+#include <hid/shim/hidrd.h>
 #include <ipts/parser.hpp>
 
+#include <algorithm>
 #include <filesystem>
 #include <gsl/gsl>
 #include <linux/hidraw.h>
@@ -134,6 +136,34 @@ public:
 			return false;
 
 		return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
+	}
+
+	/*!
+	 * Checks if a feature report is responsible for modesetting.
+	 *
+	 * @return Whether the device has a modesetting report.
+	 */
+	[[nodiscard]] bool has_set_mode() const
+	{
+		const hid::Descriptor &desc = this->descriptor();
+		const std::vector<u8> reports = desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE);
+
+		return std::any_of(reports.cbegin(), reports.cend(),
+				   [&](const u8 report) { return this->is_set_mode(report); });
+	}
+
+	/*!
+	 * Checks if an input report contains touch data.
+	 *
+	 * @return Whether the device has a report containing touch data.
+	 */
+	[[nodiscard]] bool has_touch_data() const
+	{
+		const hid::Descriptor &desc = this->descriptor();
+		const std::vector<u8> reports = desc.reports(HIDRD_ITEM_MAIN_TAG_INPUT);
+
+		return std::any_of(reports.cbegin(), reports.cend(),
+				   [&](const u8 report) { return this->is_touch_data(report); });
 	}
 
 	/*!
