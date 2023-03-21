@@ -66,12 +66,15 @@ ReflowComments: true
 SortIncludes: CaseSensitive
 SortUsingDeclarations: true
 
-# Linux: Pack initialization as much as possible to not waste lines.
+# Linux: Pack function signatures as much as possible to not waste lines.
 # PackConstructorInitializers: BinPack
+# BinPackParameters: true
 
-# Custom: Disable packing to improve readability of very long constructors.
+# Custom: Disable packing to improve readability of very long signatures.
+BinPackParameters: false
 PackConstructorInitializers: CurrentLine
 
+BreakConstructorInitializers: BeforeComma
 BreakBeforeTernaryOperators: false
 SpaceBeforeCpp11BracedList: true
 
