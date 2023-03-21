@@ -1,7 +1,17 @@
-BasedOnStyle: LLVM
-Language: Cpp
+##
+## Roughly follows the Linux Kernel coding guidelines, interpreting them for C++.
+##
+## https://www.kernel.org/doc/html/latest/process/coding-style.html
+##
 
-# Indentation
+Language: Cpp
+Standard: Latest
+
+# The LLVM style comes pretty close by default
+BasedOnStyle: LLVM
+ColumnLimit: 100
+
+# Always use 8 character wide tabs for indentation.
 AccessModifierOffset: -8
 ConstructorInitializerIndentWidth: 8
 ContinuationIndentWidth: 8
@@ -9,14 +19,8 @@ IndentWidth: 8
 TabWidth: 8
 UseTab: Always
 
-# Max Line Length
-ColumnLimit: 100
-
-# Put braces on a new line for functions
-BraceWrapping:
-  AfterFunction: true
-  SplitEmptyRecord: false
-BreakBeforeBraces: Custom
+# Put braces on the same line for every statement except for functions.
+BreakBeforeBraces: WebKit
 
 # Dont add unneccessary breaks, stay on the same line
 AllowAllParametersOfDeclarationOnNextLine: false
@@ -25,15 +29,56 @@ BreakStringLiterals: false
 
 # Except for functions
 AllowShortFunctionsOnASingleLine: None
-AllowShortBlocksOnASingleLine: Empty
 
-# Misc
-AlignConsecutiveMacros: true
-IncludeBlocks: Regroup
-IncludeCategories:
-  - Regex: '^<(common|contacts|container|core|gfx|hid|ipts|math)/'
-    Priority: 2
+# Don't allow empty lines at the start of a block.
 KeepEmptyLinesAtTheStartOfBlocks: false
-PackConstructorInitializers: CurrentLine
+
+# Don't add spaces to beginning and end of initializer lists.
 SpacesInContainerLiterals: false
+
+# Make goto labels stand out.
+IndentGotoLabels: false
+
+# Don't waste space by aligning at the rightmost column.
+AlignEscapedNewlines: Left
+
+# Don't align variables.
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+
+# Linux: Don't align macros and comments
+# AlignConsecutiveMacros: false
+# AlignTrailingComments: false
+
+# Custom: Align macros and comments
+AlignConsecutiveMacros: true
+AlignTrailingComments: true
+
+# Linux: Don't touch include statements, usings or comments.
+# IncludeBlocks: Preserve
+# ReflowComments: false
+# SortIncludes: Never
+# SortUsingDeclarations: false
+
+# Custom: Automatically format comments, includes and using statements.
+IncludeBlocks: Regroup
+ReflowComments: true
+SortIncludes: CaseSensitive
+SortUsingDeclarations: true
+
+# Linux: Pack initialization as much as possible to not waste lines.
+# PackConstructorInitializers: BinPack
+
+# Custom: Disable packing to improve readability of very long constructors.
+PackConstructorInitializers: CurrentLine
+
+BreakBeforeTernaryOperators: false
 SpaceBeforeCpp11BracedList: true
+
+##
+## Settings for this project.
+##
+
+IncludeCategories:
+  - Regex: '^<(common|contacts|core|hid|ipts)/'
+    Priority: 2
