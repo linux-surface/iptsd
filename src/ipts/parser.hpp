@@ -57,7 +57,8 @@ public:
 	 * @tparam T The type (and size) of the header.
 	 * @param[in] data The data to parse.
 	 */
-	template <class T> void parse(const gsl::span<u8> &data)
+	template <class T>
+	void parse(const gsl::span<u8> &data)
 	{
 		this->parse_with_header(data, sizeof(T));
 	}

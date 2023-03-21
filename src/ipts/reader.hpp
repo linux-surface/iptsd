@@ -96,7 +96,8 @@ public:
 	 * @tparam The type (and size) of the object to read.
 	 * @return The object that was read.
 	 */
-	template <class T> T read()
+	template <class T>
+	T read()
 	{
 		T value {};
 
