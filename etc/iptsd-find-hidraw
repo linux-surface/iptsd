@@ -1,7 +1,7 @@
 #!/bin/sh
 
 check_hid_name() {
-	grep -E "^HID_NAME=$2$" "$1/device/uevent"
+	grep -E "^HID_NAME=$2$" "/sys/class/hidraw/$1/device/uevent"
 }
 
 check_ipts() {
@@ -16,24 +16,28 @@ check_spihid() {
 	check_hid_name "$1" 'spi [A-F0-9]{4}:[A-F0-9]{4}'
 }
 
-check_udev() {
-	udevadm info -q property "$1/device" | grep -E '^TAGS=' | grep ':iptsd:'
+check_descriptor() {
+	if [ ! -x "$(command -v iptsd-check-device)" ]; then
+		return 1
+	fi
+
+	iptsd-check-device --quiet "/dev/$1"
 }
 
 check_device() {
-	check_udev "$1" || check_ipts "$1" || check_ithc "$1" || check_spihid "$1"
+	check_descriptor "$1" || check_ipts "$1" || check_ithc "$1" || check_spihid "$1"
 }
 
 find_devices() {
 	DEVICES="$(find '/sys/class/hidraw' -type l -print0 | xargs -0 stat -c "%y %n")"
-	DEVICES="$(echo "$DEVICES" | sort | cut -d' ' -f4)"
+	DEVICES="$(echo "$DEVICES" | sort | grep -Eo "hidraw[0-9]+")"
 
 	for dev in $DEVICES; do
 		check_device "$dev" && echo "$dev"
 	done
 }
 
-HIDRAW="$(find_devices | tail -n1 | grep -Eo "hidraw[0-9]+")"
+HIDRAW="$(find_devices | tail -n1)"
 
 if [ "$HIDRAW" = "" ]; then
 	exit 1
