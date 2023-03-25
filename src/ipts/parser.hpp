@@ -234,9 +234,10 @@ private:
 	 * support tilt information, and that only supports 1024 levels of pressure.
 	 *
 	 * The stylus report can contain multiple elements, each describing a different
-	 * sample of the stylus state and position. For each element, the @ref on_stylus
-	 * callback will be invoked. The 1024 pressure levels will be scaled to the same
-	 * 4096 levels that newer devices support.
+	 * sample of the stylus state and position from a 5 millisecond window.
+	 * For the last element, the @ref on_stylus callback will be invoked. The other
+	 * elements are dropped, to prevent jitter in the output. The 1024 pressure levels
+	 *  will be scaled to the same 4096 levels that newer devices support.
 	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
@@ -247,25 +248,26 @@ private:
 		const auto stylus_report = reader.read<struct ipts_stylus_report>();
 		stylus.serial = stylus_report.serial;
 
-		for (u8 i = 0; i < stylus_report.elements; i++) {
-			const auto data = reader.read<struct ipts_stylus_data_v1>();
+		for (u8 i = 0; i < stylus_report.elements - 1; i++)
+			reader.skip(sizeof(struct ipts_stylus_data_v1));
 
-			const std::bitset<8> mode {data.mode};
-			stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
-			stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
-			stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
-			stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
+		const auto data = reader.read<struct ipts_stylus_data_v1>();
 
-			stylus.x = data.x;
-			stylus.y = data.y;
-			stylus.pressure = data.pressure * 4;
-			stylus.azimuth = 0;
-			stylus.altitude = 0;
-			stylus.timestamp = 0;
+		const std::bitset<8> mode {data.mode};
+		stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
+		stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
+		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
+		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
-			if (this->on_stylus)
-				this->on_stylus(stylus);
-		}
+		stylus.x = data.x;
+		stylus.y = data.y;
+		stylus.pressure = data.pressure * 4;
+		stylus.azimuth = 0;
+		stylus.altitude = 0;
+		stylus.timestamp = 0;
+
+		if (this->on_stylus)
+			this->on_stylus(stylus);
 	}
 
 	/*!
@@ -275,8 +277,9 @@ private:
 	 * and 4096 levels of pressure.
 	 *
 	 * The stylus report can contain multiple elements, each describing a different
-	 * sample of the stylus state and position. For each element, the @ref on_stylus
-	 * callback will be invoked.
+	 * sample of the stylus state and position from a 5 millisecond window.
+	 * For the last element, the @ref on_stylus callback will be invoked. The other
+	 * elements are dropped, to prevent jitter in the output.
 	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
@@ -287,25 +290,26 @@ private:
 		const auto stylus_report = reader.read<struct ipts_stylus_report>();
 		stylus.serial = stylus_report.serial;
 
-		for (u8 i = 0; i < stylus_report.elements; i++) {
-			const auto data = reader.read<struct ipts_stylus_data_v2>();
+		for (u8 i = 0; i < stylus_report.elements - 1; i++)
+			reader.skip(sizeof(struct ipts_stylus_data_v2));
 
-			const std::bitset<16> mode(data.mode);
-			stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
-			stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
-			stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
-			stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
+		const auto data = reader.read<struct ipts_stylus_data_v2>();
 
-			stylus.x = data.x;
-			stylus.y = data.y;
-			stylus.pressure = data.pressure;
-			stylus.azimuth = data.azimuth;
-			stylus.altitude = data.altitude;
-			stylus.timestamp = data.timestamp;
+		const std::bitset<16> mode(data.mode);
+		stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
+		stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
+		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
+		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
-			if (this->on_stylus)
-				this->on_stylus(stylus);
-		}
+		stylus.x = data.x;
+		stylus.y = data.y;
+		stylus.pressure = data.pressure;
+		stylus.azimuth = data.azimuth;
+		stylus.altitude = data.altitude;
+		stylus.timestamp = data.timestamp;
+
+		if (this->on_stylus)
+			this->on_stylus(stylus);
 	}
 
 	/*!
