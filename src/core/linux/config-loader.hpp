@@ -174,6 +174,9 @@ private:
 		this->get(ini, "DFT", "TiltMinMag", m_config.dft_tilt_min_mag);
 		this->get(ini, "DFT", "TiltDistance", m_config.dft_tilt_distance);
 
+		// Legacy options that are kept for compatibility
+		this->get(ini, "DFT", "TipDistance", m_config.stylus_tip_distance);
+
 		// clang-format on
 	}
 
