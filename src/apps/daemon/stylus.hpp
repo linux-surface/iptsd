@@ -5,6 +5,7 @@
 
 #include "uinput-device.hpp"
 
+#include <common/types.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
 #include <ipts/data.hpp>
@@ -196,7 +197,10 @@ private:
 		if (altitude <= 0)
 			return Vector2<i32>::Zero();
 
-		const f64 offset = std::sin(altitude) * 0.1; // TODO: config value
+		if (m_config.stylus_tip_distance == 0)
+			return Vector2<i32>::Zero();
+
+		const f64 offset = std::sin(altitude) * m_config.stylus_tip_distance;
 
 		const f64 ox = offset * -std::cos(azimuth);
 		const f64 oy = offset * std::sin(azimuth);

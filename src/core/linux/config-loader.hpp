@@ -161,6 +161,7 @@ private:
 		this->get(ini, "Contacts", "DistanceThreshold", m_config.contacts_distance_thresh);
 
 		this->get(ini, "Stylus", "Disable", m_config.stylus_disable);
+		this->get(ini, "Stylus", "TipDistance", m_config.stylus_tip_distance);
 
 		this->get(ini, "Cone", "Angle", m_config.cone_angle);
 		this->get(ini, "Cone", "Distance", m_config.cone_distance);
