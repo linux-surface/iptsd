@@ -229,15 +229,22 @@ private:
 	 */
 	void process_stylus(const ipts::StylusData &data)
 	{
+		// Correct position based on tip-transmitter distance
+		const Vector2<i32> off = this->calculate_offset(data.altitude, data.azimuth);
+
+		ipts::StylusData corrected = data;
+		corrected.x += off.x();
+		corrected.y += off.y();
+
 		// Scale to physical coordinates
-		const f64 x = (static_cast<f64>(data.x) / IPTS_MAX_X) * m_config.width;
-		const f64 y = (static_cast<f64>(data.y) / IPTS_MAX_Y) * m_config.height;
+		const f64 x = (static_cast<f64>(corrected.x) / IPTS_MAX_X) * m_config.width;
+		const f64 y = (static_cast<f64>(corrected.y) / IPTS_MAX_Y) * m_config.height;
 
 		// Update rejection cone
 		m_cone.update_position(x, y);
 
 		// Hand off the stylus data to the handler code.
-		this->on_stylus(data);
+		this->on_stylus(corrected);
 	}
 
 	/*!
@@ -293,6 +300,39 @@ private:
 
 			contact.valid = m_cone.check(x, y);
 		}
+	}
+
+	/*!
+	 * Calculates the tilt-based offset of the stylus position.
+	 *
+	 * Some styli have the transmitter a few millimeters above the tip of the pen.
+	 * This means that the more you tilt the pen, the more the reported position will
+	 * diverge from the position of the pen tip.
+	 *
+	 * If the distance between transmitter and pen tip is known, this offset can be
+	 * calculated and added to the reported position.
+	 *
+	 * @param[in] altitude The altitude of the stylus.
+	 * @param[in] azimuth The azimuth of the stylus.
+	 * @return A Vector containing the offset on the X and Y axis.
+	 */
+	[[nodiscard]] Vector2<i32> calculate_offset(const f64 altitude, const f64 azimuth) const
+	{
+		if (altitude <= 0)
+			return Vector2<i32>::Zero();
+
+		if (m_config.stylus_tip_distance == 0)
+			return Vector2<i32>::Zero();
+
+		const f64 offset = std::sin(altitude) * m_config.stylus_tip_distance;
+
+		const f64 ox = offset * -std::cos(azimuth);
+		const f64 oy = offset * std::sin(azimuth);
+
+		const i32 dx = gsl::narrow<i32>(std::round((ox / m_config.width) * IPTS_MAX_X));
+		const i32 dy = gsl::narrow<i32>(std::round((oy / m_config.height) * IPTS_MAX_Y));
+
+		return Vector2<i32> {dx, dy};
 	}
 };
 
