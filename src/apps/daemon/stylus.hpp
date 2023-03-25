@@ -20,6 +20,9 @@ class StylusDevice {
 private:
 	std::shared_ptr<UinputDevice> m_uinput = std::make_shared<UinputDevice>();
 
+	// The daemon configuration.
+	core::Config m_config;
+
 	// Whether the device is enabled.
 	bool m_enabled = true;
 
@@ -30,7 +33,7 @@ private:
 	ipts::StylusData m_last;
 
 public:
-	StylusDevice(const core::Config &config, const core::DeviceInfo &info)
+	StylusDevice(const core::Config &config, const core::DeviceInfo &info) : m_config {config}
 	{
 		m_uinput->set_name("IPTS Stylus");
 		m_uinput->set_vendor(info.vendor);
@@ -78,15 +81,19 @@ public:
 			m_active = false;
 
 		if (m_active) {
-			const Vector2<i32> tilt = calculate_tilt(data.altitude, data.azimuth);
+			const f64 altitude = data.altitude;
+			const f64 azimuth = data.azimuth;
+
+			const Vector2<i32> tilt = calculate_tilt(altitude, azimuth);
+			const Vector2<i32> off = this->calculate_offset(altitude, azimuth);
 
 			m_uinput->emit(EV_KEY, BTN_TOUCH, data.contact ? 1 : 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, !data.rubber ? 1 : 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, data.rubber ? 1 : 0);
 			m_uinput->emit(EV_KEY, BTN_STYLUS, data.button ? 1 : 0);
 
-			m_uinput->emit(EV_ABS, ABS_X, data.x);
-			m_uinput->emit(EV_ABS, ABS_Y, data.y);
+			m_uinput->emit(EV_ABS, ABS_X, data.x + off.x());
+			m_uinput->emit(EV_ABS, ABS_Y, data.y + off.y());
 			m_uinput->emit(EV_ABS, ABS_PRESSURE, data.pressure);
 			m_uinput->emit(EV_ABS, ABS_MISC, data.timestamp);
 
@@ -168,6 +175,36 @@ private:
 		const i32 ty = gsl::narrow<i32>(std::round(atan_y * 4500 / M_PI_4)) - 9000;
 
 		return Vector2<i32> {tx, ty};
+	}
+
+	/*!
+	 * Calculates the tilt-based offset of the stylus position.
+	 *
+	 * Some styli have the transmitter a few millimeters above the tip of the pen.
+	 * This means that the more you tilt the pen, the more the reported position will
+	 * diverge from the position of the pen tip.
+	 *
+	 * If the distance between transmitter and pen tip is known, this offset can be
+	 * calculated and added to the reported position.
+	 *
+	 * @param[in] altitude The altitude of the stylus.
+	 * @param[in] azimuth The azimuth of the stylus.
+	 * @return A Vector containing the offset on the X and Y axis.
+	 */
+	[[nodiscard]] Vector2<i32> calculate_offset(const f64 altitude, const f64 azimuth) const
+	{
+		if (altitude <= 0)
+			return Vector2<i32>::Zero();
+
+		const f64 offset = std::sin(altitude) * 0.1; // TODO: config value
+
+		const f64 ox = offset * -std::cos(azimuth);
+		const f64 oy = offset * std::sin(azimuth);
+
+		const i32 dx = gsl::narrow<i32>(std::round((ox / m_config.width) * IPTS_MAX_X));
+		const i32 dy = gsl::narrow<i32>(std::round((oy / m_config.height) * IPTS_MAX_Y));
+
+		return Vector2<i32> {dx, dy};
 	}
 
 	/*!
