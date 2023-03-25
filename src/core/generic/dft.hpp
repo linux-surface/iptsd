@@ -140,14 +140,11 @@ private:
 				xt *= m_config.width / m_config.dft_tilt_distance;
 				yt *= m_config.height / m_config.dft_tilt_distance;
 
-				const f64 azm =
-					std::fmod(std::atan2(-yt, xt) / M_PI + 2, 2) * 18000;
+				const f64 azm = std::fmod(std::atan2(-yt, xt) + 2 * M_PI, 2 * M_PI);
+				const f64 alt = std::asin(std::min(1.0, std::hypot(xt, yt)));
 
-				const f64 alt =
-					std::asin(std::min(1.0, std::hypot(xt, yt))) / M_PI * 18000;
-
-				m_stylus.azimuth = gsl::narrow<u16>(std::round(azm));
-				m_stylus.altitude = gsl::narrow<u16>(std::round(alt));
+				m_stylus.azimuth = azm;
+				m_stylus.altitude = alt;
 			}
 		}
 

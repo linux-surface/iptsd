@@ -150,19 +150,16 @@ private:
 	 * @param[in] azimuth The azimuth of the stylus.
 	 * @return A Vector containing the tilt on the X and Y axis.
 	 */
-	[[nodiscard]] static Vector2<i32> calculate_tilt(const u32 altitude, const u32 azimuth)
+	[[nodiscard]] static Vector2<i32> calculate_tilt(const f64 altitude, const f64 azimuth)
 	{
 		if (altitude <= 0)
 			return Vector2<i32>::Zero();
 
-		const f64 alt = static_cast<f64>(altitude) / 18000.0 * M_PI;
-		const f64 azm = static_cast<f64>(azimuth) / 18000.0 * M_PI;
+		const f64 sin_alt = std::sin(altitude);
+		const f64 sin_azm = std::sin(azimuth);
 
-		const f64 sin_alt = std::sin(alt);
-		const f64 sin_azm = std::sin(azm);
-
-		const f64 cos_alt = std::cos(alt);
-		const f64 cos_azm = std::cos(azm);
+		const f64 cos_alt = std::cos(altitude);
+		const f64 cos_azm = std::cos(azimuth);
 
 		const f64 atan_x = std::atan2(cos_alt, sin_alt * cos_azm);
 		const f64 atan_y = std::atan2(cos_alt, sin_alt * sin_azm);

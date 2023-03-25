@@ -304,9 +304,10 @@ private:
 		stylus.x = data.x;
 		stylus.y = data.y;
 		stylus.pressure = data.pressure;
-		stylus.azimuth = data.azimuth;
-		stylus.altitude = data.altitude;
 		stylus.timestamp = data.timestamp;
+
+		stylus.azimuth = static_cast<f64>(data.azimuth) / 18000.0 * M_PI;
+		stylus.altitude = static_cast<f64>(data.altitude) / 18000.0 * M_PI;
 
 		stylus.contact = stylus.pressure > 0;
 
