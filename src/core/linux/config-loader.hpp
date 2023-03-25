@@ -173,7 +173,6 @@ private:
 		this->get(ini, "DFT", "FreqMinMag", m_config.dft_freq_min_mag);
 		this->get(ini, "DFT", "TiltMinMag", m_config.dft_tilt_min_mag);
 		this->get(ini, "DFT", "TiltDistance", m_config.dft_tilt_distance);
-		this->get(ini, "DFT", "TipDistance", m_config.dft_tip_distance);
 
 		// clang-format on
 	}

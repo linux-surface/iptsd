@@ -128,15 +128,6 @@ private:
 				xt -= x;
 				yt -= y;
 
-				if (m_config.dft_tip_distance > 0) {
-					// correct tip position using tilt data
-					const f64 r = m_config.dft_tip_distance /
-						      m_config.dft_tilt_distance;
-
-					x -= xt * r;
-					y -= yt * r;
-				}
-
 				xt *= m_config.width / m_config.dft_tilt_distance;
 				yt *= m_config.height / m_config.dft_tilt_distance;
 

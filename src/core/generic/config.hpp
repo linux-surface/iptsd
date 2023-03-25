@@ -60,7 +60,6 @@ public:
 	usize dft_freq_min_mag = 10000;
 	usize dft_tilt_min_mag = 10000;
 	f64 dft_tilt_distance = 0.6;
-	f64 dft_tip_distance = 0;
 
 public:
 	/*!
