@@ -255,7 +255,6 @@ private:
 
 		const std::bitset<8> mode {data.mode};
 		stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
-		stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
 		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
 		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
@@ -265,6 +264,8 @@ private:
 		stylus.azimuth = 0;
 		stylus.altitude = 0;
 		stylus.timestamp = 0;
+
+		stylus.contact = stylus.pressure > 0;
 
 		if (this->on_stylus)
 			this->on_stylus(stylus);
@@ -297,7 +298,6 @@ private:
 
 		const std::bitset<16> mode(data.mode);
 		stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
-		stylus.contact = mode[IPTS_STYLUS_REPORT_MODE_BIT_CONTACT];
 		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
 		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
@@ -307,6 +307,8 @@ private:
 		stylus.azimuth = data.azimuth;
 		stylus.altitude = data.altitude;
 		stylus.timestamp = data.timestamp;
+
+		stylus.contact = stylus.pressure > 0;
 
 		if (this->on_stylus)
 			this->on_stylus(stylus);
