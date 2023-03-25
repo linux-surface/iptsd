@@ -185,13 +185,6 @@ private:
 			rubber = val > 0;
 		}
 
-		/*
-		 * toggling rubber while proximity is true seems to cause issues,
-		 * so set proximity off first
-		 */
-		if (m_stylus.rubber != rubber)
-			this->lift();
-
 		m_stylus.button = button;
 		m_stylus.rubber = rubber;
 	}

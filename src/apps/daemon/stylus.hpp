@@ -7,7 +7,9 @@
 
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
+#include <ipts/data.hpp>
 #include <ipts/parser.hpp>
+#include <ipts/protocol.hpp>
 
 #include <linux/input-event-codes.h>
 #include <memory>
@@ -23,6 +25,9 @@ private:
 
 	// Whether the stylus is currently in proximity and sending data.
 	bool m_active = false;
+
+	// The last stylus event that was processed.
+	ipts::StylusData m_last;
 
 public:
 	StylusDevice(const core::Config &config, const core::DeviceInfo &info)
@@ -68,6 +73,10 @@ public:
 	{
 		m_active = data.proximity;
 
+		// Switching tools within one frame causes issues, lift the stylus for one frame.
+		if (m_last.rubber != data.rubber)
+			m_active = false;
+
 		if (m_active) {
 			const Vector2<i32> tilt = calculate_tilt(data.altitude, data.azimuth);
 
@@ -86,6 +95,8 @@ public:
 		} else {
 			this->lift();
 		}
+
+		m_last = data;
 
 		this->sync();
 	}
