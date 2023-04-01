@@ -12,7 +12,7 @@ namespace iptsd::core {
 
 class Cone {
 private:
-	using clock = std::chrono::system_clock;
+	using clock = std::chrono::steady_clock;
 
 private:
 	clock::time_point m_position_update {};
@@ -36,7 +36,7 @@ public:
 	 */
 	[[nodiscard]] bool alive() const
 	{
-		return m_position_update > clock::from_time_t(0);
+		return m_position_update.time_since_epoch() > clock::duration::zero();
 	}
 
 	/*!

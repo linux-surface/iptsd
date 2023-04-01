@@ -19,7 +19,7 @@ namespace iptsd::apps::perf {
 
 class Perf : public core::Application {
 private:
-	using clock = std::chrono::high_resolution_clock;
+	using clock = std::chrono::steady_clock;
 	using usecs = std::chrono::duration<usize, std::micro>;
 
 public:

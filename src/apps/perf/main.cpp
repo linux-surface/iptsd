@@ -43,7 +43,7 @@ static int run(const gsl::span<char *> args)
 	const auto _sigterm = core::linux::signal<SIGTERM>([&](int) { perf.stop(); });
 	const auto _sigint = core::linux::signal<SIGINT>([&](int) { perf.stop(); });
 
-	using clock = std::chrono::high_resolution_clock;
+	using clock = std::chrono::steady_clock;
 
 	usize total = 0;
 	usize total_of_squares = 0;

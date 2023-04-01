@@ -14,7 +14,7 @@ namespace iptsd::apps::visualization {
 
 class VisualizeSDL : public Visualize {
 private:
-	using clock = std::chrono::system_clock;
+	using clock = std::chrono::steady_clock;
 
 private:
 	SDL_Window *m_window = nullptr;
