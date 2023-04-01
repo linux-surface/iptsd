@@ -17,14 +17,14 @@ private:
 	usize m_index = 0;
 
 public:
-	Reader(const gsl::span<u8> &data) : m_data {data} {};
+	Reader(const gsl::span<u8> data) : m_data {data} {};
 
 	/*!
 	 * Fills a buffer with the data at the current position.
 	 *
 	 * @param[in] dest The destination and size of the data.
 	 */
-	void read(const gsl::span<u8> &dest)
+	void read(const gsl::span<u8> dest)
 	{
 		if (dest.size() > this->size())
 			throw std::runtime_error("Tried to read more data than available!");

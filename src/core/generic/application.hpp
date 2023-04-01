@@ -145,7 +145,7 @@ public:
 	 *
 	 * @param[in] data The buffer to process.
 	 */
-	void process(const gsl::span<u8> &data)
+	void process(const gsl::span<u8> data)
 	{
 		this->on_data(data);
 	}
@@ -165,7 +165,7 @@ protected:
 	 * For replacing the parsing step of the data with application
 	 * specific code that operates on the entire incoming data.
 	 */
-	virtual void on_data(const gsl::span<u8> &data)
+	virtual void on_data(const gsl::span<u8> data)
 	{
 		m_parser.parse(data);
 	}

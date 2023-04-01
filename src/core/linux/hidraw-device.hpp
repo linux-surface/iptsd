@@ -207,7 +207,7 @@ private:
 	 *
 	 * @param[in] report The report ID to set, followed by the new data.
 	 */
-	void set_feature(const gsl::span<u8> &report) const
+	void set_feature(const gsl::span<u8> report) const
 	{
 		syscalls::ioctl(m_fd, HIDIOCSFEATURE(report.size()), report.data());
 	}

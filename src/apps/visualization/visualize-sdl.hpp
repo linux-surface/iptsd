@@ -54,7 +54,7 @@ public:
 		m_cairo = Cairo::Context::create(m_tex);
 	}
 
-	void on_data(const gsl::span<u8> &data) override
+	void on_data(const gsl::span<u8> data) override
 	{
 		Visualize::on_data(data);
 

@@ -44,7 +44,7 @@ public:
 		m_had_heatmap = true;
 	}
 
-	void on_data(const gsl::span<u8> &data) override
+	void on_data(const gsl::span<u8> data) override
 	{
 		using std::chrono::duration_cast;
 

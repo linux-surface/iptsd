@@ -44,7 +44,7 @@ inline int open(const std::filesystem::path &file, const int args)
 }
 
 template <class T>
-inline isize read(const int fd, gsl::span<T> &dest)
+inline isize read(const int fd, gsl::span<T> dest)
 {
 	const isize ret = ::read(fd, dest.data(), dest.size_bytes());
 	if (ret == -1)
@@ -60,7 +60,7 @@ inline isize read(const int fd, T &dest)
 }
 
 template <class T>
-inline isize write(const int fd, const gsl::span<T> &data)
+inline isize write(const int fd, const gsl::span<T> data)
 {
 	const isize ret = ::write(fd, data.data(), data.size_bytes());
 	if (ret == -1)

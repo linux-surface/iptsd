@@ -52,7 +52,7 @@ public:
 		}
 	}
 
-	void on_data(const gsl::span<u8> &data) override
+	void on_data(const gsl::span<u8> data) override
 	{
 		if (m_out.empty())
 			return;

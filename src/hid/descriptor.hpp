@@ -23,7 +23,7 @@ public:
 	 *
 	 * @param[in] raw The raw binary data to load and parse.
 	 */
-	void load(const gsl::span<u8> &raw)
+	void load(const gsl::span<u8> raw)
 	{
 		usize size = 0;
 
