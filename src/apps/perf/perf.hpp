@@ -81,6 +81,13 @@ public:
 	void reset()
 	{
 		m_finder.reset();
+
+		total = 0;
+		total_of_squares = 0;
+		count = 0;
+
+		min = clock::duration::max();
+		max = clock::duration::min();
 	}
 };
 
