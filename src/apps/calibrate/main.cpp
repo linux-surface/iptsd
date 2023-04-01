@@ -2,9 +2,9 @@
 
 #include "calibrate.hpp"
 
-#include <common/signal.hpp>
 #include <common/types.hpp>
 #include <core/linux/device-runner.hpp>
+#include <core/linux/signal-handler.hpp>
 
 #include <CLI/CLI.hpp>
 #include <cstdlib>
@@ -28,8 +28,8 @@ static int run(const gsl::span<char *> args)
 	// Create a calibration application that reads from a device.
 	core::linux::DeviceRunner<Calibrate> calibrate {path};
 
-	const auto _sigterm = common::signal<SIGTERM>([&](int) { calibrate.stop(); });
-	const auto _sigint = common::signal<SIGINT>([&](int) { calibrate.stop(); });
+	const auto _sigterm = core::linux::signal<SIGTERM>([&](int) { calibrate.stop(); });
+	const auto _sigint = core::linux::signal<SIGINT>([&](int) { calibrate.stop(); });
 
 	if (!calibrate.run())
 		return EXIT_FAILURE;

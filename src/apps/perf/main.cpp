@@ -2,9 +2,9 @@
 
 #include "perf.hpp"
 
-#include <common/signal.hpp>
 #include <common/types.hpp>
 #include <core/linux/file-runner.hpp>
+#include <core/linux/signal-handler.hpp>
 
 #include <CLI/CLI.hpp>
 #include <CLI/Validators.hpp>
@@ -40,8 +40,8 @@ static int run(const gsl::span<char *> args)
 	// Create a performance testing application that reads from a file.
 	core::linux::FileRunner<Perf> perf {path};
 
-	const auto _sigterm = common::signal<SIGTERM>([&](int) { perf.stop(); });
-	const auto _sigint = common::signal<SIGINT>([&](int) { perf.stop(); });
+	const auto _sigterm = core::linux::signal<SIGTERM>([&](int) { perf.stop(); });
+	const auto _sigint = core::linux::signal<SIGINT>([&](int) { perf.stop(); });
 
 	using clock = std::chrono::high_resolution_clock;
 

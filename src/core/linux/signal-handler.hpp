@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#ifndef IPTSD_COMMON_SIGNAL_HPP
-#define IPTSD_COMMON_SIGNAL_HPP
+#ifndef IPTSD_CORE_LINUX_SIGNAL_HANDLER_HPP
+#define IPTSD_CORE_LINUX_SIGNAL_HANDLER_HPP
 
-#include "cerror.hpp"
+#include "syscalls.hpp"
 
 #include <csignal>
+#include <exception>
 #include <functional>
 #include <type_traits>
 
-namespace iptsd::common {
+namespace iptsd::core::linux {
 
 namespace impl {
 
@@ -46,20 +47,18 @@ public:
 		sig.sa_handler = SignalStub<Signal>::handler;
 
 		// unregister handler before we replace it
-		if (s_seat.m_handler) {
-			const int ret = sigaction(Signal, nullptr, nullptr);
-			if (ret == -1)
-				throw common::cerror("Failed to unregister signal handler");
-		}
+		if (s_seat.m_handler)
+			syscalls::sigaction(Signal, nullptr);
 
 		// replace seat; this will unregister any old handler
 		s_seat.m_handler = std::function {std::forward<F>(callback)};
 
 		// register new handler
-		const int ret = sigaction(Signal, &sig, nullptr);
-		if (ret == -1) {
+		try {
+			syscalls::sigaction(Signal, &sig);
+		} catch (std::exception &e) {
 			s_seat.m_handler = {};
-			throw common::cerror("Failed to register signal handler");
+			throw;
 		}
 	}
 
@@ -71,7 +70,12 @@ public:
 		if (!s_seat.m_handler)
 			return;
 
-		sigaction(Signal, nullptr, nullptr);
+		try {
+			syscalls::sigaction(Signal, nullptr);
+		} catch (std::exception &) {
+			// ignored
+		}
+
 		s_seat.m_handler = {};
 	}
 
@@ -113,6 +117,6 @@ template <int Signal, class F>
 	return {};
 }
 
-} // namespace iptsd::common
+} // namespace iptsd::core::linux
 
-#endif // IPTSD_COMMON_SIGNAL_HPP
+#endif // IPTSD_CORE_LINUX_SIGNAL_HANDLER_HPP

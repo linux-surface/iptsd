@@ -3,8 +3,8 @@
 #ifndef IPTSD_CORE_LINUX_HIDRAW_DEVICE_HPP
 #define IPTSD_CORE_LINUX_HIDRAW_DEVICE_HPP
 
-#include <common/cerror.hpp>
-#include <common/cwrap.hpp>
+#include "syscalls.hpp"
+
 #include <common/types.hpp>
 #include <core/generic/device.hpp>
 #include <hid/descriptor.hpp>
@@ -29,30 +29,17 @@ private:
 	hid::Descriptor m_desc {};
 
 public:
-	HidrawDevice(const std::filesystem::path &path)
+	HidrawDevice(const std::filesystem::path &path) : m_fd {syscalls::open(path, O_RDWR)}
 	{
-		int ret = common::open(path, O_RDWR);
-		if (ret == -1)
-			throw common::cerror("Failed to open hidraw device");
-
-		m_fd = ret;
-
-		ret = common::ioctl(m_fd, HIDIOCGRAWINFO, &m_devinfo);
-		if (ret == -1)
-			throw common::cerror("Failed to read HID device info");
-
 		u32 desc_size = 0;
 
-		ret = common::ioctl(m_fd, HIDIOCGRDESCSIZE, &desc_size);
-		if (ret == -1)
-			throw common::cerror("Failed to read HID descriptor size");
+		syscalls::ioctl(m_fd, HIDIOCGRAWINFO, &m_devinfo);
+		syscalls::ioctl(m_fd, HIDIOCGRDESCSIZE, &desc_size);
 
 		struct hidraw_report_descriptor hidraw_desc {};
 		hidraw_desc.size = desc_size;
 
-		ret = common::ioctl(m_fd, HIDIOCGRDESC, &hidraw_desc);
-		if (ret == -1)
-			throw common::cerror("Failed to read HID descriptor");
+		syscalls::ioctl(m_fd, HIDIOCGRDESC, &hidraw_desc);
 
 		m_desc.load(gsl::span<u8> {&hidraw_desc.value[0], desc_size});
 	}
@@ -91,11 +78,7 @@ public:
 	 */
 	[[nodiscard]] isize read(gsl::span<u8> buffer) const
 	{
-		const isize ret = common::read(m_fd, buffer);
-		if (ret == -1)
-			throw common::cerror("Failed to read from HID device");
-
-		return ret;
+		return syscalls::read(m_fd, buffer);
 	}
 
 	/*!
@@ -216,9 +199,7 @@ private:
 	 */
 	void get_feature(gsl::span<u8> report) const
 	{
-		const int ret = common::ioctl(m_fd, HIDIOCGFEATURE(report.size()), report.data());
-		if (ret == -1)
-			throw common::cerror("Failed to get feature");
+		syscalls::ioctl(m_fd, HIDIOCGFEATURE(report.size()), report.data());
 	}
 
 	/*!
@@ -228,9 +209,7 @@ private:
 	 */
 	void set_feature(const gsl::span<u8> &report) const
 	{
-		const int ret = common::ioctl(m_fd, HIDIOCSFEATURE(report.size()), report.data());
-		if (ret == -1)
-			throw common::cerror("Failed to set feature");
+		syscalls::ioctl(m_fd, HIDIOCSFEATURE(report.size()), report.data());
 	}
 
 	/*!

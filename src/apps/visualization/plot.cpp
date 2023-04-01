@@ -2,9 +2,9 @@
 
 #include "visualize-png.hpp"
 
-#include <common/signal.hpp>
 #include <common/types.hpp>
 #include <core/linux/file-runner.hpp>
+#include <core/linux/signal-handler.hpp>
 
 #include <CLI/CLI.hpp>
 #include <algorithm>
@@ -34,8 +34,8 @@ static int run(const gsl::span<char *> args)
 	// Create a plotting application that reads from a file.
 	core::linux::FileRunner<VisualizePNG> visualize {path, output};
 
-	const auto _sigterm = common::signal<SIGTERM>([&](int) { visualize.stop(); });
-	const auto _sigint = common::signal<SIGINT>([&](int) { visualize.stop(); });
+	const auto _sigterm = core::linux::signal<SIGTERM>([&](int) { visualize.stop(); });
+	const auto _sigint = core::linux::signal<SIGINT>([&](int) { visualize.stop(); });
 
 	if (!visualize.run())
 		return EXIT_FAILURE;

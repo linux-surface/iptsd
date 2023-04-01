@@ -3,12 +3,14 @@
 #ifndef IPTSD_APPS_DAEMON_UINPUT_DEVICE_HPP
 #define IPTSD_APPS_DAEMON_UINPUT_DEVICE_HPP
 
-#include <common/cerror.hpp>
-#include <common/cwrap.hpp>
 #include <common/types.hpp>
+#include <core/linux/syscalls.hpp>
 
+#include <exception>
 #include <linux/uinput.h>
 #include <string>
+
+namespace syscalls = iptsd::core::linux::syscalls;
 
 namespace iptsd::apps::daemon {
 
@@ -23,19 +25,16 @@ private:
 	int m_fd;
 
 public:
-	UinputDevice()
-	{
-		const int ret = common::open("/dev/uinput", O_WRONLY | O_NONBLOCK);
-		if (ret == -1)
-			throw common::cerror("Failed to open uinput device");
-
-		m_fd = ret;
-	}
+	UinputDevice() : m_fd {syscalls::open("/dev/uinput", O_WRONLY | O_NONBLOCK)} {};
 
 	~UinputDevice()
 	{
-		common::ioctl(m_fd, UI_DEV_DESTROY);
-		close(m_fd);
+		try {
+			syscalls::ioctl(m_fd, UI_DEV_DESTROY);
+			syscalls::close(m_fd);
+		} catch (std::exception &) {
+			// ignored
+		}
 	}
 
 	/*!
@@ -95,9 +94,7 @@ public:
 	 */
 	void set_evbit(const i32 ev) const
 	{
-		const int ret = common::ioctl(m_fd, UI_SET_EVBIT, ev);
-		if (ret == -1)
-			throw common::cerror("UI_SET_EVBIT failed");
+		syscalls::ioctl(m_fd, UI_SET_EVBIT, ev);
 	}
 
 	/*!
@@ -109,9 +106,7 @@ public:
 	 */
 	void set_propbit(const i32 prop) const
 	{
-		const int ret = common::ioctl(m_fd, UI_SET_PROPBIT, prop);
-		if (ret == -1)
-			throw common::cerror("UI_SET_PROPBIT failed");
+		syscalls::ioctl(m_fd, UI_SET_PROPBIT, prop);
 	}
 
 	/*!
@@ -123,9 +118,7 @@ public:
 	 */
 	void set_keybit(const i32 key) const
 	{
-		const int ret = common::ioctl(m_fd, UI_SET_KEYBIT, key);
-		if (ret == -1)
-			throw common::cerror("UI_SET_KEYBIT failed");
+		syscalls::ioctl(m_fd, UI_SET_KEYBIT, key);
 	}
 
 	/*!
@@ -147,9 +140,7 @@ public:
 		abs.absinfo.maximum = max;
 		abs.absinfo.resolution = res;
 
-		const int ret = iptsd::common::ioctl(m_fd, UI_ABS_SETUP, &abs);
-		if (ret == -1)
-			throw common::cerror("UI_ABS_SETUP failed");
+		syscalls::ioctl(m_fd, UI_ABS_SETUP, &abs);
 	}
 
 	/*!
@@ -167,13 +158,8 @@ public:
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 		m_name.copy(setup.name, m_name.length(), 0);
 
-		int ret = common::ioctl(m_fd, UI_DEV_SETUP, &setup);
-		if (ret == -1)
-			throw common::cerror("UI_DEV_SETUP failed");
-
-		ret = iptsd::common::ioctl(m_fd, UI_DEV_CREATE);
-		if (ret == -1)
-			throw common::cerror("UI_DEV_CREATE failed");
+		syscalls::ioctl(m_fd, UI_DEV_SETUP, &setup);
+		syscalls::ioctl(m_fd, UI_DEV_CREATE);
 	}
 
 	/*!
@@ -193,9 +179,7 @@ public:
 		ie.code = key;
 		ie.value = value;
 
-		const ssize_t ret = write(m_fd, &ie, sizeof(ie));
-		if (ret == -1)
-			throw common::cerror("Failed to write input event");
+		syscalls::write(m_fd, ie);
 	}
 };
 
