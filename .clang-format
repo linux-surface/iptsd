@@ -83,5 +83,13 @@ SpaceBeforeCpp11BracedList: true
 ##
 
 IncludeCategories:
-  - Regex: '^<(common|contacts|core|hid|ipts)/'
+  - Regex: '^".+"$'
+    Priority: 1
+  - Regex: '^<(common|contacts|core|hid|ipts)/.+>$'
     Priority: 2
+  - Regex: '^<(gsl|Eigen|spdlog|fmt|cairomm|CLI)/.+>$'
+    Priority: 3
+  - Regex: '^<(INIReader.h|SDL.h)>$'
+    Priority: 3
+  - Regex: '^<(linux|sys)/.+>$'
+    Priority: 4
