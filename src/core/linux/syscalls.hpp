@@ -5,15 +5,17 @@
 
 #include <common/types.hpp>
 
+#include <gsl/gsl>
+
+#include <linux/input.h>
+#include <sys/ioctl.h>
+
 #include <cerrno>
 #include <csignal>
 #include <cstdio>
 #include <fcntl.h>
 #include <filesystem>
-#include <gsl/gsl>
-#include <linux/input.h>
 #include <string_view>
-#include <sys/ioctl.h>
 #include <system_error>
 #include <unistd.h>
 

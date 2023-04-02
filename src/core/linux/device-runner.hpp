@@ -9,9 +9,10 @@
 #include <core/generic/application.hpp>
 #include <ipts/data.hpp>
 
+#include <spdlog/spdlog.h>
+
 #include <atomic>
 #include <filesystem>
-#include <spdlog/spdlog.h>
 #include <thread>
 #include <type_traits>
 #include <vector>

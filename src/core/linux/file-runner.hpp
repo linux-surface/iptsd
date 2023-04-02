@@ -9,10 +9,11 @@
 #include <ipts/data.hpp>
 #include <ipts/reader.hpp>
 
+#include <spdlog/spdlog.h>
+
 #include <atomic>
 #include <filesystem>
 #include <fstream>
-#include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <type_traits>
 #include <vector>

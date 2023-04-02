@@ -10,8 +10,9 @@
 #include <core/generic/device.hpp>
 
 #include <INIReader.h>
-#include <filesystem>
 #include <fmt/format.h>
+
+#include <filesystem>
 #include <optional>
 #include <stdexcept>
 #include <string>

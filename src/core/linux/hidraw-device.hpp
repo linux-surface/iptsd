@@ -11,10 +11,12 @@
 #include <hid/shim/hidrd.h>
 #include <ipts/parser.hpp>
 
+#include <gsl/gsl>
+
+#include <linux/hidraw.h>
+
 #include <algorithm>
 #include <filesystem>
-#include <gsl/gsl>
-#include <linux/hidraw.h>
 #include <optional>
 #include <vector>
 
