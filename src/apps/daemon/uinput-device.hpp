@@ -6,8 +6,9 @@
 #include <common/types.hpp>
 #include <core/linux/syscalls.hpp>
 
-#include <exception>
 #include <linux/uinput.h>
+
+#include <exception>
 #include <string>
 
 namespace syscalls = iptsd::core::linux::syscalls;

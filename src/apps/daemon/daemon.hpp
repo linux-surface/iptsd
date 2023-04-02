@@ -10,6 +10,7 @@
 #include <core/generic/config.hpp>
 
 #include <spdlog/spdlog.h>
+
 #include <stdexcept>
 
 namespace iptsd::apps::daemon {

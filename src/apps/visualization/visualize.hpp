@@ -9,8 +9,9 @@
 #include <ipts/data.hpp>
 
 #include <cairomm/cairomm.h>
-#include <cmath>
 #include <gsl/gsl>
+
+#include <cmath>
 #include <limits>
 #include <utility>
 #include <vector>

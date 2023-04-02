@@ -8,12 +8,13 @@
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
 
+#include <spdlog/spdlog.h>
+
 #include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
-#include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <vector>
 

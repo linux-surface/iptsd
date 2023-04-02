@@ -10,8 +10,9 @@
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
 
-#include <algorithm>
 #include <linux/input-event-codes.h>
+
+#include <algorithm>
 #include <memory>
 #include <optional>
 #include <set>

@@ -13,6 +13,7 @@
 #include <ipts/protocol.hpp>
 
 #include <linux/input-event-codes.h>
+
 #include <memory>
 
 namespace iptsd::apps::daemon {

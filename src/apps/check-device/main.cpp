@@ -9,10 +9,11 @@
 #include <ipts/data.hpp>
 
 #include <CLI/CLI.hpp>
-#include <cstdlib>
 #include <gsl/gsl>
 #include <spdlog/common.h>
 #include <spdlog/spdlog.h>
+
+#include <cstdlib>
 
 namespace iptsd::apps::check {
 

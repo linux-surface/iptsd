@@ -7,9 +7,10 @@
 #include <core/linux/signal-handler.hpp>
 
 #include <CLI/CLI.hpp>
-#include <algorithm>
 #include <gsl/gsl>
 #include <spdlog/spdlog.h>
+
+#include <algorithm>
 
 namespace iptsd::apps::visualization::plot {
 

@@ -7,9 +7,10 @@
 #include <core/linux/signal-handler.hpp>
 
 #include <CLI/CLI.hpp>
-#include <cstdlib>
 #include <gsl/gsl>
 #include <spdlog/spdlog.h>
+
+#include <cstdlib>
 
 namespace iptsd::apps::calibrate {
 

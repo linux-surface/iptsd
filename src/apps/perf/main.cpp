@@ -8,11 +8,12 @@
 
 #include <CLI/CLI.hpp>
 #include <CLI/Validators.hpp>
+#include <gsl/gsl>
+#include <spdlog/spdlog.h>
+
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
-#include <gsl/gsl>
-#include <spdlog/spdlog.h>
 
 namespace iptsd::apps::perf {
 

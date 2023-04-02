@@ -6,8 +6,9 @@
 #include "visualize.hpp"
 
 #include <cairomm/cairomm.h>
-#include <filesystem>
 #include <gsl/gsl>
+
+#include <filesystem>
 
 namespace iptsd::apps::visualization {
 
