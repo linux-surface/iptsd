@@ -7,7 +7,6 @@
 #include <common/types.hpp>
 
 #include <gsl/gsl>
-#include <spdlog/spdlog.h>
 
 #include <limits>
 #include <stdexcept>
@@ -372,15 +371,11 @@ void fit(std::vector<Parameters<typename DenseBase<Derived>::Scalar>> &params,
 
 			// solve systems
 			p.valid = impl::ge_solve(sys, rhs, chi);
-			if (!p.valid) {
-				spdlog::warn("invalid equation system");
+			if (!p.valid)
 				continue;
-			}
 
 			// get parameters
 			p.valid = impl::extract_params(chi, p.scale, p.mean, p.prec);
-			if (!p.valid)
-				spdlog::warn("parameter extraction failed");
 		}
 	}
 

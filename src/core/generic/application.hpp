@@ -13,6 +13,8 @@
 #include <ipts/data.hpp>
 #include <ipts/parser.hpp>
 
+#include <spdlog/spdlog.h>
+
 #include <functional>
 #include <stdexcept>
 #include <vector>

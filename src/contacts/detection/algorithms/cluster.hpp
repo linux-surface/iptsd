@@ -5,8 +5,6 @@
 
 #include <common/types.hpp>
 
-#include <spdlog/spdlog.h>
-
 #include <limits>
 #include <vector>
 
