@@ -9,6 +9,7 @@
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
 #include <ipts/data.hpp>
+#include <ipts/protocol.hpp>
 
 #include <cairomm/cairomm.h>
 #include <gsl/gsl>
@@ -25,6 +26,9 @@ namespace iptsd::apps::visualization {
 class Visualize : public core::Application {
 private:
 	Image<u32> m_argb {};
+
+	// The last known state of the stylus.
+	ipts::StylusData m_stylus {};
 
 protected:
 	// The size of the texture we are drawing to.
@@ -65,20 +69,31 @@ public:
 		}
 	}
 
+	void on_stylus(const ipts::StylusData &data) override
+	{
+		m_stylus = data;
+	}
+
 	void draw()
 	{
-		if (m_argb.size() == 0)
-			return;
-
 		// Draw the raw heatmap
 		this->draw_heatmap();
 
 		// Draw the contacts
 		this->draw_contacts();
+
+		// Draw the position of the stylus
+		this->draw_stylus();
 	}
 
 	void draw_heatmap()
 	{
+		if (m_argb.size() == 0) {
+			m_cairo->set_source_rgb(0, 0, 0);
+			m_cairo->paint();
+			return;
+		}
+
 		const i32 cols = gsl::narrow<i32>(m_argb.cols());
 		const i32 rows = gsl::narrow<i32>(m_argb.rows());
 
@@ -191,6 +206,47 @@ public:
 			m_cairo->restore();
 			m_cairo->stroke();
 		}
+	}
+
+	void draw_stylus()
+	{
+		if (!m_stylus.proximity)
+			return;
+
+		constexpr f64 RADIUS = 50;
+
+		const f64 x = static_cast<f64>(m_stylus.x);
+		const f64 y = static_cast<f64>(m_stylus.y);
+
+		const f64 sx = (x / IPTS_MAX_X) * (m_size.x() - 1);
+		const f64 sy = (y / IPTS_MAX_Y) * (m_size.y() - 1);
+
+		m_cairo->set_source_rgb(0, 1, 0.5);
+
+		m_cairo->move_to(sx - RADIUS, sy);
+		m_cairo->line_to(sx + RADIUS, sy);
+		m_cairo->stroke();
+
+		m_cairo->move_to(sx, sy - RADIUS);
+		m_cairo->line_to(sx, sy + RADIUS);
+		m_cairo->stroke();
+
+		if (!m_stylus.contact)
+			return;
+
+		m_cairo->set_source_rgb(1, 0.5, 0);
+
+		const f64 pressure = static_cast<f64>(m_stylus.pressure) / IPTS_MAX_PRESSURE;
+
+		m_cairo->arc(sx, sy, RADIUS * pressure, 0, 2 * M_PI);
+		m_cairo->stroke();
+
+		const f64 ox = RADIUS * std::cos(m_stylus.azimuth) * std::sin(m_stylus.altitude);
+		const f64 oy = -RADIUS * std::sin(m_stylus.azimuth) * std::sin(m_stylus.altitude);
+
+		m_cairo->move_to(sx, sy);
+		m_cairo->line_to(sx + ox, sy + oy);
+		m_cairo->stroke();
 	}
 };
 
