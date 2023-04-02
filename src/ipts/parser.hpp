@@ -9,11 +9,12 @@
 
 #include <common/types.hpp>
 
+#include <gsl/gsl>
+
 #include <array>
 #include <bitset>
 #include <cstddef>
 #include <functional>
-#include <gsl/gsl>
 #include <memory>
 #include <optional>
 #include <vector>
