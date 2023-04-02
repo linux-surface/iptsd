@@ -118,22 +118,14 @@ public:
 				/*
 				 * Abort if there is not enough data left.
 				 */
-				if (local.size() < (sizeof(i64) + m_info.buffer_size))
+				if (local.size() < (sizeof(u64) + m_info.buffer_size))
 					break;
 
-				const auto size = local.read<i64>();
+				const auto size = local.read<u64>();
 
 				/*
 				 * This is an error baked into the format.
-				 * The writer should check for errors returned by the read() call,
-				 * instead it unconditionally writes the values into the file.
-				 */
-				if (size < 0)
-					continue;
-
-				/*
-				 * This is another error baked into the format.
-				 * The write should simply write as many bytes as it just received,
+				 * The writer should simply write as many bytes as it just received,
 				 * instead of writing the entire buffer all the time.
 				 */
 				ipts::Reader buffer = local.sub(m_info.buffer_size);
