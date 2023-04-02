@@ -2,6 +2,7 @@
 
 #include "perf.hpp"
 
+#include <common/chrono.hpp>
 #include <common/types.hpp>
 #include <core/linux/file-runner.hpp>
 #include <core/linux/signal-handler.hpp>
@@ -11,7 +12,6 @@
 #include <spdlog/spdlog.h>
 
 #include <algorithm>
-#include <chrono>
 #include <cmath>
 #include <cstdlib>
 #include <exception>
@@ -23,9 +23,6 @@ namespace iptsd::apps::perf {
 
 static int run(const gsl::span<char *> args)
 {
-	using std::chrono::duration_cast;
-	using usecs = std::chrono::duration<f64, std::micro>;
-
 	CLI::App app {"Utility for performance testing of iptsd."};
 
 	std::filesystem::path path {};
@@ -85,8 +82,8 @@ static int run(const gsl::span<char *> args)
 	spdlog::info("Total: {}μs", total);
 	spdlog::info("Mean: {:.2f}μs", mean);
 	spdlog::info("Standard Deviation: {:.2f}μs", stddev);
-	spdlog::info("Minimum: {:.3f}μs", duration_cast<usecs>(min).count());
-	spdlog::info("Maximum: {:.3f}μs", duration_cast<usecs>(max).count());
+	spdlog::info("Minimum: {:.3f}μs", chrono::duration_cast<microseconds<f64>>(min).count());
+	spdlog::info("Maximum: {:.3f}μs", chrono::duration_cast<microseconds<f64>>(max).count());
 
 	if (!should_stop)
 		return EXIT_FAILURE;

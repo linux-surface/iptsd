@@ -6,6 +6,7 @@
 #include "config-loader.hpp"
 #include "hidraw-device.hpp"
 
+#include <common/chrono.hpp>
 #include <core/generic/application.hpp>
 #include <ipts/data.hpp>
 
@@ -117,7 +118,7 @@ public:
 				spdlog::warn(e.what());
 
 				// Sleep for a moment to let the device get back into normal state.
-				std::this_thread::sleep_for(std::chrono::milliseconds {100});
+				std::this_thread::sleep_for(100ms);
 
 				errors++;
 				continue;

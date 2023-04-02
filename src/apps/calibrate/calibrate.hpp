@@ -5,6 +5,7 @@
 
 #include "configure.h"
 
+#include <common/chrono.hpp>
 #include <common/types.hpp>
 #include <contacts/contact.hpp>
 #include <core/generic/application.hpp>
@@ -15,7 +16,6 @@
 #include <spdlog/spdlog.h>
 
 #include <algorithm>
-#include <chrono>
 #include <cmath>
 #include <filesystem>
 #include <fstream>
@@ -27,6 +27,9 @@
 namespace iptsd::apps::calibrate {
 
 class Calibrate : public core::Application {
+private:
+	using clock = chrono::system_clock;
+
 private:
 	// The sizes of all received contacts.
 	std::vector<f64> m_size {};
@@ -106,12 +109,8 @@ public:
 
 	void on_stop() override
 	{
-		using clock = std::chrono::system_clock;
-		using seconds = std::chrono::seconds;
-		using std::chrono::duration_cast;
-
-		const auto now = clock::now().time_since_epoch();
-		usize unix = duration_cast<seconds>(now).count();
+		const clock::duration now = clock::now().time_since_epoch();
+		usize unix = chrono::duration_cast<seconds<usize>>(now).count();
 
 		const std::string no_slack = fmt::format("iptsd_calib_{}_0mm.conf", unix);
 		const std::string some_slack = fmt::format("iptsd_calib_{}_2mm.conf", unix);

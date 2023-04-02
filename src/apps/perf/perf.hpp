@@ -3,6 +3,7 @@
 #ifndef IPTSD_APPS_PERF_PERF_HPP
 #define IPTSD_APPS_PERF_PERF_HPP
 
+#include <common/chrono.hpp>
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
 #include <core/generic/application.hpp>
@@ -12,7 +13,6 @@
 #include <gsl/gsl>
 
 #include <algorithm>
-#include <chrono>
 #include <optional>
 #include <ratio>
 #include <utility>
@@ -22,8 +22,7 @@ namespace iptsd::apps::perf {
 
 class Perf : public core::Application {
 private:
-	using clock = std::chrono::steady_clock;
-	using usecs = std::chrono::duration<usize, std::micro>;
+	using clock = chrono::steady_clock;
 
 public:
 	usize total = 0;
@@ -49,8 +48,6 @@ public:
 
 	void on_data(const gsl::span<u8> data) override
 	{
-		using std::chrono::duration_cast;
-
 		// Take start time
 		const clock::time_point start = clock::now();
 
@@ -63,7 +60,7 @@ public:
 			const clock::duration x_ns = end - start;
 
 			// Divide early for x and x**2 because they are overflowing
-			const usize x_us = duration_cast<usecs>(x_ns).count();
+			const usize x_us = chrono::duration_cast<microseconds<usize>>(x_ns).count();
 
 			total += x_us;
 			total_of_squares += x_us * x_us;

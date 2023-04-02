@@ -3,16 +3,16 @@
 #ifndef IPTSD_CORE_GENERIC_CONE_HPP
 #define IPTSD_CORE_GENERIC_CONE_HPP
 
+#include <common/chrono.hpp>
 #include <common/types.hpp>
 
-#include <chrono>
 #include <type_traits>
 
 namespace iptsd::core {
 
 class Cone {
 private:
-	using clock = std::chrono::steady_clock;
+	using clock = chrono::steady_clock;
 
 private:
 	clock::time_point m_position_update {};
@@ -46,7 +46,7 @@ public:
 	 */
 	[[nodiscard]] bool active() const
 	{
-		return m_position_update + std::chrono::milliseconds {300} > clock::now();
+		return m_position_update + 300ms > clock::now();
 	}
 
 	/*!
@@ -77,9 +77,9 @@ public:
 		const clock::time_point timestamp = clock::now();
 
 		const auto time_diff = timestamp - m_direction_update;
-		const auto diff = std::chrono::duration_cast<std::chrono::seconds>(time_diff);
+		const auto diff = chrono::duration_cast<seconds<f64>>(time_diff);
 
-		const f64 weight = std::exp2(-gsl::narrow<f64>(diff.count()));
+		const f64 weight = std::exp2(-diff.count());
 		f64 dist = std::hypot(m_x - x, m_y - y);
 
 		const f64 dx = (x - m_x) / (dist + 1E-6F);

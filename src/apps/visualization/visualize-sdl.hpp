@@ -5,6 +5,7 @@
 
 #include "visualize.hpp"
 
+#include <common/chrono.hpp>
 #include <common/types.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
@@ -14,7 +15,6 @@
 #include <cairomm/cairomm.h>
 #include <gsl/gsl>
 
-#include <chrono>
 #include <cstring>
 #include <memory>
 #include <optional>
@@ -71,7 +71,7 @@ public:
 
 		// Limit how many times per seconds the screen is redrawn.
 		const clock::time_point now = clock::now();
-		const clock::time_point next = m_last_draw + std::chrono::milliseconds {1000 / FPS};
+		const clock::time_point next = m_last_draw + (1000ms / FPS);
 
 		if (now < next)
 			return;
