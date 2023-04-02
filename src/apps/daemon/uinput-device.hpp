@@ -6,10 +6,13 @@
 #include <common/types.hpp>
 #include <core/linux/syscalls.hpp>
 
+#include <linux/input.h>
 #include <linux/uinput.h>
 
 #include <exception>
+#include <fcntl.h>
 #include <string>
+#include <utility>
 
 namespace syscalls = iptsd::core::linux::syscalls;
 

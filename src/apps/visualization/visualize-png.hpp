@@ -5,10 +5,17 @@
 
 #include "visualize.hpp"
 
+#include <core/generic/config.hpp>
+#include <core/generic/device.hpp>
+#include <ipts/data.hpp>
+
 #include <cairomm/cairomm.h>
 #include <gsl/gsl>
 
+#include <cmath>
 #include <filesystem>
+#include <optional>
+#include <utility>
 
 namespace iptsd::apps::visualization {
 

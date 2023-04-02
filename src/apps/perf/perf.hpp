@@ -3,15 +3,18 @@
 #ifndef IPTSD_APPS_PERF_PERF_HPP
 #define IPTSD_APPS_PERF_PERF_HPP
 
+#include <common/types.hpp>
+#include <contacts/finder.hpp>
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
+#include <ipts/data.hpp>
 
+#include <gsl/gsl>
+
+#include <algorithm>
 #include <chrono>
-#include <filesystem>
-#include <fstream>
 #include <optional>
-#include <set>
-#include <stdexcept>
+#include <ratio>
 #include <utility>
 #include <vector>
 

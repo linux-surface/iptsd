@@ -4,8 +4,10 @@
 #define IPTSD_APPS_VISUALIZATION_VISUALIZE_HPP
 
 #include <common/types.hpp>
+#include <contacts/contact.hpp>
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
+#include <core/generic/device.hpp>
 #include <ipts/data.hpp>
 
 #include <cairomm/cairomm.h>
@@ -13,6 +15,8 @@
 
 #include <cmath>
 #include <limits>
+#include <optional>
+#include <string>
 #include <utility>
 #include <vector>
 

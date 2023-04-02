@@ -9,11 +9,15 @@
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
 #include <ipts/data.hpp>
-#include <ipts/parser.hpp>
 #include <ipts/protocol.hpp>
+
+#include <gsl/gsl>
 
 #include <linux/input-event-codes.h>
 
+#include <algorithm>
+#include <climits>
+#include <cmath>
 #include <memory>
 
 namespace iptsd::apps::daemon {

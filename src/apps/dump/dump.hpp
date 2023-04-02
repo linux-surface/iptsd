@@ -3,17 +3,20 @@
 #ifndef IPTSD_APPS_DUMP_DUMP_HPP
 #define IPTSD_APPS_DUMP_DUMP_HPP
 
+#include <common/types.hpp>
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
+#include <core/generic/device.hpp>
+#include <ipts/data.hpp>
 
+#include <gsl/gsl>
+
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <iterator>
 #include <optional>
-#include <set>
-#include <stdexcept>
 #include <utility>
-#include <vector>
 
 namespace iptsd::apps::dump {
 

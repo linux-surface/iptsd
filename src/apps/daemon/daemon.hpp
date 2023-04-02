@@ -6,12 +6,16 @@
 #include "stylus.hpp"
 #include "touch.hpp"
 
+#include <common/types.hpp>
+#include <contacts/contact.hpp>
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
+#include <ipts/data.hpp>
 
 #include <spdlog/spdlog.h>
 
-#include <stdexcept>
+#include <optional>
+#include <vector>
 
 namespace iptsd::apps::daemon {
 

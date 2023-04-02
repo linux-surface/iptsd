@@ -9,10 +9,15 @@
 #include <contacts/contact.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
+#include <ipts/protocol.hpp>
+
+#include <gsl/gsl>
 
 #include <linux/input-event-codes.h>
 
 #include <algorithm>
+#include <cmath>
+#include <iterator>
 #include <memory>
 #include <optional>
 #include <set>

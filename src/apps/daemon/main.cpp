@@ -11,6 +11,10 @@
 #include <spdlog/spdlog.h>
 
 #include <cstdlib>
+#include <exception>
+#include <filesystem>
+#include <csignal>
+#include <string>
 
 namespace iptsd::apps::daemon {
 

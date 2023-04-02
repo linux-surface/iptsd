@@ -5,15 +5,17 @@
 #include <core/generic/device.hpp>
 #include <core/linux/config-loader.hpp>
 #include <core/linux/hidraw-device.hpp>
-#include <hid/descriptor.hpp>
 #include <ipts/data.hpp>
 
 #include <CLI/CLI.hpp>
 #include <gsl/gsl>
-#include <spdlog/common.h>
 #include <spdlog/spdlog.h>
 
 #include <cstdlib>
+#include <exception>
+#include <filesystem>
+#include <optional>
+#include <string>
 
 namespace iptsd::apps::check {
 

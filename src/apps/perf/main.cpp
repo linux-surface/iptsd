@@ -7,13 +7,17 @@
 #include <core/linux/signal-handler.hpp>
 
 #include <CLI/CLI.hpp>
-#include <CLI/Validators.hpp>
 #include <gsl/gsl>
 #include <spdlog/spdlog.h>
 
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <cstdlib>
+#include <exception>
+#include <filesystem>
+#include <ratio>
+#include <string>
 
 namespace iptsd::apps::perf {
 
