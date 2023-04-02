@@ -8,10 +8,11 @@
 #endif
 
 #include <Eigen/Eigen>
+#include <gsl/gsl>
+
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
-#include <gsl/gsl>
 
 using i8 = std::int8_t;
 using i16 = std::int16_t;
