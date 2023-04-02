@@ -7,8 +7,9 @@
 #include <common/types.hpp>
 
 #include <gsl/gsl>
-#include <limits>
 #include <spdlog/spdlog.h>
+
+#include <limits>
 #include <stdexcept>
 #include <type_traits>
 

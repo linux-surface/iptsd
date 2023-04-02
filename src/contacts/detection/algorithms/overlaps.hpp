@@ -7,6 +7,7 @@
 #include <common/types.hpp>
 
 #include <gsl/gsl>
+
 #include <vector>
 
 namespace iptsd::contacts::detection::overlaps {

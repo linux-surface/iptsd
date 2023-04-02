@@ -5,8 +5,9 @@
 
 #include <common/types.hpp>
 
-#include <limits>
 #include <spdlog/spdlog.h>
+
+#include <limits>
 #include <vector>
 
 namespace iptsd::contacts::detection::cluster {
