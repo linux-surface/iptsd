@@ -60,7 +60,7 @@ public:
 		if (m_out.empty())
 			return;
 
-		const usize size = data.size();
+		const u64 size = gsl::narrow<u64>(data.size());
 
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 		m_writer.write(reinterpret_cast<const char *>(&size), sizeof(size));

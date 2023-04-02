@@ -118,10 +118,10 @@ public:
 				/*
 				 * Abort if there is not enough data left.
 				 */
-				if (local.size() < (sizeof(isize) + m_info.buffer_size))
+				if (local.size() < (sizeof(i64) + m_info.buffer_size))
 					break;
 
-				const auto size = local.read<isize>();
+				const auto size = local.read<i64>();
 
 				/*
 				 * This is an error baked into the format.
