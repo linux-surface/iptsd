@@ -243,13 +243,44 @@ public:
 
 		m_cairo->set_source_rgb(0, 1, 0.5);
 
-		m_cairo->move_to(sx - RADIUS, sy);
-		m_cairo->line_to(sx + RADIUS, sy);
-		m_cairo->stroke();
+		// Draw a cross for pen, a box for rubber, and a triangle for the side button
+		if (!stylus.rubber && !stylus.button) {
+			m_cairo->move_to(sx - RADIUS, sy);
+			m_cairo->line_to(sx + RADIUS, sy);
+			m_cairo->stroke();
 
-		m_cairo->move_to(sx, sy - RADIUS);
-		m_cairo->line_to(sx, sy + RADIUS);
-		m_cairo->stroke();
+			m_cairo->move_to(sx, sy - RADIUS);
+			m_cairo->line_to(sx, sy + RADIUS);
+			m_cairo->stroke();
+		} else if (stylus.rubber && !stylus.button) {
+			m_cairo->move_to(sx - RADIUS, sy - RADIUS);
+			m_cairo->line_to(sx + RADIUS, sy - RADIUS);
+			m_cairo->stroke();
+
+			m_cairo->move_to(sx - RADIUS, sy + RADIUS);
+			m_cairo->line_to(sx + RADIUS, sy + RADIUS);
+			m_cairo->stroke();
+
+			m_cairo->move_to(sx - RADIUS, sy - RADIUS);
+			m_cairo->line_to(sx - RADIUS, sy + RADIUS);
+			m_cairo->stroke();
+
+			m_cairo->move_to(sx + RADIUS, sy - RADIUS);
+			m_cairo->line_to(sx + RADIUS, sy + RADIUS);
+			m_cairo->stroke();
+		} else if (!stylus.rubber && stylus.button) {
+			m_cairo->move_to(sx - RADIUS, sy - RADIUS);
+			m_cairo->line_to(sx + RADIUS, sy - RADIUS);
+			m_cairo->stroke();
+
+			m_cairo->move_to(sx - RADIUS, sy - RADIUS);
+			m_cairo->line_to(sx, sy + RADIUS);
+			m_cairo->stroke();
+
+			m_cairo->move_to(sx + RADIUS, sy - RADIUS);
+			m_cairo->line_to(sx, sy + RADIUS);
+			m_cairo->stroke();
+		}
 
 		if (!stylus.contact)
 			return;
