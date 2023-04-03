@@ -13,8 +13,10 @@
 
 #include <cairomm/cairomm.h>
 #include <gsl/gsl>
+#include <spdlog/spdlog.h>
 
 #include <cmath>
+#include <deque>
 #include <limits>
 #include <optional>
 #include <string>
@@ -28,7 +30,7 @@ private:
 	Image<u32> m_argb {};
 
 	// The last known state of the stylus.
-	ipts::StylusData m_stylus {};
+	std::deque<ipts::StylusData> m_history {};
 
 protected:
 	// The size of the texture we are drawing to.
@@ -71,7 +73,17 @@ public:
 
 	void on_stylus(const ipts::StylusData &data) override
 	{
-		m_stylus = data;
+		if (!data.proximity) {
+			m_history.clear();
+			return;
+		}
+
+		m_history.push_back(data);
+
+		if (m_history.size() < 50)
+			return;
+
+		m_history.pop_front();
 	}
 
 	void draw()
@@ -84,6 +96,9 @@ public:
 
 		// Draw the position of the stylus
 		this->draw_stylus();
+
+		// Draw a line through the last 50 positions of the stylus
+		this->draw_stylus_stroke();
 	}
 
 	void draw_heatmap()
@@ -210,13 +225,18 @@ public:
 
 	void draw_stylus()
 	{
-		if (!m_stylus.proximity)
+		if (m_history.empty())
+			return;
+
+		const ipts::StylusData &stylus = m_history.back();
+
+		if (!stylus.proximity)
 			return;
 
 		constexpr f64 RADIUS = 50;
 
-		const f64 x = static_cast<f64>(m_stylus.x);
-		const f64 y = static_cast<f64>(m_stylus.y);
+		const f64 x = static_cast<f64>(stylus.x);
+		const f64 y = static_cast<f64>(stylus.y);
 
 		const f64 sx = (x / IPTS_MAX_X) * (m_size.x() - 1);
 		const f64 sy = (y / IPTS_MAX_Y) * (m_size.y() - 1);
@@ -231,22 +251,58 @@ public:
 		m_cairo->line_to(sx, sy + RADIUS);
 		m_cairo->stroke();
 
-		if (!m_stylus.contact)
+		if (!stylus.contact)
 			return;
 
 		m_cairo->set_source_rgb(1, 0.5, 0);
 
-		const f64 pressure = static_cast<f64>(m_stylus.pressure) / IPTS_MAX_PRESSURE;
+		const f64 pressure = static_cast<f64>(stylus.pressure) / IPTS_MAX_PRESSURE;
 
 		m_cairo->arc(sx, sy, RADIUS * pressure, 0, 2 * M_PI);
 		m_cairo->stroke();
 
-		const f64 ox = RADIUS * std::cos(m_stylus.azimuth) * std::sin(m_stylus.altitude);
-		const f64 oy = -RADIUS * std::sin(m_stylus.azimuth) * std::sin(m_stylus.altitude);
+		const f64 ox = RADIUS * std::cos(stylus.azimuth) * std::sin(stylus.altitude);
+		const f64 oy = -RADIUS * std::sin(stylus.azimuth) * std::sin(stylus.altitude);
 
 		m_cairo->move_to(sx, sy);
 		m_cairo->line_to(sx + ox, sy + oy);
 		m_cairo->stroke();
+	}
+
+	void draw_stylus_stroke()
+	{
+		if (m_history.empty())
+			return;
+
+		for (usize i = 0; i < m_history.size() - 1; i++) {
+			const ipts::StylusData &from = m_history[i];
+			const ipts::StylusData &to = m_history[i + 1];
+
+			if (!from.proximity || !to.proximity)
+				continue;
+
+			if (!from.contact || !to.contact)
+				m_cairo->set_source_rgba(0.5, 0, 1.0, 0.5);
+			else
+				m_cairo->set_source_rgba(0.5, 0, 1.0, 1.0);
+
+			const f64 fx = static_cast<f64>(from.x);
+			const f64 fy = static_cast<f64>(from.y);
+
+			const f64 fsx = (fx / IPTS_MAX_X) * (m_size.x() - 1);
+			const f64 fsy = (fy / IPTS_MAX_Y) * (m_size.y() - 1);
+
+			m_cairo->move_to(fsx, fsy);
+
+			const f64 tx = static_cast<f64>(to.x);
+			const f64 ty = static_cast<f64>(to.y);
+
+			const f64 tsx = (tx / IPTS_MAX_X) * (m_size.x() - 1);
+			const f64 tsy = (ty / IPTS_MAX_Y) * (m_size.y() - 1);
+
+			m_cairo->line_to(tsx, tsy);
+			m_cairo->stroke();
+		}
 	}
 };
 
