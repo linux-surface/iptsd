@@ -20,8 +20,9 @@
 #include <string>
 
 namespace iptsd::apps::perf {
+namespace {
 
-static int run(const gsl::span<char *> args)
+int run(const gsl::span<char *> args)
 {
 	CLI::App app {"Utility for performance testing of iptsd."};
 
@@ -91,6 +92,7 @@ static int run(const gsl::span<char *> args)
 	return 0;
 }
 
+} // namespace
 } // namespace iptsd::apps::perf
 
 int main(int argc, char **argv)

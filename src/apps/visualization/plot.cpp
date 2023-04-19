@@ -18,8 +18,9 @@
 #include <string>
 
 namespace iptsd::apps::visualization::plot {
+namespace {
 
-static int run(const gsl::span<char *> args)
+int run(const gsl::span<char *> args)
 {
 	CLI::App app {"Utility for rendering captured touchscreen inputs to PNG frames."};
 
@@ -49,6 +50,7 @@ static int run(const gsl::span<char *> args)
 	return 0;
 }
 
+} // namespace
 } // namespace iptsd::apps::visualization::plot
 
 int main(int argc, char **argv)

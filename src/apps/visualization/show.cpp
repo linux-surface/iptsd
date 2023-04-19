@@ -18,8 +18,9 @@
 #include <string>
 
 namespace iptsd::apps::visualization::show {
+namespace {
 
-static int run(const gsl::span<char *> args)
+int run(const gsl::span<char *> args)
 {
 	CLI::App app {"Utility for rendering touchscreen inputs in real time."};
 
@@ -43,6 +44,7 @@ static int run(const gsl::span<char *> args)
 	return 0;
 }
 
+} // namespace
 } // namespace iptsd::apps::visualization::show
 
 int main(int argc, char **argv)

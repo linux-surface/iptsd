@@ -18,8 +18,9 @@
 #include <string>
 
 namespace iptsd::apps::check {
+namespace {
 
-static int run(const gsl::span<char *> args)
+int run(const gsl::span<char *> args)
 {
 	CLI::App app {"Utility for checking if a hidraw device is an IPTS touchscreen."};
 
@@ -71,6 +72,7 @@ static int run(const gsl::span<char *> args)
 	return 0;
 }
 
+} // namespace
 } // namespace iptsd::apps::check
 
 int main(int argc, char **argv)

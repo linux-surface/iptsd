@@ -17,8 +17,9 @@
 #include <string>
 
 namespace iptsd::apps::calibrate {
+namespace {
 
-static int run(const gsl::span<char *> args)
+int run(const gsl::span<char *> args)
 {
 	CLI::App app {"Utility for measuring your finger size and calibrating iptsd."};
 
@@ -42,6 +43,7 @@ static int run(const gsl::span<char *> args)
 	return 0;
 }
 
+} // namespace
 } // namespace iptsd::apps::calibrate
 
 int main(int argc, char **argv)

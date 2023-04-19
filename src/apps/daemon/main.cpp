@@ -17,8 +17,9 @@
 #include <string>
 
 namespace iptsd::apps::daemon {
+namespace {
 
-static int run(const gsl::span<char *> args)
+int run(const gsl::span<char *> args)
 {
 	CLI::App app {"Daemon to translate touchscreen inputs to Linux input events."};
 
@@ -42,6 +43,7 @@ static int run(const gsl::span<char *> args)
 	return 0;
 }
 
+} // namespace
 } // namespace iptsd::apps::daemon
 
 int main(int argc, char **argv)

@@ -17,8 +17,9 @@
 #include <string>
 
 namespace iptsd::apps::dump {
+namespace {
 
-static int run(const gsl::span<char *> args)
+int run(const gsl::span<char *> args)
 {
 	CLI::App app {"Utility for saving raw reports from your touchscreen to a binary file."};
 
@@ -48,6 +49,7 @@ static int run(const gsl::span<char *> args)
 	return 0;
 }
 
+} // namespace
 } // namespace iptsd::apps::dump
 
 int main(int argc, char **argv)
