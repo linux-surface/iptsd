@@ -163,7 +163,7 @@ struct [[gnu::packed]] ipts_pen_dft_window {
 	u32 timestamp; // counting at approx 8MHz
 	u8 num_rows;
 	u8 seq_num;
-	u8 reserved[3]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+	u8 reserved[3];	 // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 	u8 data_type;
 	u8 reserved2[2]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 };

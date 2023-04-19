@@ -275,7 +275,7 @@ bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
 				for (Eigen::Index i = c; i < 6; ++i)
 					std::swap(a(i, r), a(i, c)); // swap A[r, :] and A[c, :]
 
-				std::swap(b[r], b[c]); // swap b[r] and b[c]
+				std::swap(b[r], b[c]);		     // swap b[r] and b[c]
 			}
 		}
 

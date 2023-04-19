@@ -63,7 +63,7 @@ inline void run_3x3(const DenseBase<DerivedData> &in,
 			v += d(i, 0, 0) * k(0, -1);  // extended
 			v += d(i, 1, 0) * k(1, -1);  // extended
 
-			v += d(i, 0, 0) * k(-1, 0); // extended
+			v += d(i, 0, 0) * k(-1, 0);  // extended
 			v += d(i, 0, 0) * k(0, 0);
 			v += d(i, 1, 0) * k(1, 0);
 
@@ -226,7 +226,7 @@ inline void run_3x3(const DenseBase<DerivedData> &in,
 
 			v += d(i, -1, 0) * k(-1, 0);
 			v += d(i, 0, 0) * k(0, 0);
-			v += d(i, 0, 0) * k(1, 0); // extended
+			v += d(i, 0, 0) * k(1, 0);   // extended
 
 			v += d(i, -1, 0) * k(-1, 1); // extended
 			v += d(i, 0, 0) * k(0, 1);   // extended
