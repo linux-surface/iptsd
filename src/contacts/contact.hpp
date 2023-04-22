@@ -57,21 +57,21 @@ public:
 	 * Whether the contact is stable.
 	 */
 	std::optional<bool> stable = std::nullopt;
-};
 
-template <class T>
-std::optional<std::reference_wrapper<const Contact<T>>>
-find_in_frame(const usize index, const std::vector<Contact<T>> &frame)
-{
-	for (const Contact<T> &contact : frame) {
-		if (contact.index != index)
-			continue;
+public:
+	static std::optional<Contact<T>> find_in_frame(const usize index,
+						       const std::vector<Contact<T>> &frame)
+	{
+		for (const Contact<T> &contact : frame) {
+			if (contact.index != index)
+				continue;
 
-		return contact;
+			return contact;
+		}
+
+		return std::nullopt;
 	}
-
-	return std::nullopt;
-}
+};
 
 } // namespace iptsd::contacts
 

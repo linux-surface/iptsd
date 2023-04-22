@@ -96,7 +96,7 @@ private:
 		if (!contact.index.has_value())
 			return true;
 
-		const auto wrapper = find_in_frame(contact.index.value(), m_last);
+		const auto wrapper = Contact<T>::find_in_frame(contact.index.value(), m_last);
 
 		if (!wrapper.has_value())
 			return true;

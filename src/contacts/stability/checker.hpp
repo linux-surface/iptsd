@@ -88,11 +88,11 @@ private:
 			return true;
 
 		const usize index = contact.index.value();
-		std::reference_wrapper<const Contact<T>> current {contact};
+		Contact<T> current = contact;
 
 		// Iterate over the last frames and find the contact with the same index
 		for (auto itr = m_frames.crbegin(); itr != m_frames.crend(); itr++) {
-			const auto wrapper = find_in_frame(index, *itr);
+			const auto wrapper = Contact<T>::find_in_frame(index, *itr);
 
 			if (!wrapper.has_value())
 				return !should_temp;
