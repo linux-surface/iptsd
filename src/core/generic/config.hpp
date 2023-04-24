@@ -45,6 +45,7 @@ public:
 	// [Stylus]
 	bool stylus_disable = false;
 	f64 stylus_tip_distance = 0;
+	usize stylus_prediction_target = 0;
 
 	// [Cone]
 	f64 cone_angle = 30;

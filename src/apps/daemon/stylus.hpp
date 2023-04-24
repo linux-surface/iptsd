@@ -6,6 +6,7 @@
 #include "uinput-device.hpp"
 
 #include <common/casts.hpp>
+#include <common/chrono.hpp>
 #include <common/types.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
@@ -44,8 +45,12 @@ private:
 	// Kalman-based input predictor to reduce latency.
 	prediction::SinglePointerPredictor m_predictor {};
 
+	// How many milliseconds the predictor will look ahead.
+	milliseconds<usize> m_prediction_target;
+
 public:
 	StylusDevice(const core::Config &config, const core::DeviceInfo &info)
+		: m_prediction_target {config.stylus_prediction_target}
 	{
 		m_uinput->set_name("IPTS Stylus");
 		m_uinput->set_vendor(info.vendor);
@@ -87,7 +92,7 @@ public:
 	void update(const ipts::StylusData &data)
 	{
 		// If the stylus moves to proximity, reset the predictor
-		if (!m_active && data.proximity)
+		if (!m_last.contact && data.contact)
 			m_predictor.reset();
 
 		m_active = data.proximity;
@@ -101,15 +106,17 @@ public:
 			f64 cy = data.y;
 			f64 cp = data.pressure;
 
-			m_predictor.update(Vector2<f64> {cx, cy}, cp);
+			// Run prediction if the user enabled it.
+			if (m_prediction_target.count() > 0 && data.contact) {
+				m_predictor.update(Vector2<f64> {cx, cy}, cp);
 
-			// If the predictor was able to predict something, update our values.
-			if (m_predictor.predict(100ms)) {
-				const Vector2<f64> pos = m_predictor.position();
+				if (m_predictor.predict(m_prediction_target)) {
+					const Vector2<f64> pos = m_predictor.position();
 
-				cx = pos.x();
-				cy = pos.y();
-				cp = m_predictor.pressure();
+					cx = pos.x();
+					cy = pos.y();
+					cp = m_predictor.pressure();
+				}
 			}
 
 			const Vector2<i32> tilt = calculate_tilt(data.altitude, data.azimuth);
