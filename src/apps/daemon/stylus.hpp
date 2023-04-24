@@ -10,6 +10,7 @@
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
 #include <ipts/data.hpp>
+#include <prediction/single-pointer-predictor.hpp>
 
 #include <gsl/gsl>
 
@@ -39,6 +40,9 @@ private:
 
 	// The last stylus event that was processed.
 	ipts::StylusData m_last;
+
+	// Kalman-based input predictor to reduce latency.
+	prediction::SinglePointerPredictor m_predictor {};
 
 public:
 	StylusDevice(const core::Config &config, const core::DeviceInfo &info)
@@ -82,6 +86,10 @@ public:
 	 */
 	void update(const ipts::StylusData &data)
 	{
+		// If the stylus moves to proximity, reset the predictor
+		if (!m_active && data.proximity)
+			m_predictor.reset();
+
 		m_active = data.proximity;
 
 		// Switching tools within one frame causes issues, lift the stylus for one frame.
@@ -89,11 +97,26 @@ public:
 			m_active = false;
 
 		if (m_active) {
+			f64 cx = data.x;
+			f64 cy = data.y;
+			f64 cp = data.pressure;
+
+			m_predictor.update(Vector2<f64> {cx, cy}, cp);
+
+			// If the predictor was able to predict something, update our values.
+			if (m_predictor.predict(100ms)) {
+				const Vector2<f64> pos = m_predictor.position();
+
+				cx = pos.x();
+				cy = pos.y();
+				cp = m_predictor.pressure();
+			}
+
 			const Vector2<i32> tilt = calculate_tilt(data.altitude, data.azimuth);
 
-			const i32 x = casts::to<i32>(std::round(data.x * MAX_X));
-			const i32 y = casts::to<i32>(std::round(data.y * MAX_Y));
-			const i32 pressure = casts::to<i32>(std::round(data.pressure * MAX_P));
+			const i32 x = casts::to<i32>(std::round(cx * MAX_X));
+			const i32 y = casts::to<i32>(std::round(cy * MAX_Y));
+			const i32 pressure = casts::to<i32>(std::round(cp * MAX_P));
 
 			m_uinput->emit(EV_KEY, BTN_TOUCH, data.contact ? 1 : 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, !data.rubber ? 1 : 0);
