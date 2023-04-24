@@ -9,7 +9,6 @@
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
 #include <ipts/data.hpp>
-#include <ipts/protocol.hpp>
 
 #include <cairomm/cairomm.h>
 #include <gsl/gsl>
@@ -238,8 +237,8 @@ public:
 		const f64 x = static_cast<f64>(stylus.x);
 		const f64 y = static_cast<f64>(stylus.y);
 
-		const f64 sx = (x / IPTS_MAX_X) * (m_size.x() - 1);
-		const f64 sy = (y / IPTS_MAX_Y) * (m_size.y() - 1);
+		const f64 sx = x * (m_size.x() - 1);
+		const f64 sy = y * (m_size.y() - 1);
 
 		m_cairo->set_source_rgb(0, 1, 0.5);
 
@@ -287,9 +286,7 @@ public:
 
 		m_cairo->set_source_rgb(1, 0.5, 0);
 
-		const f64 pressure = static_cast<f64>(stylus.pressure) / IPTS_MAX_PRESSURE;
-
-		m_cairo->arc(sx, sy, RADIUS * pressure, 0, 2 * M_PI);
+		m_cairo->arc(sx, sy, RADIUS * stylus.pressure, 0, 2 * M_PI);
 		m_cairo->stroke();
 
 		const f64 ox = RADIUS * std::cos(stylus.azimuth) * std::sin(stylus.altitude);
@@ -320,16 +317,16 @@ public:
 			const f64 fx = static_cast<f64>(from.x);
 			const f64 fy = static_cast<f64>(from.y);
 
-			const f64 fsx = (fx / IPTS_MAX_X) * (m_size.x() - 1);
-			const f64 fsy = (fy / IPTS_MAX_Y) * (m_size.y() - 1);
+			const f64 fsx = fx * (m_size.x() - 1);
+			const f64 fsy = fy * (m_size.y() - 1);
 
 			m_cairo->move_to(fsx, fsy);
 
 			const f64 tx = static_cast<f64>(to.x);
 			const f64 ty = static_cast<f64>(to.y);
 
-			const f64 tsx = (tx / IPTS_MAX_X) * (m_size.x() - 1);
-			const f64 tsy = (ty / IPTS_MAX_Y) * (m_size.y() - 1);
+			const f64 tsx = tx * (m_size.x() - 1);
+			const f64 tsy = ty * (m_size.y() - 1);
 
 			m_cairo->line_to(tsx, tsy);
 			m_cairo->stroke();

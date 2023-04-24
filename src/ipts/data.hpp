@@ -18,9 +18,9 @@ struct StylusData {
 	bool rubber = false;
 
 	u16 timestamp = 0;
-	u16 x = 0;
-	u16 y = 0;
-	u16 pressure = 0;
+	f64 x = 0;
+	f64 y = 0;
+	f64 pressure = 0;
 	f64 altitude = 0;
 	f64 azimuth = 0;
 	u32 serial = 0;

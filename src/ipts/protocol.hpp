@@ -68,10 +68,11 @@ constexpr u8 IPTS_DFT_ID_PRESSURE = 11;
 /*
  * Static limits for the data that is returned by IPTS
  */
-constexpr u16 IPTS_MAX_X        = 9600;
-constexpr u16 IPTS_MAX_Y        = 7200;
-constexpr u16 IPTS_MAX_PRESSURE = 4096;
-constexpr u8  IPTS_MAX_CONTACTS = 16;
+constexpr u16 IPTS_MAX_X           = 9600;
+constexpr u16 IPTS_MAX_Y           = 7200;
+constexpr u16 IPTS_MAX_PRESSURE_V1 = 1024;
+constexpr u16 IPTS_MAX_PRESSURE_V2 = 4096;
+constexpr u8  IPTS_MAX_CONTACTS    = 16;
 
 /*
  * sqrt(IPTS_MAX_X² + IPTS_MAX_Y²)

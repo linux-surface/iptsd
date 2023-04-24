@@ -259,9 +259,9 @@ private:
 		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
 		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
-		stylus.x = data.x;
-		stylus.y = data.y;
-		stylus.pressure = data.pressure * 4;
+		stylus.x = static_cast<f64>(data.x) / IPTS_MAX_X;
+		stylus.y = static_cast<f64>(data.y) / IPTS_MAX_Y;
+		stylus.pressure = static_cast<f64>(data.pressure) / IPTS_MAX_PRESSURE_V1;
 		stylus.azimuth = 0;
 		stylus.altitude = 0;
 		stylus.timestamp = 0;
@@ -302,9 +302,9 @@ private:
 		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
 		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
-		stylus.x = data.x;
-		stylus.y = data.y;
-		stylus.pressure = data.pressure;
+		stylus.x = static_cast<f64>(data.x) / IPTS_MAX_X;
+		stylus.y = static_cast<f64>(data.y) / IPTS_MAX_Y;
+		stylus.pressure = static_cast<f64>(data.pressure) / IPTS_MAX_PRESSURE_V2;
 		stylus.timestamp = data.timestamp;
 
 		stylus.azimuth = static_cast<f64>(data.azimuth) / 18000.0 * M_PI;

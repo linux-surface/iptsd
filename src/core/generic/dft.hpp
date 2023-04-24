@@ -5,8 +5,9 @@
 
 #include "config.hpp"
 
-#include <ipts/parser.hpp>
+#include <ipts/data.hpp>
 
+#include <algorithm>
 #include <optional>
 #include <utility>
 
@@ -139,11 +140,8 @@ private:
 			}
 		}
 
-		x = std::round(std::clamp(x, 0.0, 1.0) * IPTS_MAX_X);
-		y = std::round(std::clamp(y, 0.0, 1.0) * IPTS_MAX_Y);
-
-		m_stylus.x = gsl::narrow<u16>(x);
-		m_stylus.y = gsl::narrow<u16>(y);
+		m_stylus.x = std::clamp(x, 0.0, 1.0);
+		m_stylus.y = std::clamp(y, 0.0, 1.0);
 	}
 
 	/*!
@@ -188,12 +186,11 @@ private:
 			return;
 
 		f64 p = this->interpolate_frequency(dft, IPTS_DFT_PRESSURE_ROWS);
-		p = (1 - p) * IPTS_MAX_PRESSURE;
+		p = 1 - p;
 
-		if (p > 1) {
+		if (p > 0) {
 			m_stylus.contact = true;
-			m_stylus.pressure =
-				std::min(gsl::narrow<u16>(std::round(p)), IPTS_MAX_PRESSURE);
+			m_stylus.pressure = std::clamp(p, 0.0, 1.0);
 		} else {
 			m_stylus.contact = false;
 			m_stylus.pressure = 0;

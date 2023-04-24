@@ -9,7 +9,6 @@
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
 #include <ipts/data.hpp>
-#include <ipts/protocol.hpp>
 
 #include <gsl/gsl>
 
@@ -23,6 +22,11 @@
 namespace iptsd::apps::daemon {
 
 class StylusDevice {
+private:
+	constexpr static usize MAX_X = 9600;
+	constexpr static usize MAX_Y = 7200;
+	constexpr static usize MAX_P = 4096;
+
 private:
 	std::shared_ptr<UinputDevice> m_uinput = std::make_shared<UinputDevice>();
 
@@ -54,15 +58,15 @@ public:
 		m_uinput->set_keybit(BTN_TOOL_RUBBER);
 
 		// Resolution for X / Y is expected to be units/mm.
-		const i32 res_x = gsl::narrow<i32>(std::round(IPTS_MAX_X / (config.width * 10)));
-		const i32 res_y = gsl::narrow<i32>(std::round(IPTS_MAX_Y / (config.height * 10)));
+		const i32 res_x = gsl::narrow<i32>(std::round(MAX_X / (config.width * 10)));
+		const i32 res_y = gsl::narrow<i32>(std::round(MAX_Y / (config.height * 10)));
 
 		// Resolution for tilt is expected to be units/radian.
 		const i32 res_tilt = gsl::narrow<i32>(std::round(18000.0 / M_PI));
 
-		m_uinput->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
-		m_uinput->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
-		m_uinput->set_absinfo(ABS_PRESSURE, 0, IPTS_MAX_PRESSURE, 0);
+		m_uinput->set_absinfo(ABS_X, 0, MAX_X, res_x);
+		m_uinput->set_absinfo(ABS_Y, 0, MAX_Y, res_y);
+		m_uinput->set_absinfo(ABS_PRESSURE, 0, MAX_P, 0);
 		m_uinput->set_absinfo(ABS_TILT_X, -9000, 9000, res_tilt);
 		m_uinput->set_absinfo(ABS_TILT_Y, -9000, 9000, res_tilt);
 		m_uinput->set_absinfo(ABS_MISC, 0, USHRT_MAX, 0);
@@ -86,14 +90,18 @@ public:
 		if (m_active) {
 			const Vector2<i32> tilt = calculate_tilt(data.altitude, data.azimuth);
 
+			const i32 x = gsl::narrow<i32>(std::round(data.x * MAX_X));
+			const i32 y = gsl::narrow<i32>(std::round(data.y * MAX_Y));
+			const i32 pressure = gsl::narrow<i32>(std::round(data.pressure * MAX_P));
+
 			m_uinput->emit(EV_KEY, BTN_TOUCH, data.contact ? 1 : 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, !data.rubber ? 1 : 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, data.rubber ? 1 : 0);
 			m_uinput->emit(EV_KEY, BTN_STYLUS, data.button ? 1 : 0);
 
-			m_uinput->emit(EV_ABS, ABS_X, data.x);
-			m_uinput->emit(EV_ABS, ABS_Y, data.y);
-			m_uinput->emit(EV_ABS, ABS_PRESSURE, data.pressure);
+			m_uinput->emit(EV_ABS, ABS_X, x);
+			m_uinput->emit(EV_ABS, ABS_Y, y);
+			m_uinput->emit(EV_ABS, ABS_PRESSURE, pressure);
 			m_uinput->emit(EV_ABS, ABS_MISC, data.timestamp);
 
 			m_uinput->emit(EV_ABS, ABS_TILT_X, tilt.x());

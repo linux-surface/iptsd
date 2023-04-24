@@ -234,16 +234,16 @@ private:
 	 */
 	void process_stylus(const ipts::StylusData &data)
 	{
-		// Correct position based on tip-transmitter distance
-		const Vector2<i32> off = this->calculate_offset(data.altitude, data.azimuth);
-
 		ipts::StylusData corrected = data;
+
+		// Correct position based on tip-transmitter distance
+		const Vector2<f64> off = this->calculate_offset(data.altitude, data.azimuth);
 		corrected.x += off.x();
 		corrected.y += off.y();
 
 		// Scale to physical coordinates
-		const f64 x = (static_cast<f64>(corrected.x) / IPTS_MAX_X) * m_config.width;
-		const f64 y = (static_cast<f64>(corrected.y) / IPTS_MAX_Y) * m_config.height;
+		const f64 x = corrected.x * m_config.width;
+		const f64 y = corrected.y * m_config.height;
 
 		// Update rejection cone
 		m_cone.update_position(x, y);
@@ -321,23 +321,20 @@ private:
 	 * @param[in] azimuth The azimuth of the stylus.
 	 * @return A Vector containing the offset on the X and Y axis.
 	 */
-	[[nodiscard]] Vector2<i32> calculate_offset(const f64 altitude, const f64 azimuth) const
+	[[nodiscard]] Vector2<f64> calculate_offset(const f64 altitude, const f64 azimuth) const
 	{
 		if (altitude <= 0)
-			return Vector2<i32>::Zero();
+			return Vector2<f64>::Zero();
 
 		if (m_config.stylus_tip_distance == 0)
-			return Vector2<i32>::Zero();
+			return Vector2<f64>::Zero();
 
 		const f64 offset = std::sin(altitude) * m_config.stylus_tip_distance;
 
 		const f64 ox = offset * -std::cos(azimuth);
 		const f64 oy = offset * std::sin(azimuth);
 
-		const i32 dx = gsl::narrow<i32>(std::round((ox / m_config.width) * IPTS_MAX_X));
-		const i32 dy = gsl::narrow<i32>(std::round((oy / m_config.height) * IPTS_MAX_Y));
-
-		return Vector2<i32> {dx, dy};
+		return Vector2<f64> {ox / m_config.width, oy / m_config.height};
 	}
 };
 
