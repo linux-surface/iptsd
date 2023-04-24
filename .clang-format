@@ -85,7 +85,7 @@ SpaceBeforeCpp11BracedList: true
 IncludeCategories:
   - Regex: '^".+"$'
     Priority: 1
-  - Regex: '^<(common|contacts|core|hid|ipts)/.+>$'
+  - Regex: '^<(common|contacts|core|hid|ipts|prediction)/.+>$'
     Priority: 2
   - Regex: '^<(gsl|Eigen|spdlog|fmt|cairomm|CLI)/.+>$'
     Priority: 3
