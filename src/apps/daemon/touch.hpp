@@ -9,13 +9,13 @@
 #include <contacts/contact.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
-#include <ipts/protocol.hpp>
 
 #include <gsl/gsl>
 
 #include <linux/input-event-codes.h>
 
 #include <algorithm>
+#include <climits>
 #include <cmath>
 #include <iterator>
 #include <memory>
@@ -26,6 +26,17 @@
 namespace iptsd::apps::daemon {
 
 class TouchDevice {
+private:
+	constexpr static usize MAX_CONTACTS = 16;
+
+	constexpr static usize MAX_X = 9600;
+	constexpr static usize MAX_Y = 7200;
+
+	/*
+	 * sqrt(MAX_X² + MAX_Y²)
+	 */
+	constexpr static usize DIAGONAL = 12000;
+
 private:
 	std::shared_ptr<UinputDevice> m_uinput = std::make_shared<UinputDevice>();
 
@@ -63,19 +74,19 @@ public:
 		const f64 diag = std::hypot(config.width, config.height);
 
 		// Resolution for X / Y is expected to be units/mm.
-		const i32 res_x = gsl::narrow<i32>(std::round(IPTS_MAX_X / (config.width * 10)));
-		const i32 res_y = gsl::narrow<i32>(std::round(IPTS_MAX_Y / (config.height * 10)));
-		const i32 res_d = gsl::narrow<i32>(std::round(IPTS_DIAGONAL / (diag * 10)));
+		const i32 res_x = gsl::narrow<i32>(std::round(MAX_X / (config.width * 10)));
+		const i32 res_y = gsl::narrow<i32>(std::round(MAX_Y / (config.height * 10)));
+		const i32 res_d = gsl::narrow<i32>(std::round(DIAGONAL / (diag * 10)));
 
-		m_uinput->set_absinfo(ABS_MT_SLOT, 0, IPTS_MAX_CONTACTS, 0);
-		m_uinput->set_absinfo(ABS_MT_TRACKING_ID, 0, IPTS_MAX_CONTACTS, 0);
-		m_uinput->set_absinfo(ABS_MT_POSITION_X, 0, IPTS_MAX_X, res_x);
-		m_uinput->set_absinfo(ABS_MT_POSITION_Y, 0, IPTS_MAX_Y, res_y);
+		m_uinput->set_absinfo(ABS_MT_SLOT, 0, MAX_CONTACTS, 0);
+		m_uinput->set_absinfo(ABS_MT_TRACKING_ID, 0, MAX_CONTACTS, 0);
+		m_uinput->set_absinfo(ABS_MT_POSITION_X, 0, MAX_X, res_x);
+		m_uinput->set_absinfo(ABS_MT_POSITION_Y, 0, MAX_Y, res_y);
 		m_uinput->set_absinfo(ABS_MT_ORIENTATION, 0, 180, 0);
-		m_uinput->set_absinfo(ABS_MT_TOUCH_MAJOR, 0, IPTS_DIAGONAL, res_d);
-		m_uinput->set_absinfo(ABS_MT_TOUCH_MINOR, 0, IPTS_DIAGONAL, res_d);
-		m_uinput->set_absinfo(ABS_X, 0, IPTS_MAX_X, res_x);
-		m_uinput->set_absinfo(ABS_Y, 0, IPTS_MAX_Y, res_y);
+		m_uinput->set_absinfo(ABS_MT_TOUCH_MAJOR, 0, DIAGONAL, res_d);
+		m_uinput->set_absinfo(ABS_MT_TOUCH_MINOR, 0, DIAGONAL, res_d);
+		m_uinput->set_absinfo(ABS_X, 0, MAX_X, res_x);
+		m_uinput->set_absinfo(ABS_Y, 0, MAX_Y, res_y);
 
 		m_uinput->create();
 	}
@@ -249,12 +260,12 @@ private:
 
 		const i32 index = gsl::narrow<i32>(contact.index.value_or(0));
 
-		const i32 x = gsl::narrow<i32>(std::round(mean.x() * IPTS_MAX_X));
-		const i32 y = gsl::narrow<i32>(std::round(mean.y() * IPTS_MAX_Y));
+		const i32 x = gsl::narrow<i32>(std::round(mean.x() * MAX_X));
+		const i32 y = gsl::narrow<i32>(std::round(mean.y() * MAX_Y));
 
 		const i32 angle = gsl::narrow<i32>(std::round(orientation * 180));
-		const i32 major = gsl::narrow<i32>(std::round(size.maxCoeff() * IPTS_DIAGONAL));
-		const i32 minor = gsl::narrow<i32>(std::round(size.minCoeff() * IPTS_DIAGONAL));
+		const i32 major = gsl::narrow<i32>(std::round(size.maxCoeff() * DIAGONAL));
+		const i32 minor = gsl::narrow<i32>(std::round(size.minCoeff() * DIAGONAL));
 
 		m_uinput->emit(EV_ABS, ABS_MT_SLOT, index);
 		m_uinput->emit(EV_ABS, ABS_MT_TRACKING_ID, index);
@@ -334,8 +345,8 @@ private:
 		if (m_config.invert_y)
 			mean.y() = 1.0 - mean.y();
 
-		const i32 x = gsl::narrow<i32>(std::round(mean.x() * IPTS_MAX_X));
-		const i32 y = gsl::narrow<i32>(std::round(mean.y() * IPTS_MAX_Y));
+		const i32 x = gsl::narrow<i32>(std::round(mean.x() * MAX_X));
+		const i32 y = gsl::narrow<i32>(std::round(mean.y() * MAX_Y));
 
 		m_uinput->emit(EV_KEY, BTN_TOUCH, 1);
 		m_uinput->emit(EV_ABS, ABS_X, x);
