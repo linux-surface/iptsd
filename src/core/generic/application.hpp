@@ -196,6 +196,9 @@ private:
 		const Eigen::Index rows = index_cast(data.dim.height);
 		const Eigen::Index cols = index_cast(data.dim.width);
 
+		if (rows == 0 || cols == 0)
+			return;
+
 		// Make sure the heatmap buffer has the right size
 		if (m_heatmap.rows() != rows || m_heatmap.cols() != cols)
 			m_heatmap.conservativeResize(data.dim.height, data.dim.width);
