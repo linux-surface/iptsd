@@ -72,12 +72,6 @@ constexpr u16 IPTS_MAX_X           = 9600;
 constexpr u16 IPTS_MAX_Y           = 7200;
 constexpr u16 IPTS_MAX_PRESSURE_V1 = 1024;
 constexpr u16 IPTS_MAX_PRESSURE_V2 = 4096;
-constexpr u8  IPTS_MAX_CONTACTS    = 16;
-
-/*
- * sqrt(IPTS_MAX_X² + IPTS_MAX_Y²)
- */
-constexpr u32 IPTS_DIAGONAL = 12000;
 
 // clang-format on
 
