@@ -2,12 +2,7 @@
 
 This is the userspace touch processing daemon for Microsoft Surface devices using Intel Precise Touch technology.
 
-The daemon will read incoming HID reports containing raw capacitive touch data, and create standard input events from it using uinput devices.
-
-The following kernel drivers are supported:
- * ipts
- * ithc
- * spi-hid
+The daemon will read incoming HID reports containing raw capacitive touch data, stylus coordinates and DFT pen measurements, and create standard input events from it using uinput devices.
 
 At the moment, only systemd based distributions are properly supported. The daemon itself does not depend on the service manager in any ways, but it needs to know which hidraw device corresponds to the touchscreen. The easiest way to do this is with udev and a parameterized service file, which only systemd seems to support.
 
@@ -27,13 +22,14 @@ To build IPTSD from source, you need to install the following dependencies:
  * meson
  * ninja
  * CLI11
+ * Eigen3
  * fmt
+ * inih / INIReader
  * gsl
  * hidrd
- * inih
  * spdlog
 
-To build the debugging tools you need to install a few more dependencies. The debugging tools will be enabled automatically when these are detected:
+To build the plotting tools for visualizing data, you need to install a few more dependencies.
 
  * cairomm
  * SDL2
@@ -56,7 +52,7 @@ $ sudo ./etc/iptsd-find-hidraw
 You can then run iptsd with the device path as a launch argument:
 
 ```bash
-$ sudo ./build/src/daemon/iptsd /dev/hidrawN
+$ sudo ./build/src/iptsd /dev/hidrawN
 ```
 
 Alternatively, you can install the files you just built to the system. After a reboot, iptsd will be automatically started by udev:
