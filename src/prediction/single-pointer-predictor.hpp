@@ -122,9 +122,9 @@ public:
 			if (m_prev_event_time.time_since_epoch() > clock::duration::zero()) {
 				m_report_rates.push_back(event_time - m_prev_event_time);
 
-				clock::duration sum = std::accumulate(m_report_rates.begin(),
-								      m_report_rates.end(),
-								      clock::duration::zero());
+				const clock::duration sum = std::accumulate(
+					m_report_rates.begin(), m_report_rates.end(),
+					clock::duration::zero());
 
 				m_report_rate = sum / m_report_rates.size();
 			}
