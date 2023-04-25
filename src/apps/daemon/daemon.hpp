@@ -46,6 +46,9 @@ public:
 
 	void on_contacts(const std::vector<contacts::Contact<f64>> &contacts) override
 	{
+		if (m_config.touch_disable)
+			return;
+
 		// Enable the touchscreen if it was disabled by a stylus that is no longer active.
 		if (m_config.touch_disable_on_stylus && !m_stylus.active() && !m_touch.enabled())
 			m_touch.enable();
@@ -55,6 +58,9 @@ public:
 
 	void on_stylus(const ipts::StylusData &stylus) override
 	{
+		if (m_config.stylus_disable)
+			return;
+
 		if (m_config.touch_disable_on_stylus && m_touch.enabled())
 			m_touch.disable();
 
