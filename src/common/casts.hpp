@@ -14,35 +14,35 @@
 
 namespace iptsd::casts {
 
+template <class To, class From>
+constexpr inline To to(const From value)
+{
+	using Common = std::common_type_t<To, From>;
+
+	// Can To contain From?
+	if constexpr (std::is_same_v<Common, To>) {
+		return static_cast<To>(value);
+	} else {
+		return gsl::narrow<To>(value);
+	}
+}
+
 template <class T>
 constexpr inline std::make_signed_t<T> to_signed(const T value)
 {
-	using S = std::make_signed_t<T>;
-
-	if constexpr (std::is_same_v<T, S>)
-		return value;
-	else
-		return gsl::narrow<S>(value);
+	return to<std::make_signed_t<T>>(value);
 }
 
 template <class T>
 constexpr inline std::make_unsigned_t<T> to_unsigned(const T value)
 {
-	using U = std::make_unsigned_t<T>;
-
-	if constexpr (std::is_same_v<T, U>)
-		return value;
-	else
-		return gsl::narrow<U>(value);
+	return to<std::make_unsigned_t<T>>(value);
 }
 
 template <class T>
 constexpr inline Eigen::Index to_eigen(const T value)
 {
-	if constexpr (std::is_signed_v<Eigen::Index>)
-		return casts::to_signed(value);
-	else
-		return casts::to_unsigned(value);
+	return to<Eigen::Index>(value);
 }
 
 } // namespace iptsd::casts
