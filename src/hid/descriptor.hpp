@@ -154,7 +154,7 @@ public:
 	 * @param[in] report The report ID for which to calculate the size.
 	 * @return The combined size of the HID report in bytes.
 	 */
-	[[nodiscard]] u64 size(const u8 report) const
+	[[nodiscard]] usize size(const u8 report) const
 	{
 		u8 current = 0;
 
@@ -190,7 +190,7 @@ public:
 			}
 		}
 
-		return total_size;
+		return gsl::narrow<usize>(total_size);
 	}
 
 	/*!
