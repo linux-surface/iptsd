@@ -37,10 +37,10 @@ void calculate(const std::vector<Contact<typename DenseBase<Derived>::Scalar>> &
 
 	// Calculate the distances between current and previous inputs
 	for (Eigen::Index iy = 0; iy < sy; iy++) {
-		const Contact<T> &cy = y[iy];
+		const Contact<T> &cy = y[unsigned_cast(iy)];
 
 		for (Eigen::Index ix = 0; ix < sx; ix++) {
-			const Contact<T> &cx = x[ix];
+			const Contact<T> &cx = x[unsigned_cast(ix)];
 
 			out(iy, ix) = static_cast<T>((cx.mean - cy.mean).hypotNorm());
 		}

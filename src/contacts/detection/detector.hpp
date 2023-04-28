@@ -109,7 +109,7 @@ public:
 		m_counter = (m_counter + 1) % m_config.neutral_value_backoff;
 
 		// Subtract the neutral value from the whole heatmap
-		m_img_neutral = (heatmap - m_neutral).max(0.0F);
+		m_img_neutral = (heatmap - m_neutral).max(Zero<T>());
 
 		// Blur the heatmap slightly
 		convolution::run(m_img_neutral, m_kernel_blur, m_img_blurred);
