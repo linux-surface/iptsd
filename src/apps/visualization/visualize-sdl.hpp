@@ -83,7 +83,7 @@ public:
 
 		// Copy drawtex to rendertex
 		SDL_LockTexture(m_rtex, nullptr, &pixels, &pitch);
-		std::memcpy(pixels, m_tex->get_data(), m_size.prod() * 4L);
+		std::memcpy(pixels, m_tex->get_data(), unsigned_cast(m_size.prod() * 4L));
 		SDL_UnlockTexture(m_rtex);
 
 		// Display rendertex
