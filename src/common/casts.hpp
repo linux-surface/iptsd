@@ -12,8 +12,10 @@
 
 #include <type_traits>
 
+namespace iptsd::casts {
+
 template <class T>
-constexpr inline std::make_signed_t<T> signed_cast(const T value)
+constexpr inline std::make_signed_t<T> to_signed(const T value)
 {
 	using S = std::make_signed_t<T>;
 
@@ -24,7 +26,7 @@ constexpr inline std::make_signed_t<T> signed_cast(const T value)
 }
 
 template <class T>
-constexpr inline std::make_unsigned_t<T> unsigned_cast(const T value)
+constexpr inline std::make_unsigned_t<T> to_unsigned(const T value)
 {
 	using U = std::make_unsigned_t<T>;
 
@@ -35,12 +37,14 @@ constexpr inline std::make_unsigned_t<T> unsigned_cast(const T value)
 }
 
 template <class T>
-constexpr inline Eigen::Index index_cast(const T value)
+constexpr inline Eigen::Index to_eigen(const T value)
 {
 	if constexpr (std::is_signed_v<Eigen::Index>)
-		return signed_cast(value);
+		return casts::to_signed(value);
 	else
-		return unsigned_cast(value);
+		return casts::to_unsigned(value);
 }
+
+} // namespace iptsd::casts
 
 #endif // IPTSD_COMMON_CASTS_HPP

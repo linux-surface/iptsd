@@ -193,8 +193,8 @@ private:
 	 */
 	void process_heatmap(const ipts::Heatmap &data)
 	{
-		const Eigen::Index rows = index_cast(data.dim.height);
-		const Eigen::Index cols = index_cast(data.dim.width);
+		const Eigen::Index rows = casts::to_eigen(data.dim.height);
+		const Eigen::Index cols = casts::to_eigen(data.dim.width);
 
 		if (rows == 0 || cols == 0)
 			return;

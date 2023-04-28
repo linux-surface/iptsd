@@ -25,7 +25,7 @@ namespace impl {
  */
 inline isize area(const Box &box)
 {
-	return signed_cast((box.sizes().array() + 1).prod());
+	return casts::to_signed((box.sizes().array() + 1).prod());
 }
 
 /*!

@@ -37,8 +37,8 @@ void run_generic(const DenseBase<DerivedData> &in,
 	const Eigen::Index kernel_cols = kernel.cols();
 	const Eigen::Index kernel_rows = kernel.rows();
 
-	const isize dx = (signed_cast(kernel_cols) - 1) / 2;
-	const isize dy = (signed_cast(kernel_rows) - 1) / 2;
+	const isize dx = (casts::to_signed(kernel_cols) - 1) / 2;
+	const isize dy = (casts::to_signed(kernel_rows) - 1) / 2;
 
 	out.setZero();
 
@@ -47,16 +47,16 @@ void run_generic(const DenseBase<DerivedData> &in,
 			const T kern = kernel(ky, kx);
 
 			for (Eigen::Index oy = 0; oy < rows; oy++) {
-				const isize sy = signed_cast(oy + ky) - dy;
+				const isize sy = casts::to_signed(oy + ky) - dy;
 				const isize cy = std::clamp(sy, Zero<isize>(), rows - 1);
 
-				const Eigen::Index iy = index_cast(cy);
+				const Eigen::Index iy = casts::to_eigen(cy);
 
 				for (Eigen::Index ox = 0; ox < cols; ox++) {
-					const isize sx = signed_cast(ox + kx) - dx;
+					const isize sx = casts::to_signed(ox + kx) - dx;
 					const isize cx = std::clamp(sx, Zero<isize>(), cols - 1);
 
-					const Eigen::Index ix = index_cast(cx);
+					const Eigen::Index ix = casts::to_eigen(cx);
 
 					out(oy, ox) += in(iy, ix) * kern;
 				}

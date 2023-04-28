@@ -65,7 +65,7 @@ public:
 				m_distances.minCoeff(&y, &x);
 
 				// Copy the index of the contact
-				frame[unsigned_cast(x)].index = m_last[unsigned_cast(y)].index;
+				frame[casts::to_unsigned(x)].index = m_last[casts::to_unsigned(y)].index;
 
 				// Invalidate all entries containing these contacts
 				m_distances.row(y) = Eigen::NumTraits<T>::infinity();

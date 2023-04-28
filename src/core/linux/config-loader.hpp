@@ -199,7 +199,7 @@ private:
 		if constexpr (std::is_same_v<T, bool>)
 			value = ini.GetBoolean(section, name, value);
 		else if constexpr (std::is_integral_v<T>)
-			value = gsl::narrow<T>(ini.GetInteger(section, name, signed_cast(value)));
+			value = gsl::narrow<T>(ini.GetInteger(section, name, casts::to_signed(value)));
 		else if constexpr (std::is_floating_point_v<T>)
 			value = gsl::narrow_cast<T>(ini.GetReal(section, name, value));
 		else if constexpr (std::is_same_v<T, std::string>)

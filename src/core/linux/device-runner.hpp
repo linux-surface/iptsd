@@ -113,7 +113,7 @@ public:
 				if (!m_device.is_touch_data(m_buffer[0]))
 					continue;
 
-				m_application->process(gsl::span<u8>(m_buffer.data(), unsigned_cast(size)));
+				m_application->process(gsl::span<u8>(m_buffer.data(), casts::to_unsigned(size)));
 			} catch (std::exception &e) {
 				spdlog::warn(e.what());
 

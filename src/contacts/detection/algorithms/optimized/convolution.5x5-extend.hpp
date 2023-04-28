@@ -29,8 +29,8 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 	// access helpers
 	const auto k = [&](isize dx, isize dy) constexpr -> S {
-		const Eigen::Index x = index_cast(dx + 2);
-		const Eigen::Index y = index_cast(dy + 2);
+		const Eigen::Index x = casts::to_eigen(dx + 2);
+		const Eigen::Index y = casts::to_eigen(dy + 2);
 
 #ifdef IPTSD_CONFIG_FORCE_ACCESS_CHECKS
 		return kernel(y, x);
@@ -40,8 +40,8 @@ void run_5x5(const DenseBase<DerivedData> &in,
 	};
 
 	const auto d = [&](Eigen::Index i, isize dx, isize dy) constexpr -> T {
-		const isize sdx = signed_cast(i) + dy * signed_cast(cols) + dx;
-		const Eigen::Index index = index_cast(sdx);
+		const isize sdx = casts::to_signed(i) + dy * casts::to_signed(cols) + dx;
+		const Eigen::Index index = casts::to_eigen(sdx);
 
 #ifdef IPTSD_CONFIG_FORCE_ACCESS_CHECKS
 		return in(index);

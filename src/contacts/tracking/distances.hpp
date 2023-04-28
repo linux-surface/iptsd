@@ -30,17 +30,17 @@ void calculate(const std::vector<Contact<typename DenseBase<Derived>::Scalar>> &
 {
 	using T = typename DenseBase<Derived>::Scalar;
 
-	const Eigen::Index sx = index_cast(x.size());
-	const Eigen::Index sy = index_cast(y.size());
+	const Eigen::Index sx = casts::to_eigen(x.size());
+	const Eigen::Index sy = casts::to_eigen(y.size());
 
 	out.derived().conservativeResize(sy, sx);
 
 	// Calculate the distances between current and previous inputs
 	for (Eigen::Index iy = 0; iy < sy; iy++) {
-		const Contact<T> &cy = y[unsigned_cast(iy)];
+		const Contact<T> &cy = y[casts::to_unsigned(iy)];
 
 		for (Eigen::Index ix = 0; ix < sx; ix++) {
-			const Contact<T> &cx = x[unsigned_cast(ix)];
+			const Contact<T> &cx = x[casts::to_unsigned(ix)];
 
 			out(iy, ix) = static_cast<T>((cx.mean - cy.mean).hypotNorm());
 		}
