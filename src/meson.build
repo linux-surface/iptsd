@@ -11,6 +11,7 @@ cxxflags = [
   '-Wmissing-include-dirs',
   '-Winit-self',
   '-Wimplicit-fallthrough',
+  '-Wdouble-promotion',
 ]
 
 optflags = []
