@@ -3,6 +3,7 @@
 #ifndef IPTSD_CONTACTS_DETECTION_ALGORITHMS_ELLIPSE_HPP
 #define IPTSD_CONTACTS_DETECTION_ALGORITHMS_ELLIPSE_HPP
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 
 #include <cmath>
@@ -21,7 +22,7 @@ Vector2<T> size(const Vector2<T> &eigenvalues)
 	const Vector2<T> size = eigenvalues.cwiseAbs().cwiseSqrt();
 
 	// The eigenvalues are the radius of the ellipse but we want to return the diameter.
-	return (size.array() * static_cast<T>(2)).matrix();
+	return (size.array() * casts::to<T>(2)).matrix();
 }
 
 /*!
@@ -33,7 +34,7 @@ Vector2<T> size(const Vector2<T> &eigenvalues)
 template <class T>
 T angle(const Matrix2<T> &eigenvectors)
 {
-	constexpr auto PI = static_cast<T>(M_PI);
+	constexpr auto PI = casts::to<T>(M_PI);
 
 	const Vector2<T> ev1 = eigenvectors.col(0);
 	const T angle = std::atan2(ev1.x(), ev1.y());

@@ -128,7 +128,8 @@ public:
 				 * The writer should simply write as many bytes as it just received,
 				 * instead of writing the entire buffer all the time.
 				 */
-				ipts::Reader buffer = local.sub(gsl::narrow<usize>(m_info.buffer_size));
+				ipts::Reader buffer =
+					local.sub(gsl::narrow<usize>(m_info.buffer_size));
 
 				m_application->process(buffer.subspan(gsl::narrow<usize>(size)));
 			} catch (std::exception &e) {

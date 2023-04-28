@@ -3,6 +3,7 @@
 #ifndef IPTSD_CONTACTS_DETECTION_ALGORITHMS_GAUSSIAN_HPP
 #define IPTSD_CONTACTS_DETECTION_ALGORITHMS_GAUSSIAN_HPP
 
+#include <common/casts.hpp>
 #include <common/constants.hpp>
 #include <common/types.hpp>
 
@@ -50,7 +51,7 @@ T gaussian_like(const Vector2<T> &x, const Vector2<T> &mean, const Matrix2<T> &p
 	const Vector2<T> vec = x - mean;
 	const T vtmv = vec.transpose() * prec * vec;
 
-	return std::exp(-vtmv) / static_cast<T>(2);
+	return std::exp(-vtmv) / casts::to<T>(2);
 }
 
 template <class T, class DerivedData>
@@ -60,14 +61,14 @@ void assemble_system(Matrix6<T> &m,
 		     const DenseBase<DerivedData> &data,
 		     const Matrix<T> &w)
 {
-	constexpr T eps = std::is_same_v<T, f32> ? static_cast<T>(1E-20) : static_cast<T>(1E-40);
+	constexpr T eps = std::is_same_v<T, f32> ? casts::to<T>(1E-20) : casts::to<T>(1E-40);
 
 	const Eigen::Index cols = data.cols();
 	const Eigen::Index rows = data.rows();
 
 	const auto scale = Vector2<T> {
-		static_cast<T>(2) / gsl::narrow<T>(cols),
-		static_cast<T>(2) / gsl::narrow<T>(rows),
+		casts::to<T>(2) / gsl::narrow<T>(cols),
+		casts::to<T>(2) / gsl::narrow<T>(rows),
 	};
 
 	m.setZero();
@@ -82,7 +83,7 @@ void assemble_system(Matrix6<T> &m,
 		for (Eigen::Index ix = bmin.x(); ix <= bmax.x(); ix++) {
 			const T x = gsl::narrow<T>(ix) * scale.x() - 1;
 
-			const T d = w(iy - bmin.y(), ix - bmin.x()) * static_cast<T>(data(iy, ix));
+			const T d = w(iy - bmin.y(), ix - bmin.x()) * casts::to<T>(data(iy, ix));
 			const T v = std::log(d + eps) * d * d;
 
 			rhs(0) += v * x * x;
@@ -142,7 +143,7 @@ void assemble_system(Matrix6<T> &m,
 template <class T>
 bool extract_params(const Vector6<T> &chi, T &scale, Vector2<T> &mean, Matrix2<T> &prec)
 {
-	constexpr T eps = std::is_same_v<T, f32> ? static_cast<T>(1E-20) : static_cast<T>(1E-40);
+	constexpr T eps = std::is_same_v<T, f32> ? casts::to<T>(1E-20) : casts::to<T>(1E-40);
 
 	prec.noalias() = -2 * Matrix2<T> {
 				      {chi[0], chi[1]},
@@ -158,7 +159,7 @@ bool extract_params(const Vector6<T> &chi, T &scale, Vector2<T> &mean, Matrix2<T
 	mean.y() = (prec(0, 0) * chi[4] - prec(0, 1) * chi[3]) / d;
 
 	const T vtmv = mean.transpose() * prec * mean;
-	scale = std::exp(chi[5] + vtmv / static_cast<T>(2));
+	scale = std::exp(chi[5] + vtmv / casts::to<T>(2));
 
 	return true;
 }
@@ -173,8 +174,8 @@ void update_weight_maps(std::vector<Parameters<typename DenseBase<Derived>::Scal
 	const Eigen::Index rows = total.rows();
 
 	const auto scale = Vector2<T> {
-		static_cast<T>(2) / gsl::narrow<T>(cols),
-		static_cast<T>(2) / gsl::narrow<T>(rows),
+		casts::to<T>(2) / gsl::narrow<T>(cols),
+		casts::to<T>(2) / gsl::narrow<T>(rows),
 	};
 
 	total.setZero();
@@ -244,7 +245,7 @@ void update_weight_maps(std::vector<Parameters<typename DenseBase<Derived>::Scal
 template <class T>
 bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
 {
-	constexpr T eps = std::is_same_v<T, f32> ? static_cast<T>(1E-20) : static_cast<T>(1E-40);
+	constexpr T eps = std::is_same_v<T, f32> ? casts::to<T>(1E-20) : casts::to<T>(1E-40);
 
 	// TODO: optimize/unroll?
 
@@ -333,8 +334,8 @@ void fit(std::vector<Parameters<typename DenseBase<Derived>::Scalar>> &params,
 	const Eigen::Index rows = data.rows();
 
 	const auto scale = Vector2<T> {
-		static_cast<T>(2) / gsl::narrow<T>(cols),
-		static_cast<T>(2) / gsl::narrow<T>(rows),
+		casts::to<T>(2) / gsl::narrow<T>(cols),
+		casts::to<T>(2) / gsl::narrow<T>(rows),
 	};
 
 	// down-scaling

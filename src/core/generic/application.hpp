@@ -8,6 +8,7 @@
 #include "device.hpp"
 #include "dft.hpp"
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
 #include <ipts/data.hpp>
@@ -206,8 +207,8 @@ private:
 		// Map the buffer to an Eigen container
 		const Eigen::Map<const Image<u8>> mapped {data.data.data(), rows, cols};
 
-		const auto z_min = static_cast<f64>(data.dim.z_min);
-		const auto z_max = static_cast<f64>(data.dim.z_max);
+		const auto z_min = casts::to<f64>(data.dim.z_min);
+		const auto z_max = casts::to<f64>(data.dim.z_max);
 
 		// Normalize the heatmap to range [0, 1]
 		const auto norm = (mapped.cast<f64>() - z_min) / (z_max - z_min);

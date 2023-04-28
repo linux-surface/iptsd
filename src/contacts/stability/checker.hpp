@@ -6,6 +6,7 @@
 #include "../contact.hpp"
 #include "config.hpp"
 
+#include <common/casts.hpp>
 #include <common/constants.hpp>
 #include <common/types.hpp>
 
@@ -30,7 +31,7 @@ private:
 public:
 	Checker(Config<T> config)
 		: m_config {config}
-		, m_frames {std::max(config.temporal_window, static_cast<usize>(2)) - 1} {};
+		, m_frames {std::max(config.temporal_window, casts::to<usize>(2)) - 1} {};
 
 	/*!
 	 * Resets the checker by clearing the stored copies of the last frames.

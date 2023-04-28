@@ -5,6 +5,7 @@
 
 #include "syscalls.hpp"
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 #include <core/generic/device.hpp>
 #include <hid/descriptor.hpp>
@@ -94,7 +95,7 @@ public:
 	{
 		std::array<u8, 2> report {
 			this->get_set_mode(),
-			multitouch ? static_cast<u8>(0x1) : static_cast<u8>(0x0),
+			multitouch ? casts::to<u8>(0x1) : casts::to<u8>(0x0),
 		};
 
 		this->set_feature(report);

@@ -7,6 +7,7 @@
 #include "protocol.hpp"
 #include "reader.hpp"
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 
 #include <gsl/gsl>
@@ -259,9 +260,9 @@ private:
 		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
 		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
-		stylus.x = static_cast<f64>(data.x) / IPTS_MAX_X;
-		stylus.y = static_cast<f64>(data.y) / IPTS_MAX_Y;
-		stylus.pressure = static_cast<f64>(data.pressure) / IPTS_MAX_PRESSURE_V1;
+		stylus.x = casts::to<f64>(data.x) / IPTS_MAX_X;
+		stylus.y = casts::to<f64>(data.y) / IPTS_MAX_Y;
+		stylus.pressure = casts::to<f64>(data.pressure) / IPTS_MAX_PRESSURE_V1;
 		stylus.azimuth = 0;
 		stylus.altitude = 0;
 		stylus.timestamp = 0;
@@ -302,13 +303,13 @@ private:
 		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
 		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
 
-		stylus.x = static_cast<f64>(data.x) / IPTS_MAX_X;
-		stylus.y = static_cast<f64>(data.y) / IPTS_MAX_Y;
-		stylus.pressure = static_cast<f64>(data.pressure) / IPTS_MAX_PRESSURE_V2;
+		stylus.x = casts::to<f64>(data.x) / IPTS_MAX_X;
+		stylus.y = casts::to<f64>(data.y) / IPTS_MAX_Y;
+		stylus.pressure = casts::to<f64>(data.pressure) / IPTS_MAX_PRESSURE_V2;
 		stylus.timestamp = data.timestamp;
 
-		stylus.azimuth = static_cast<f64>(data.azimuth) / 18000.0 * M_PI;
-		stylus.altitude = static_cast<f64>(data.altitude) / 18000.0 * M_PI;
+		stylus.azimuth = casts::to<f64>(data.azimuth) / 18000.0 * M_PI;
+		stylus.altitude = casts::to<f64>(data.altitude) / 18000.0 * M_PI;
 
 		stylus.contact = stylus.pressure > 0;
 
@@ -361,7 +362,7 @@ private:
 	{
 		Heatmap heatmap {};
 
-		const usize size = static_cast<usize>(m_dim.width) * m_dim.height;
+		const usize size = casts::to<usize>(m_dim.width) * m_dim.height;
 
 		heatmap.data = reader.subspan(size);
 		heatmap.dim = m_dim;

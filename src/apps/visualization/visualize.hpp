@@ -3,6 +3,7 @@
 #ifndef IPTSD_APPS_VISUALIZATION_VISUALIZE_HPP
 #define IPTSD_APPS_VISUALIZATION_VISUALIZE_HPP
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 #include <contacts/contact.hpp>
 #include <core/generic/application.hpp>
@@ -121,11 +122,11 @@ public:
 		const Cairo::RefPtr<Cairo::ImageSurface> source =
 			Cairo::ImageSurface::create(data, format, cols, rows, stride);
 
-		const f64 wx = static_cast<f64>(m_size.x());
-		const f64 wy = static_cast<f64>(m_size.y());
+		const f64 wx = casts::to<f64>(m_size.x());
+		const f64 wy = casts::to<f64>(m_size.y());
 
-		f64 sx = static_cast<f64>(cols) / wx;
-		f64 sy = static_cast<f64>(rows) / wy;
+		f64 sx = casts::to<f64>(cols) / wx;
+		f64 sy = casts::to<f64>(rows) / wy;
 
 		f64 tx = 0;
 		f64 ty = 0;
@@ -234,8 +235,8 @@ public:
 
 		constexpr f64 RADIUS = 50;
 
-		const f64 x = static_cast<f64>(stylus.x);
-		const f64 y = static_cast<f64>(stylus.y);
+		const f64 x = casts::to<f64>(stylus.x);
+		const f64 y = casts::to<f64>(stylus.y);
 
 		const f64 sx = x * (m_size.x() - 1);
 		const f64 sy = y * (m_size.y() - 1);
@@ -314,16 +315,16 @@ public:
 			else
 				m_cairo->set_source_rgba(0.5, 0, 1.0, 1.0);
 
-			const f64 fx = static_cast<f64>(from.x);
-			const f64 fy = static_cast<f64>(from.y);
+			const f64 fx = casts::to<f64>(from.x);
+			const f64 fy = casts::to<f64>(from.y);
 
 			const f64 fsx = fx * (m_size.x() - 1);
 			const f64 fsy = fy * (m_size.y() - 1);
 
 			m_cairo->move_to(fsx, fsy);
 
-			const f64 tx = static_cast<f64>(to.x);
-			const f64 ty = static_cast<f64>(to.y);
+			const f64 tx = casts::to<f64>(to.x);
+			const f64 ty = casts::to<f64>(to.y);
 
 			const f64 tsx = tx * (m_size.x() - 1);
 			const f64 tsy = ty * (m_size.y() - 1);

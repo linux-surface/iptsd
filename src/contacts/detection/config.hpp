@@ -5,6 +5,7 @@
 
 #include "algorithms/neutral.hpp"
 
+#include <common/casts.hpp>
 #include <common/constants.hpp>
 #include <common/types.hpp>
 
@@ -44,13 +45,13 @@ public:
 	 * If a pixel of the input data is larger than this value plus the neutral value
 	 * it is marked as a contact and a recursive cluster search is started.
 	 */
-	T activation_threshold = static_cast<T>(24);
+	T activation_threshold = casts::to<T>(24);
 
 	/*
 	 * If a pixel of the input data is below this value plus the neutral value,
 	 * the recursive cluster search will stop once it reaches it.
 	 */
-	T deactivation_threshold = static_cast<T>(20);
+	T deactivation_threshold = casts::to<T>(20);
 };
 
 } // namespace iptsd::contacts::detection

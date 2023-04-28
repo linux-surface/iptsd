@@ -5,6 +5,7 @@
 
 #include "config.hpp"
 
+#include <common/casts.hpp>
 #include <ipts/data.hpp>
 
 #include <algorithm>
@@ -224,7 +225,7 @@ private:
 		// get phase-aligned amplitudes of the three center components
 		const f64 amp = std::hypot(gsl::at(row.real, maxi), gsl::at(row.imag, maxi));
 		if (amp < gsl::narrow<f64>(m_config.dft_position_min_amp))
-			return static_cast<f64>(NAN);
+			return casts::to<f64>(NAN);
 
 		const f64 sin = gsl::at(row.real, maxi) / amp;
 		const f64 cos = gsl::at(row.imag, maxi) / amp;
@@ -241,7 +242,7 @@ private:
 
 		// check orientation of fitted parabola
 		if (x[0] + x[2] <= 2 * x[1])
-			return static_cast<f64>(NAN);
+			return casts::to<f64>(NAN);
 
 		// find critical point of fitted parabola
 		const f64 d = (x[0] - x[2]) / (2 * (x[0] - 2 * x[1] + x[2]));
@@ -252,7 +253,7 @@ private:
 	[[nodiscard]] f64 interpolate_frequency(const ipts::DftWindow &dft, const u8 rows) const
 	{
 		if (rows < 3)
-			return static_cast<f64>(NAN);
+			return casts::to<f64>(NAN);
 
 		// find max row
 		u8 maxi = 0;
@@ -267,8 +268,8 @@ private:
 			}
 		}
 
-		if (maxm < static_cast<u64>(2 * m_config.dft_freq_min_mag))
-			return static_cast<f64>(NAN);
+		if (maxm < casts::to<u64>(2 * m_config.dft_freq_min_mag))
+			return casts::to<f64>(NAN);
 
 		f64 mind = -0.5;
 		f64 maxd = 0.5;
@@ -307,7 +308,7 @@ private:
 		const i32 ia = imag[0] - imag[2];
 		const i32 ib = 2 * imag[1] - imag[0] - imag[2];
 
-		const f64 d = (ra * rb + ia * ib) / static_cast<f64>(rb * rb + ib * ib);
+		const f64 d = (ra * rb + ia * ib) / casts::to<f64>(rb * rb + ib * ib);
 
 		return (maxi + std::clamp(d, mind, maxd)) / (rows - 1);
 	}

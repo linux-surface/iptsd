@@ -3,6 +3,7 @@
 #ifndef IPTSD_CONTACTS_DETECTION_ALGORITHMS_KERNELS_HPP
 #define IPTSD_CONTACTS_DETECTION_ALGORITHMS_KERNELS_HPP
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 
 #include <gsl/gsl>
@@ -38,7 +39,7 @@ Matrix<T, Rows, Cols> gaussian(const T sigma)
 			const T vx = gsl::narrow_cast<T>(dx);
 
 			const T norm = (Vector2<T> {vy, vx} / sigma).squaredNorm();
-			const T val = std::exp(static_cast<T>(-0.5) * norm);
+			const T val = std::exp(casts::to<T>(-0.5) * norm);
 
 			kernel(y, x) = val;
 			sum += val;
