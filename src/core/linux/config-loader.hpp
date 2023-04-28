@@ -5,6 +5,7 @@
 
 #include "configure.h"
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
@@ -32,8 +33,8 @@ public:
 		namespace filesystem = std::filesystem;
 
 		if (metadata.has_value()) {
-			m_config.width = gsl::narrow<f32>(metadata->size.width) / 1e3F;
-			m_config.height = gsl::narrow<f32>(metadata->size.height) / 1e3F;
+			m_config.width = gsl::narrow<f64>(metadata->size.width) / 1e3;
+			m_config.height = gsl::narrow<f64>(metadata->size.height) / 1e3;
 			m_config.invert_x = metadata->transform.xx < 0;
 			m_config.invert_y = metadata->transform.yy < 0;
 		}
@@ -198,7 +199,7 @@ private:
 		if constexpr (std::is_same_v<T, bool>)
 			value = ini.GetBoolean(section, name, value);
 		else if constexpr (std::is_integral_v<T>)
-			value = gsl::narrow<T>(ini.GetInteger(section, name, value));
+			value = gsl::narrow<T>(ini.GetInteger(section, name, signed_cast(value)));
 		else if constexpr (std::is_floating_point_v<T>)
 			value = gsl::narrow_cast<T>(ini.GetReal(section, name, value));
 		else if constexpr (std::is_same_v<T, std::string>)

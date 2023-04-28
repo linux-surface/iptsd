@@ -52,7 +52,7 @@ public:
 		const ConfigLoader loader {info, meta};
 		m_application.emplace(loader.config(), info, meta, args...);
 
-		m_buffer.resize(info.buffer_size);
+		m_buffer.resize(gsl::narrow<usize>(info.buffer_size));
 
 		const u16 vendor = info.vendor;
 		const u16 product = info.product;
@@ -113,7 +113,7 @@ public:
 				if (!m_device.is_touch_data(m_buffer[0]))
 					continue;
 
-				m_application->process(gsl::span<u8>(m_buffer.data(), size));
+				m_application->process(gsl::span<u8>(m_buffer.data(), unsigned_cast(size)));
 			} catch (std::exception &e) {
 				spdlog::warn(e.what());
 
