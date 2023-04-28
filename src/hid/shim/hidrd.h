@@ -37,8 +37,8 @@ int64_t shim_hidrd_item_main_get_tag(const uint8_t *item);
 int64_t shim_hidrd_item_local_get_tag(const uint8_t *item);
 int64_t shim_hidrd_item_usage_get_value(const uint8_t *item);
 int64_t shim_hidrd_item_usage_page_get_value(const uint8_t *item);
-int64_t shim_hidrd_item_report_count_get_value(const uint8_t *item);
-int64_t shim_hidrd_item_report_size_get_value(const uint8_t *item);
+uint32_t shim_hidrd_item_report_count_get_value(const uint8_t *item);
+uint32_t shim_hidrd_item_report_size_get_value(const uint8_t *item);
 
 int64_t shim_hidrd_item_basic_format_short(void);
 int64_t shim_hidrd_item_short_type_global(void);

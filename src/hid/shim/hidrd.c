@@ -62,12 +62,12 @@ int64_t shim_hidrd_item_usage_page_get_value(const uint8_t *item)
 	return hidrd_item_usage_page_get_value((const hidrd_item *)item);
 }
 
-int64_t shim_hidrd_item_report_count_get_value(const uint8_t *item)
+uint32_t shim_hidrd_item_report_count_get_value(const uint8_t *item)
 {
 	return hidrd_item_report_count_get_value((const hidrd_item *)item);
 }
 
-int64_t shim_hidrd_item_report_size_get_value(const uint8_t *item)
+uint32_t shim_hidrd_item_report_size_get_value(const uint8_t *item)
 {
 	return hidrd_item_report_size_get_value((const hidrd_item *)item);
 }
