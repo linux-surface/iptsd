@@ -56,8 +56,13 @@ public:
 	{
 		DeviceInfo info {};
 
+		/*
+		 * The value is just an ID stored in a signed value.
+		 * A negative device ID doesn't make sense, so cast it away.
+		 */
 		info.vendor = gsl::narrow_cast<u16>(m_devinfo.vendor);
 		info.product = gsl::narrow_cast<u16>(m_devinfo.product);
+
 		info.buffer_size = casts::to<u64>(this->buffer_size());
 
 		return info;
