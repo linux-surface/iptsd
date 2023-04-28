@@ -235,11 +235,8 @@ public:
 
 		constexpr f64 RADIUS = 50;
 
-		const f64 x = casts::to<f64>(stylus.x);
-		const f64 y = casts::to<f64>(stylus.y);
-
-		const f64 sx = x * (m_size.x() - 1);
-		const f64 sy = y * (m_size.y() - 1);
+		const f64 sx = stylus.x * (m_size.x() - 1);
+		const f64 sy = stylus.y * (m_size.y() - 1);
 
 		m_cairo->set_source_rgb(0, 1, 0.5);
 
@@ -315,21 +312,15 @@ public:
 			else
 				m_cairo->set_source_rgba(0.5, 0, 1.0, 1.0);
 
-			const f64 fx = casts::to<f64>(from.x);
-			const f64 fy = casts::to<f64>(from.y);
+			const f64 fx = from.x * (m_size.x() - 1);
+			const f64 fy = from.y * (m_size.y() - 1);
 
-			const f64 fsx = fx * (m_size.x() - 1);
-			const f64 fsy = fy * (m_size.y() - 1);
+			m_cairo->move_to(fx, fy);
 
-			m_cairo->move_to(fsx, fsy);
+			const f64 tx = to.x * (m_size.x() - 1);
+			const f64 ty = to.y * (m_size.y() - 1);
 
-			const f64 tx = casts::to<f64>(to.x);
-			const f64 ty = casts::to<f64>(to.y);
-
-			const f64 tsx = tx * (m_size.x() - 1);
-			const f64 tsy = ty * (m_size.y() - 1);
-
-			m_cairo->line_to(tsx, tsy);
+			m_cairo->line_to(tx, ty);
 			m_cairo->stroke();
 		}
 	}
