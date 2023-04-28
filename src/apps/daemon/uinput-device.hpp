@@ -23,7 +23,7 @@ private:
 	std::string m_name;
 	u16 m_vendor = 0;
 	u16 m_product = 0;
-	u32 m_version = 0;
+	u16 m_version = 0;
 
 	// The file descriptor of the open uinput node.
 	int m_fd;
@@ -84,7 +84,7 @@ public:
 	 *
 	 * @param[in] version The firmware or hardware revision.
 	 */
-	void set_version(const u32 version)
+	void set_version(const u16 version)
 	{
 		m_version = version;
 	}
