@@ -25,11 +25,10 @@ constexpr inline To to(const From value)
 	using Common = std::common_type_t<To, From>;
 
 	// Can To contain From?
-	if constexpr (std::is_same_v<Common, To>) {
+	if constexpr (std::is_same_v<Common, To>)
 		return static_cast<To>(value);
-	} else {
+	else
 		return gsl::narrow<To>(value);
-	}
 }
 
 template <class T>
