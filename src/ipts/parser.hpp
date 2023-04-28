@@ -404,10 +404,10 @@ private:
 		DftWindow dft {};
 		const auto window = reader.read<struct ipts_pen_dft_window>();
 
-		for (int i = 0; i < window.num_rows; i++)
+		for (usize i = 0; i < window.num_rows; i++)
 			dft.x.at(i) = reader.read<struct ipts_pen_dft_window_row>();
 
-		for (int i = 0; i < window.num_rows; i++)
+		for (usize i = 0; i < window.num_rows; i++)
 			dft.y.at(i) = reader.read<struct ipts_pen_dft_window_row>();
 
 		dft.rows = window.num_rows;
