@@ -82,14 +82,14 @@ public:
 		const f64 weight = std::exp2(-diff.count());
 		f64 dist = std::hypot(m_x - x, m_y - y);
 
-		const f64 dx = (x - m_x) / (dist + 1E-6F);
-		const f64 dy = (y - m_y) / (dist + 1E-6F);
+		const f64 dx = (x - m_x) / (dist + 1E-6);
+		const f64 dy = (y - m_y) / (dist + 1E-6);
 
 		m_dx = weight * m_dx + dx;
 		m_dy = weight * m_dy + dy;
 
 		// Normalize cone direction vector
-		dist = std::hypot(m_dx, m_dy) + 1E-6F;
+		dist = std::hypot(m_dx, m_dy) + 1E-6;
 		m_dx /= dist;
 		m_dy /= dist;
 
