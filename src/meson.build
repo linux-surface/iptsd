@@ -12,6 +12,7 @@ cxxflags = [
   '-Winit-self',
   '-Wimplicit-fallthrough',
   '-Wdouble-promotion',
+  '-Wconversion',
 ]
 
 optflags = []
