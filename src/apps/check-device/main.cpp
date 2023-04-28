@@ -20,7 +20,7 @@
 namespace iptsd::apps::check {
 namespace {
 
-int run(const gsl::span<char *> args)
+int run(const int argc, const char **argv)
 {
 	CLI::App app {"Utility for checking if a hidraw device is an IPTS touchscreen."};
 
@@ -33,7 +33,7 @@ int run(const gsl::span<char *> args)
 	bool quiet = false;
 	app.add_flag("-q,--quiet", quiet)->description("Disable output of device information.");
 
-	CLI11_PARSE(app, args.size(), args.data());
+	CLI11_PARSE(app, argc, argv);
 
 	if (quiet)
 		spdlog::set_level(spdlog::level::off);
@@ -75,13 +75,12 @@ int run(const gsl::span<char *> args)
 } // namespace
 } // namespace iptsd::apps::check
 
-int main(int argc, char **argv)
+int main(const int argc, const char **argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
-	const gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
 
 	try {
-		return iptsd::apps::check::run(args);
+		return iptsd::apps::check::run(argc, argv);
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

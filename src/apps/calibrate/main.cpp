@@ -19,7 +19,7 @@
 namespace iptsd::apps::calibrate {
 namespace {
 
-int run(const gsl::span<char *> args)
+int run(const int argc, const char **argv)
 {
 	CLI::App app {"Utility for measuring your finger size and calibrating iptsd."};
 
@@ -29,7 +29,7 @@ int run(const gsl::span<char *> args)
 		->type_name("FILE")
 		->required();
 
-	CLI11_PARSE(app, args.size(), args.data());
+	CLI11_PARSE(app, argc, argv);
 
 	// Create a calibration application that reads from a device.
 	core::linux::DeviceRunner<Calibrate> calibrate {path};
@@ -46,13 +46,12 @@ int run(const gsl::span<char *> args)
 } // namespace
 } // namespace iptsd::apps::calibrate
 
-int main(int argc, char **argv)
+int main(const int argc, const char **argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
-	const gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
 
 	try {
-		return iptsd::apps::calibrate::run(args);
+		return iptsd::apps::calibrate::run(argc, argv);
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

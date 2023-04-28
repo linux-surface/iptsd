@@ -20,7 +20,7 @@
 namespace iptsd::apps::visualization::plot {
 namespace {
 
-int run(const gsl::span<char *> args)
+int run(const int argc, const char **argv)
 {
 	CLI::App app {"Utility for rendering captured touchscreen inputs to PNG frames."};
 
@@ -36,7 +36,7 @@ int run(const gsl::span<char *> args)
 		->type_name("DIR")
 		->required();
 
-	CLI11_PARSE(app, args.size(), args.data());
+	CLI11_PARSE(app, argc, argv);
 
 	// Create a plotting application that reads from a file.
 	core::linux::FileRunner<VisualizePNG> visualize {path, output};
@@ -53,13 +53,12 @@ int run(const gsl::span<char *> args)
 } // namespace
 } // namespace iptsd::apps::visualization::plot
 
-int main(int argc, char **argv)
+int main(const int argc, const char **argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
-	const gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
 
 	try {
-		return iptsd::apps::visualization::plot::run(args);
+		return iptsd::apps::visualization::plot::run(argc, argv);
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;

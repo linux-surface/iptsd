@@ -22,7 +22,7 @@
 namespace iptsd::apps::perf {
 namespace {
 
-int run(const gsl::span<char *> args)
+int run(const int argc, const char **argv)
 {
 	CLI::App app {"Utility for performance testing of iptsd."};
 
@@ -38,7 +38,7 @@ int run(const gsl::span<char *> args)
 		->check(CLI::PositiveNumber)
 		->default_val(10);
 
-	CLI11_PARSE(app, args.size(), args.data());
+	CLI11_PARSE(app, argc, argv);
 
 	// Create a performance testing application that reads from a file.
 	core::linux::FileRunner<Perf> perf {path};
@@ -95,13 +95,12 @@ int run(const gsl::span<char *> args)
 } // namespace
 } // namespace iptsd::apps::perf
 
-int main(int argc, char **argv)
+int main(const int argc, const char **argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
-	const gsl::span<char *> args {argv, gsl::narrow<usize>(argc)};
 
 	try {
-		return iptsd::apps::perf::run(args);
+		return iptsd::apps::perf::run(argc, argv);
 	} catch (std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;
