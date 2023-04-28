@@ -60,7 +60,7 @@ void assemble_system(Matrix6<T> &m,
 		     const DenseBase<DerivedData> &data,
 		     const Matrix<T> &w)
 {
-	constexpr T eps = std::is_same_v<T, f32> ? 1E-20F : 1E-40;
+	constexpr T eps = std::is_same_v<T, f32> ? static_cast<T>(1E-20) : static_cast<T>(1E-40);
 
 	const Eigen::Index cols = data.cols();
 	const Eigen::Index rows = data.rows();
@@ -142,7 +142,7 @@ void assemble_system(Matrix6<T> &m,
 template <class T>
 bool extract_params(const Vector6<T> &chi, T &scale, Vector2<T> &mean, Matrix2<T> &prec)
 {
-	constexpr T eps = std::is_same_v<T, f32> ? 1E-20F : 1E-40;
+	constexpr T eps = std::is_same_v<T, f32> ? static_cast<T>(1E-20) : static_cast<T>(1E-40);
 
 	prec.noalias() = -2 * Matrix2<T> {
 				      {chi[0], chi[1]},
@@ -244,7 +244,7 @@ void update_weight_maps(std::vector<Parameters<typename DenseBase<Derived>::Scal
 template <class T>
 bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
 {
-	constexpr T eps = std::is_same_v<T, f32> ? 1E-20F : 1E-40;
+	constexpr T eps = std::is_same_v<T, f32> ? static_cast<T>(1E-20) : static_cast<T>(1E-40);
 
 	// TODO: optimize/unroll?
 
