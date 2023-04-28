@@ -55,7 +55,7 @@ inline f32 overlap(const Box &a, const Box &b)
 
 	// Compute the intersection over union by taking the intersection area and dividing it
 	// by the sum of both bounding box areas minus the intersection area
-	const f32 iou = gsl::narrow<f32>(area_i) / gsl::narrow<f32>(area_a + area_b - area_i);
+	const f32 iou = casts::to<f32>(area_i) / casts::to<f32>(area_a + area_b - area_i);
 
 	if (iou < 0.0F || iou > 1.0F)
 		throw std::runtime_error("Calculated invalid cluster overlap!");

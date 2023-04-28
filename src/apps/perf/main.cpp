@@ -2,6 +2,7 @@
 
 #include "perf.hpp"
 
+#include <common/casts.hpp>
 #include <common/chrono.hpp>
 #include <common/types.hpp>
 #include <core/linux/file-runner.hpp>
@@ -75,9 +76,9 @@ int run(const int argc, const char **argv)
 		app.reset();
 	}
 
-	const f64 n = gsl::narrow<f64>(count);
-	const f64 mean = gsl::narrow<f64>(total) / n;
-	const f64 stddev = std::sqrt(gsl::narrow<f64>(total_of_squares) / n - mean * mean);
+	const f64 n = casts::to<f64>(count);
+	const f64 mean = casts::to<f64>(total) / n;
+	const f64 stddev = std::sqrt(casts::to<f64>(total_of_squares) / n - mean * mean);
 
 	spdlog::info("Ran {} times", count);
 	spdlog::info("Total: {}μs", total);

@@ -5,6 +5,7 @@
 
 #include "configure.h"
 
+#include <common/casts.hpp>
 #include <common/chrono.hpp>
 #include <common/types.hpp>
 #include <contacts/contact.hpp>
@@ -80,7 +81,7 @@ public:
 		std::sort(m_size.begin(), m_size.end());
 		std::sort(m_aspect.begin(), m_aspect.end());
 
-		const f64 size = gsl::narrow<f64>(m_size.size());
+		const f64 size = casts::to<f64>(m_size.size());
 
 		const f64 avg_s = m_size_sum / size;
 		const f64 avg_a = m_aspect_sum / size;
@@ -143,24 +144,24 @@ public:
 
 	void calculate_min_max(f64 &size_min, f64 &size_max, f64 &aspect_min, f64 &aspect_max) const
 	{
-		const f64 size = gsl::narrow<f64>(m_size.size());
+		const f64 size = casts::to<f64>(m_size.size());
 
 		// Determine 1st and 99th percentile
 		const f64 min_idx = std::max(size - 1, 0.0) * 0.01;
 		const f64 max_idx = std::max(size - 1, 0.0) * 0.99;
 
-		size_min = m_size[gsl::narrow<usize>(std::round(min_idx))];
-		size_max = m_size[gsl::narrow<usize>(std::round(max_idx))];
+		size_min = m_size[casts::to<usize>(std::round(min_idx))];
+		size_max = m_size[casts::to<usize>(std::round(max_idx))];
 
-		aspect_min = m_aspect[gsl::narrow<usize>(std::round(min_idx))];
-		aspect_max = m_aspect[gsl::narrow<usize>(std::round(max_idx))];
+		aspect_min = m_aspect[casts::to<usize>(std::round(min_idx))];
+		aspect_max = m_aspect[casts::to<usize>(std::round(max_idx))];
 	}
 
 	void write_file(const std::filesystem::path &out, f64 slack) const
 	{
 		std::ofstream writer {out};
 
-		const f64 size = gsl::narrow<f64>(m_size.size());
+		const f64 size = casts::to<f64>(m_size.size());
 
 		f64 size_min {};
 		f64 size_max {};

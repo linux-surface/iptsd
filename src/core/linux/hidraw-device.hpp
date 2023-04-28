@@ -58,7 +58,7 @@ public:
 
 		info.vendor = gsl::narrow_cast<u16>(m_devinfo.vendor);
 		info.product = gsl::narrow_cast<u16>(m_devinfo.product);
-		info.buffer_size = gsl::narrow<u64>(this->buffer_size());
+		info.buffer_size = casts::to<u64>(this->buffer_size());
 
 		return info;
 	}

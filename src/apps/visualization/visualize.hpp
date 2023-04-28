@@ -59,7 +59,7 @@ public:
 				const f64 value = m_heatmap(y, x);
 
 				const u8 max = std::numeric_limits<u8>::max();
-				const u8 v = gsl::narrow<u8>(std::round(value * max));
+				const u8 v = casts::to<u8>(std::round(value * max));
 
 				const u32 a = max;
 				const u32 r = v;
@@ -109,8 +109,8 @@ public:
 			return;
 		}
 
-		const i32 cols = gsl::narrow<i32>(m_argb.cols());
-		const i32 rows = gsl::narrow<i32>(m_argb.rows());
+		const i32 cols = casts::to<i32>(m_argb.cols());
+		const i32 rows = casts::to<i32>(m_argb.rows());
 
 		const auto format = Cairo::FORMAT_ARGB32;
 		const auto stride = Cairo::ImageSurface::format_stride_for_width(format, cols);

@@ -5,6 +5,7 @@
 
 #include "uinput-device.hpp"
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
@@ -58,11 +59,11 @@ public:
 		m_uinput->set_keybit(BTN_TOOL_RUBBER);
 
 		// Resolution for X / Y is expected to be units/mm.
-		const i32 res_x = gsl::narrow<i32>(std::round(MAX_X / (config.width * 10)));
-		const i32 res_y = gsl::narrow<i32>(std::round(MAX_Y / (config.height * 10)));
+		const i32 res_x = casts::to<i32>(std::round(MAX_X / (config.width * 10)));
+		const i32 res_y = casts::to<i32>(std::round(MAX_Y / (config.height * 10)));
 
 		// Resolution for tilt is expected to be units/radian.
-		const i32 res_tilt = gsl::narrow<i32>(std::round(18000.0 / M_PI));
+		const i32 res_tilt = casts::to<i32>(std::round(18000.0 / M_PI));
 
 		m_uinput->set_absinfo(ABS_X, 0, MAX_X, res_x);
 		m_uinput->set_absinfo(ABS_Y, 0, MAX_Y, res_y);
@@ -90,9 +91,9 @@ public:
 		if (m_active) {
 			const Vector2<i32> tilt = calculate_tilt(data.altitude, data.azimuth);
 
-			const i32 x = gsl::narrow<i32>(std::round(data.x * MAX_X));
-			const i32 y = gsl::narrow<i32>(std::round(data.y * MAX_Y));
-			const i32 pressure = gsl::narrow<i32>(std::round(data.pressure * MAX_P));
+			const i32 x = casts::to<i32>(std::round(data.x * MAX_X));
+			const i32 y = casts::to<i32>(std::round(data.y * MAX_Y));
+			const i32 pressure = casts::to<i32>(std::round(data.pressure * MAX_P));
 
 			m_uinput->emit(EV_KEY, BTN_TOUCH, data.contact ? 1 : 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, !data.rubber ? 1 : 0);
@@ -178,8 +179,8 @@ private:
 		const f64 atan_x = std::atan2(cos_alt, sin_alt * cos_azm);
 		const f64 atan_y = std::atan2(cos_alt, sin_alt * sin_azm);
 
-		const i32 tx = 9000 - gsl::narrow<i32>(std::round(atan_x * 4500 / M_PI_4));
-		const i32 ty = gsl::narrow<i32>(std::round(atan_y * 4500 / M_PI_4)) - 9000;
+		const i32 tx = 9000 - casts::to<i32>(std::round(atan_x * 4500 / M_PI_4));
+		const i32 ty = casts::to<i32>(std::round(atan_y * 4500 / M_PI_4)) - 9000;
 
 		return Vector2<i32> {tx, ty};
 	}

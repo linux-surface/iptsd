@@ -6,6 +6,7 @@
 #include "config-loader.hpp"
 #include "hidraw-device.hpp"
 
+#include <common/casts.hpp>
 #include <common/chrono.hpp>
 #include <core/generic/application.hpp>
 #include <ipts/data.hpp>
@@ -52,7 +53,7 @@ public:
 		const ConfigLoader loader {info, meta};
 		m_application.emplace(loader.config(), info, meta, args...);
 
-		m_buffer.resize(gsl::narrow<usize>(info.buffer_size));
+		m_buffer.resize(casts::to<usize>(info.buffer_size));
 
 		const u16 vendor = info.vendor;
 		const u16 product = info.product;

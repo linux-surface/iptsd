@@ -67,8 +67,8 @@ void assemble_system(Matrix6<T> &m,
 	const Eigen::Index rows = data.rows();
 
 	const auto scale = Vector2<T> {
-		casts::to<T>(2) / gsl::narrow<T>(cols),
-		casts::to<T>(2) / gsl::narrow<T>(rows),
+		casts::to<T>(2) / casts::to<T>(cols),
+		casts::to<T>(2) / casts::to<T>(rows),
 	};
 
 	m.setZero();
@@ -78,10 +78,10 @@ void assemble_system(Matrix6<T> &m,
 	const Point &bmax = b.max();
 
 	for (Eigen::Index iy = bmin.y(); iy <= bmax.y(); iy++) {
-		const T y = gsl::narrow<T>(iy) * scale.y() - 1;
+		const T y = casts::to<T>(iy) * scale.y() - 1;
 
 		for (Eigen::Index ix = bmin.x(); ix <= bmax.x(); ix++) {
-			const T x = gsl::narrow<T>(ix) * scale.x() - 1;
+			const T x = casts::to<T>(ix) * scale.x() - 1;
 
 			const T d = w(iy - bmin.y(), ix - bmin.x()) * casts::to<T>(data(iy, ix));
 			const T v = std::log(d + eps) * d * d;
@@ -174,8 +174,8 @@ void update_weight_maps(std::vector<Parameters<typename DenseBase<Derived>::Scal
 	const Eigen::Index rows = total.rows();
 
 	const auto scale = Vector2<T> {
-		casts::to<T>(2) / gsl::narrow<T>(cols),
-		casts::to<T>(2) / gsl::narrow<T>(rows),
+		casts::to<T>(2) / casts::to<T>(cols),
+		casts::to<T>(2) / casts::to<T>(rows),
 	};
 
 	total.setZero();
@@ -189,10 +189,10 @@ void update_weight_maps(std::vector<Parameters<typename DenseBase<Derived>::Scal
 		const Point bmax = p.bounds.max();
 
 		for (Eigen::Index iy = bmin.y(); iy <= bmax.y(); iy++) {
-			const T y = gsl::narrow<T>(iy) * scale.y() - 1;
+			const T y = casts::to<T>(iy) * scale.y() - 1;
 
 			for (Eigen::Index ix = bmin.x(); ix <= bmax.x(); ix++) {
-				const T x = gsl::narrow<T>(ix) * scale.x() - 1;
+				const T x = casts::to<T>(ix) * scale.x() - 1;
 
 				const T v = p.scale * gaussian_like({x, y}, p.mean, p.prec);
 				p.weights(iy - bmin.y(), ix - bmin.x()) = v;
@@ -334,8 +334,8 @@ void fit(std::vector<Parameters<typename DenseBase<Derived>::Scalar>> &params,
 	const Eigen::Index rows = data.rows();
 
 	const auto scale = Vector2<T> {
-		casts::to<T>(2) / gsl::narrow<T>(cols),
-		casts::to<T>(2) / gsl::narrow<T>(rows),
+		casts::to<T>(2) / casts::to<T>(cols),
+		casts::to<T>(2) / casts::to<T>(rows),
 	};
 
 	// down-scaling

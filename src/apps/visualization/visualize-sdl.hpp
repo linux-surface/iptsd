@@ -5,6 +5,7 @@
 
 #include "visualize.hpp"
 
+#include <common/casts.hpp>
 #include <common/chrono.hpp>
 #include <common/types.hpp>
 #include <core/generic/config.hpp>

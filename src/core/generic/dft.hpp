@@ -84,8 +84,8 @@ private:
 		u8 height = dft.dim.height;
 
 		if ((width == 0 || height == 0) && m_metadata.has_value()) {
-			width = gsl::narrow<u8>(m_metadata->size.columns);
-			height = gsl::narrow<u8>(m_metadata->size.rows);
+			width = casts::to<u8>(m_metadata->size.columns);
+			height = casts::to<u8>(m_metadata->size.rows);
 		}
 
 		m_real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
@@ -224,7 +224,7 @@ private:
 
 		// get phase-aligned amplitudes of the three center components
 		const f64 amp = std::hypot(gsl::at(row.real, maxi), gsl::at(row.imag, maxi));
-		if (amp < gsl::narrow<f64>(m_config.dft_position_min_amp))
+		if (amp < casts::to<f64>(m_config.dft_position_min_amp))
 			return casts::to<f64>(NAN);
 
 		const f64 sin = gsl::at(row.real, maxi) / amp;

@@ -5,6 +5,7 @@
 
 #include "shim/hidrd.h"
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 
 #include <gsl/gsl>
@@ -190,7 +191,7 @@ public:
 			}
 		}
 
-		return gsl::narrow<usize>(total_size);
+		return casts::to<usize>(total_size);
 	}
 
 	/*!

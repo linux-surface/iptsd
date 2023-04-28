@@ -6,6 +6,7 @@
 #include "../contact.hpp"
 #include "distances.hpp"
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 
 #include <algorithm>

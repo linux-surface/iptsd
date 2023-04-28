@@ -5,6 +5,7 @@
 
 #include "visualize.hpp"
 
+#include <common/casts.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
 #include <ipts/data.hpp>
@@ -42,8 +43,8 @@ public:
 		const f64 y = 1000;
 		const f64 x = y * aspect;
 
-		m_size.x() = gsl::narrow<i32>(std::round(x));
-		m_size.y() = gsl::narrow<i32>(std::round(y));
+		m_size.x() = casts::to<i32>(std::round(x));
+		m_size.y() = casts::to<i32>(std::round(y));
 
 		// Create a texture for drawing.
 		m_tex = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, m_size.x(), m_size.y());

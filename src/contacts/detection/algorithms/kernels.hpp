@@ -31,11 +31,11 @@ Matrix<T, Rows, Cols> gaussian(const T sigma)
 	const Eigen::Index rows = kernel.rows();
 
 	for (Eigen::Index y = 0; y < rows; y++) {
-		const f64 dy = gsl::narrow<f64>(y) - (rows - 1) / 2.0;
+		const f64 dy = casts::to<f64>(y) - (rows - 1) / 2.0;
 		const T vy = gsl::narrow_cast<T>(dy);
 
 		for (Eigen::Index x = 0; x < cols; x++) {
-			const f64 dx = gsl::narrow<f64>(x) - (cols - 1) / 2.0;
+			const f64 dx = casts::to<f64>(x) - (cols - 1) / 2.0;
 			const T vx = gsl::narrow_cast<T>(dx);
 
 			const T norm = (Vector2<T> {vy, vx} / sigma).squaredNorm();

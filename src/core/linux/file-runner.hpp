@@ -5,6 +5,7 @@
 
 #include "config-loader.hpp"
 
+#include <common/casts.hpp>
 #include <core/generic/application.hpp>
 #include <ipts/data.hpp>
 #include <ipts/reader.hpp>
@@ -129,9 +130,9 @@ public:
 				 * instead of writing the entire buffer all the time.
 				 */
 				ipts::Reader buffer =
-					local.sub(gsl::narrow<usize>(m_info.buffer_size));
+					local.sub(casts::to<usize>(m_info.buffer_size));
 
-				m_application->process(buffer.subspan(gsl::narrow<usize>(size)));
+				m_application->process(buffer.subspan(casts::to<usize>(size)));
 			} catch (std::exception &e) {
 				spdlog::warn(e.what());
 				continue;

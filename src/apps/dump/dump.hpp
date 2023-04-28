@@ -3,6 +3,7 @@
 #ifndef IPTSD_APPS_DUMP_DUMP_HPP
 #define IPTSD_APPS_DUMP_DUMP_HPP
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
@@ -60,14 +61,14 @@ public:
 		if (m_out.empty())
 			return;
 
-		const u64 size = gsl::narrow<u64>(data.size());
+		const u64 size = casts::to<u64>(data.size());
 
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 		m_writer.write(reinterpret_cast<const char *>(&size), sizeof(size));
 
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
 		m_writer.write(reinterpret_cast<char *>(data.data()),
-			       gsl::narrow<std::streamsize>(size));
+			       casts::to<std::streamsize>(size));
 
 		// Pad the data with zeros, so that we always write a full buffer.
 		std::fill_n(std::ostream_iterator<u8>(m_writer), m_info.buffer_size - size, '\0');

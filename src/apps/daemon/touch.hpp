@@ -5,6 +5,7 @@
 
 #include "uinput-device.hpp"
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
 #include <contacts/contact.hpp>
 #include <core/generic/config.hpp>
@@ -74,9 +75,9 @@ public:
 		const f64 diag = std::hypot(config.width, config.height);
 
 		// Resolution for X / Y is expected to be units/mm.
-		const i32 res_x = gsl::narrow<i32>(std::round(MAX_X / (config.width * 10)));
-		const i32 res_y = gsl::narrow<i32>(std::round(MAX_Y / (config.height * 10)));
-		const i32 res_d = gsl::narrow<i32>(std::round(DIAGONAL / (diag * 10)));
+		const i32 res_x = casts::to<i32>(std::round(MAX_X / (config.width * 10)));
+		const i32 res_y = casts::to<i32>(std::round(MAX_Y / (config.height * 10)));
+		const i32 res_d = casts::to<i32>(std::round(DIAGONAL / (diag * 10)));
 
 		m_uinput->set_absinfo(ABS_MT_SLOT, 0, MAX_CONTACTS, 0);
 		m_uinput->set_absinfo(ABS_MT_TRACKING_ID, 0, MAX_CONTACTS, 0);
@@ -233,7 +234,7 @@ private:
 	 */
 	void lift_multitouch(const usize index) const
 	{
-		m_uinput->emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
+		m_uinput->emit(EV_ABS, ABS_MT_SLOT, casts::to<i32>(index));
 		m_uinput->emit(EV_ABS, ABS_MT_TRACKING_ID, -1);
 	}
 
@@ -258,14 +259,14 @@ private:
 		if (m_config.invert_x != m_config.invert_y)
 			orientation = 1.0 - orientation;
 
-		const i32 index = gsl::narrow<i32>(contact.index.value_or(0));
+		const i32 index = casts::to<i32>(contact.index.value_or(0));
 
-		const i32 x = gsl::narrow<i32>(std::round(mean.x() * MAX_X));
-		const i32 y = gsl::narrow<i32>(std::round(mean.y() * MAX_Y));
+		const i32 x = casts::to<i32>(std::round(mean.x() * MAX_X));
+		const i32 y = casts::to<i32>(std::round(mean.y() * MAX_Y));
 
-		const i32 angle = gsl::narrow<i32>(std::round(orientation * 180));
-		const i32 major = gsl::narrow<i32>(std::round(size.maxCoeff() * DIAGONAL));
-		const i32 minor = gsl::narrow<i32>(std::round(size.minCoeff() * DIAGONAL));
+		const i32 angle = casts::to<i32>(std::round(orientation * 180));
+		const i32 major = casts::to<i32>(std::round(size.maxCoeff() * DIAGONAL));
+		const i32 minor = casts::to<i32>(std::round(size.minCoeff() * DIAGONAL));
 
 		m_uinput->emit(EV_ABS, ABS_MT_SLOT, index);
 		m_uinput->emit(EV_ABS, ABS_MT_TRACKING_ID, index);
@@ -345,8 +346,8 @@ private:
 		if (m_config.invert_y)
 			mean.y() = 1.0 - mean.y();
 
-		const i32 x = gsl::narrow<i32>(std::round(mean.x() * MAX_X));
-		const i32 y = gsl::narrow<i32>(std::round(mean.y() * MAX_Y));
+		const i32 x = casts::to<i32>(std::round(mean.x() * MAX_X));
+		const i32 y = casts::to<i32>(std::round(mean.y() * MAX_Y));
 
 		m_uinput->emit(EV_KEY, BTN_TOUCH, 1);
 		m_uinput->emit(EV_ABS, ABS_X, x);
@@ -359,12 +360,12 @@ private:
 	void lift_all() const
 	{
 		for (const usize &index : m_current) {
-			m_uinput->emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
+			m_uinput->emit(EV_ABS, ABS_MT_SLOT, casts::to<i32>(index));
 			this->lift_multitouch(index);
 		}
 
 		for (const usize &index : m_last) {
-			m_uinput->emit(EV_ABS, ABS_MT_SLOT, gsl::narrow<i32>(index));
+			m_uinput->emit(EV_ABS, ABS_MT_SLOT, casts::to<i32>(index));
 			this->lift_multitouch(index);
 		}
 
