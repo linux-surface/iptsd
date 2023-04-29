@@ -35,17 +35,17 @@ inline isize area(const Box &box)
  * @param[in] b The second cluster.
  * @return The percentage of overlap between both clusters (range 0-1).
  */
-inline f32 overlap(const Box &a, const Box &b)
+inline f64 overlap(const Box &a, const Box &b)
 {
 	// Check if the two boxes are identical
 	if (a.isApprox(b))
-		return 1.0F;
+		return 1.0;
 
 	const Box intersection = a.intersection(b);
 
 	// Check if the two boxes overlap
 	if (intersection.isEmpty())
-		return 0.0F;
+		return 0.0;
 
 	// Compute the area of both bounding boxes
 	const isize area_a = area(a);
@@ -55,9 +55,9 @@ inline f32 overlap(const Box &a, const Box &b)
 
 	// Compute the intersection over union by taking the intersection area and dividing it
 	// by the sum of both bounding box areas minus the intersection area
-	const f32 iou = casts::to<f32>(area_i) / casts::to<f32>(area_a + area_b - area_i);
+	const f64 iou = casts::to<f64>(area_i) / casts::to<f64>(area_a + area_b - area_i);
 
-	if (iou < 0.0F || iou > 1.0F)
+	if (iou < 0.0 || iou > 1.0)
 		throw std::runtime_error("Calculated invalid cluster overlap!");
 
 	return iou;
@@ -85,7 +85,7 @@ inline bool search(const std::vector<Box> &clusters, std::vector<Vector2<usize>>
 			const Box &b = clusters[j];
 
 			// Ignore clusters that overlap by less than 50%
-			if (overlap(a, b) < 0.5F)
+			if (overlap(a, b) < 0.5)
 				continue;
 
 			found_overlap = true;
