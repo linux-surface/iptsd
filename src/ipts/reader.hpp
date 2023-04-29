@@ -7,6 +7,8 @@
 
 #include <gsl/gsl>
 
+#include <algorithm>
+
 namespace iptsd::ipts {
 
 class Reader {
@@ -29,14 +31,8 @@ public:
 		if (dest.size() > this->size())
 			throw std::runtime_error("Tried to read more data than available!");
 
-		auto begin = m_data.begin();
-		std::advance(begin, m_index);
-
-		auto end = begin;
-		std::advance(end, dest.size());
-
-		std::copy(begin, end, dest.begin());
-		m_index += dest.size();
+		const gsl::span<u8> src = this->subspan(dest.size());
+		std::copy(src.begin(), src.end(), dest.begin());
 	}
 
 	/*!
