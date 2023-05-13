@@ -71,8 +71,8 @@ void run_5x5(const DenseBase<DerivedData> &in,
 			v += d(i, 1, 0) * k(1, -1);  // extended
 			v += d(i, 2, 0) * k(2, -1);  // extended
 
-			v += d(i, 0, 0) * k(-2, 0);  // extended
-			v += d(i, 0, 0) * k(-1, 0);  // extended
+			v += d(i, 0, 0) * k(-2, 0); // extended
+			v += d(i, 0, 0) * k(-1, 0); // extended
 			v += d(i, 0, 0) * k(0, 0);
 			v += d(i, 1, 0) * k(1, 0);
 			v += d(i, 2, 0) * k(2, 0);
@@ -108,7 +108,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 			v += d(i, 1, 0) * k(1, -1);   // extended
 			v += d(i, 2, 0) * k(2, -1);   // extended
 
-			v += d(i, -1, 0) * k(-2, 0);  // extended
+			v += d(i, -1, 0) * k(-2, 0); // extended
 			v += d(i, -1, 0) * k(-1, 0);
 			v += d(i, 0, 0) * k(0, 0);
 			v += d(i, 1, 0) * k(1, 0);
@@ -760,7 +760,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 			v += d(i, -1, 1) * k(-1, 1);
 			v += d(i, 0, 1) * k(0, 1);
 			v += d(i, 1, 1) * k(1, 1);
-			v += d(i, 1, 1) * k(2, 1);   // extended
+			v += d(i, 1, 1) * k(2, 1); // extended
 
 			v += d(i, -2, 1) * k(-2, 2); // extended
 			v += d(i, -1, 1) * k(-1, 2); // extended
@@ -796,8 +796,8 @@ void run_5x5(const DenseBase<DerivedData> &in,
 			v += d(i, -2, 1) * k(-2, 1);
 			v += d(i, -1, 1) * k(-1, 1);
 			v += d(i, 0, 1) * k(0, 1);
-			v += d(i, 0, 1) * k(1, 1);   // extended
-			v += d(i, 0, 1) * k(2, 1);   // extended
+			v += d(i, 0, 1) * k(1, 1); // extended
+			v += d(i, 0, 1) * k(2, 1); // extended
 
 			v += d(i, -2, 1) * k(-2, 2); // extended
 			v += d(i, -1, 1) * k(-1, 2); // extended
@@ -943,7 +943,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 			v += d(i, -1, 0) * k(-1, 0);
 			v += d(i, 0, 0) * k(0, 0);
 			v += d(i, 1, 0) * k(1, 0);
-			v += d(i, 1, 0) * k(2, 0);   // extended
+			v += d(i, 1, 0) * k(2, 0); // extended
 
 			v += d(i, -2, 0) * k(-2, 1); // extended
 			v += d(i, -1, 0) * k(-1, 1); // extended
@@ -979,8 +979,8 @@ void run_5x5(const DenseBase<DerivedData> &in,
 			v += d(i, -2, 0) * k(-2, 0);
 			v += d(i, -1, 0) * k(-1, 0);
 			v += d(i, 0, 0) * k(0, 0);
-			v += d(i, 0, 0) * k(1, 0);   // extended
-			v += d(i, 0, 0) * k(2, 0);   // extended
+			v += d(i, 0, 0) * k(1, 0); // extended
+			v += d(i, 0, 0) * k(2, 0); // extended
 
 			v += d(i, -2, 0) * k(-2, 1); // extended
 			v += d(i, -1, 0) * k(-1, 1); // extended
