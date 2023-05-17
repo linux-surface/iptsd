@@ -19,7 +19,7 @@ override_dh_strip:
 	dh_strip --no-automatic-dbgsym
 
 override_dh_auto_install:
-	DESTDIR=$(PWD)/debian/iptsd meson install -C $(shell dirname `find ./obj-* -name 'build.ninja'`) --skip-subprojects
+	DESTDIR=$(PWD)/debian/iptsd meson install -C $(shell dirname `find ./obj-* -maxdepth 1 -name 'build.ninja' -print -quit`) --skip-subprojects
 
 override_dh_dwz:
 	true
