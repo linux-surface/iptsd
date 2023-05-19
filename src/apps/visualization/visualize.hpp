@@ -173,8 +173,6 @@ public:
 			 */
 			if (!contact.valid.value_or(true))
 				m_cairo->set_source_rgb(1, 0, 0);
-			else if (!contact.stable.value_or(true))
-				m_cairo->set_source_rgb(1, 1, 0);
 			else
 				m_cairo->set_source_rgb(0, 1, 0);
 

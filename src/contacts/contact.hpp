@@ -53,11 +53,6 @@ public:
 	 */
 	std::optional<bool> valid = std::nullopt;
 
-	/*
-	 * Whether the contact is stable.
-	 */
-	std::optional<bool> stable = std::nullopt;
-
 public:
 	static std::optional<Contact<T>> find_in_frame(const usize index,
 						       const std::vector<Contact<T>> &frame)

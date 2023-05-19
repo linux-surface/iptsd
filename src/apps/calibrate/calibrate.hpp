@@ -62,9 +62,6 @@ public:
 	{
 		// Calculate size and aspect of all stable contacts
 		for (const contacts::Contact<f64> &contact : contacts) {
-			if (!contact.stable.value_or(true))
-				continue;
-
 			const auto size = contact.size.maxCoeff() * m_diagonal;
 			const auto aspect = contact.size.maxCoeff() / contact.size.minCoeff();
 

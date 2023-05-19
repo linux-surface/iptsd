@@ -215,10 +215,6 @@ private:
 			if (!contact.index.has_value())
 				continue;
 
-			// Ignore unstable changes
-			if (!contact.stable.value_or(true))
-				continue;
-
 			if (contact.valid.value_or(true))
 				this->emit_multitouch(contact);
 			else
@@ -295,10 +291,6 @@ private:
 				// If the contact should be lifted select a new one.
 				if (!m_enabled || !contact.valid.value_or(true))
 					break;
-
-				// Ignore unstable changes
-				if (!contact.stable.value_or(true))
-					return;
 
 				this->emit_singletouch(contact);
 				return;
