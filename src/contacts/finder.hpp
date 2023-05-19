@@ -30,17 +30,17 @@ private:
 	// Tracks contacts over multiple frames.
 	tracking::Tracker<T> m_tracker {};
 
-	// Validates size and aspect ratio of contacts.
-	validation::Validator<T> m_validator;
-
 	// Stabilizes size and movement of contacts.
 	stability::Stabilizer<T> m_stabilizer;
+
+	// Validates size and aspect ratio of contacts.
+	validation::Validator<T> m_validator;
 
 public:
 	Finder(Config<T> config)
 		: m_detector {config.detection}
-		, m_validator {config.validation}
-		, m_stabilizer {config.stability} {};
+		, m_stabilizer {config.stability}
+		, m_validator {config.validation} {};
 
 	/*!
 	 * Resets the contact finder by clearing all stored previous frames.
@@ -48,8 +48,8 @@ public:
 	void reset()
 	{
 		m_tracker.reset();
-		m_validator.reset();
 		m_stabilizer.reset();
+		m_validator.reset();
 	}
 
 	/*!
@@ -69,8 +69,8 @@ public:
 	{
 		m_detector.detect(heatmap, contacts);
 		m_tracker.track(contacts);
-		m_validator.validate(contacts);
 		m_stabilizer.stabilize(contacts);
+		m_validator.validate(contacts);
 	}
 };
 
