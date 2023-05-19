@@ -23,7 +23,7 @@ public:
 	// The configuration options for the validation phase.
 	validation::Config<T> validation {};
 
-	// The configuration options for the stability checking phase.
+	// The configuration options for the stabilization phase.
 	stability::Config<T> stability {};
 };
 
