@@ -144,7 +144,6 @@ private:
 
 		this->get(ini, "Touch", "Disable", m_config.touch_disable);
 		this->get(ini, "Touch", "CheckCone", m_config.touch_check_cone);
-		this->get(ini, "Touch", "CheckStability", m_config.touch_check_stability);
 		this->get(ini, "Touch", "DisableOnPalm", m_config.touch_disable_on_palm);
 		this->get(ini, "Touch", "DisableOnStylus", m_config.touch_disable_on_stylus);
 

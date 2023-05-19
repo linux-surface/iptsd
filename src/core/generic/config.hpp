@@ -25,7 +25,6 @@ public:
 	// [Touch]
 	bool touch_disable = false;
 	bool touch_check_cone = true;
-	bool touch_check_stability = true;
 	bool touch_disable_on_palm = false;
 	bool touch_disable_on_stylus = false;
 
