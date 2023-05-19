@@ -50,7 +50,7 @@ public:
 	void check(std::vector<Contact<T>> &frame)
 	{
 		for (Contact<T> &contact : frame)
-			contact.stable = this->check_contact(contact, frame);
+			contact.stable = this->check_contact(contact);
 
 		auto &nf = m_frames.front();
 		nf.clear();
@@ -70,16 +70,11 @@ private:
 	 * @param[in] stability An optional validity checker to enable additional stability checks.
 	 * @return Whether the contact is valid.
 	 */
-	[[nodiscard]] bool check_contact(const Contact<T> &contact,
-					 const std::vector<Contact<T>> &frame) const
+	[[nodiscard]] bool check_contact(const Contact<T> &contact) const
 	{
 		const bool should_temp = m_config.check_temporal_stability;
-		const bool should_dist = m_config.distance_threshold.has_value();
 		const bool should_size = m_config.size_difference_threshold.has_value();
 		const bool should_move = m_config.movement_limits.has_value();
-
-		if (should_dist && !this->check_distance(contact, frame))
-			return false;
 
 		// Contacts that can't be tracked are considered temporally stable.
 		if (!contact.index.has_value())
@@ -110,44 +105,6 @@ private:
 		}
 
 		return true;
-	}
-
-	/*!
-	 * Checks if the contact is close to any invalid contacts.
-	 *
-	 * @param[in] contact The contact to check.
-	 * @param[in] frame The other contacts that the contact will be compared against.
-	 * @return Whether the contact is far enough away from any invalid contacts.
-	 */
-	[[nodiscard]] bool check_distance(const Contact<T> &contact,
-					  const std::vector<Contact<T>> &frame) const
-	{
-		if (!contact.index.has_value() || !m_config.distance_threshold.has_value())
-			return true;
-
-		const usize index = contact.index.value();
-		const T distance_thresh = m_config.distance_threshold.value();
-
-		return std::all_of(frame.cbegin(), frame.cend(), [&](const auto &v) {
-			if (v.index == index)
-				return true;
-
-			if (v.valid.value_or(true))
-				return true;
-
-			/*
-			 * Assumption: All contacts are perfect circles. The radius is major / 2.
-			 * This covers more area than neccessary, but will make the code easier.
-			 */
-
-			const Vector2<T> delta = contact.mean - v.mean;
-			const T distance = std::hypot(delta.x(), delta.y());
-
-			const T difference =
-				distance - (contact.size.maxCoeff() / 2) - (v.size.maxCoeff() / 2);
-
-			return difference >= distance_thresh;
-		});
 	}
 
 	/*!

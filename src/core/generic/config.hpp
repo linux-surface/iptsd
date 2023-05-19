@@ -93,6 +93,7 @@ public:
 		config.detection.neutral_value_backoff = 16; // TODO: config option
 
 		const f64 diagonal = std::hypot(this->width, this->height);
+		const f64 dist_thresh = this->contacts_distance_thresh;
 
 		config.validation.track_validity = true;
 		config.validation.size_limits = Vector2<f64> {
@@ -103,14 +104,13 @@ public:
 			this->contacts_aspect_min,
 			this->contacts_aspect_max,
 		};
+		config.validation.distance_threshold = dist_thresh / diagonal;
 
 		const f64 size_thresh = this->contacts_size_thresh;
-		const f64 dist_thresh = this->contacts_distance_thresh;
 
 		config.stability.check_temporal_stability = true;
 		config.stability.temporal_window = this->contacts_temporal_window;
 		config.stability.size_difference_threshold = size_thresh / diagonal;
-		config.stability.distance_threshold = dist_thresh / diagonal;
 		config.stability.movement_limits = Vector2<f64> {
 			this->contacts_position_thresh_min / diagonal,
 			this->contacts_position_thresh_max / diagonal,

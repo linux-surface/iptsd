@@ -33,6 +33,12 @@ public:
 	 * The limits that the size of a valid contact must not exceed.
 	 */
 	std::optional<Vector2<T>> size_limits = std::nullopt;
+
+	/*
+	 * How close an otherwise valid contact can be to an invalid one before getting marked as
+	 * invalid.
+	 */
+	std::optional<T> distance_threshold = std::nullopt;
 };
 
 } // namespace iptsd::contacts::validation

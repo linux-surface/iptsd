@@ -37,11 +37,6 @@ public:
 	 * The limits that the movement of a stable contact between two frames may not exceed.
 	 */
 	std::optional<Vector2<T>> movement_limits = std::nullopt;
-
-	/*
-	 * How close a stable contact can be to an invalid one before getting marked as unstable.
-	 */
-	std::optional<T> distance_threshold = std::nullopt;
 };
 
 } // namespace iptsd::contacts::stability
