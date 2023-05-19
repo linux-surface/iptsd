@@ -41,7 +41,6 @@ public:
 	f64 contacts_size_thresh = 0.1;
 	f64 contacts_position_thresh_min = 0.2;
 	f64 contacts_position_thresh_max = 2;
-	f64 contacts_distance_thresh = 1;
 
 	// [Stylus]
 	bool stylus_disable = false;
@@ -92,7 +91,6 @@ public:
 		config.detection.neutral_value_backoff = 16; // TODO: config option
 
 		const f64 diagonal = std::hypot(this->width, this->height);
-		const f64 dist_thresh = this->contacts_distance_thresh;
 
 		config.validation.track_validity = true;
 		config.validation.size_limits = Vector2<f64> {
@@ -103,7 +101,6 @@ public:
 			this->contacts_aspect_min,
 			this->contacts_aspect_max,
 		};
-		config.validation.distance_threshold = dist_thresh / diagonal;
 
 		const f64 size_thresh = this->contacts_size_thresh;
 
