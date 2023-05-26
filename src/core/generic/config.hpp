@@ -38,7 +38,8 @@ public:
 	f64 contacts_size_max = 2;
 	f64 contacts_aspect_min = 1;
 	f64 contacts_aspect_max = 2.5;
-	f64 contacts_size_thresh = 0.1;
+	f64 contacts_size_thresh_min = 0.1;
+	f64 contacts_size_thresh_max = 0.5;
 	f64 contacts_position_thresh_min = 0.2;
 	f64 contacts_position_thresh_max = 2;
 
@@ -102,12 +103,13 @@ public:
 			this->contacts_aspect_max,
 		};
 
-		const f64 size_thresh = this->contacts_size_thresh;
-
 		config.stability.check_temporal_stability = true;
 		config.stability.temporal_window = this->contacts_temporal_window;
-		config.stability.size_difference_threshold = size_thresh / diagonal;
-		config.stability.movement_limits = Vector2<f64> {
+		config.stability.size_threshold = Vector2<f64> {
+			this->contacts_size_thresh_min / diagonal,
+			this->contacts_size_thresh_max / diagonal,
+		};
+		config.stability.position_threshold = Vector2<f64> {
 			this->contacts_position_thresh_min / diagonal,
 			this->contacts_position_thresh_max / diagonal,
 		};

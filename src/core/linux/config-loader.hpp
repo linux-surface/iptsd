@@ -156,7 +156,8 @@ private:
 		this->get(ini, "Contacts", "SizeMax", m_config.contacts_size_max);
 		this->get(ini, "Contacts", "AspectMin", m_config.contacts_aspect_max);
 		this->get(ini, "Contacts", "AspectMax", m_config.contacts_aspect_max);
-		this->get(ini, "Contacts", "SizeThreshold", m_config.contacts_size_thresh);
+		this->get(ini, "Contacts", "SizeThresholdMin", m_config.contacts_size_thresh_min);
+		this->get(ini, "Contacts", "SizeThresholdMax", m_config.contacts_size_thresh_max);
 		this->get(ini, "Contacts", "PositionThresholdMin", m_config.contacts_position_thresh_min);
 		this->get(ini, "Contacts", "PositionThresholdMax", m_config.contacts_position_thresh_max);
 
@@ -176,6 +177,7 @@ private:
 
 		// Legacy options that are kept for compatibility
 		this->get(ini, "DFT", "TipDistance", m_config.stylus_tip_distance);
+		this->get(ini, "Contacts", "SizeThreshold", m_config.contacts_size_thresh_max);
 
 		// clang-format on
 	}

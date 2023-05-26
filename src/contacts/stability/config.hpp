@@ -29,14 +29,14 @@ public:
 	bool check_temporal_stability = false;
 
 	/*
-	 * How much a contact can increase in size before it is considered unstable.
+	 * The limits that the size difference of a contact between two frames may not exceed.
 	 */
-	std::optional<T> size_difference_threshold = std::nullopt;
+	std::optional<Vector2<T>> size_threshold = std::nullopt;
 
 	/*
-	 * The limits that the movement of a stable contact between two frames may not exceed.
+	 * The limits that the position difference of a contact between two frames may not exceed.
 	 */
-	std::optional<Vector2<T>> movement_limits = std::nullopt;
+	std::optional<Vector2<T>> position_threshold = std::nullopt;
 };
 
 } // namespace iptsd::contacts::stability

@@ -32,7 +32,7 @@ private:
 public:
 	Stabilizer(Config<T> config)
 		: m_config {config}
-		, m_frames {std::max(config.temporal_window, casts::to<usize>(2))} {};
+		, m_frames {std::max(config.temporal_window, casts::to<usize>(2) - 1)} {};
 
 	/*!
 	 * Resets the stabilizer by clearing the stored copies of the last frames.
@@ -62,23 +62,45 @@ public:
 
 		// Copy the new frame
 		std::copy(frame.begin(), frame.end(), std::back_inserter(nf));
-
-		// Remove all contacts that are not temporally stable
-		if (m_config.check_temporal_stability && m_config.temporal_window >= 2) {
-			frame.clear();
-
-			for (const Contact<T> &contact : nf) {
-				if (!this->check_temporal(contact))
-					continue;
-
-				frame.push_back(contact);
-			}
-		}
-
 		m_frames.push_back(nf);
 	}
 
 private:
+	/*!
+	 * Stabilize a single contact.
+	 *
+	 * @param[in,out] contact The contact to stabilize.
+	 * @param[in] frame The previous frame.
+	 */
+	void stabilize_contact(Contact<T> &contact, const std::vector<Contact<T>> &frame) const
+	{
+		// Contacts that can't be tracked can't be stabilized.
+		if (!contact.index.has_value())
+			return;
+
+		if (m_config.check_temporal_stability && m_config.temporal_window >= 2)
+			contact.stable = this->check_temporal(contact);
+		else
+			contact.stable = true;
+
+		if (m_config.temporal_window < 2)
+			return;
+
+		const usize index = contact.index.value();
+		const auto wrapper = Contact<T>::find_in_frame(index, frame);
+
+		if (!wrapper.has_value())
+			return;
+
+		const Contact<T> &last = wrapper.value();
+
+		if (m_config.size_threshold.has_value())
+			this->stabilize_size(contact, last);
+
+		if (m_config.position_threshold.has_value())
+			this->stabilize_movement(contact, last);
+	}
+
 	/*!
 	 * Checks the temporal stability of a contact.
 	 *
@@ -107,36 +129,6 @@ private:
 	}
 
 	/*!
-	 * Stabilize a single contact.
-	 *
-	 * @param[in,out] contact The contact to stabilize.
-	 * @param[in] frame The previous frame.
-	 */
-	void stabilize_contact(Contact<T> &contact, const std::vector<Contact<T>> &frame) const
-	{
-		// Contacts that can't be tracked can't be stabilized.
-		if (!contact.index.has_value())
-			return;
-
-		if (m_config.temporal_window < 2)
-			return;
-
-		const usize index = contact.index.value();
-		const auto wrapper = Contact<T>::find_in_frame(index, frame);
-
-		if (!wrapper.has_value())
-			return;
-
-		const Contact<T> &last = wrapper.value();
-
-		if (m_config.size_difference_threshold.has_value())
-			this->stabilize_size(contact, last);
-
-		if (m_config.movement_limits.has_value())
-			this->stabilize_movement(contact, last);
-	}
-
-	/*!
 	 * Stabilizes the size of the contact.
 	 *
 	 * @param[in,out] current The contact to stabilize.
@@ -144,17 +136,27 @@ private:
 	 */
 	void stabilize_size(Contact<T> &current, const Contact<T> &last) const
 	{
-		if (!m_config.size_difference_threshold.has_value())
+		if (!m_config.size_threshold.has_value())
 			return;
 
-		const T size_thresh = m_config.size_difference_threshold.value();
+		const Vector2<T> thresh = m_config.size_threshold.value();
 		const Vector2<T> delta = (current.size - last.size).cwiseAbs();
 
-		// Is the contact rapidly changing its size?
-		if ((delta.array() <= size_thresh).all())
-			return;
+		/*
+		 * If the size is increasing too slow, discard the change.
+		 * If the size is increasing too fast, mark it as unstable (we can't stabilize it).
+		 * Otherwise, keep the values.
+		 */
 
-		current.size = last.size;
+		if (delta.x() < thresh.x())
+			current.size.x() = last.size.x();
+		else if (delta.x() > thresh.y())
+			current.stable = false;
+
+		if (delta.y() < thresh.x())
+			current.size.y() = last.size.y();
+		else if (delta.y() > thresh.y())
+			current.stable = false;
 	}
 
 	/*!
@@ -165,21 +167,26 @@ private:
 	 */
 	void stabilize_movement(Contact<T> &current, const Contact<T> &last) const
 	{
-		if (!m_config.movement_limits.has_value())
+		if (!m_config.position_threshold.has_value())
 			return;
 
-		const Vector2<T> limit = m_config.movement_limits.value();
+		const Vector2<T> thresh = m_config.position_threshold.value();
 
 		const Vector2<T> delta = current.mean - last.mean;
 		const T distance = std::hypot(delta.x(), delta.y());
 
-		// Is the contact moving too fast or too slow?
-		if (distance >= limit.x() && distance <= limit.y()) {
-			// Move in the direction, but just as much as necessary
-			current.mean -= limit.x() * (delta / distance);
-		} else {
+		/*
+		 * If the contact is moving too slow, discard the movement.
+		 * If the contact is moving too fast, mark it as unstable (we can't stabilize it).
+		 * Otherwise, stabilize the movement by moving it just as much as neccessary.
+		 */
+
+		if (distance < thresh.x())
 			current.mean = last.mean;
-		}
+		else if (distance <= thresh.y())
+			current.mean -= thresh.x() * (delta / distance);
+		else
+			current.stable = false;
 	}
 };
 
