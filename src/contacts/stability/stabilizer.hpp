@@ -145,7 +145,7 @@ private:
 		/*
 		 * If the size is increasing too slow, discard the change.
 		 * If the size is increasing too fast, mark it as unstable (we can't stabilize it).
-		 * Otherwise, keep the values.
+		 * Otherwise, keep the change as is.
 		 */
 
 		if (delta.x() < thresh.x())
@@ -178,14 +178,12 @@ private:
 		/*
 		 * If the contact is moving too slow, discard the movement.
 		 * If the contact is moving too fast, mark it as unstable (we can't stabilize it).
-		 * Otherwise, stabilize the movement by moving it just as much as neccessary.
+		 * Otherwise, keep the change as is.
 		 */
 
 		if (distance < thresh.x())
 			current.mean = last.mean;
-		else if (distance <= thresh.y())
-			current.mean -= thresh.x() * (delta / distance);
-		else
+		else if (distance > thresh.y())
 			current.stable = false;
 	}
 };
