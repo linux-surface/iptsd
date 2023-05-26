@@ -34,14 +34,14 @@ public:
 	f64 contacts_activation_threshold = 24;
 	f64 contacts_deactivation_threshold = 20;
 	usize contacts_temporal_window = 3;
-	f64 contacts_size_min = 0.2;
-	f64 contacts_size_max = 2;
-	f64 contacts_aspect_min = 1;
-	f64 contacts_aspect_max = 2.5;
 	f64 contacts_size_thresh_min = 0.1;
 	f64 contacts_size_thresh_max = 0.5;
 	f64 contacts_position_thresh_min = 0.2;
 	f64 contacts_position_thresh_max = 2;
+	f64 contacts_size_min = 0.2;
+	f64 contacts_size_max = 2;
+	f64 contacts_aspect_min = 1;
+	f64 contacts_aspect_max = 2.5;
 
 	// [Stylus]
 	bool stylus_disable = false;
