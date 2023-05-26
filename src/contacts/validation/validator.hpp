@@ -66,6 +66,10 @@ private:
 	 */
 	bool check_contact(const Contact<T> &contact)
 	{
+		// Don't invalidate unstable contacts
+		if (!contact.stable.value_or(true))
+			return true;
+
 		/*
 		 * If the state should be tracked and the contact was invalid in the
 		 * last frame, it is also invalid in the current frame.
