@@ -36,7 +36,7 @@ public:
 	usize contacts_temporal_window = 3;
 	f64 contacts_size_thresh_min = 0.1;
 	f64 contacts_size_thresh_max = 0.5;
-	f64 contacts_position_thresh_min = 0.2;
+	f64 contacts_position_thresh_min = 0.1;
 	f64 contacts_position_thresh_max = 2;
 	f64 contacts_size_min = 0.2;
 	f64 contacts_size_max = 2;
