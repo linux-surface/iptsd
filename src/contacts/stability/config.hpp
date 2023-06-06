@@ -37,6 +37,12 @@ public:
 	 * The limits that the position difference of a contact between two frames may not exceed.
 	 */
 	std::optional<Vector2<T>> position_threshold = std::nullopt;
+
+	/*
+	 * The limits that the orientation difference of a contact between two frames may not
+	 * exceed.
+	 */
+	std::optional<Vector2<T>> orientation_threshold = std::nullopt;
 };
 
 } // namespace iptsd::contacts::stability

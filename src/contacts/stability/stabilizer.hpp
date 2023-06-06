@@ -10,6 +10,8 @@
 #include <common/constants.hpp>
 #include <common/types.hpp>
 
+#include <gsl/gsl>
+
 #include <algorithm>
 #include <deque>
 #include <iterator>
@@ -99,6 +101,9 @@ private:
 
 		if (m_config.position_threshold.has_value())
 			this->stabilize_position(contact, last);
+
+		if (m_config.orientation_threshold.has_value())
+			this->stabilize_orientation(contact, last);
 	}
 
 	/*!
@@ -184,6 +189,48 @@ private:
 		if (distance < thresh.x())
 			current.mean = last.mean;
 		else if (distance > thresh.y())
+			current.stable = false;
+	}
+
+	void stabilize_orientation(Contact<T> &current, const Contact<T> &last) const
+	{
+		if (!m_config.orientation_threshold.has_value())
+			return;
+
+		const T aspect = current.size.maxCoeff() / current.size.minCoeff();
+
+		/*
+		 * If the aspect ratio is too small, the orientation cannot be determined
+		 * in a stable way. To prevent errors, we set it to 0 in this case.
+		 *
+		 * TODO: Check if there is a better way to signal this (make orientation optional,
+		 * and / or applying the last stable value).
+		 */
+		if (aspect < 1.1) {
+			current.orientation = 0;
+			return;
+		}
+
+		const Vector2<T> thresh = m_config.orientation_threshold.value();
+
+		const T max = current.normalized ? One<T>() : gsl::narrow_cast<T>(M_PI);
+
+		// The angle difference in both directions.
+		const T d1 = std::abs(current.orientation - last.orientation);
+		const T d2 = max - d1;
+
+		// Pick the smaller difference to properly handle going from 0° to 179°.
+		const T delta = std::min(d1, d2);
+
+		/*
+		 * If the angle is changing too slow, discard the orientation change.
+		 * If the angle is changing too fast, mark it as unstable (we can't stabilize it).
+		 * Otherwise, don't change the orientation.
+		 */
+
+		if (delta < thresh.x())
+			current.orientation = last.orientation;
+		else if (delta > thresh.y())
 			current.stable = false;
 	}
 };
