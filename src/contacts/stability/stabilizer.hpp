@@ -98,7 +98,7 @@ private:
 			this->stabilize_size(contact, last);
 
 		if (m_config.position_threshold.has_value())
-			this->stabilize_movement(contact, last);
+			this->stabilize_position(contact, last);
 	}
 
 	/*!
@@ -145,7 +145,7 @@ private:
 		/*
 		 * If the size is increasing too slow, discard the change.
 		 * If the size is increasing too fast, mark it as unstable (we can't stabilize it).
-		 * Otherwise, keep the change as is.
+		 * Otherwise, don't change the size.
 		 */
 
 		if (delta.x() < thresh.x())
@@ -160,12 +160,12 @@ private:
 	}
 
 	/*!
-	 * Stabilizes the movement of the contact.
+	 * Stabilizes the position of the contact.
 	 *
 	 * @param[in,out] current The contact to stabilize.
 	 * @param[in] last The contact to compare against.
 	 */
-	void stabilize_movement(Contact<T> &current, const Contact<T> &last) const
+	void stabilize_position(Contact<T> &current, const Contact<T> &last) const
 	{
 		if (!m_config.position_threshold.has_value())
 			return;
@@ -176,9 +176,9 @@ private:
 		const T distance = std::hypot(delta.x(), delta.y());
 
 		/*
-		 * If the contact is moving too slow, discard the movement.
+		 * If the contact is moving too slow, discard the position change.
 		 * If the contact is moving too fast, mark it as unstable (we can't stabilize it).
-		 * Otherwise, keep the change as is.
+		 * Otherwise, don't change the position.
 		 */
 
 		if (distance < thresh.x())
