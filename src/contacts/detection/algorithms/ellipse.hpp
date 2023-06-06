@@ -34,7 +34,7 @@ Vector2<T> size(const Vector2<T> &eigenvalues)
 template <class T>
 T angle(const Matrix2<T> &eigenvectors)
 {
-	constexpr auto PI = casts::to<T>(M_PI);
+	constexpr auto PI = gsl::narrow_cast<T>(M_PI);
 
 	const Vector2<T> ev1 = eigenvectors.col(0);
 	const T angle = std::atan2(ev1.x(), ev1.y());

@@ -8,6 +8,7 @@
 #include <common/types.hpp>
 
 #include <gsl/gsl>
+#include <gsl/util>
 
 #include <limits>
 #include <stdexcept>
@@ -38,6 +39,9 @@ struct Parameters {
 
 namespace impl {
 
+template <class T>
+constexpr T EPS = std::is_same_v<T, f32> ? gsl::narrow_cast<T>(1E-20) : gsl::narrow_cast<T>(1E-40);
+
 /*!
  * 2D Gaussian probability density function without normalization.
  *
@@ -61,8 +65,6 @@ void assemble_system(Matrix6<T> &m,
 		     const DenseBase<DerivedData> &data,
 		     const Matrix<T> &w)
 {
-	constexpr T eps = std::is_same_v<T, f32> ? casts::to<T>(1E-20) : casts::to<T>(1E-40);
-
 	const Eigen::Index cols = data.cols();
 	const Eigen::Index rows = data.rows();
 
@@ -83,8 +85,9 @@ void assemble_system(Matrix6<T> &m,
 		for (Eigen::Index ix = bmin.x(); ix <= bmax.x(); ix++) {
 			const T x = casts::to<T>(ix) * scale.x() - 1;
 
-			const T d = w(iy - bmin.y(), ix - bmin.x()) * casts::to<T>(data(iy, ix));
-			const T v = std::log(d + eps) * d * d;
+			const T d =
+				w(iy - bmin.y(), ix - bmin.x()) * gsl::narrow_cast<T>(data(iy, ix));
+			const T v = std::log(d + EPS<T>) * d * d;
 
 			rhs(0) += v * x * x;
 			rhs(1) += v * x * y;
@@ -143,8 +146,6 @@ void assemble_system(Matrix6<T> &m,
 template <class T>
 bool extract_params(const Vector6<T> &chi, T &scale, Vector2<T> &mean, Matrix2<T> &prec)
 {
-	constexpr T eps = std::is_same_v<T, f32> ? casts::to<T>(1E-20) : casts::to<T>(1E-40);
-
 	prec.noalias() = -2 * Matrix2<T> {
 				      {chi[0], chi[1]},
 				      {chi[1], chi[2]},
@@ -152,7 +153,7 @@ bool extract_params(const Vector6<T> &chi, T &scale, Vector2<T> &mean, Matrix2<T
 
 	// mu = sigma * b = prec^-1 * B
 	const T d = prec.determinant();
-	if (std::abs(d) <= eps)
+	if (std::abs(d) <= EPS<T>)
 		return false;
 
 	mean.x() = (prec(1, 1) * chi[3] - prec(1, 0) * chi[4]) / d;
@@ -245,8 +246,6 @@ void update_weight_maps(std::vector<Parameters<typename DenseBase<Derived>::Scal
 template <class T>
 bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
 {
-	constexpr T eps = std::is_same_v<T, f32> ? casts::to<T>(1E-20) : casts::to<T>(1E-40);
-
 	// TODO: optimize/unroll?
 
 	// step 1: Gaussian elimination
@@ -268,7 +267,7 @@ bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
 			}
 
 			// step 1.5: abort if we cannot find a sufficiently large pivot
-			if (v <= eps)
+			if (v <= EPS<T>)
 				return false;
 
 			// step 2: permutate, swap row r and c
@@ -294,7 +293,7 @@ bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
 	}
 
 	// last check for r=5, c=5 because we've skipped that above
-	if (std::abs(a(5, 5)) <= eps)
+	if (std::abs(a(5, 5)) <= EPS<T>)
 		return false;
 
 	// step 2: backwards substitution

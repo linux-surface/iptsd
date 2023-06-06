@@ -11,6 +11,8 @@
 #include <common/constants.hpp>
 #include <common/types.hpp>
 
+#include <gsl/gsl>
+
 #include <cmath>
 #include <iostream>
 #include <type_traits>
@@ -37,7 +39,7 @@ private:
 	Image<T> m_img_blurred {};
 
 	// The kernel that is used for blurring.
-	Matrix3<T> m_kernel_blur = kernels::gaussian<T, 3, 3>(casts::to<T>(0.75));
+	Matrix3<T> m_kernel_blur = kernels::gaussian<T, 3, 3>(gsl::narrow_cast<T>(0.75));
 
 	// The list of local maximas.
 	std::vector<Point> m_maximas {};
@@ -182,12 +184,12 @@ public:
 			if (m_config.normalize) {
 				mean = mean.cwiseQuotient(dimensions.cast<TFit>());
 				size = (size.array() / m_input_diagonal).matrix();
-				orientation /= casts::to<TFit>(M_PI);
+				orientation /= gsl::narrow_cast<TFit>(M_PI);
 			}
 
 			contacts.push_back(
 				Contact<T> {mean.template cast<T>(), size.template cast<T>(),
-					    casts::to<T>(orientation), m_config.normalize});
+					    gsl::narrow_cast<T>(orientation), m_config.normalize});
 		}
 	}
 };

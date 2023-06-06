@@ -42,7 +42,7 @@ void calculate(const std::vector<Contact<typename DenseBase<Derived>::Scalar>> &
 		for (Eigen::Index ix = 0; ix < sx; ix++) {
 			const Contact<T> &cx = x[casts::to_unsigned(ix)];
 
-			out(iy, ix) = casts::to<T>((cx.mean - cy.mean).hypotNorm());
+			out(iy, ix) = gsl::narrow_cast<T>((cx.mean - cy.mean).hypotNorm());
 		}
 	}
 }

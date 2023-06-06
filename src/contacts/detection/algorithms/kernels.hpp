@@ -31,13 +31,13 @@ Matrix<T, Rows, Cols> gaussian(const T sigma)
 	const Eigen::Index rows = kernel.rows();
 
 	for (Eigen::Index y = 0; y < rows; y++) {
-		const T vy = casts::to<T>(y) - casts::to<T>(rows - 1) / casts::to<T>(2.0);
+		const T vy = casts::to<T>(y) - casts::to<T>(rows - 1) / casts::to<T>(2);
 
 		for (Eigen::Index x = 0; x < cols; x++) {
-			const T vx = casts::to<T>(x) - casts::to<T>(cols - 1) / casts::to<T>(2.0);
+			const T vx = casts::to<T>(x) - casts::to<T>(cols - 1) / casts::to<T>(2);
 
 			const T norm = (Vector2<T> {vy, vx} / sigma).squaredNorm();
-			const T val = std::exp(casts::to<T>(-0.5) * norm);
+			const T val = std::exp(gsl::narrow_cast<T>(-0.5) * norm);
 
 			kernel(y, x) = val;
 			sum += val;
