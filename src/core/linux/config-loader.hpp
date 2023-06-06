@@ -157,6 +157,8 @@ private:
 		this->get(ini, "Contacts", "SizeThresholdMax", m_config.contacts_size_thresh_max);
 		this->get(ini, "Contacts", "PositionThresholdMin", m_config.contacts_position_thresh_min);
 		this->get(ini, "Contacts", "PositionThresholdMax", m_config.contacts_position_thresh_max);
+		this->get(ini, "Contacts", "OrientationThresholdMin", m_config.contacts_orientation_thresh_min);
+		this->get(ini, "Contacts", "OrientationThresholdMax", m_config.contacts_orientation_thresh_max);
 		this->get(ini, "Contacts", "SizeMin", m_config.contacts_size_min);
 		this->get(ini, "Contacts", "SizeMax", m_config.contacts_size_max);
 		this->get(ini, "Contacts", "AspectMin", m_config.contacts_aspect_max);

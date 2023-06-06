@@ -39,6 +39,8 @@ public:
 	f64 contacts_size_thresh_max = 0.5;
 	f64 contacts_position_thresh_min = 0.04;
 	f64 contacts_position_thresh_max = 2;
+	f64 contacts_orientation_thresh_min = 1;
+	f64 contacts_orientation_thresh_max = 5;
 	f64 contacts_size_min = 0.2;
 	f64 contacts_size_max = 2;
 	f64 contacts_aspect_min = 1;
@@ -113,6 +115,10 @@ public:
 		config.stability.position_threshold = Vector2<f64> {
 			this->contacts_position_thresh_min / diagonal,
 			this->contacts_position_thresh_max / diagonal,
+		};
+		config.stability.orientation_threshold = Vector2<f64> {
+			this->contacts_orientation_thresh_min / 180,
+			this->contacts_orientation_thresh_max / 180,
 		};
 
 		return config;
