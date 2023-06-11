@@ -219,10 +219,14 @@ private:
 			if (!contact.stable.value_or(true))
 				continue;
 
-			if (contact.valid.value_or(true))
+			bool lift = !contact.valid.value_or(true);
+			lift |= (contact.mean.array() < 0).any();
+			lift |= (contact.mean.array() > 1).any();
+
+			if (!lift)
 				this->emit_multitouch(contact);
 			else
-				this->lift_multitouch(contact.index.value_or(0));
+				this->lift_multitouch(contact.index.value());
 		}
 
 		for (const usize &index : m_lift)
