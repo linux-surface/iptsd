@@ -106,12 +106,10 @@ public:
 		// Find the inputs that need to be lifted
 		this->search_lifted(contacts);
 
-		if (this->is_blocked(contacts)) {
+		if (this->is_blocked(contacts))
 			this->lift_all();
-		} else {
-			this->process_multitouch(contacts);
-			this->process_singletouch(contacts);
-		}
+		else
+			this->process(contacts);
 
 		this->sync();
 	}
@@ -208,12 +206,16 @@ private:
 	 *
 	 * @param[in] contacts All currently active contacts.
 	 */
-	void process_multitouch(const std::vector<contacts::Contact<f64>> &contacts) const
+	void process(const std::vector<contacts::Contact<f64>> &contacts)
 	{
+		bool reset_singletouch = true;
+
 		for (const contacts::Contact<f64> &contact : contacts) {
 			// Ignore contacts without an index
 			if (!contact.index.has_value())
 				continue;
+
+			const usize index = contact.index.value();
 
 			// Ignore unstable changes
 			if (!contact.stable.value_or(true))
@@ -226,11 +228,42 @@ private:
 			if (!lift)
 				this->emit_multitouch(contact);
 			else
-				this->lift_multitouch(contact.index.value());
+				this->lift_multitouch(index);
+
+			// If this is the selected singletouch contact, emit a singletouch event.
+			if (m_single_index != index)
+				continue;
+
+			if (!lift) {
+				this->emit_singletouch(contact);
+				reset_singletouch = false;
+			}
 		}
 
 		for (const usize &index : m_lift)
 			this->lift_multitouch(index);
+
+		if (reset_singletouch) {
+			this->lift_singletouch();
+
+			// Search for a new contact to emit as singletouch events.
+			for (const contacts::Contact<f64> &contact : contacts) {
+				// Ignore contacts without an index
+				if (!contact.index.has_value())
+					continue;
+
+				const usize index = contact.index.value();
+
+				if (index == m_single_index)
+					continue;
+
+				if (!contact.valid.value_or(true))
+					continue;
+
+				m_single_index = index;
+				return;
+			}
+		}
 	}
 
 	/*!
