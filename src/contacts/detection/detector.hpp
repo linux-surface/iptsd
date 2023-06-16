@@ -150,8 +150,7 @@ public:
 		// Prepare clusters for gaussian fitting
 		for (const Box &cluster : m_clusters) {
 			const Vector2<TFit> mean = cluster.cast<TFit>().center();
-			const Matrix2<TFit> prec {{One<TFit>(), Zero<TFit>()},
-						  {Zero<TFit>(), One<TFit>()}};
+			const Matrix2<TFit> prec = Matrix2<TFit>::Identity();
 
 			// min() and max() are inclusive so we need to add one
 			const Vector2<Eigen::Index> size = cluster.sizes() + one;
