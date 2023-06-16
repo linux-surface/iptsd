@@ -51,7 +51,8 @@ public:
 			syscalls::sigaction(Signal, nullptr);
 
 		// replace seat; this will unregister any old handler
-		s_seat.m_handler = std::function {std::forward<F>(callback)};
+		// NOTE: Omitting the template parameter does not work on Android / libc++
+		s_seat.m_handler = std::function<void(int)> {std::forward<F>(callback)};
 
 		// register new handler
 		try {
