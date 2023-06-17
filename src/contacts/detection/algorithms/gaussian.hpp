@@ -146,7 +146,7 @@ void assemble_system(Matrix6<T> &m,
 template <class T>
 bool extract_params(const Vector6<T> &chi, T &scale, Vector2<T> &mean, Matrix2<T> &prec)
 {
-	prec.noalias() = (Matrix2<T> {} << chi[0], chi[1], chi[1], chi[0]).finished() * -2;
+	prec.noalias() = (Matrix2<T> {} << chi[0], chi[1], chi[1], chi[2]).finished() * -2;
 
 	// mu = sigma * b = prec^-1 * B
 	const T d = prec.determinant();
