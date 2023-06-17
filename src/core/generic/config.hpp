@@ -27,6 +27,7 @@ public:
 	bool touch_check_cone = true;
 	bool touch_disable_on_palm = false;
 	bool touch_disable_on_stylus = false;
+	f64 touch_overshoot = 0.5;
 
 	// [Contacts]
 	std::string contacts_neutral = "mode";

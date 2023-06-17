@@ -210,6 +210,9 @@ private:
 	{
 		bool reset_singletouch = true;
 
+		const f64 ox = m_config.touch_overshoot / m_config.width;
+		const f64 oy = m_config.touch_overshoot / m_config.height;
+
 		for (const contacts::Contact<f64> &contact : contacts) {
 			// Ignore contacts without an index
 			if (!contact.index.has_value())
@@ -221,9 +224,10 @@ private:
 			if (!contact.stable.value_or(true))
 				continue;
 
+			// Check if the contact is too far outside of the screen.
 			bool lift = !contact.valid.value_or(true);
-			lift |= (contact.mean.array() < 0).any();
-			lift |= (contact.mean.array() > 1).any();
+			lift |= contact.mean.x() < -ox || contact.mean.x() > (ox + 1);
+			lift |= contact.mean.y() < -oy || contact.mean.y() > (oy + 1);
 
 			if (!lift)
 				this->emit_multitouch(contact);
@@ -295,6 +299,9 @@ private:
 
 		if (m_config.invert_x != m_config.invert_y)
 			orientation = 1.0 - orientation;
+
+		mean.x() = std::clamp(mean.x(), 0.0, 1.0);
+		mean.y() = std::clamp(mean.y(), 0.0, 1.0);
 
 		const i32 index = casts::to<i32>(contact.index.value_or(0));
 
@@ -382,6 +389,9 @@ private:
 
 		if (m_config.invert_y)
 			mean.y() = 1.0 - mean.y();
+
+		mean.x() = std::clamp(mean.x(), 0.0, 1.0);
+		mean.y() = std::clamp(mean.y(), 0.0, 1.0);
 
 		const i32 x = casts::to<i32>(std::round(mean.x() * MAX_X));
 		const i32 y = casts::to<i32>(std::round(mean.y() * MAX_Y));
