@@ -152,7 +152,6 @@ private:
 		this->get(ini, "Contacts", "NeutralValue", m_config.contacts_neutral_value);
 		this->get(ini, "Contacts", "ActivationThreshold", m_config.contacts_activation_threshold);
 		this->get(ini, "Contacts", "DeactivationThreshold", m_config.contacts_deactivation_threshold);
-		this->get(ini, "Contacts", "TemporalWindow", m_config.contacts_temporal_window);
 		this->get(ini, "Contacts", "SizeThresholdMin", m_config.contacts_size_thresh_min);
 		this->get(ini, "Contacts", "SizeThresholdMax", m_config.contacts_size_thresh_max);
 		this->get(ini, "Contacts", "PositionThresholdMin", m_config.contacts_position_thresh_min);

@@ -28,21 +28,18 @@ public:
 private:
 	Config<T> m_config;
 
-	// The last n frames, with n being m_config.temporal_window.
-	std::deque<std::vector<Contact<T>>> m_frames;
+	// The last frame.
+	std::vector<Contact<T>> m_last {};
 
 public:
-	Stabilizer(Config<T> config)
-		: m_config {config}
-		, m_frames {std::max(config.temporal_window, casts::to<usize>(2) - 1)} {};
+	Stabilizer(Config<T> config) : m_config {std::move(config)} {};
 
 	/*!
-	 * Resets the stabilizer by clearing the stored copies of the last frames.
+	 * Resets the stabilizer by clearing the stored previous frames.
 	 */
 	void reset()
 	{
-		for (auto &frame : m_frames)
-			frame.clear();
+		m_last.clear();
 	}
 
 	/*!
@@ -54,17 +51,12 @@ public:
 	{
 		// Stabilize contacts
 		for (Contact<T> &contact : frame)
-			this->stabilize_contact(contact, m_frames.back());
+			this->stabilize_contact(contact);
 
-		auto nf = m_frames.front();
+		m_last.clear();
 
-		// Clear the oldest stored frame
-		m_frames.pop_front();
-		nf.clear();
-
-		// Copy the new frame
-		std::copy(frame.begin(), frame.end(), std::back_inserter(nf));
-		m_frames.push_back(nf);
+		// Save a copy of the new data
+		std::copy(frame.begin(), frame.end(), std::back_inserter(m_last));
 	}
 
 private:
@@ -74,22 +66,16 @@ private:
 	 * @param[in,out] contact The contact to stabilize.
 	 * @param[in] frame The previous frame.
 	 */
-	void stabilize_contact(Contact<T> &contact, const std::vector<Contact<T>> &frame) const
+	void stabilize_contact(Contact<T> &contact) const
 	{
 		// Contacts that can't be tracked can't be stabilized.
 		if (!contact.index.has_value())
 			return;
 
-		if (m_config.check_temporal_stability && m_config.temporal_window >= 2)
-			contact.stable = this->check_temporal(contact);
-		else
-			contact.stable = true;
-
-		if (m_config.temporal_window < 2)
-			return;
+		contact.stable = true;
 
 		const usize index = contact.index.value();
-		const auto wrapper = Contact<T>::find_in_frame(index, frame);
+		const auto wrapper = Contact<T>::find_in_frame(index, m_last);
 
 		if (!wrapper.has_value())
 			return;
@@ -104,33 +90,6 @@ private:
 
 		if (m_config.orientation_threshold.has_value())
 			this->stabilize_orientation(contact, last);
-	}
-
-	/*!
-	 * Checks the temporal stability of a contact.
-	 *
-	 * A contact is temporally stable if it appears in all frames of the temporal window.
-	 *
-	 * @param[in] contact The contact to check.
-	 * @return Whether the contact is present in all previous frames.
-	 */
-	[[nodiscard]] bool check_temporal(const Contact<T> &contact) const
-	{
-		// Contacts that can't be tracked are considered temporally stable.
-		if (!contact.index.has_value())
-			return true;
-
-		const usize index = contact.index.value();
-
-		// Iterate over the last frames and find the contact with the same index
-		for (auto itr = m_frames.crbegin(); itr != m_frames.crend(); itr++) {
-			const auto wrapper = Contact<T>::find_in_frame(index, *itr);
-
-			if (!wrapper.has_value())
-				return false;
-		}
-
-		return true;
 	}
 
 	/*!

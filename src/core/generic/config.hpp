@@ -34,7 +34,6 @@ public:
 	f64 contacts_neutral_value = 0;
 	f64 contacts_activation_threshold = 24;
 	f64 contacts_deactivation_threshold = 20;
-	usize contacts_temporal_window = 3;
 	f64 contacts_size_thresh_min = 0.1;
 	f64 contacts_size_thresh_max = 0.5;
 	f64 contacts_position_thresh_min = 0.04;
@@ -106,8 +105,6 @@ public:
 			this->contacts_aspect_max,
 		};
 
-		config.stability.check_temporal_stability = true;
-		config.stability.temporal_window = this->contacts_temporal_window;
 		config.stability.size_threshold = Vector2<f64> {
 			this->contacts_size_thresh_min / diagonal,
 			this->contacts_size_thresh_max / diagonal,
