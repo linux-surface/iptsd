@@ -30,7 +30,6 @@ BuildRequires: pkgconfig(fmt)
 BuildRequires: pkgconfig(inih)
 BuildRequires: cmake(Microsoft.GSL)
 BuildRequires: pkgconfig(spdlog)
-BuildRequires: hidrd-devel
 
 # Debug Tools
 BuildRequires: pkgconfig(cairomm-1.0)

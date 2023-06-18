@@ -26,7 +26,6 @@ To build IPTSD from source, you need to install the following dependencies:
  * fmt
  * inih / INIReader
  * gsl
- * hidrd
  * spdlog
 
 To build the plotting tools for visualizing data, you need to install a few more dependencies.

@@ -3,89 +3,43 @@
 #ifndef IPTSD_HID_DESCRIPTOR_HPP
 #define IPTSD_HID_DESCRIPTOR_HPP
 
-#include "shim/hidrd.h"
+#include "report.hpp"
+#include "spec.hpp"
 
 #include <common/casts.hpp>
 #include <common/types.hpp>
 
 #include <gsl/gsl>
 
+#include <optional>
+#include <set>
 #include <vector>
 
 namespace iptsd::hid {
 
 class Descriptor {
 private:
-	std::vector<u8> m_descriptor {};
-	std::vector<const hidrd_item *> m_parsed {};
+	std::vector<Report> m_reports {};
 
 public:
-	/*!
-	 * Loads a binary HID descriptor and parses it.
-	 *
-	 * @param[in] raw The raw binary data to load and parse.
-	 */
-	void load(const gsl::span<u8> raw)
-	{
-		usize size = 0;
-
-		m_descriptor.clear();
-		m_descriptor.resize(raw.size());
-
-		std::copy(raw.begin(), raw.end(), m_descriptor.begin());
-
-		while (size < m_descriptor.size()) {
-			// NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
-			const auto *item =
-				reinterpret_cast<const hidrd_item *>(&m_descriptor[size]);
-			// NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
-
-			size += hidrd_item_get_size(item);
-			m_parsed.push_back(item);
-		}
-	}
+	Descriptor() = default;
+	Descriptor(std::vector<Report> reports) : m_reports {std::move(reports)} {};
 
 	/*!
-	 * All hidrd_items of the HID report.
-	 *
-	 * Every item corresponds to one tag of the HID descriptor.
-
-	 * @return A list of all items found in the HID descriptor.
-	 */
-	[[nodiscard]] const std::vector<const hidrd_item *> &items() const
-	{
-		return m_parsed;
-	}
-
-	/*!
-	 * Returns all reports matching a certain type.
-	 *
-	 * This can be used to get a list of all Input or Feature reports.
+	 * Returns all reports of a certain type.
 	 *
 	 * @param[in] type The type of report to search for.
 	 * @return A list of all report IDs of the given type.
 	 */
-	[[nodiscard]] std::vector<u8> reports(const hidrd_item_main_tag type) const
+	[[nodiscard]] std::set<std::optional<u8>> reports(const ReportType type) const
 	{
-		u8 current = 0;
-		std::vector<u8> reports {};
+		std::set<std::optional<u8>> reports {};
 
-		for (const hidrd_item *item : this->items()) {
-			if (is_report(item)) {
-				current = hidrd_item_report_id_get_value(item);
-				continue;
-			}
-
-			if (!is_commit(item))
+		for (const Report &report : m_reports) {
+			if (report.type() != type)
 				continue;
 
-			if (current == 0)
-				continue;
-
-			if (hidrd_item_main_get_tag(item) == type) {
-				reports.push_back(current);
-				current = 0;
-			}
+			reports.insert(report.id());
 		}
 
 		return reports;
@@ -95,58 +49,21 @@ public:
 	 * Returns the usage tags of a HID report.
 	 *
 	 * @param[in] report The report ID for which to get the usage tags.
-	 * @return The values of all usage tags that are active for the report.
+	 * @return All usage tags that apply to the report.
 	 */
-	[[nodiscard]] std::vector<hidrd_usage> usage(const u8 report) const
+	[[nodiscard]] std::vector<Usage> usage(const std::optional<u8> id) const
 	{
-		u8 current = 0;
-		std::vector<hidrd_usage> usage {};
+		std::vector<Usage> usages {};
 
-		for (const hidrd_item *item : this->items()) {
-			if (is_report(item)) {
-				current = hidrd_item_report_id_get_value(item);
-				continue;
-			}
-
-			if (current != report)
+		for (const Report &report : m_reports) {
+			if (report.id() != id)
 				continue;
 
-			if (hidrd_item_short_get_type(item) != HIDRD_ITEM_SHORT_TYPE_LOCAL)
-				continue;
-
-			if (hidrd_item_local_get_tag(item) != HIDRD_ITEM_LOCAL_TAG_USAGE)
-				continue;
-
-			usage.push_back(hidrd_item_usage_get_value(item));
+			for (const Usage &usage : report.usages())
+				usages.push_back(usage);
 		}
 
-		return usage;
-	}
-
-	/*!
-	 * The usage page of a HID report.
-	 *
-	 * @param[in] report The report ID for which to get the usage page.
-	 * @return The value of the usage page tag that is active for the report.
-	 */
-	[[nodiscard]] hidrd_usage_page usage_page(const u8 report) const
-	{
-		hidrd_usage_page current = HIDRD_USAGE_PAGE_MAX;
-
-		for (const hidrd_item *item : this->items()) {
-			if (is_report(item) && report == hidrd_item_report_id_get_value(item))
-				return current;
-
-			if (hidrd_item_short_get_type(item) != HIDRD_ITEM_SHORT_TYPE_GLOBAL)
-				continue;
-
-			if (hidrd_item_global_get_tag(item) != HIDRD_ITEM_GLOBAL_TAG_USAGE_PAGE)
-				continue;
-
-			current = hidrd_item_usage_page_get_value(item);
-		}
-
-		return HIDRD_USAGE_PAGE_MAX;
+		return usages;
 	}
 
 	/*!
@@ -155,85 +72,18 @@ public:
 	 * @param[in] report The report ID for which to calculate the size.
 	 * @return The combined size of the HID report in bytes.
 	 */
-	[[nodiscard]] usize size(const u8 report) const
+	[[nodiscard]] usize size(const std::optional<u8> id) const
 	{
-		u8 current = 0;
+		f64 total_size = 0;
 
-		u32 report_count = 0;
-		u32 report_size = 0;
-		u64 total_size = 0;
-
-		for (const hidrd_item *item : this->items()) {
-			if (is_report(item)) {
-				current = hidrd_item_report_id_get_value(item);
-				continue;
-			}
-
-			if (current != report)
+		for (const Report &report : m_reports) {
+			if (report.id() != id)
 				continue;
 
-			if (is_commit(item)) {
-				total_size += (report_count * report_size) / 8;
-				continue;
-			}
-
-			if (hidrd_item_short_get_type(item) != HIDRD_ITEM_SHORT_TYPE_GLOBAL)
-				continue;
-
-			if (hidrd_item_global_get_tag(item) == HIDRD_ITEM_GLOBAL_TAG_REPORT_COUNT) {
-				report_count = hidrd_item_report_count_get_value(item);
-				continue;
-			}
-
-			if (hidrd_item_global_get_tag(item) == HIDRD_ITEM_GLOBAL_TAG_REPORT_SIZE) {
-				report_size = hidrd_item_report_size_get_value(item);
-				continue;
-			}
+			total_size += casts::to<f64>(report.size()) / 8.0;
 		}
 
-		return casts::to<usize>(total_size);
-	}
-
-	/*!
-	 * Whether an item represents a Report ID tag.
-	 *
-	 * @param[in] item The item to check.
-	 * @return true if the item is the definition of a Report ID.
-	 */
-	static bool is_report(const hidrd_item *item)
-	{
-		if (hidrd_item_basic_get_format(item) != HIDRD_ITEM_BASIC_FORMAT_SHORT)
-			return false;
-
-		if (hidrd_item_short_get_type(item) != HIDRD_ITEM_SHORT_TYPE_GLOBAL)
-			return false;
-
-		return hidrd_item_global_get_tag(item) == HIDRD_ITEM_GLOBAL_TAG_REPORT_ID;
-	}
-
-	/*!
-	 * Whether a hidrd item "commits" a report.
-	 *
-	 * With the state machine that HID uses, an Input, Output or Feature tag
-	 * will create a new report with the current state, e.g. everything that preceded
-	 * it.
-	 *
-	 * This checks whether an item represents one of these "committing" tags.
-	 *
-	 * @param[in] item The item to check.
-	 * @return Whether the item is a "committing" tag.
-	 */
-	static bool is_commit(const hidrd_item *item)
-	{
-		if (hidrd_item_basic_get_format(item) != HIDRD_ITEM_BASIC_FORMAT_SHORT)
-			return false;
-
-		if (hidrd_item_short_get_type(item) != HIDRD_ITEM_SHORT_TYPE_MAIN)
-			return false;
-
-		return hidrd_item_main_get_tag(item) == HIDRD_ITEM_MAIN_TAG_INPUT ||
-		       hidrd_item_main_get_tag(item) == HIDRD_ITEM_MAIN_TAG_OUTPUT ||
-		       hidrd_item_main_get_tag(item) == HIDRD_ITEM_MAIN_TAG_FEATURE;
+		return casts::to<usize>(std::ceil(total_size));
 	}
 };
 

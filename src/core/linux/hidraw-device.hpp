@@ -9,16 +9,21 @@
 #include <common/types.hpp>
 #include <core/generic/device.hpp>
 #include <hid/descriptor.hpp>
-#include <hid/shim/hidrd.h>
+#include <hid/parser.hpp>
+#include <hid/report.hpp>
+#include <hid/spec.hpp>
 #include <ipts/parser.hpp>
+#include <ipts/protocol.hpp>
 
 #include <gsl/gsl>
+#include <spdlog/spdlog.h>
 
 #include <linux/hidraw.h>
 
 #include <algorithm>
 #include <filesystem>
 #include <optional>
+#include <set>
 #include <vector>
 
 namespace iptsd::core::linux {
@@ -44,7 +49,7 @@ public:
 
 		syscalls::ioctl(m_fd, HIDIOCGRDESC, &hidraw_desc);
 
-		m_desc.load(gsl::span<u8> {&hidraw_desc.value[0], desc_size});
+		m_desc = hid::parse(gsl::span<u8> {&hidraw_desc.value[0], desc_size});
 	}
 
 	/*!
@@ -99,7 +104,7 @@ public:
 	void set_mode(const bool multitouch) const
 	{
 		std::array<u8, 2> report {
-			this->get_set_mode(),
+			this->get_set_mode().value_or(0),
 			multitouch ? casts::to<u8>(0x1) : casts::to<u8>(0x0),
 		};
 
@@ -112,21 +117,18 @@ public:
 	 * @param[in] report The ID of the HID report to check.
 	 * @return Whether the given report contains touchscreen data.
 	 */
-	[[nodiscard]] bool is_touch_data(const u8 report) const
+	[[nodiscard]] bool is_touch_data(const std::optional<u8> report) const
 	{
 		const hid::Descriptor &desc = this->descriptor();
-		const std::vector<hidrd_usage> usage = desc.usage(report);
+		const std::vector<hid::Usage> usage = desc.usage(report);
 
 		if (usage.size() != 2)
 			return false;
 
-		if (usage[0] != IPTS_HID_REPORT_USAGE_SCAN_TIME)
-			return false;
-
-		if (usage[1] != IPTS_HID_REPORT_USAGE_GESTURE_DATA)
-			return false;
-
-		return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
+		return usage[0].page == IPTS_HID_REPORT_USAGE_PAGE_DIGITIZER &&
+		       usage[0].value == IPTS_HID_REPORT_USAGE_SCAN_TIME &&
+		       usage[1].page == IPTS_HID_REPORT_USAGE_PAGE_DIGITIZER &&
+		       usage[1].value == IPTS_HID_REPORT_USAGE_GESTURE_DATA;
 	}
 
 	/*!
@@ -137,10 +139,11 @@ public:
 	[[nodiscard]] bool has_set_mode() const
 	{
 		const hid::Descriptor &desc = this->descriptor();
-		const std::vector<u8> reports = desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE);
+		const std::set<std::optional<u8>> reports = desc.reports(hid::ReportType::Feature);
 
-		return std::any_of(reports.cbegin(), reports.cend(),
-				   [&](const u8 report) { return this->is_set_mode(report); });
+		return std::any_of(
+			reports.cbegin(), reports.cend(),
+			[&](const std::optional<u8> report) { return this->is_set_mode(report); });
 	}
 
 	/*!
@@ -151,10 +154,12 @@ public:
 	[[nodiscard]] bool has_touch_data() const
 	{
 		const hid::Descriptor &desc = this->descriptor();
-		const std::vector<u8> reports = desc.reports(HIDRD_ITEM_MAIN_TAG_INPUT);
+		const std::set<std::optional<u8>> reports = desc.reports(hid::ReportType::Input);
 
 		return std::any_of(reports.cbegin(), reports.cend(),
-				   [&](const u8 report) { return this->is_touch_data(report); });
+				   [&](const std::optional<u8> report) {
+					   return this->is_touch_data(report);
+				   });
 	}
 
 	/*!
@@ -167,12 +172,12 @@ public:
 		std::optional<ipts::Metadata> metadata = std::nullopt;
 		const hid::Descriptor &desc = this->descriptor();
 
-		const u8 id = this->get_metadata_report_id();
-		if (id == 0)
+		const std::optional<u8> id = this->get_metadata_report_id();
+		if (!id.has_value())
 			return std::nullopt;
 
 		std::vector<u8> report(desc.size(id) + 1);
-		report.at(0) = id;
+		report.at(0) = id.value();
 
 		this->get_feature(report);
 
@@ -194,7 +199,7 @@ private:
 		usize size = 0;
 		const hid::Descriptor &desc = this->descriptor();
 
-		for (const u8 report : desc.reports(HIDRD_ITEM_MAIN_TAG_INPUT))
+		for (const std::optional<u8> report : desc.reports(hid::ReportType::Input))
 			size = std::max(size, desc.size(report));
 
 		return size;
@@ -226,21 +231,19 @@ private:
 	 * @param[in] report The ID of the HID report to check.
 	 * @return Whether the given report is a modesetting report.
 	 */
-	[[nodiscard]] bool is_set_mode(const u8 report) const
+	[[nodiscard]] bool is_set_mode(const std::optional<u8> report) const
 	{
 		const hid::Descriptor &desc = this->descriptor();
-		const std::vector<hidrd_usage> usage = desc.usage(report);
+		const std::vector<hid::Usage> usage = desc.usage(report);
 
 		if (usage.size() != 1)
-			return false;
-
-		if (usage[0] != IPTS_HID_REPORT_USAGE_SET_MODE)
 			return false;
 
 		if (desc.size(report) != 1)
 			return false;
 
-		return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
+		return usage[0].page == IPTS_HID_REPORT_USAGE_PAGE_VENDOR &&
+		       usage[0].value == IPTS_HID_REPORT_USAGE_SET_MODE;
 	}
 
 	/*!
@@ -248,16 +251,16 @@ private:
 	 *
 	 * @return The report ID of the report for modesetting if it exists, 0 otherwise.
 	 */
-	[[nodiscard]] u8 get_set_mode() const
+	[[nodiscard]] std::optional<u8> get_set_mode() const
 	{
 		const hid::Descriptor &desc = this->descriptor();
 
-		for (const u8 report : desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE)) {
+		for (const std::optional<u8> report : desc.reports(hid::ReportType::Feature)) {
 			if (this->is_set_mode(report))
 				return report;
 		}
 
-		return 0;
+		return std::nullopt;
 	}
 
 	/*!
@@ -266,18 +269,16 @@ private:
 	 * @param[in] report The ID of the HID report to check.
 	 * @return Whether the given report is a metadata report.
 	 */
-	[[nodiscard]] bool is_metadata_report(const u8 report) const
+	[[nodiscard]] bool is_metadata_report(const std::optional<u8> report) const
 	{
 		const hid::Descriptor &desc = this->descriptor();
-		const std::vector<hidrd_usage> usage = desc.usage(report);
+		const std::vector<hid::Usage> usage = desc.usage(report);
 
 		if (usage.size() != 1)
 			return false;
 
-		if (usage[0] != IPTS_HID_REPORT_USAGE_METADATA)
-			return false;
-
-		return desc.usage_page(report) == HIDRD_USAGE_PAGE_DIGITIZER;
+		return usage[0].page == IPTS_HID_REPORT_USAGE_PAGE_DIGITIZER &&
+		       usage[0].value == IPTS_HID_REPORT_USAGE_METADATA;
 	}
 
 	/*!
@@ -285,16 +286,16 @@ private:
 	 *
 	 * @return The report ID of the metadata report if it exists, 0 otherwise.
 	 */
-	[[nodiscard]] u8 get_metadata_report_id() const
+	[[nodiscard]] std::optional<u8> get_metadata_report_id() const
 	{
 		const hid::Descriptor &desc = this->descriptor();
 
-		for (const u8 report : desc.reports(HIDRD_ITEM_MAIN_TAG_FEATURE)) {
+		for (const std::optional<u8> report : desc.reports(hid::ReportType::Feature)) {
 			if (this->is_metadata_report(report))
 				return report;
 		}
 
-		return 0;
+		return std::nullopt;
 	}
 };
 

@@ -9,6 +9,9 @@
 
 // clang-format off
 
+constexpr u16 IPTS_HID_REPORT_USAGE_PAGE_DIGITIZER = 0x000D;
+constexpr u16 IPTS_HID_REPORT_USAGE_PAGE_VENDOR    = 0xFF00;
+
 /*
  * If a report contains both of these usages, the report is used to send touch data
  */
