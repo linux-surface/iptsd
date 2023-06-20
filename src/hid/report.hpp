@@ -9,7 +9,11 @@
 #include <common/casts.hpp>
 #include <common/types.hpp>
 
+#include <algorithm>
+#include <iterator>
 #include <optional>
+#include <stdexcept>
+#include <unordered_set>
 #include <vector>
 
 namespace iptsd::hid {
@@ -40,22 +44,20 @@ private:
 	std::optional<u8> m_report_id;
 
 	// The size of the report
-	u32 m_report_size;
-	u32 m_report_count;
+	u64 m_report_size;
 
 	// The usage values describing the report
-	std::vector<Usage> m_usages;
+	std::unordered_set<Usage> m_usages;
 
 public:
 	Report(ReportType type,
 	       std::optional<u8> report_id,
 	       u32 report_count,
 	       u32 report_size,
-	       const std::vector<Usage> &usages)
+	       const std::unordered_set<Usage> &usages)
 		: m_type {type}
 		, m_report_id {report_id}
-		, m_report_size {report_size}
-		, m_report_count {report_count}
+		, m_report_size {casts::to<u64>(report_count) * report_size}
 		, m_usages {usages} {};
 
 	/*!
@@ -79,15 +81,60 @@ public:
 	 */
 	[[nodiscard]] u64 size() const
 	{
-		return casts::to<u64>(m_report_size) * m_report_count;
+		return m_report_size;
 	}
 
 	/*
 	 * The usage tags of the HID report.
 	 */
-	[[nodiscard]] const std::vector<Usage> &usages() const
+	[[nodiscard]] const std::unordered_set<Usage> &usages() const
 	{
 		return m_usages;
+	}
+
+	/*!
+	 * Checks if the report contains a certain usage tag.
+	 *
+	 * @param[in] value The usage tag to search for.
+	 * @return Whether the combination of Usage / Usage Page applies to this report.
+	 */
+	[[nodiscard]] bool find_usage(Usage value) const
+	{
+		return this->find_usage(value.page, value.value);
+	}
+
+	/*!
+	 * Checks if the report contains a certain usage tag.
+	 *
+	 * @param[in] page The usage page tag to search for.
+	 * @param[in] value The usage tag to search for.
+	 * @return Whether the combination of Usage / Usage Page applies to this report.
+	 */
+	[[nodiscard]] bool find_usage(u16 page, u16 value) const
+	{
+		return std::any_of(m_usages.cbegin(), m_usages.cend(),
+				   [&](const Usage &usage) -> bool {
+					   return usage.page == page && usage.value == value;
+				   });
+	}
+
+	/*!
+	 * Combines two reports sharing the same ID and type.
+	 *
+	 * @param[in] other The report to combine with this one.
+	 */
+	void merge(const Report &other)
+	{
+		if (m_type != other.type())
+			throw std::runtime_error {"Cannot merge two reports of different types"};
+
+		if (m_report_id != other.id())
+			throw std::runtime_error {"Cannot merge two reports with different IDs"};
+
+		m_report_size += other.size();
+
+		for (const Usage &usage : other.usages())
+			m_usages.insert(usage);
 	}
 };
 

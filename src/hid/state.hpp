@@ -11,6 +11,7 @@
 
 #include <optional>
 #include <stdexcept>
+#include <unordered_set>
 
 namespace iptsd::hid {
 
@@ -25,7 +26,7 @@ private:
 	std::optional<u16> m_usage_min = std::nullopt;
 	std::optional<u16> m_usage_max = std::nullopt;
 
-	std::vector<Usage> m_usages {};
+	std::unordered_set<Usage> m_usages {};
 
 public:
 	/*!
@@ -101,7 +102,7 @@ public:
 		if (!m_usage_page.has_value())
 			throw std::runtime_error {"HID Descriptor: Usage before Usage Page"};
 
-		m_usages.push_back(Usage {m_usage_page.value(), usage});
+		m_usages.insert(Usage {m_usage_page.value(), usage});
 	}
 
 	/*!
@@ -126,7 +127,7 @@ public:
 
 		if (m_usage_max.has_value()) {
 			for (u16 i = usage_min; i < (m_usage_max.value() + 1); i++)
-				m_usages.push_back(Usage {m_usage_page.value(), i});
+				m_usages.insert(Usage {m_usage_page.value(), i});
 
 			m_usage_max.reset();
 		} else {
@@ -146,7 +147,7 @@ public:
 
 		if (m_usage_min.has_value()) {
 			for (u16 i = m_usage_min.value(); i < (usage_max + 1); i++)
-				m_usages.push_back(Usage {m_usage_page.value(), i});
+				m_usages.insert(Usage {m_usage_page.value(), i});
 
 			m_usage_min.reset();
 		} else {

@@ -10,11 +10,13 @@
 #include <common/chrono.hpp>
 #include <core/generic/application.hpp>
 #include <ipts/data.hpp>
+#include <ipts/device.hpp>
 
 #include <spdlog/spdlog.h>
 
 #include <atomic>
 #include <filesystem>
+#include <memory>
 #include <thread>
 #include <type_traits>
 #include <vector>
@@ -28,7 +30,10 @@ private:
 
 private:
 	// The hidraw device serving as the source of data.
-	HidrawDevice m_device;
+	std::shared_ptr<HidrawDevice> m_device;
+
+	// The IPTS touchscreen interface
+	ipts::Device m_ipts;
 
 	// Whether the loop for reading from the device should stop.
 	std::atomic_bool m_should_stop = false;
@@ -45,10 +50,16 @@ private:
 
 public:
 	template <class... Args>
-	DeviceRunner(const std::filesystem::path &path, Args... args) : m_device {path}
+	DeviceRunner(const std::filesystem::path &path, Args... args)
+		: m_device {std::make_shared<HidrawDevice>(path)}
+		, m_ipts {m_device}
 	{
-		const DeviceInfo info = m_device.info();
-		const std::optional<const ipts::Metadata> meta = m_device.get_metadata();
+		DeviceInfo info {};
+		info.vendor = m_device->vendor();
+		info.product = m_device->product();
+		info.buffer_size = m_ipts.buffer_size();
+
+		const std::optional<const ipts::Metadata> meta = m_ipts.metadata();
 
 		const ConfigLoader loader {info, meta};
 		m_application.emplace(loader.config(), info, meta, args...);
@@ -94,7 +105,7 @@ public:
 			throw std::runtime_error("Init error: Application is null");
 
 		// Enable multitouch mode
-		m_device.set_mode(true);
+		m_ipts.set_mode(ipts::Mode::Multitouch);
 
 		// Signal the application that the data flow has started.
 		m_application->on_start();
@@ -108,10 +119,10 @@ public:
 			}
 
 			try {
-				const isize size = m_device.read(m_buffer);
+				const isize size = m_device->read(m_buffer);
 
 				// Does this report contain touch data?
-				if (!m_device.is_touch_data(m_buffer[0]))
+				if (!m_ipts.is_touch_data(m_buffer))
 					continue;
 
 				m_application->process(
@@ -137,7 +148,7 @@ public:
 
 		try {
 			// Disable multitouch mode
-			m_device.set_mode(false);
+			m_ipts.set_mode(ipts::Mode::Singletouch);
 		} catch (std::exception &e) {
 			spdlog::error(e.what());
 		}

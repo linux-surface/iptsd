@@ -5,7 +5,10 @@
 #include <core/generic/device.hpp>
 #include <core/linux/config-loader.hpp>
 #include <core/linux/hidraw-device.hpp>
+#include <hid/report.hpp>
 #include <ipts/data.hpp>
+#include <ipts/descriptor.hpp>
+#include <ipts/device.hpp>
 
 #include <CLI/CLI.hpp>
 #include <gsl/gsl>
@@ -14,6 +17,7 @@
 #include <cstdlib>
 #include <exception>
 #include <filesystem>
+#include <memory>
 #include <optional>
 #include <string>
 
@@ -39,21 +43,29 @@ int run(const int argc, const char **argv)
 		spdlog::set_level(spdlog::level::off);
 
 	// Open the device
-	const core::linux::HidrawDevice device {path};
+	const auto device = std::make_shared<core::linux::HidrawDevice>(path);
 
-	const core::DeviceInfo info = device.info();
-	const std::optional<const ipts::Metadata> metadata = device.get_metadata();
+	core::DeviceInfo info {};
+	info.vendor = device->vendor();
+	info.product = device->product();
 
-	spdlog::info("Opened device {:04X}:{:04X}", info.vendor, info.product);
+	// Create IPTS interface
+	const ipts::Device ipts {device};
+	const ipts::Descriptor &descriptor = ipts.descriptor();
+	const std::optional<const ipts::Metadata> metadata = ipts.metadata();
+
+	info.buffer_size = ipts.buffer_size();
+
+	spdlog::info("Opened device {:04X}:{:04X}", device->vendor(), device->product());
 
 	// Check if the device can switch modes
-	if (!device.has_set_mode()) {
+	if (!descriptor.find_modesetting_report().has_value()) {
 		spdlog::error("{} is not an IPTS device!", path.string());
 		return EXIT_FAILURE;
 	}
 
 	// Check if the device can send touch data.
-	if (!device.has_touch_data()) {
+	if (descriptor.find_touch_data_reports().empty()) {
 		spdlog::error("{} is not an IPTS device!", path.string());
 		return EXIT_FAILURE;
 	}

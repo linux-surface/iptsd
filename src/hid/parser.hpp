@@ -3,7 +3,6 @@
 #ifndef IPTSD_HID_PARSER_HPP
 #define IPTSD_HID_PARSER_HPP
 
-#include "descriptor.hpp"
 #include "report.hpp"
 #include "spec.hpp"
 #include "state.hpp"
@@ -24,15 +23,16 @@ namespace iptsd::hid {
  *
  * This function will parse the report ID, size and usage tags.
  *
- * @param[in] data The buffer containing the descriptor.
+ * @param[in] buffer The buffer containing the descriptor.
+ * @param[in] reports A reference to the vector where a representation of the reports will be saved.
  * @return A representation of the HID reports defined by the descriptor.
  */
-inline Descriptor parse(const gsl::span<u8> buffer)
+inline void parse(const gsl::span<u8> buffer, std::vector<Report> &reports)
 {
 	ParserState state {};
-	std::vector<Report> reports {};
-
 	Reader reader {buffer};
+
+	reports.clear();
 
 	while (reader.size() > 0) {
 		const u8 header = reader.read<u8>();
@@ -61,7 +61,25 @@ inline Descriptor parse(const gsl::span<u8> buffer)
 				continue;
 			}
 
-			reports.push_back(state.get_report(tag));
+			bool found = false;
+			const Report nr = state.get_report(tag);
+
+			// Try to find an existing report that we can update
+			for (Report &report : reports) {
+				if (nr.id() != report.id())
+					continue;
+
+				if (nr.type() != report.type())
+					continue;
+
+				report.merge(nr);
+
+				found = true;
+				break;
+			}
+
+			if (!found)
+				reports.push_back(nr);
 		} else if (type == ItemType::Global) {
 			const auto tag = gsl::narrow<TagGlobal>((header & BITS_TAG) >> SHIFT_TAG);
 
@@ -95,8 +113,21 @@ inline Descriptor parse(const gsl::span<u8> buffer)
 			}
 		}
 	}
+}
 
-	return Descriptor {std::move(reports)};
+/*!
+ * Loads a HID descriptor from a its binary representation.
+ *
+ * This function will parse the report ID, size and usage tags.
+ *
+ * @param[in] buffer The buffer containing the descriptor.
+ * @return A representation of the HID reports defined by the descriptor.
+ */
+inline std::vector<Report> parse(const gsl::span<u8> buffer)
+{
+	std::vector<Report> reports {};
+	parse(buffer, reports);
+	return reports;
 }
 
 } // namespace iptsd::hid
