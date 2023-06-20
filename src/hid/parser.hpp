@@ -9,8 +9,8 @@
 #include "state.hpp"
 
 #include <common/casts.hpp>
+#include <common/reader.hpp>
 #include <common/types.hpp>
-#include <ipts/reader.hpp>
 
 #include <gsl/gsl>
 
@@ -32,7 +32,7 @@ inline Descriptor parse(const gsl::span<u8> buffer)
 	ParserState state {};
 	std::vector<Report> reports {};
 
-	ipts::Reader reader {buffer};
+	Reader reader {buffer};
 
 	while (reader.size() > 0) {
 		const u8 header = reader.read<u8>();

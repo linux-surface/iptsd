@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#ifndef IPTSD_IPTS_READER_HPP
-#define IPTSD_IPTS_READER_HPP
+#ifndef IPTSD_COMMON_READER_HPP
+#define IPTSD_COMMON_READER_HPP
 
-#include <common/types.hpp>
+#include "types.hpp"
 
 #include <gsl/gsl>
 
 #include <algorithm>
 
-namespace iptsd::ipts {
+namespace iptsd {
 
 class Reader {
 private:
@@ -105,6 +105,6 @@ public:
 	}
 };
 
-} // namespace iptsd::ipts
+} // namespace iptsd
 
-#endif // IPTSD_IPTS_READER_HPP
+#endif // IPTSD_COMMON_READER_HPP

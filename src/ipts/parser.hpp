@@ -5,9 +5,9 @@
 
 #include "data.hpp"
 #include "protocol.hpp"
-#include "reader.hpp"
 
 #include <common/casts.hpp>
+#include <common/reader.hpp>
 #include <common/types.hpp>
 
 #include <gsl/gsl>

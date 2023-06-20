@@ -6,9 +6,9 @@
 #include "config-loader.hpp"
 
 #include <common/casts.hpp>
+#include <common/reader.hpp>
 #include <core/generic/application.hpp>
 #include <ipts/data.hpp>
-#include <ipts/reader.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -42,7 +42,7 @@ private:
 
 	// The application that is being executed.
 	std::optional<T> m_application = std::nullopt;
-	std::optional<ipts::Reader> m_reader = std::nullopt;
+	std::optional<Reader> m_reader = std::nullopt;
 
 public:
 	template <class... Args>
@@ -55,7 +55,7 @@ public:
 		m_file = std::vector<u8> {std::istream_iterator<u8>(ifs),
 					  std::istream_iterator<u8>()};
 
-		m_reader = ipts::Reader {m_file};
+		m_reader = Reader {m_file};
 		m_info = m_reader->read<DeviceInfo>();
 
 		std::optional<ipts::Metadata> meta = std::nullopt;
@@ -109,7 +109,7 @@ public:
 		if (!m_application.has_value() || !m_reader.has_value())
 			throw std::runtime_error("Error: Application / Reader are null");
 
-		ipts::Reader local = m_reader.value();
+		Reader local = m_reader.value();
 
 		// Signal the application that the data flow has started.
 		m_application->on_start();
@@ -129,8 +129,7 @@ public:
 				 * The writer should simply write as many bytes as it just received,
 				 * instead of writing the entire buffer all the time.
 				 */
-				ipts::Reader buffer =
-					local.sub(casts::to<usize>(m_info.buffer_size));
+				Reader buffer = local.sub(casts::to<usize>(m_info.buffer_size));
 
 				m_application->process(buffer.subspan(casts::to<usize>(size)));
 			} catch (std::exception &e) {
