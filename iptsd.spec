@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 # Build with clang since it produces faster binaries
-%global toolchain clang
+%global toolchain gcc
 
 Name: iptsd
 Version: 1.2.1
