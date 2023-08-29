@@ -156,6 +156,7 @@ endif
 
 if tools.contains('show')
   sdl_options = [
+    'test=false',
     'use_audio=disabled',
     'use_joystick=disabled',
     'use_haptic=disabled',
