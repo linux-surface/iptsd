@@ -181,7 +181,7 @@ if tools.contains('show')
 
   # Enabling compiler warnings in the consuming project is a great idea, SDL...
   sdl = sdl.partial_dependency(
-    compile_args: false,
+    compile_args: sdl.type_name() == 'pkgconfig',
     includes: true,
     link_args: true,
     links: true,
