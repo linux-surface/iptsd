@@ -155,9 +155,37 @@ if tools.contains('plot')
 endif
 
 if tools.contains('show')
+  sdl_options = [
+    'use_audio=disabled',
+    'use_joystick=disabled',
+    'use_haptic=disabled',
+    'use_hidapi=disabled',
+    'use_sensor=disabled',
+    'use_video=enabled',
+    'use_video_x11=disabled',
+    'use_video_wayland=disabled',
+    'use_video_wayland_libdecor=disabled',
+    'use_video_opengl=disabled',
+    'use_video_openglesv2=enabled',
+    'use_video_vulkan=disabled',
+    'use_video_offscreen=disabled',
+    'system_iconv=disabled',
+    'use_dummies=true',
+    'prefer_dlopen=true',
+  ]
+
   sdl = dependency('sdl2',
     fallback: ['sdl2', 'sdl2_dep'],
-    default_options: dependency_options,
+    default_options: dependency_options + sdl_options,
+  )
+
+  # Enabling compiler warnings in the consuming project is a great idea, SDL...
+  sdl = sdl.partial_dependency(
+    compile_args: false,
+    includes: true,
+    link_args: true,
+    links: true,
+    sources: true
   )
 
   if cairo.found()

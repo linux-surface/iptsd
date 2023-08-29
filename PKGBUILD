@@ -6,6 +6,7 @@ arch=('x86_64' 'aarch64')
 url='https://github.com/linux-surface/iptsd'
 license=('GPL')
 depends=(
+	'libgl'
 	'libcairomm-1.0.so'
 )
 makedepends=(
