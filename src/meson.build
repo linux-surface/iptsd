@@ -61,7 +61,7 @@ cli11 = dependency('CLI11',
 eigen = dependency('eigen3',
   fallback: ['eigen', 'eigen_dep'],
   default_options: dependency_options,
-   include_type: 'system',
+  include_type: 'system',
 )
 
 fmt = dependency('fmt',
@@ -82,7 +82,7 @@ gsl = dependency('Microsoft.GSL',
 
 spdlog = dependency('spdlog',
   fallback: ['spdlog', 'spdlog_dep'],
-  default_options: dependency_options,
+  default_options: dependency_options + ['tests=false'],
 )
 
 # Find libstdc++fs for older GCC
