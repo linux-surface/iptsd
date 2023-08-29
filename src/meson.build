@@ -163,7 +163,7 @@ if tools.contains('show')
     'use_hidapi=disabled',
     'use_sensor=disabled',
     'use_video=enabled',
-    'use_video_x11=disabled',
+    'use_video_x11=enabled',
     'use_video_wayland=disabled',
     'use_video_wayland_libdecor=disabled',
     'use_video_opengl=disabled',

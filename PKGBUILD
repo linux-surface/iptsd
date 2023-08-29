@@ -7,6 +7,12 @@ url='https://github.com/linux-surface/iptsd'
 license=('GPL')
 depends=(
 	'libgl'
+	'libx11'
+	'libxext'
+	'libxcursor'
+	'libxi'
+	'libxfixes'
+	'libxrandr'
 	'libcairomm-1.0.so'
 )
 makedepends=(
