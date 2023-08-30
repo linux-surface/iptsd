@@ -4,7 +4,7 @@
 %global toolchain gcc
 
 Name: iptsd
-Version: 1.3.1
+Version: 1.3.2
 Release: 1%{?dist}
 Summary: Userspace daemon for Intel Precise Touch & Stylus
 License: GPLv2+
