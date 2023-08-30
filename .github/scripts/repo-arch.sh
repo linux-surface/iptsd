@@ -3,7 +3,8 @@
 NAME="$1"
 
 # Install dependencies
-pacman -Sy --noconfirm git
+pacman -Syu --noconfirm
+pacman -S --noconfirm git
 
 repo="https://surfacebot:${SURFACEBOT_TOKEN}@github.com/linux-surface/repo.git"
 
