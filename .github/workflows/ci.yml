@@ -30,7 +30,7 @@ jobs:
 
   check:
     name: Check code quality
-    container: fedora:38
+    container: fedora:39
     runs-on: ubuntu-latest
     needs: [checkout]
     steps:
@@ -120,6 +120,38 @@ jobs:
         name: debian-latest
         path: release
 
+  build-f39:
+    name: Build Fedora 39 package
+    container: fedora:39
+    runs-on: ubuntu-latest
+    needs: [check]
+    steps:
+    - name: Restore workspace
+      uses: actions/download-artifact@v3
+      with:
+        name: workspace
+
+    - name: Install build dependencies
+      run: bash $SCRIPTS/pkg-fedora.sh install
+
+    - name: Build package
+      run: bash $SCRIPTS/pkg-fedora.sh build
+
+    - name: Sign packages
+      env:
+        GPG_KEY_ID: 56C464BAAC421453
+        GPG_KEY: ${{ secrets.LINUX_SURFACE_GPG_KEY }}
+      run: bash $SCRIPTS/pkg-fedora.sh sign
+
+    - name: Prepare release
+      run: bash $SCRIPTS/pkg-fedora.sh release
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: fedora-39-latest
+        path: release
+
   build-f38:
     name: Build Fedora 38 package
     container: fedora:38
@@ -187,7 +219,7 @@ jobs:
   release:
     name: Publish release
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
-    needs: [build-deb, build-arch, build-f38, build-f37]
+    needs: [build-deb, build-arch, build-f39, build-f38, build-f37]
     runs-on: ubuntu-latest
     steps:
     - name: Download Debian artifacts
@@ -201,6 +233,12 @@ jobs:
       with:
         name: arch-latest
         path: arch-latest
+
+    - name: Download Fedora 39 artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: fedora-39-latest
+        path: fedora-39-latest
 
     - name: Download Fedora 38 artifacts
       uses: actions/download-artifact@v3
@@ -268,6 +306,29 @@ jobs:
         SURFACEBOT_TOKEN: ${{ secrets.LINUX_SURFACE_BOT_TOKEN }}
         GIT_REF: ${{ github.ref }}
       run: bash $SCRIPTS/repo-debian.sh $NAME
+
+  repo-f39:
+    name: Update Fedora 39 package repository
+    container: fedora:39
+    runs-on: ubuntu-latest
+    needs: [release]
+    steps:
+    - name: Restore workspace
+      uses: actions/download-artifact@v3
+      with:
+        name: workspace
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: fedora-39-latest
+        path: fedora-39-latest
+
+    - name: Update repository
+      env:
+        SURFACEBOT_TOKEN: ${{ secrets.LINUX_SURFACE_BOT_TOKEN }}
+        GIT_REF: ${{ github.ref }}
+      run: bash $SCRIPTS/repo-fedora.sh $NAME 39
 
   repo-f38:
     name: Update Fedora 38 package repository
