@@ -186,12 +186,12 @@ public:
 			aspect_max = std::ceil(aspect_max * 10) / 10;
 		}
 
-		writer << "#" << "\n";
+		writer << "#\n";
 		writer << "# Samples: " << fmt::format("{}", size) << "\n";
 		writer << "# Slack:   " << fmt::format("{:.3f}", slack) << "\n";
-		writer << "#" << "\n";
-		writer << "" << "\n";
-		writer << "[Contacts]" << "\n";
+		writer << "#\n";
+		writer << "\n";
+		writer << "[Contacts]\n";
 		writer << "SizeMin = " << fmt::format("{:.3f}", size_min) << "\n";
 		writer << "SizeMax = " << fmt::format("{:.3f}", size_max) << "\n";
 		writer << "AspectMin = " << fmt::format("{:.3f}", aspect_min) << "\n";
