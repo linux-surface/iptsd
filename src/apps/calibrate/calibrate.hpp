@@ -186,16 +186,16 @@ public:
 			aspect_max = std::ceil(aspect_max * 10) / 10;
 		}
 
-		writer << "#" << std::endl;
-		writer << "# Samples: " << fmt::format("{}", size) << std::endl;
-		writer << "# Slack:   " << fmt::format("{:.3f}", slack) << std::endl;
-		writer << "#" << std::endl;
-		writer << "" << std::endl;
-		writer << "[Contacts]" << std::endl;
-		writer << "SizeMin = " << fmt::format("{:.3f}", size_min) << std::endl;
-		writer << "SizeMax = " << fmt::format("{:.3f}", size_max) << std::endl;
-		writer << "AspectMin = " << fmt::format("{:.3f}", aspect_min) << std::endl;
-		writer << "AspectMax = " << fmt::format("{:.3f}", aspect_max) << std::endl;
+		writer << "#" << "\n";
+		writer << "# Samples: " << fmt::format("{}", size) << "\n";
+		writer << "# Slack:   " << fmt::format("{:.3f}", slack) << "\n";
+		writer << "#" << "\n";
+		writer << "" << "\n";
+		writer << "[Contacts]" << "\n";
+		writer << "SizeMin = " << fmt::format("{:.3f}", size_min) << "\n";
+		writer << "SizeMax = " << fmt::format("{:.3f}", size_max) << "\n";
+		writer << "AspectMin = " << fmt::format("{:.3f}", aspect_min) << "\n";
+		writer << "AspectMax = " << fmt::format("{:.3f}", aspect_max) << "\n";
 
 		writer.close();
 	}

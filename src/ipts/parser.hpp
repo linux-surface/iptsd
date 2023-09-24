@@ -97,6 +97,9 @@ private:
 		case IPTS_HID_FRAME_TYPE_HID:
 			this->parse_hid(sub);
 			break;
+		default:
+			// TODO: Add handler for unknow data and wire up debug tools
+			break;
 		}
 	}
 
@@ -122,6 +125,9 @@ private:
 			case IPTS_RAW_FRAME_TYPE_STYLUS:
 			case IPTS_RAW_FRAME_TYPE_HEATMAP:
 				this->parse_reports(sub);
+				break;
+			default:
+				// TODO: Add handler for unknow data and wire up debug tools
 				break;
 			}
 		}
@@ -162,6 +168,9 @@ private:
 				break;
 			case IPTS_HID_FRAME_TYPE_METADATA:
 				this->parse_metadata(sub);
+				break;
+			default:
+				// TODO: Add handler for unknow data and wire up debug tools
 				break;
 			}
 		}
@@ -224,6 +233,9 @@ private:
 				break;
 			case IPTS_REPORT_TYPE_PEN_DFT_WINDOW:
 				this->parse_dft_window(sub);
+				break;
+			default:
+				// TODO: Add handler for unknow data and wire up debug tools
 				break;
 			}
 		}

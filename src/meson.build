@@ -7,7 +7,6 @@ includes = [
 ]
 
 cxxflags = [
-  '-Wlogical-op',
   '-Wmissing-include-dirs',
   '-Winit-self',
   '-Wimplicit-fallthrough',
