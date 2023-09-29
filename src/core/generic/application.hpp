@@ -219,6 +219,18 @@ private:
 		// Search for contacts
 		m_finder.find(m_heatmap, m_contacts);
 
+		// Invert contact coordinates if neccessary
+		for (contacts::Contact<f64> &contact : m_contacts) {
+			if (m_config.invert_x)
+				contact.mean.x() = 1.0 - contact.mean.x();
+
+			if (m_config.invert_y)
+				contact.mean.y() = 1.0 - contact.mean.y();
+
+			if (m_config.invert_x != m_config.invert_y)
+				contact.orientation = 1.0 - contact.orientation;
+		}
+
 		// Update touch rejection cone
 		this->update_touch_cone();
 

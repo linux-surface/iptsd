@@ -289,16 +289,6 @@ private:
 		const Vector2<f64> size = contact.size;
 
 		Vector2<f64> mean = contact.mean;
-		f64 orientation = contact.orientation;
-
-		if (m_config.invert_x)
-			mean.x() = 1.0 - mean.x();
-
-		if (m_config.invert_y)
-			mean.y() = 1.0 - mean.y();
-
-		if (m_config.invert_x != m_config.invert_y)
-			orientation = 1.0 - orientation;
 
 		mean.x() = std::clamp(mean.x(), 0.0, 1.0);
 		mean.y() = std::clamp(mean.y(), 0.0, 1.0);
@@ -308,7 +298,7 @@ private:
 		const i32 x = casts::to<i32>(std::round(mean.x() * MAX_X));
 		const i32 y = casts::to<i32>(std::round(mean.y() * MAX_Y));
 
-		const i32 angle = casts::to<i32>(std::round(orientation * 180));
+		const i32 angle = casts::to<i32>(std::round(contact.orientation * 180));
 		const i32 major = casts::to<i32>(std::round(size.maxCoeff() * DIAGONAL));
 		const i32 minor = casts::to<i32>(std::round(size.minCoeff() * DIAGONAL));
 
@@ -383,12 +373,6 @@ private:
 	void emit_singletouch(const contacts::Contact<f64> &contact) const
 	{
 		Vector2<f64> mean = contact.mean;
-
-		if (m_config.invert_x)
-			mean.x() = 1.0 - mean.x();
-
-		if (m_config.invert_y)
-			mean.y() = 1.0 - mean.y();
 
 		mean.x() = std::clamp(mean.x(), 0.0, 1.0);
 		mean.y() = std::clamp(mean.y(), 0.0, 1.0);

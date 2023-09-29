@@ -183,22 +183,10 @@ public:
 			Cairo::TextExtents extends {};
 			m_cairo->get_text_extents(index, extends);
 
-			Vector2<f64> mean = contact.mean;
-			f64 orientation = contact.orientation;
+			const Vector2<f64> mean = contact.mean.cwiseProduct(m_size.cast<f64>());
+			const f64 orientation = contact.orientation * M_PI;
 
 			const Vector2<f64> size = (contact.size.array() * diag).matrix();
-
-			if (m_config.invert_x)
-				mean.x() = 1.0 - mean.x();
-
-			if (m_config.invert_y)
-				mean.y() = 1.0 - mean.y();
-
-			if (m_config.invert_x != m_config.invert_y)
-				orientation = 1.0 - orientation;
-
-			mean = mean.cwiseProduct(m_size.cast<f64>());
-			orientation = orientation * M_PI;
 
 			// Center the text at the mean point of the contact
 			m_cairo->move_to(mean.x() - (extends.x_bearing + extends.width / 2),
