@@ -143,7 +143,6 @@ private:
 		this->get(ini, "Config", "Height", m_config.height);
 
 		this->get(ini, "Touch", "Disable", m_config.touch_disable);
-		this->get(ini, "Touch", "CheckCone", m_config.touch_check_cone);
 		this->get(ini, "Touch", "DisableOnPalm", m_config.touch_disable_on_palm);
 		this->get(ini, "Touch", "DisableOnStylus", m_config.touch_disable_on_stylus);
 		this->get(ini, "Touch", "Overshoot", m_config.touch_overshoot);
@@ -165,9 +164,6 @@ private:
 
 		this->get(ini, "Stylus", "Disable", m_config.stylus_disable);
 		this->get(ini, "Stylus", "TipDistance", m_config.stylus_tip_distance);
-
-		this->get(ini, "Cone", "Angle", m_config.cone_angle);
-		this->get(ini, "Cone", "Distance", m_config.cone_distance);
 
 		this->get(ini, "DFT", "PositionMinAmp", m_config.dft_position_min_amp);
 		this->get(ini, "DFT", "PositionMinMag", m_config.dft_position_min_mag);

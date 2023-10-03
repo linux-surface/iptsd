@@ -3,7 +3,6 @@
 #ifndef IPTSD_CORE_GENERIC_APPLICATION_HPP
 #define IPTSD_CORE_GENERIC_APPLICATION_HPP
 
-#include "cone.hpp"
 #include "config.hpp"
 #include "device.hpp"
 #include "dft.hpp"
@@ -88,14 +87,6 @@ protected:
 	 */
 	DftStylus m_dft;
 
-	/*
-	 * The touch rejection cone has its origin at the current coordinates of the
-	 * stylus. It is rotated in the direction of palm inputs, so that when
-	 * writing with the stylus, the hand holding it has less chance of accidentally
-	 * triggering any inputs.
-	 */
-	Cone m_cone;
-
 public:
 	Application(const Config &config,
 		    const DeviceInfo &info,
@@ -105,7 +96,6 @@ public:
 		, m_metadata {metadata}
 		, m_finder {config.contacts()}
 		, m_dft {config, metadata}
-		, m_cone {config.cone_angle, config.cone_distance}
 	{
 		if (m_config.width == 0 || m_config.height == 0)
 			throw std::runtime_error("Invalid config: The screen size is 0!");
@@ -231,17 +221,12 @@ private:
 				contact.orientation = 1.0 - contact.orientation;
 		}
 
-		// Update touch rejection cone
-		this->update_touch_cone();
-
 		// Hand off the found contacts to the handler code.
 		this->on_contacts(m_contacts);
 	}
 
 	/*!
 	 * Handles incoming IPTS stylus data.
-	 *
-	 * Position data from the stylus updates the position of the touch rejection cone.
 	 *
 	 * @param[in] data The data to process.
 	 */
@@ -253,13 +238,6 @@ private:
 		const Vector2<f64> off = this->calculate_offset(data.altitude, data.azimuth);
 		corrected.x += off.x();
 		corrected.y += off.y();
-
-		// Scale to physical coordinates
-		const f64 x = corrected.x * m_config.width;
-		const f64 y = corrected.y * m_config.height;
-
-		// Update rejection cone
-		m_cone.update_position(x, y);
 
 		// Hand off the stylus data to the handler code.
 		this->on_stylus(corrected);
@@ -277,47 +255,6 @@ private:
 	{
 		m_dft.input(data);
 		this->process_stylus(m_dft.get_stylus());
-	}
-
-	/*!
-	 * Updates the palm rejection cone with the positions of all palms on the display.
-	 *
-	 * Then marks all contacts inside of the cone as palms.
-	 */
-	void update_touch_cone()
-	{
-		// The cone has never seen a position update, so its inactive
-		if (!m_cone.alive())
-			return;
-
-		if (!m_cone.active())
-			return;
-
-		if (!m_config.touch_check_cone)
-			return;
-
-		for (const contacts::Contact<f64> &contact : m_contacts) {
-			if (contact.valid.value_or(true))
-				continue;
-
-			// Scale to physical coordinates
-			const f64 x = contact.mean.x() * m_config.width;
-			const f64 y = contact.mean.y() * m_config.height;
-
-			m_cone.update_direction(x, y);
-		}
-
-		// Mark all contacts inside of the cone as palms
-		for (contacts::Contact<f64> &contact : m_contacts) {
-			if (!contact.valid.value_or(true))
-				continue;
-
-			// Scale to physical coordinates
-			const f64 x = contact.mean.x() * m_config.width;
-			const f64 y = contact.mean.y() * m_config.height;
-
-			contact.valid = m_cone.check(x, y);
-		}
 	}
 
 	/*!

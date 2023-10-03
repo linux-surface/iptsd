@@ -24,7 +24,6 @@ public:
 
 	// [Touch]
 	bool touch_disable = false;
-	bool touch_check_cone = true;
 	bool touch_disable_on_palm = false;
 	bool touch_disable_on_stylus = false;
 	f64 touch_overshoot = 0.5;
@@ -48,10 +47,6 @@ public:
 	// [Stylus]
 	bool stylus_disable = false;
 	f64 stylus_tip_distance = 0;
-
-	// [Cone]
-	f64 cone_angle = 30;
-	f64 cone_distance = 5;
 
 	// [DFT]
 	usize dft_position_min_amp = 50;
