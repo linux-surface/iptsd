@@ -98,7 +98,7 @@ public:
 		, m_dft {config, metadata}
 	{
 		if (m_config.width == 0 || m_config.height == 0)
-			throw std::runtime_error("Invalid config: The screen size is 0!");
+			throw std::runtime_error {"Invalid config: The screen size is 0!"};
 
 		if (metadata.has_value()) {
 			const auto &u = metadata->unknown.unknown;
