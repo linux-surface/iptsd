@@ -41,7 +41,6 @@ add_project_arguments(cxxflags, language: 'cpp')
 
 if get_option('optimization') in ['2', '3']
   optflags = cpp.get_supported_arguments(optflags)
-  add_project_arguments(optflags, language: 'cpp')
 endif
 
 # Build wrapped dependencies as static libraries and disable warnings
@@ -101,6 +100,7 @@ default_deps = [
 # The main iptsd daemon
 executable('iptsd', 'apps/daemon/main.cpp',
            install: true,
+           cpp_args: optflags,
            dependencies: default_deps,
            include_directories: includes,
 )
@@ -116,6 +116,7 @@ tools = get_option('debug_tools')
 if tools.contains('calibrate')
   executable('iptsd-calibrate', 'apps/calibrate/main.cpp',
              install: true,
+             cpp_args: optflags,
              dependencies: default_deps,
              include_directories: includes,
   )
@@ -124,6 +125,7 @@ endif
 if tools.contains('dump')
   executable('iptsd-dump', 'apps/dump/main.cpp',
              install: true,
+             cpp_args: optflags,
              dependencies: default_deps,
              include_directories: includes,
   )
@@ -132,6 +134,7 @@ endif
 if tools.contains('perf')
   executable('iptsd-perf', 'apps/perf/main.cpp',
              install: true,
+             cpp_args: optflags,
              dependencies: default_deps,
              include_directories: includes,
   )
@@ -145,6 +148,7 @@ if tools.contains('plot')
   if cairo.found()
     executable('iptsd-plot', 'apps/visualization/plot.cpp',
                install: true,
+               cpp_args: optflags,
                dependencies: default_deps + [cairo],
                include_directories: includes,
     )
@@ -191,6 +195,7 @@ if tools.contains('show')
   if cairo.found()
     executable('iptsd-show', 'apps/visualization/show.cpp',
                install: true,
+               cpp_args: optflags,
                dependencies: default_deps + [cairo, sdl],
                include_directories: includes,
     )
