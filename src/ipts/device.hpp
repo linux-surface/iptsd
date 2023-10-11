@@ -43,7 +43,16 @@ public:
 	Device(std::shared_ptr<hid::Device> hid)
 		: m_hid {std::move(hid)}
 		, m_descriptor {m_hid->descriptor()}
-		, m_touch_data_reports {m_descriptor.find_touch_data_reports()} {};
+		, m_touch_data_reports {m_descriptor.find_touch_data_reports()}
+	{
+		// Check if the device can switch modes
+		if (!m_descriptor.find_modesetting_report().has_value())
+			throw std::runtime_error {"This device is not an IPTS device!"};
+
+		// Check if the device can send touch data.
+		if (m_descriptor.find_touch_data_reports().empty())
+			throw std::runtime_error {"This device is not an IPTS device!"};
+	};
 
 	/*
 	 *
