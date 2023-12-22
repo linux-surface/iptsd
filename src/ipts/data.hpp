@@ -34,6 +34,7 @@ struct Heatmap {
 };
 
 struct DftWindow {
+	std::optional<u32> group = std::nullopt;
 	u8 rows = 0;
 	u8 type = 0;
 
