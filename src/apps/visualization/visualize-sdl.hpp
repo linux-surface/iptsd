@@ -68,6 +68,10 @@ public:
 	{
 		Visualize::on_data(data);
 
+		// Handle window events, such as the X11_NET_WM_PING
+		// event that is used to detect stuck programs.
+		SDL_PumpEvents();
+
 		constexpr usize FPS = 60;
 
 		// Limit how many times per seconds the screen is redrawn.
