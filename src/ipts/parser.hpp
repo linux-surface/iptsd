@@ -39,6 +39,7 @@ public:
 private:
 	struct ipts_dimensions m_dim {};
 	struct ipts_timestamp m_time {};
+	struct ipts_pen_metadata m_pen_meta {};
 
 public:
 	/*!
@@ -230,6 +231,9 @@ private:
 				break;
 			case IPTS_REPORT_TYPE_HEATMAP:
 				this->parse_heatmap_data(sub);
+				break;
+			case IPTS_REPORT_TYPE_PEN_METADATA:
+				this->parse_pen_metadata(sub);
 				break;
 			case IPTS_REPORT_TYPE_PEN_DFT_WINDOW:
 				this->parse_dft_window(sub);
@@ -426,6 +430,12 @@ private:
 		dft.rows = window.num_rows;
 		dft.type = window.data_type;
 
+		if (window.seq_num == m_pen_meta.seq_num &&
+		    window.data_type == m_pen_meta.data_type) {
+			const auto g = m_pen_meta.group_counter;
+			dft.group = g;
+		}
+
 		dft.dim = m_dim;
 		dft.time = m_time;
 
@@ -433,6 +443,18 @@ private:
 			return;
 
 		this->on_dft(dft);
+	}
+
+	/*!
+	 * Parses a pen metadata report.
+	 *
+	 * A pen metadata report precedes each DFT report.
+
+	 * @param[in] reader The chunk of data allocated to the report.
+	 */
+	void parse_pen_metadata(Reader &reader)
+	{
+		m_pen_meta = reader.read<struct ipts_pen_metadata>();
 	}
 };
 

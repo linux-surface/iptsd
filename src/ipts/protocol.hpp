@@ -157,6 +157,13 @@ struct [[gnu::packed]] ipts_heatmap_header {
 	u32 size;
 };
 
+struct [[gnu::packed]] ipts_pen_metadata {
+	u32 group_counter;
+	u8 seq_num;
+	u8 data_type;
+	u8 reserved[10]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+};
+
 struct [[gnu::packed]] ipts_pen_dft_window {
 	u32 timestamp; // counting at approx 8MHz
 	u8 num_rows;

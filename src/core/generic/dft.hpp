@@ -25,6 +25,7 @@ private:
 
 	i32 m_real = 0;
 	i32 m_imag = 0;
+	std::optional<u32> m_group = std::nullopt;
 
 public:
 	DftStylus(Config config, std::optional<const ipts::Metadata> metadata)
@@ -95,6 +96,7 @@ private:
 			 dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
 		m_imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
 			 dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
+		m_group = dft.group;
 
 		f64 x = this->interpolate_position(dft.x[0]);
 		f64 y = this->interpolate_position(dft.y[0]);
@@ -157,6 +159,11 @@ private:
 	void handle_button(const ipts::DftWindow &dft)
 	{
 		if (dft.rows <= 0)
+			return;
+
+		// The position and button signals must be from the same group,
+		// otherwise the relative phase is meaningless.
+		if (!m_group.has_value() || m_group != dft.group)
 			return;
 
 		bool button = false;
