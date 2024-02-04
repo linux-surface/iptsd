@@ -1,95 +1,103 @@
 ##
-## Roughly follows the Linux Kernel coding guidelines, interpreting them for C++.
+## Roughly follows the Linux Kernel coding guidelines, interpreting them for C++
 ##
 ## https://www.kernel.org/doc/html/latest/process/coding-style.html
 ##
 
-Language: Cpp
-Standard: Latest
+{
+	"Language": "Cpp",
+	"Standard": "c++17",
 
-# The LLVM style comes pretty close by default
-BasedOnStyle: LLVM
-ColumnLimit: 100
+	# The LLVM style comes pretty close to what we want by default
+	"BasedOnStyle": "LLVM",
 
-# Always use 8 character wide tabs for indentation.
-AccessModifierOffset: -8
-ConstructorInitializerIndentWidth: 8
-ContinuationIndentWidth: 8
-IndentWidth: 8
-TabWidth: 8
-UseTab: Always
+	# Sync this with .editorconfig
+	"UseTab": "Always",
+	"ColumnLimit": 100,
 
-# Put braces on the same line for every statement except for functions.
-BreakBeforeBraces: WebKit
+	# Assume that one TAB character is 8 spaces wide
+	# This is required for calculating whether a line is wider than the limit defined above
+	"TabWidth": 8,
 
-# Dont add unneccessary breaks, stay on the same line
-AllowAllParametersOfDeclarationOnNextLine: false
-AlwaysBreakTemplateDeclarations: true
-BreakStringLiterals: false
+	# Setup indentation using one TAB character
+	# This needs to be synced with the value of TabWidth
+	"IndentWidth": 8,
+	"AccessModifierOffset": -8,
+	"ContinuationIndentWidth": 8,
+	"ConstructorInitializerIndentWidth": 8,
 
-# Except for functions
-AllowShortFunctionsOnASingleLine: None
+	# Put braces on the same line for every statement except for functions
+	"BreakBeforeBraces": "WebKit",
 
-# Don't allow empty lines at the start of a block.
-KeepEmptyLinesAtTheStartOfBlocks: false
+	# Don't add unnecessary breaks, stay on the same line ...
+	"AllowAllParametersOfDeclarationOnNextLine": false,
+	"BreakStringLiterals": false,
 
-# Don't add spaces to beginning and end of initializer lists.
-SpacesInContainerLiterals: false
+	# ... except for functions and templates
+	"AlwaysBreakTemplateDeclarations": true,
+	"AllowShortFunctionsOnASingleLine": "None",
 
-# Make goto labels stand out.
-IndentGotoLabels: false
+	# Don't allow empty lines at the start of a block
+	"KeepEmptyLinesAtTheStartOfBlocks": false,
 
-# Don't waste space by aligning at the rightmost column.
-AlignEscapedNewlines: Left
+	# Don't add spaces to the beginning and end of aggregate initializers
+	"SpacesInContainerLiterals": false,
 
-# Don't align variables.
-AlignConsecutiveAssignments: false
-AlignConsecutiveDeclarations: false
+	# Make goto labels stand out
+	"IndentGotoLabels": false,
 
-# Linux: Don't align macros and comments
-# AlignConsecutiveMacros: false
-# AlignTrailingComments: false
+	# Don't waste space by aligning at the rightmost column
+	"AlignEscapedNewlines": "Left",
 
-# Custom: Align macros and comments
-AlignConsecutiveMacros: true
-AlignTrailingComments: true
+	# Don't align variables
+	"AlignConsecutiveAssignments": false,
+	"AlignConsecutiveDeclarations": false,
 
-# Linux: Don't touch include statements, usings or comments.
-# IncludeBlocks: Preserve
-# ReflowComments: false
-# SortIncludes: Never
-# SortUsingDeclarations: false
+	# Align macros and comments
+	"AlignConsecutiveMacros": true,
+	"AlignTrailingComments": true,
 
-# Custom: Automatically format comments, includes and using statements.
-IncludeBlocks: Regroup
-ReflowComments: true
-SortIncludes: CaseSensitive
-SortUsingDeclarations: true
+	# Automatically format comments, includes and using statements
+	"IncludeBlocks": "Regroup",
+	"ReflowComments": true,
+	"SortIncludes": "CaseSensitive",
+	"SortUsingDeclarations": true,
 
-# Linux: Pack function signatures as much as possible to not waste lines.
-# PackConstructorInitializers: BinPack
-# BinPackParameters: true
+	# Disable packing to improve readability of very long signatures
+	"BinPackParameters": false,
+	"PackConstructorInitializers": "CurrentLine",
 
-# Custom: Disable packing to improve readability of very long signatures.
-BinPackParameters: false
-PackConstructorInitializers: CurrentLine
+	"BreakConstructorInitializers": "BeforeComma",
+	"BreakBeforeTernaryOperators": false,
+	"SpaceBeforeCpp11BracedList": true,
 
-BreakConstructorInitializers: BeforeComma
-BreakBeforeTernaryOperators: false
-SpaceBeforeCpp11BracedList: true
+	"IncludeCategories": [
+		{
+			# Includes relative to the file use #include "..."
+			"Regex": "^\".+\"$",
+			"Priority": 1,
+		},
+		{
+			# All directories under src/
+			"Regex": "^<(common|contacts|core|hid|ipts)/.+>$",
+			"Priority": 2,
+		},
+		{
+			# Dependencies
+			"Regex": "^<(gsl|Eigen|spdlog|fmt|cairomm|CLI)/.+>$",
+			"Priority": 3,
+		},
+		{
+			# Dependencies with only a single header
+			"Regex": "^<(INIReader.h|SDL.h)>$",
+			"Priority": 3,
+		},
+		{
+			# Linux userspace API
+			"Regex": "^<(linux|sys)/.+>$",
+			"Priority": 4,
+		},
 
-##
-## Settings for this project.
-##
-
-IncludeCategories:
-  - Regex: '^".+"$'
-    Priority: 1
-  - Regex: '^<(common|contacts|core|hid|ipts)/.+>$'
-    Priority: 2
-  - Regex: '^<(gsl|Eigen|spdlog|fmt|cairomm|CLI)/.+>$'
-    Priority: 3
-  - Regex: '^<(INIReader.h|SDL.h)>$'
-    Priority: 3
-  - Regex: '^<(linux|sys)/.+>$'
-    Priority: 4
+		# The C / C++ standard library is automatically assigned priority 5
+	],
+}
