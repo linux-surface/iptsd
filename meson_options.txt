@@ -1,13 +1,31 @@
-option('service_manager',
-       type: 'array',
-       choices: ['systemd'],
-       value: ['systemd'])
+option(
+	'service_manager',
+	type: 'array',
+	choices: ['systemd'],
+	value: ['systemd'],
+)
 
-option('sample_config', type: 'boolean', value: true)
-option('debug_tools',
-       type: 'array',
-       choices: ['calibrate', 'dump', 'perf', 'plot', 'show'],
-       value: ['calibrate', 'dump', 'perf', 'plot', 'show'])
+option(
+	'sample_config',
+	type: 'boolean',
+	value: true,
+)
 
-option('access_checks', type: 'boolean', value: true)
-option('force_access_checks', type: 'boolean', value: false)
+option(
+	'debug_tools',
+	type: 'array',
+	choices: ['calibrate', 'dump', 'perf', 'plot', 'show'],
+	value: ['calibrate', 'dump', 'perf', 'plot', 'show'],
+)
+
+option(
+	'access_checks',
+	type: 'boolean',
+	value: true,
+)
+
+option(
+	'force_access_checks',
+	type: 'boolean',
+	value: false,
+)
