@@ -1,18 +1,29 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 function create_tarball {
-	NAME="$(grep -E "Name:" "$INPUT_PATH" | cut -d':' -f2 | sed 's|^ *||g')"
-	VERSION="$(grep -E "Version:" "$INPUT_PATH" | cut -d':' -f2 | sed 's|^ *||g')"
-
-	NAME="$NAME-$VERSION"
-	TARBALL="$NAME.tar.gz"
-
-	pack_sources "$INPUT_DIR_PATH" "$NAME" "$OUTDIR/$TARBALL"
-	ret="$?"
-
-	if [ ! "$ret" -eq 0 ]; then
-		return "$ret"
+	if [ -z "${INPUT_PATH:-}" ]; then
+		echo "ERROR: INPUT_PATH unset"
+		return 1
 	fi
 
-	echo -n "$TARBALL"
+	if [ -z "${INPUT_DIR_PATH:-}" ]; then
+		echo "ERROR: INPUT_DIR_PATH unset"
+		return 1
+	fi
+
+	if [ -z "${OUTDIR:-}" ]; then
+		echo "ERROR: OUTDIR unset"
+		return 1
+	fi
+
+	# Get name and version from the spec file
+	NAME="$(grep -E "Name:" "${INPUT_PATH}" | cut -d':' -f2 | sed 's|^ *||g')"
+	VERSION="$(grep -E "Version:" "${INPUT_PATH}" | cut -d':' -f2 | sed 's|^ *||g')"
+
+	NAME="${NAME}-${VERSION}"
+	TARBALL="${NAME}.tar.gz"
+
+	pack_sources "${INPUT_DIR_PATH}" "${NAME}" "${OUTDIR}/${TARBALL}" && echo -n "${TARBALL}"
 }
