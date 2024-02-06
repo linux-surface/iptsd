@@ -22,14 +22,14 @@
 			"steps": [
 				{
 					"name": "Checkout code",
-					"uses": "actions/checkout@v3",
+					"uses": "actions/checkout@v4",
 					"with": {
 						"fetch-depth": 0,
 					},
 				},
 				{
 					"name": "Archive workspace",
-					"uses": "actions/upload-artifact@v3",
+					"uses": "actions/upload-artifact@v4",
 					"with": {
 						"name": "workspace",
 						"path": ".",
@@ -47,7 +47,7 @@
 			"steps": [
 				{
 					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "workspace",
 					},
@@ -84,7 +84,7 @@
 			"steps": [
 				{
 					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "workspace",
 					},
@@ -111,7 +111,7 @@
 				},
 				{
 					"name": "Upload artifacts",
-					"uses": "actions/upload-artifact@v3",
+					"uses": "actions/upload-artifact@v4",
 					"with": {
 						"name": "arch-latest",
 						"path": "release",
@@ -129,7 +129,7 @@
 			"steps": [
 				{
 					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "workspace",
 					},
@@ -156,7 +156,7 @@
 				},
 				{
 					"name": "Upload artifacts",
-					"uses": "actions/upload-artifact@v3",
+					"uses": "actions/upload-artifact@v4",
 					"with": {
 						"name": "debian-latest",
 						"path": "release",
@@ -174,7 +174,7 @@
 			"steps": [
 				{
 					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "workspace",
 					},
@@ -201,7 +201,7 @@
 				},
 				{
 					"name": "Upload artifacts",
-					"uses": "actions/upload-artifact@v3",
+					"uses": "actions/upload-artifact@v4",
 					"with": {
 						"name": "fedora-38-latest",
 						"path": "release",
@@ -219,7 +219,7 @@
 			"steps": [
 				{
 					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "workspace",
 					},
@@ -246,7 +246,7 @@
 				},
 				{
 					"name": "Upload artifacts",
-					"uses": "actions/upload-artifact@v3",
+					"uses": "actions/upload-artifact@v4",
 					"with": {
 						"name": "fedora-39-latest",
 						"path": "release",
@@ -267,7 +267,7 @@
 			"steps": [
 				{
 					"name": "Download Arch Linux artifacts",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "arch-latest",
 						"path": "arch-latest",
@@ -275,7 +275,7 @@
 				},
 				{
 					"name": "Download Debian artifacts",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "debian-latest",
 						"path": "debian-latest",
@@ -283,7 +283,7 @@
 				},
 				{
 					"name": "Download Fedora 38 artifacts",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "fedora-38-latest",
 						"path": "fedora-38-latest",
@@ -291,7 +291,7 @@
 				},
 				{
 					"name": "Download Fedora 39 artifacts",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "fedora-39-latest",
 						"path": "fedora-39-latest",
@@ -320,14 +320,14 @@
 			"steps": [
 				{
 					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "workspace",
 					},
 				},
 				{
 					"name": "Download artifacts",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "arch-latest",
 						"path": "arch-latest",
@@ -353,14 +353,14 @@
 			"steps": [
 				{
 					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "workspace",
 					},
 				},
 				{
 					"name": "Download artifacts",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "debian-latest",
 						"path": "debian-latest",
@@ -386,14 +386,14 @@
 			"steps": [
 				{
 					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "workspace",
 					},
 				},
 				{
 					"name": "Download artifacts",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "fedora-38-latest",
 						"path": "fedora-38-latest",
@@ -419,14 +419,14 @@
 			"steps": [
 				{
 					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "workspace",
 					},
 				},
 				{
 					"name": "Download artifacts",
-					"uses": "actions/download-artifact@v3",
+					"uses": "actions/download-artifact@v4",
 					"with": {
 						"name": "fedora-39-latest",
 						"path": "fedora-39-latest",
