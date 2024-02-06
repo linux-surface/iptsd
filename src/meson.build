@@ -88,7 +88,11 @@ gsl = dependency(
 spdlog = dependency(
 	'spdlog',
 	fallback: ['spdlog', 'spdlog_dep'],
-	default_options: dependency_options + ['tests=false'],
+	default_options: dependency_options + [
+		'tests=disabled',
+		'external_fmt=enabled',
+		'std_format=disabled',
+	],
 )
 
 # Find libstdc++fs for older GCC
