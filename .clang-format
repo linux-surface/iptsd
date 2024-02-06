@@ -65,9 +65,6 @@
 	# void foo() {}
 	"AllowShortFunctionsOnASingleLine": "None",
 
-	"BreakConstructorInitializers": "BeforeComma",
-	"BreakBeforeTernaryOperators": false,
-
 	# Automatically format comments, includes and using statements
 	"IncludeBlocks": "Regroup",
 	"ReflowComments": true,
