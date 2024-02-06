@@ -26,10 +26,6 @@ if get_option('access_checks')
 	cxxflags += '-D_GLIBCXX_ASSERTIONS'
 endif
 
-if get_option('force_access_checks')
-	cxxflags += '-DIPTSD_CONFIG_FORCE_ACCESS_CHECKS'
-endif
-
 cxxflags += '-DSPDLOG_FMT_EXTERNAL'
 
 cxxflags = cpp.get_supported_arguments(cxxflags)
@@ -43,6 +39,7 @@ conf = configuration_data()
 conf.set_quoted('IPTSD_PRESET_DIR', presetdir)
 conf.set_quoted('IPTSD_CONFIG_DIR', configdir)
 conf.set_quoted('IPTSD_CONFIG_FILE', configfile)
+conf.set10('IPTSD_FORCE_ACCESS_CHECKS', get_option('force_access_checks'))
 
 configure_file(
 	output: 'configure.h',

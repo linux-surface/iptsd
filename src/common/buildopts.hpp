@@ -32,12 +32,19 @@ constexpr std::string_view ConfigDir = IPTSD_CONFIG_DIR;
  */
 constexpr std::string_view PresetDir = IPTSD_PRESET_DIR;
 
+/*!
+ * If this option is true, iptsd will do access checks even in the performance critical parts
+ * of the touch processing library where they are currently bypassed.
+ */
+constexpr bool ForceAccessChecks = IPTSD_FORCE_ACCESS_CHECKS;
+
 /*
  * Make sure that nothing uses the defines directly.
  */
 #undef IPTSD_CONFIG_DIR
 #undef IPTSD_CONFIG_FILE
 #undef IPTSD_PRESET_DIR
+#undef IPTSD_FORCE_ACCESS_CHECKS
 
 } // namespace iptsd::common::buildopts
 

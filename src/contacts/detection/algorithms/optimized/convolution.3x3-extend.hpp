@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <common/buildopts.hpp>
 #include <common/casts.hpp>
 #include <common/constants.hpp>
 #include <common/types.hpp>
@@ -32,22 +33,22 @@ inline void run_3x3(const DenseBase<DerivedData> &in,
 		const Eigen::Index x = casts::to_eigen(dx + 1);
 		const Eigen::Index y = casts::to_eigen(dy + 1);
 
-#ifdef IPTSD_CONFIG_FORCE_ACCESS_CHECKS
-		return kernel(y, x);
-#else
-		return kernel.coeff(y, x);
-#endif
+		if constexpr (common::buildopts::ForceAccessChecks) {
+			return kernel(y, x);
+		} else {
+			return kernel.coeff(y, x);
+		}
 	};
 
 	const auto d = [&](Eigen::Index i, isize dx, isize dy) constexpr -> T {
 		const isize sdx = casts::to_signed(i) + dy * casts::to_signed(cols) + dx;
 		const Eigen::Index index = casts::to_eigen(sdx);
 
-#ifdef IPTSD_CONFIG_FORCE_ACCESS_CHECKS
-		return in(index);
-#else
-		return in.coeff(index);
-#endif
+		if constexpr (common::buildopts::ForceAccessChecks) {
+			return in(index);
+		} else {
+			return in.coeff(index);
+		}
 	};
 
 	// processing...
