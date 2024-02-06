@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-OUTPUT="$(python3 ./scripts/clang-format.py)"
+OUTPUT="$(python3 ./scripts/format/cpp.py)"
 
 if [ ! "$OUTPUT" = "" ]; then
 	echo "$OUTPUT"

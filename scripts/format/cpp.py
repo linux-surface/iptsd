@@ -22,7 +22,7 @@ def main() -> int:
 		return 1
 
 	scriptdir: Path = Path(os.path.dirname(__file__))
-	projectdir: Path = scriptdir / ".."
+	projectdir: Path = scriptdir / ".." / ".."
 
 	sourcedir: Path = projectdir / "src"
 

@@ -32,7 +32,7 @@ def main() -> int:
 		return 1
 
 	scriptdir: Path = Path(os.path.dirname(__file__))
-	projectdir: Path = scriptdir / ".."
+	projectdir: Path = scriptdir / ".." / ".."
 
 	for file in projectdir.rglob("*.py"):
 		if not file.is_file():

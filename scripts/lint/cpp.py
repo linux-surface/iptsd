@@ -22,7 +22,7 @@ def main(*args: Any) -> int:
 		return 1
 
 	scriptdir: Path = Path(os.path.dirname(__file__))
-	projectdir: Path = scriptdir / ".."
+	projectdir: Path = scriptdir / ".." / ".."
 
 	sourcedir: Path = projectdir / "src"
 	ccdbs: list[Path] = list(projectdir.rglob("compile_commands.json"))
