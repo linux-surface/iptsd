@@ -1,11 +1,5 @@
 cpp = meson.get_compiler('cpp')
 
-configure_file(
-	input: 'configure.h.in',
-	output: 'configure.h',
-	configuration: conf,
-)
-
 includes = [include_directories('.')]
 
 cxxflags = [
@@ -44,6 +38,16 @@ add_project_arguments(cxxflags, language: 'cpp')
 if get_option('optimization') in ['2', '3']
 	optflags = cpp.get_supported_arguments(optflags)
 endif
+
+conf = configuration_data()
+conf.set_quoted('IPTSD_PRESET_DIR', presetdir)
+conf.set_quoted('IPTSD_CONFIG_DIR', configdir)
+conf.set_quoted('IPTSD_CONFIG_FILE', configfile)
+
+configure_file(
+	output: 'configure.h',
+	configuration: conf,
+)
 
 # Build wrapped dependencies as static libraries and disable warnings
 dependency_options = [

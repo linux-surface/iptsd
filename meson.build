@@ -24,14 +24,5 @@ presetdir = join_paths(datadir, 'iptsd')
 configdir = join_paths(sysconfdir, 'iptsd.d')
 configfile = join_paths(sysconfdir, 'iptsd.conf')
 
-conf = configuration_data()
-conf.set('bindir', bindir)
-conf.set('datadir', datadir)
-conf.set('sysconfdir', sysconfdir)
-
-conf.set('presetdir', presetdir)
-conf.set('configdir', configdir)
-conf.set('configfile', configfile)
-
 subdir('etc')
 subdir('src')
