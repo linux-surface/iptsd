@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-exec python3 ./scripts/lint/cpp.py --warnings-as-errors='*'
+exec python3 ./scripts/lint/cpp.py

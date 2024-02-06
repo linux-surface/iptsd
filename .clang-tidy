@@ -1,4 +1,5 @@
 {
+	"WarningsAsErrors": "*",
 	"Checks": [
 		"bugprone-*",
 		"-bugprone-easily-swappable-parameters",
