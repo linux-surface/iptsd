@@ -1,0 +1,5 @@
+[style]
+use_tabs = True
+column_limit = 100
+based_on_style = pep8
+continuation_align_style = FIXED
