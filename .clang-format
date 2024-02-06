@@ -12,7 +12,7 @@
 	"BasedOnStyle": "LLVM",
 
 	# Sync this with .editorconfig
-	"UseTab": "Always",
+	"UseTab": "AlignWithSpaces",
 	"ColumnLimit": 100,
 
 	# Assume that one TAB character is 8 spaces wide
