@@ -29,8 +29,17 @@
 	# Put braces on the same line for every statement except for functions
 	"BreakBeforeBraces": "WebKit",
 
-	# Don't add unnecessary breaks, stay on the same line ...
+	# Disable bin-packing.
+	# This means that the code will either be aligned horizontally or vertically, but not both.
+	"BinPackArguments": false,
+	"BinPackParameters": false,
+	"PackConstructorInitializers": "CurrentLine",
+
+	# Disable rules that might override the ones above to keep things consistent
+	"AllowAllArgumentsOnNextLine": false,
 	"AllowAllParametersOfDeclarationOnNextLine": false,
+
+	# Don't add unnecessary breaks, stay on the same line ...
 	"BreakStringLiterals": false,
 
 	# ... except for functions and templates
@@ -62,10 +71,6 @@
 	"ReflowComments": true,
 	"SortIncludes": "CaseSensitive",
 	"SortUsingDeclarations": true,
-
-	# Disable packing to improve readability of very long signatures
-	"BinPackParameters": false,
-	"PackConstructorInitializers": "CurrentLine",
 
 	"BreakConstructorInitializers": "BeforeComma",
 	"BreakBeforeTernaryOperators": false,
