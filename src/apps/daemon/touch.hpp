@@ -182,8 +182,11 @@ private:
 		m_lift.clear();
 
 		// Determine all indices that were in the last frame but not in this one
-		std::set_difference(m_last.cbegin(), m_last.cend(), m_current.cbegin(),
-				    m_current.cend(), std::inserter(m_lift, m_lift.begin()));
+		std::set_difference(m_last.cbegin(),
+		                    m_last.cend(),
+		                    m_current.cbegin(),
+		                    m_current.cend(),
+		                    std::inserter(m_lift, m_lift.begin()));
 	}
 
 	/*!
@@ -197,8 +200,9 @@ private:
 		if (!m_config.touch_disable_on_palm)
 			return false;
 
-		return std::any_of(contacts.cbegin(), contacts.cend(),
-				   [&](const auto &c) { return !c.valid.value_or(true); });
+		return std::any_of(contacts.cbegin(), contacts.cend(), [&](const auto &c) {
+			return !c.valid.value_or(true);
+		});
 	}
 
 	/*!

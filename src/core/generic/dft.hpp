@@ -29,8 +29,8 @@ private:
 
 public:
 	DftStylus(Config config, std::optional<const ipts::Metadata> metadata)
-		: m_config {std::move(config)}
-		, m_metadata {std::move(metadata)} {};
+		: m_config {std::move(config)},
+		  m_metadata {std::move(metadata)} {};
 
 	/*!
 	 * Loads a DFT window and calculates stylus properties from it.
@@ -93,9 +93,9 @@ private:
 		}
 
 		m_real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
-			 dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
+		         dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
 		m_imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
-			 dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
+		         dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
 		m_group = dft.group;
 
 		f64 x = this->interpolate_position(dft.x[0]);
@@ -172,9 +172,9 @@ private:
 		if (dft.x[0].magnitude > m_config.dft_button_min_mag &&
 		    dft.y[0].magnitude > m_config.dft_button_min_mag) {
 			const i32 real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
-					 dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
+			                 dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
 			const i32 imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
-					 dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
+			                 dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
 
 			// same phase as position signal = eraser, opposite phase = button
 			const i32 val = m_real * real + m_imag * imag;

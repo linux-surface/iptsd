@@ -29,11 +29,11 @@ private:
 
 public:
 	VisualizePNG(const core::Config &config,
-		     const core::DeviceInfo &info,
-		     std::optional<const ipts::Metadata> metadata,
-		     std::filesystem::path output)
-		: Visualize(config, info, metadata)
-		, m_output {std::move(output)} {};
+	             const core::DeviceInfo &info,
+	             std::optional<const ipts::Metadata> metadata,
+	             std::filesystem::path output)
+		: Visualize(config, info, metadata),
+		  m_output {std::move(output)} {};
 
 	void on_start() override
 	{

@@ -51,8 +51,8 @@ private:
 public:
 	template <class... Args>
 	DeviceRunner(const std::filesystem::path &path, Args... args)
-		: m_device {std::make_shared<HidrawDevice>(path)}
-		, m_ipts {m_device}
+		: m_device {std::make_shared<HidrawDevice>(path)},
+		  m_ipts {m_device}
 	{
 		DeviceInfo info {};
 		info.vendor = m_device->vendor();

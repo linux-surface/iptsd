@@ -41,9 +41,9 @@ private:
 
 public:
 	Device(std::shared_ptr<hid::Device> hid)
-		: m_hid {std::move(hid)}
-		, m_descriptor {m_hid->descriptor()}
-		, m_touch_data_reports {m_descriptor.find_touch_data_reports()}
+		: m_hid {std::move(hid)},
+		  m_descriptor {m_hid->descriptor()},
+		  m_touch_data_reports {m_descriptor.find_touch_data_reports()}
 	{
 		// Check if the device can switch modes
 		if (!m_descriptor.find_modesetting_report().has_value())
@@ -139,7 +139,8 @@ public:
 			return false;
 
 		return std::any_of(
-			m_touch_data_reports.cbegin(), m_touch_data_reports.cend(),
+			m_touch_data_reports.cbegin(),
+			m_touch_data_reports.cend(),
 			[&](const hid::Report &report) { return report.id() == buffer[0]; });
 	}
 };

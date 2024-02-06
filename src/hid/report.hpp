@@ -55,10 +55,10 @@ public:
 	       u32 report_count,
 	       u32 report_size,
 	       const std::unordered_set<Usage> &usages)
-		: m_type {type}
-		, m_report_id {report_id}
-		, m_report_size {casts::to<u64>(report_count) * report_size}
-		, m_usages {usages} {};
+		: m_type {type},
+		  m_report_id {report_id},
+		  m_report_size {casts::to<u64>(report_count) * report_size},
+		  m_usages {usages} {};
 
 	/*!
 	 * The type of the HID report.
@@ -112,8 +112,9 @@ public:
 	 */
 	[[nodiscard]] bool find_usage(u16 page, u16 value) const
 	{
-		return std::any_of(m_usages.cbegin(), m_usages.cend(),
-				   [&](const Usage &usage) -> bool {
+		return std::any_of(m_usages.cbegin(),
+		                   m_usages.cend(),
+		                   [&](const Usage &usage) -> bool {
 					   return usage.page == page && usage.value == value;
 				   });
 	}

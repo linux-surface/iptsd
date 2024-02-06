@@ -53,7 +53,7 @@ public:
 
 		std::noskipws(ifs);
 		m_file = std::vector<u8> {std::istream_iterator<u8>(ifs),
-					  std::istream_iterator<u8>()};
+		                          std::istream_iterator<u8>()};
 
 		m_reader = Reader {m_file};
 		m_info = m_reader->read<DeviceInfo>();

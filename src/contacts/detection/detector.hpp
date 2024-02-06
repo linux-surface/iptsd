@@ -104,8 +104,9 @@ public:
 
 		// Recalculate the neutral value if neccessary
 		if (m_counter == 0) {
-			m_neutral = neutral::calculate(heatmap, m_config.neutral_value_algorithm,
-						       m_config.neutral_value_offset);
+			m_neutral = neutral::calculate(heatmap,
+			                               m_config.neutral_value_algorithm,
+			                               m_config.neutral_value_offset);
 		}
 
 		// Update counter
@@ -156,7 +157,12 @@ public:
 			const Vector2<Eigen::Index> size = cluster.sizes() + one;
 
 			gaussian::Parameters<TFit> params {
-				true, 1, mean, prec, cluster, Image<TFit> {size.y(), size.x()},
+				true,
+				1,
+				mean,
+				prec,
+				cluster,
+				Image<TFit> {size.y(), size.x()},
 			};
 
 			m_fitting_params.push_back(std::move(params));
@@ -186,9 +192,10 @@ public:
 				orientation /= gsl::narrow_cast<TFit>(M_PI);
 			}
 
-			contacts.push_back(
-				Contact<T> {mean.template cast<T>(), size.template cast<T>(),
-					    gsl::narrow_cast<T>(orientation), m_config.normalize});
+			contacts.push_back(Contact<T> {mean.template cast<T>(),
+			                               size.template cast<T>(),
+			                               gsl::narrow_cast<T>(orientation),
+			                               m_config.normalize});
 		}
 	}
 };

@@ -38,9 +38,9 @@ private:
 
 public:
 	Finder(Config<T> config)
-		: m_detector {config.detection}
-		, m_stabilizer {config.stability}
-		, m_validator {config.validation} {};
+		: m_detector {config.detection},
+		  m_stabilizer {config.stability},
+		  m_validator {config.validation} {};
 
 	/*!
 	 * Resets the contact finder by clearing all stored previous frames.

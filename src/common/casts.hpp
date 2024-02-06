@@ -20,7 +20,7 @@ template <class To, class From>
 constexpr inline To to(const From value)
 {
 	static_assert(!std::is_same_v<From, f64> || !std::is_same_v<To, f32>,
-		      "f64 to f32 cannot be narrowed safely. Please use gsl::narrow_cast!");
+	              "f64 to f32 cannot be narrowed safely. Please use gsl::narrow_cast!");
 
 	using Common = std::common_type_t<To, From>;
 

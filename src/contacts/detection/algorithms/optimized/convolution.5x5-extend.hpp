@@ -18,8 +18,8 @@ namespace iptsd::contacts::detection::convolution::impl {
  */
 template <class DerivedData, class DerivedKernel>
 void run_5x5(const DenseBase<DerivedData> &in,
-	     const DenseBase<DerivedKernel> &kernel,
-	     DenseBase<DerivedData> &out)
+             const DenseBase<DerivedKernel> &kernel,
+             DenseBase<DerivedData> &out)
 {
 	using T = typename DenseBase<DerivedData>::Scalar;
 	using S = typename DenseBase<DerivedKernel>::Scalar;

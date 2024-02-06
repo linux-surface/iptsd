@@ -75,8 +75,8 @@ enum class Algorithm {
  */
 template <class Derived>
 typename DenseBase<Derived>::Scalar calculate(const DenseBase<Derived> &heatmap,
-					      const Algorithm algorithm,
-					      const typename DenseBase<Derived>::Scalar offset)
+                                              const Algorithm algorithm,
+                                              const typename DenseBase<Derived>::Scalar offset)
 {
 	switch (algorithm) {
 	case Algorithm::MODE:
