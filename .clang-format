@@ -39,21 +39,31 @@
 	"AllowAllArgumentsOnNextLine": false,
 	"AllowAllParametersOfDeclarationOnNextLine": false,
 
-	# Don't add unnecessary breaks, stay on the same line ...
-	"BreakStringLiterals": false,
-
-	# ... except for functions and templates
-	"AlwaysBreakTemplateDeclarations": true,
-	"AllowShortFunctionsOnASingleLine": "None",
-
-	# Don't allow empty lines at the start of a block
-	"KeepEmptyLinesAtTheStartOfBlocks": false,
-
-	# Don't add spaces to the beginning and end of aggregate initializers
+	# Foo {bar} instead of Foo{ bar }
+	"SpaceBeforeCpp11BracedList": true,
 	"SpacesInContainerLiterals": false,
+
+	"KeepEmptyLinesAtTheStartOfBlocks": false,
 
 	# Make goto labels stand out
 	"IndentGotoLabels": false,
+
+	# template <class T>
+	# class Foo {};
+	#
+	# instead of
+	#
+	# template <class T> class Foo {};
+	"AlwaysBreakTemplateDeclarations": true,
+
+	# void foo()
+	# {
+	# }
+	#
+	# instead of
+	#
+	# void foo() {}
+	"AllowShortFunctionsOnASingleLine": "None",
 
 	# Don't waste space by aligning at the rightmost column
 	"AlignEscapedNewlines": "Left",
@@ -66,15 +76,14 @@
 	"AlignConsecutiveMacros": true,
 	"AlignTrailingComments": true,
 
+	"BreakConstructorInitializers": "BeforeComma",
+	"BreakBeforeTernaryOperators": false,
+
 	# Automatically format comments, includes and using statements
 	"IncludeBlocks": "Regroup",
 	"ReflowComments": true,
 	"SortIncludes": "CaseSensitive",
 	"SortUsingDeclarations": true,
-
-	"BreakConstructorInitializers": "BeforeComma",
-	"BreakBeforeTernaryOperators": false,
-	"SpaceBeforeCpp11BracedList": true,
 
 	"IncludeCategories": [
 		{
