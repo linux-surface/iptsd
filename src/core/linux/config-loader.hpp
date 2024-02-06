@@ -3,8 +3,7 @@
 #ifndef IPTSD_CORE_LINUX_CONFIG_LOADER_HPP
 #define IPTSD_CORE_LINUX_CONFIG_LOADER_HPP
 
-#include "configure.h"
-
+#include <common/buildopts.hpp>
 #include <common/casts.hpp>
 #include <common/types.hpp>
 #include <core/generic/config.hpp>
@@ -30,8 +29,6 @@ public:
 	ConfigLoader(const DeviceInfo &info, std::optional<const ipts::Metadata> metadata)
 		: m_info {info}
 	{
-		namespace filesystem = std::filesystem;
-
 		if (metadata.has_value()) {
 			m_config.width = casts::to<f64>(metadata->size.width) / 1e3;
 			m_config.height = casts::to<f64>(metadata->size.height) / 1e3;
@@ -39,7 +36,7 @@ public:
 			m_config.invert_y = metadata->transform.yy < 0;
 		}
 
-		this->load_dir(IPTSD_PRESET_DIR, true);
+		this->load_dir(common::buildopts::PresetDir, true);
 		this->load_dir("./etc/presets", true);
 
 		/*
@@ -53,10 +50,10 @@ public:
 			return;
 		}
 
-		if (filesystem::exists(IPTSD_CONFIG_FILE))
-			this->load_file(IPTSD_CONFIG_FILE);
+		if (std::filesystem::exists(common::buildopts::ConfigFile))
+			this->load_file(common::buildopts::ConfigFile);
 
-		this->load_dir(IPTSD_CONFIG_DIR, false);
+		this->load_dir(common::buildopts::ConfigDir, false);
 	}
 
 	/*!
@@ -76,14 +73,12 @@ private:
 	 * @param[in] path The path to the directory.
 	 * @param[in] check_device If true, check if the config is meant for the current device.
 	 */
-	void load_dir(const std::string &path, const bool check_device)
+	void load_dir(const std::filesystem::path &path, const bool check_device)
 	{
-		namespace filesystem = std::filesystem;
-
-		if (!filesystem::exists(path))
+		if (!std::filesystem::exists(path))
 			return;
 
-		for (const filesystem::directory_entry &p : filesystem::directory_iterator(path)) {
+		for (const auto &p : std::filesystem::directory_iterator(path)) {
 			if (!p.is_regular_file())
 				continue;
 
@@ -109,12 +104,12 @@ private:
 	 * @param[out] vendor The vendor ID the config is targeting.
 	 * @param[out] vendor The product ID the config is targeting.
 	 */
-	void load_device(const std::string &path, u16 &vendor, u16 &product)
+	void load_device(const std::filesystem::path &path, u16 &vendor, u16 &product)
 	{
 		const INIReader ini {path};
 
 		if (ini.ParseError() != 0)
-			throw std::runtime_error(fmt::format("Failed to parse {}", path));
+			throw std::runtime_error(fmt::format("Failed to parse {}", path.c_str()));
 
 		vendor = 0;
 		product = 0;
@@ -128,12 +123,12 @@ private:
 	 *
 	 * @param[in] path The file to load and parse.
 	 */
-	void load_file(const std::string &path)
+	void load_file(const std::filesystem::path &path)
 	{
 		const INIReader ini {path};
 
 		if (ini.ParseError() != 0)
-			throw std::runtime_error(fmt::format("Failed to parse {}", path));
+			throw std::runtime_error(fmt::format("Failed to parse {}", path.c_str()));
 
 		// clang-format off
 

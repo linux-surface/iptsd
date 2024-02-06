@@ -3,8 +3,7 @@
 #ifndef IPTSD_APPS_CALIBRATE_CALIBRATE_HPP
 #define IPTSD_APPS_CALIBRATE_CALIBRATE_HPP
 
-#include "configure.h"
-
+#include <common/buildopts.hpp>
 #include <common/casts.hpp>
 #include <common/chrono.hpp>
 #include <common/types.hpp>
@@ -129,13 +128,13 @@ public:
 		spdlog::info("Run the displayed to command to install them, and restart iptsd.");
 		spdlog::info("");
 		spdlog::info("Recommended:");
-		spdlog::info("    sudo cp {} {}/90-calibration.conf", some_slack, IPTSD_CONFIG_DIR);
+		spdlog::info("    sudo cp {} {}/90-calibration.conf", some_slack, common::buildopts::ConfigDir);
 		spdlog::info("");
 		spdlog::info("If iptsd misses inputs:");
-		spdlog::info("    sudo cp {} {}/90-calibration.conf", much_slack, IPTSD_CONFIG_DIR);
+		spdlog::info("    sudo cp {} {}/90-calibration.conf", much_slack, common::buildopts::ConfigDir);
 		spdlog::info("");
 		spdlog::info("For manual finetuning:");
-		spdlog::info("    sudo cp {} {}/90-calibration.conf", no_slack, IPTSD_CONFIG_DIR);
+		spdlog::info("    sudo cp {} {}/90-calibration.conf", no_slack, common::buildopts::ConfigDir);
 		spdlog::info("");
 		spdlog::warn("Running these commands can permanently overwrite a previous calibration!");
 
