@@ -18,8 +18,8 @@ namespace iptsd::contacts::detection::maximas {
  */
 template <class Derived>
 void find(const DenseBase<Derived> &data,
-	  typename DenseBase<Derived>::Scalar threshold,
-	  std::vector<Point> &maximas)
+          typename DenseBase<Derived>::Scalar threshold,
+          std::vector<Point> &maximas)
 {
 	using T = typename DenseBase<Derived>::Scalar;
 

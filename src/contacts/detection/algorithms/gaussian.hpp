@@ -60,10 +60,10 @@ T gaussian_like(const Vector2<T> &x, const Vector2<T> &mean, const Matrix2<T> &p
 
 template <class T, class DerivedData>
 void assemble_system(Matrix6<T> &m,
-		     Vector6<T> &rhs,
-		     const Box &b,
-		     const DenseBase<DerivedData> &data,
-		     const Matrix<T> &w)
+                     Vector6<T> &rhs,
+                     const Box &b,
+                     const DenseBase<DerivedData> &data,
+                     const Matrix<T> &w)
 {
 	const Eigen::Index cols = data.cols();
 	const Eigen::Index rows = data.rows();
@@ -164,7 +164,7 @@ bool extract_params(const Vector6<T> &chi, T &scale, Vector2<T> &mean, Matrix2<T
 
 template <class Derived>
 void update_weight_maps(std::vector<Parameters<typename DenseBase<Derived>::Scalar>> &params,
-			DenseBase<Derived> &total)
+                        DenseBase<Derived> &total)
 {
 	using T = typename DenseBase<Derived>::Scalar;
 
@@ -320,9 +320,9 @@ bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
 
 template <class Derived, class DerivedData>
 void fit(std::vector<Parameters<typename DenseBase<Derived>::Scalar>> &params,
-	 const DenseBase<DerivedData> &data,
-	 DenseBase<Derived> &tmp,
-	 usize iterations)
+         const DenseBase<DerivedData> &data,
+         DenseBase<Derived> &tmp,
+         usize iterations)
 {
 	using T = typename DenseBase<Derived>::Scalar;
 

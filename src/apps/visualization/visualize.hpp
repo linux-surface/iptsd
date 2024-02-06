@@ -41,8 +41,8 @@ protected:
 
 public:
 	Visualize(const core::Config &config,
-		  const core::DeviceInfo &info,
-		  std::optional<const ipts::Metadata> metadata)
+	          const core::DeviceInfo &info,
+	          std::optional<const ipts::Metadata> metadata)
 		: core::Application(config, info, metadata) {};
 
 	void on_contacts(const std::vector<contacts::Contact<f64>> & /* unused */) override
@@ -161,8 +161,9 @@ public:
 		const f64 diag = m_size.cast<f64>().hypotNorm();
 
 		// Select Font
-		m_cairo->select_font_face("monospace", Cairo::FONT_SLANT_NORMAL,
-					  Cairo::FONT_WEIGHT_NORMAL);
+		m_cairo->select_font_face("monospace",
+		                          Cairo::FONT_SLANT_NORMAL,
+		                          Cairo::FONT_WEIGHT_NORMAL);
 		m_cairo->set_font_size(24.0);
 
 		for (const auto &contact : m_contacts) {
@@ -190,7 +191,7 @@ public:
 
 			// Center the text at the mean point of the contact
 			m_cairo->move_to(mean.x() - (extends.x_bearing + extends.width / 2),
-					 mean.y() - (extends.y_bearing + extends.height / 2));
+			                 mean.y() - (extends.y_bearing + extends.height / 2));
 			m_cairo->save();
 
 			m_cairo->show_text(index);

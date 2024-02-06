@@ -185,7 +185,11 @@ public:
 			throw std::runtime_error {"HID Descriptior: Missing report count"};
 
 		Report report {
-			type, m_report_id, m_report_size.value(), m_report_count.value(), m_usages,
+			type,
+			m_report_id,
+			m_report_size.value(),
+			m_report_count.value(),
+			m_usages,
 		};
 
 		this->reset_local();

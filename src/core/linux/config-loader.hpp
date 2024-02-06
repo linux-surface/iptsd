@@ -190,9 +190,9 @@ private:
 	 */
 	template <class T>
 	void get(const INIReader &ini,
-		 const std::string &section,
-		 const std::string &name,
-		 T &value) const
+	         const std::string &section,
+	         const std::string &name,
+	         T &value) const
 	{
 		if constexpr (std::is_same_v<T, bool>)
 			value = ini.GetBoolean(section, name, value);

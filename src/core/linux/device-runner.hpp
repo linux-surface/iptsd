@@ -51,8 +51,8 @@ private:
 public:
 	template <class... Args>
 	DeviceRunner(const std::filesystem::path &path, Args... args)
-		: m_device {std::make_shared<HidrawDevice>(path)}
-		, m_ipts {m_device}
+		: m_device {std::make_shared<HidrawDevice>(path)},
+		  m_ipts {m_device}
 	{
 		DeviceInfo info {};
 		info.vendor = m_device->vendor();
@@ -120,13 +120,14 @@ public:
 
 			try {
 				const isize size = m_device->read(m_buffer);
+				const gsl::span<u8> data {m_buffer.data(),
+				                          casts::to_unsigned(size)};
 
 				// Does this report contain touch data?
 				if (!m_ipts.is_touch_data(m_buffer))
 					continue;
 
-				m_application->process(
-					gsl::span<u8>(m_buffer.data(), casts::to_unsigned(size)));
+				m_application->process(data);
 			} catch (std::exception &e) {
 				spdlog::warn(e.what());
 

@@ -46,10 +46,10 @@ private:
 
 public:
 	Calibrate(const core::Config &config,
-		  const core::DeviceInfo &info,
-		  std::optional<const ipts::Metadata> metadata)
-		: core::Application(config, info, metadata)
-		, m_diagonal {std::hypot(config.width, config.height)} {};
+	          const core::DeviceInfo &info,
+	          std::optional<const ipts::Metadata> metadata)
+		: core::Application(config, info, metadata),
+		  m_diagonal {std::hypot(config.width, config.height)} {};
 
 	void on_start() override
 	{

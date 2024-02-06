@@ -26,8 +26,8 @@ namespace impl {
  */
 template <class DerivedData, class DerivedKernel>
 void run_generic(const DenseBase<DerivedData> &in,
-		 const DenseBase<DerivedKernel> &kernel,
-		 DenseBase<DerivedData> &out)
+                 const DenseBase<DerivedKernel> &kernel,
+                 DenseBase<DerivedData> &out)
 {
 	using T = typename DenseBase<DerivedKernel>::Scalar;
 
@@ -81,8 +81,8 @@ void run_generic(const DenseBase<DerivedData> &in,
  */
 template <class DerivedData, class DerivedKernel>
 inline void run(const DenseBase<DerivedData> &in,
-		const DenseBase<DerivedKernel> &kernel,
-		DenseBase<DerivedData> &out)
+                const DenseBase<DerivedKernel> &kernel,
+                DenseBase<DerivedData> &out)
 {
 	constexpr usize Rows = DerivedKernel::RowsAtCompileTime;
 	constexpr usize Cols = DerivedKernel::ColsAtCompileTime;

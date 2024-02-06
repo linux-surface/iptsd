@@ -89,13 +89,13 @@ protected:
 
 public:
 	Application(const Config &config,
-		    const DeviceInfo &info,
-		    std::optional<const ipts::Metadata> metadata)
-		: m_config {config}
-		, m_info {info}
-		, m_metadata {metadata}
-		, m_finder {config.contacts()}
-		, m_dft {config, metadata}
+	            const DeviceInfo &info,
+	            std::optional<const ipts::Metadata> metadata)
+		: m_config {config},
+		  m_info {info},
+		  m_metadata {metadata},
+		  m_finder {config.contacts()},
+		  m_dft {config, metadata}
 	{
 		if (m_config.width == 0 || m_config.height == 0)
 			throw std::runtime_error {"Invalid config: The screen size is 0!"};
@@ -122,14 +122,29 @@ public:
 			spdlog::info("transform=[{},{},{},{},{},{}]", xx, yx, tx, xy, yy, ty);
 			spdlog::info(
 				"unknown={}, [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]",
-				metadata->unknown_byte, u[0], u[1], u[2], u[3], u[4], u[5], u[6],
-				u[7], u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
+				metadata->unknown_byte,
+				u[0],
+				u[1],
+				u[2],
+				u[3],
+				u[4],
+				u[5],
+				u[6],
+				u[7],
+				u[8],
+				u[9],
+				u[10],
+				u[11],
+				u[12],
+				u[13],
+				u[14],
+				u[15]);
 		}
 
 		m_parser.on_heatmap = [&](const auto &data) { this->process_heatmap(data); };
 		m_parser.on_stylus = [&](const auto &data) { this->process_stylus(data); };
 		m_parser.on_dft = [&](const auto &data) { this->process_dft(data); };
-	};
+	}
 
 	virtual ~Application() = default;
 

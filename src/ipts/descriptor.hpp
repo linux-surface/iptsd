@@ -86,9 +86,9 @@ public:
 			return false;
 
 		return report.find_usage(IPTS_HID_REPORT_USAGE_PAGE_DIGITIZER,
-					 IPTS_HID_REPORT_USAGE_SCAN_TIME) &&
+		                         IPTS_HID_REPORT_USAGE_SCAN_TIME) &&
 		       report.find_usage(IPTS_HID_REPORT_USAGE_PAGE_DIGITIZER,
-					 IPTS_HID_REPORT_USAGE_GESTURE_DATA);
+		                         IPTS_HID_REPORT_USAGE_GESTURE_DATA);
 	}
 
 	/*!
@@ -111,7 +111,7 @@ public:
 			return false;
 
 		return report.find_usage(IPTS_HID_REPORT_USAGE_PAGE_VENDOR,
-					 IPTS_HID_REPORT_USAGE_SET_MODE);
+		                         IPTS_HID_REPORT_USAGE_SET_MODE);
 	}
 
 	/*!
@@ -131,7 +131,7 @@ public:
 			return false;
 
 		return report.find_usage(IPTS_HID_REPORT_USAGE_PAGE_DIGITIZER,
-					 IPTS_HID_REPORT_USAGE_METADATA);
+		                         IPTS_HID_REPORT_USAGE_METADATA);
 	}
 };
 
