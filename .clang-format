@@ -68,10 +68,6 @@
 	# Don't waste space by aligning at the rightmost column
 	"AlignEscapedNewlines": "Left",
 
-	# Don't align variables
-	"AlignConsecutiveAssignments": false,
-	"AlignConsecutiveDeclarations": false,
-
 	# Align macros and comments
 	"AlignConsecutiveMacros": true,
 	"AlignTrailingComments": true,
