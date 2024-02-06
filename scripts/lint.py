@@ -16,6 +16,7 @@ def main() -> int:
 
 	scripts: list[Path] = [
 		lintdir / "cpp.py",
+		lintdir / "meson.py",
 	]
 
 	# Don't create __pycache__ directories
