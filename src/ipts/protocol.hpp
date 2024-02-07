@@ -26,14 +26,6 @@ constexpr u8 IPTS_HID_REPORT_USAGE_SET_MODE = 0xC8;
  */
 constexpr u8 IPTS_HID_REPORT_USAGE_METADATA = 0x63;
 
-constexpr u8 IPTS_DFT_NUM_COMPONENTS = 9;
-constexpr u8 IPTS_DFT_MAX_ROWS       = 16;
-constexpr u8 IPTS_DFT_PRESSURE_ROWS  = 6;
-
-constexpr u8 IPTS_DFT_ID_POSITION = 6;
-constexpr u8 IPTS_DFT_ID_BUTTON   = 9;
-constexpr u8 IPTS_DFT_ID_PRESSURE = 11;
-
 // clang-format on
 
 struct [[gnu::packed]] ipts_dimensions {
@@ -50,33 +42,6 @@ struct [[gnu::packed]] ipts_dimensions {
 struct [[gnu::packed]] ipts_heatmap_header {
 	u8 reserved[5]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 	u32 size;
-};
-
-struct [[gnu::packed]] ipts_pen_metadata {
-	u32 group_counter;
-	u8 seq_num;
-	u8 data_type;
-	u8 reserved[10]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-};
-
-struct [[gnu::packed]] ipts_pen_dft_window {
-	u32 timestamp; // counting at approx 8MHz
-	u8 num_rows;
-	u8 seq_num;
-	u8 reserved[3]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-	u8 data_type;
-	u8 reserved2[2]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-};
-
-struct [[gnu::packed]] ipts_pen_dft_window_row {
-	u32 frequency;
-	u32 magnitude;
-	i16 real[IPTS_DFT_NUM_COMPONENTS]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-	i16 imag[IPTS_DFT_NUM_COMPONENTS]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-	i8 first;
-	i8 last;
-	i8 mid;
-	i8 zero;
 };
 
 #endif // IPTSD_IPTS_PROTOCOL_HPP

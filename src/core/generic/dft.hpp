@@ -7,6 +7,7 @@
 
 #include <common/casts.hpp>
 #include <ipts/data.hpp>
+#include <ipts/protocol/dft.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -40,13 +41,13 @@ public:
 	void input(const ipts::DftWindow &dft)
 	{
 		switch (dft.type) {
-		case IPTS_DFT_ID_POSITION:
+		case ipts::protocol::dft::Type::Position:
 			this->handle_position(dft);
 			break;
-		case IPTS_DFT_ID_BUTTON:
+		case ipts::protocol::dft::Type::Button:
 			this->handle_button(dft);
 			break;
-		case IPTS_DFT_ID_PRESSURE:
+		case ipts::protocol::dft::Type::Pressure:
 			this->handle_pressure(dft);
 			break;
 		default:
@@ -69,7 +70,7 @@ private:
 	/*!
 	 * Calculates the stylus position from a DFT window.
 	 *
-	 * @param[in] dft The DFT window (with type == IPTS_DFT_ID_POSITION)
+	 * @param[in] dft The DFT window (with type == Type::Position)
 	 */
 	void handle_position(const ipts::DftWindow &dft)
 	{
@@ -92,10 +93,10 @@ private:
 			height = casts::to<u8>(m_metadata->dimensions.rows);
 		}
 
-		m_real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
-		         dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
-		m_imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
-		         dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
+		m_real = dft.x[0].real[ipts::protocol::dft::NUM_COMPONENTS / 2] +
+		         dft.y[0].real[ipts::protocol::dft::NUM_COMPONENTS / 2];
+		m_imag = dft.x[0].imag[ipts::protocol::dft::NUM_COMPONENTS / 2] +
+		         dft.y[0].imag[ipts::protocol::dft::NUM_COMPONENTS / 2];
 		m_group = dft.group;
 
 		f64 x = this->interpolate_position(dft.x[0]);
@@ -154,7 +155,7 @@ private:
 	/*!
 	 * Calculates the button states of the stylus from a DFT window.
 	 *
-	 * @param[in] dft The DFT window (with type == IPTS_DFT_ID_BUTTON)
+	 * @param[in] dft The DFT window (with type == Type::Button)
 	 */
 	void handle_button(const ipts::DftWindow &dft)
 	{
@@ -171,10 +172,10 @@ private:
 
 		if (dft.x[0].magnitude > m_config.dft_button_min_mag &&
 		    dft.y[0].magnitude > m_config.dft_button_min_mag) {
-			const i32 real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +
-			                 dft.y[0].real[IPTS_DFT_NUM_COMPONENTS / 2];
-			const i32 imag = dft.x[0].imag[IPTS_DFT_NUM_COMPONENTS / 2] +
-			                 dft.y[0].imag[IPTS_DFT_NUM_COMPONENTS / 2];
+			const i32 real = dft.x[0].real[ipts::protocol::dft::NUM_COMPONENTS / 2] +
+			                 dft.y[0].real[ipts::protocol::dft::NUM_COMPONENTS / 2];
+			const i32 imag = dft.x[0].imag[ipts::protocol::dft::NUM_COMPONENTS / 2] +
+			                 dft.y[0].imag[ipts::protocol::dft::NUM_COMPONENTS / 2];
 
 			// same phase as position signal = eraser, opposite phase = button
 			const i32 val = m_real * real + m_imag * imag;
@@ -190,14 +191,14 @@ private:
 	/*!
 	 * Calculates the current pressure of the stylus from a DFT window.
 	 *
-	 * @param[in] dft The DFT window (with type == IPTS_DFT_ID_PRESSURE)
+	 * @param[in] dft The DFT window (with type == Type::Pressure)
 	 */
 	void handle_pressure(const ipts::DftWindow &dft)
 	{
-		if (dft.rows < IPTS_DFT_PRESSURE_ROWS)
+		if (dft.rows < ipts::protocol::dft::PRESSURE_ROWS)
 			return;
 
-		f64 p = this->interpolate_frequency(dft, IPTS_DFT_PRESSURE_ROWS);
+		f64 p = this->interpolate_frequency(dft, ipts::protocol::dft::PRESSURE_ROWS);
 		p = 1 - p;
 
 		if (p > 0) {
@@ -215,10 +216,10 @@ private:
 	 * @param[in] row A list of measurements on one axis.
 	 * @return The position of the stylus on that axis.
 	 */
-	[[nodiscard]] f64 interpolate_position(const struct ipts_pen_dft_window_row &row) const
+	[[nodiscard]] f64 interpolate_position(const ipts::protocol::dft::Row &row) const
 	{
 		// assume the center component has the max amplitude
-		u8 maxi = IPTS_DFT_NUM_COMPONENTS / 2;
+		u8 maxi = ipts::protocol::dft::NUM_COMPONENTS / 2;
 
 		// off-screen components are always zero, don't use them
 		f64 mind = -0.5;
@@ -303,9 +304,9 @@ private:
 			real.at(i) = 0;
 			imag.at(i) = 0;
 
-			for (u8 j = 0; j < IPTS_DFT_NUM_COMPONENTS; j++) {
-				const struct ipts_pen_dft_window_row &x = dft.x.at(maxi + i - 1);
-				const struct ipts_pen_dft_window_row &y = dft.y.at(maxi + i - 1);
+			for (u8 j = 0; j < ipts::protocol::dft::NUM_COMPONENTS; j++) {
+				const ipts::protocol::dft::Row &x = dft.x.at(maxi + i - 1);
+				const ipts::protocol::dft::Row &y = dft.y.at(maxi + i - 1);
 
 				real.at(i) += gsl::at(x.real, j) + gsl::at(y.real, j);
 				imag.at(i) += gsl::at(x.imag, j) + gsl::at(y.imag, j);

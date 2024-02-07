@@ -5,6 +5,7 @@
 
 #include "data.hpp"
 #include "protocol.hpp"
+#include "protocol/dft.hpp"
 #include "protocol/hid.hpp"
 #include "protocol/legacy.hpp"
 #include "protocol/metadata.hpp"
@@ -39,7 +40,7 @@ public:
 
 private:
 	struct ipts_dimensions m_dim {};
-	struct ipts_pen_metadata m_pen_meta {};
+	protocol::dft::Metadata m_dft_meta {};
 
 public:
 	/*!
@@ -208,7 +209,7 @@ private:
 			this->parse_heatmap_data(sub);
 			break;
 		case protocol::report::Type::DftMetadata:
-			this->parse_pen_metadata(sub);
+			this->parse_dft_metadata(sub);
 			break;
 		case protocol::report::Type::DftWindow:
 			this->parse_dft_window(sub);
@@ -397,28 +398,26 @@ private:
 	 * antenna measurements and leave it to the client to determine the exact position
 	 * of the stylus.
 	 *
-	 * After the data was parsed, the @ref on_dft callback will be invoked.
-	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
 	void parse_dft_window(Reader &reader) const
 	{
 		DftWindow dft {};
-		const auto window = reader.read<struct ipts_pen_dft_window>();
+		const auto window = reader.read<protocol::dft::Window>();
 
 
 		for (usize i = 0; i < window.num_rows; i++)
-			dft.x.at(i) = reader.read<struct ipts_pen_dft_window_row>();
+			dft.x.at(i) = reader.read<protocol::dft::Row>();
 
 		for (usize i = 0; i < window.num_rows; i++)
-			dft.y.at(i) = reader.read<struct ipts_pen_dft_window_row>();
+			dft.y.at(i) = reader.read<protocol::dft::Row>();
 
 		dft.rows = window.num_rows;
 		dft.type = window.data_type;
 
-		if (window.seq_num == m_pen_meta.seq_num &&
-		    window.data_type == m_pen_meta.data_type) {
-			dft.group = casts::unpack(m_pen_meta.group_counter);
+		if (window.seq_num == m_dft_meta.seq_num &&
+		    window.data_type == m_dft_meta.data_type) {
+			dft.group = casts::unpack(m_dft_meta.group_counter);
 		}
 
 		dft.dim = m_dim;
@@ -430,15 +429,15 @@ private:
 	}
 
 	/*!
-	 * Parses a pen metadata report.
+	 * Parses a DFT metadata report.
 	 *
-	 * A pen metadata report precedes each DFT report.
+	 * A metadata report precedes each window report.
 	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
-	void parse_pen_metadata(Reader &reader)
+	void parse_dft_metadata(Reader &reader)
 	{
-		m_pen_meta = reader.read<struct ipts_pen_metadata>();
+		m_dft_meta = reader.read<protocol::dft::Metadata>();
 	}
 };
 
