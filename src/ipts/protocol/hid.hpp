@@ -28,8 +28,9 @@ enum class FrameType : u8 {
 	//! The HID frame contains a metadata frame.
 	Metadata = 0x2,
 
-	//! The HID frame contains a raw frame.
-	Raw = 0xEE,
+	//! The HID frame contains a legacy frame. See @ref protocol::legacy::Header
+	//! NOTE: This is a made up type for transporting legacy frames over HID.
+	Legacy = 0xEE,
 
 	//! The HID frame contains a report frame.
 	Reports = 0xFF,

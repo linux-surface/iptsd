@@ -6,6 +6,7 @@
 #include "data.hpp"
 #include "protocol.hpp"
 #include "protocol/hid.hpp"
+#include "protocol/legacy.hpp"
 
 #include <common/casts.hpp>
 #include <common/reader.hpp>
@@ -96,8 +97,8 @@ private:
 		case protocol::hid::FrameType::Metadata:
 			this->parse_metadata(sub);
 			break;
-		case protocol::hid::FrameType::Raw:
-			this->parse_raw(sub);
+		case protocol::hid::FrameType::Legacy:
+			this->parse_legacy_frame(sub);
 			break;
 		case protocol::hid::FrameType::Reports:
 			/*
@@ -131,26 +132,24 @@ private:
 	}
 
 	/*!
-	 * Parses IPTS raw data.
+	 * Parses legacy frames.
 	 *
-	 * This data is found on older IPTS devices, who don't natively support HID.
-	 * The data will contain a header, followed by multiple frames. Each frame identifies
-	 * a different family of data (e.g. heatmap or stylus data) and consists of multiple
-	 * reports.
+	 * Legacy frames are used by older devices, that don't natively support HID.
+	 * For more information, see @ref protocol::legacy::Header
 	 *
-	 * @param[in] reader The chunk of data allocated to the raw data.
+	 * @param[in] reader The chunk of data allocated to the legacy frame.
 	 */
-	void parse_raw(Reader &reader)
+	void parse_legacy_frame(Reader &reader)
 	{
-		const auto header = reader.read<struct ipts_raw_header>();
+		const auto header = reader.read<protocol::legacy::Header>();
 
-		for (u32 i = 0; i < header.frames; i++) {
-			const auto frame = reader.read<struct ipts_raw_frame>();
-			Reader sub = reader.sub(frame.size);
+		for (u32 i = 0; i < header.elements; i++) {
+			const auto group = reader.read<protocol::legacy::ReportGroup>();
+			Reader sub = reader.sub(group.size);
 
-			switch (frame.type) {
-			case IPTS_RAW_FRAME_TYPE_STYLUS:
-			case IPTS_RAW_FRAME_TYPE_HEATMAP:
+			switch (group.type) {
+			case protocol::legacy::GroupType::Stylus:
+			case protocol::legacy::GroupType::Touch:
 				this->parse_reports(sub);
 				break;
 			default:
