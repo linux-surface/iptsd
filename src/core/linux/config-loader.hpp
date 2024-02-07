@@ -26,7 +26,7 @@ private:
 	DeviceInfo m_info;
 
 public:
-	ConfigLoader(const DeviceInfo &info, std::optional<const ipts::Metadata> metadata)
+	ConfigLoader(const DeviceInfo &info, const std::optional<const ipts::Metadata> &metadata)
 		: m_info {info}
 	{
 		if (metadata.has_value()) {

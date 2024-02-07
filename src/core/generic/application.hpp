@@ -90,7 +90,7 @@ protected:
 public:
 	Application(const Config &config,
 	            const DeviceInfo &info,
-	            std::optional<const ipts::Metadata> metadata)
+	            const std::optional<const ipts::Metadata> &metadata)
 		: m_config {config},
 		  m_info {info},
 		  m_metadata {metadata},

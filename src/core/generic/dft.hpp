@@ -28,9 +28,9 @@ private:
 	std::optional<u32> m_group = std::nullopt;
 
 public:
-	DftStylus(Config config, std::optional<const ipts::Metadata> metadata)
+	DftStylus(Config config, const std::optional<const ipts::Metadata> &metadata)
 		: m_config {std::move(config)},
-		  m_metadata {std::move(metadata)} {};
+		  m_metadata {metadata} {};
 
 	/*!
 	 * Loads a DFT window and calculates stylus properties from it.

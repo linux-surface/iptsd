@@ -37,7 +37,7 @@ private:
 public:
 	Perf(const core::Config &config,
 	     const core::DeviceInfo &info,
-	     std::optional<const ipts::Metadata> metadata)
+	     const std::optional<const ipts::Metadata> &metadata)
 		: core::Application(config, info, metadata) {};
 
 	void on_contacts(const std::vector<contacts::Contact<f64>> & /* unused */) override

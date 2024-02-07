@@ -37,7 +37,7 @@ private:
 public:
 	VisualizeSDL(const core::Config &config,
 	             const core::DeviceInfo &info,
-	             std::optional<const ipts::Metadata> metadata)
+	             const std::optional<const ipts::Metadata> &metadata)
 		: Visualize(config, info, metadata)
 	{
 		SDL_Init(SDL_INIT_VIDEO);

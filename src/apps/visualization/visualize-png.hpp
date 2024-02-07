@@ -30,7 +30,7 @@ private:
 public:
 	VisualizePNG(const core::Config &config,
 	             const core::DeviceInfo &info,
-	             std::optional<const ipts::Metadata> metadata,
+	             const std::optional<const ipts::Metadata> &metadata,
 	             std::filesystem::path output)
 		: Visualize(config, info, metadata),
 		  m_output {std::move(output)} {};

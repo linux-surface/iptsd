@@ -46,7 +46,7 @@ private:
 public:
 	Calibrate(const core::Config &config,
 	          const core::DeviceInfo &info,
-	          std::optional<const ipts::Metadata> metadata)
+	          const std::optional<const ipts::Metadata> &metadata)
 		: core::Application(config, info, metadata),
 		  m_diagonal {std::hypot(config.width, config.height)} {};
 

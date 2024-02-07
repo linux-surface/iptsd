@@ -29,7 +29,7 @@ private:
 public:
 	Dump(const core::Config &config,
 	     const core::DeviceInfo &info,
-	     std::optional<const ipts::Metadata> metadata,
+	     const std::optional<const ipts::Metadata> &metadata,
 	     std::filesystem::path output)
 		: core::Application(config, info, metadata),
 		  m_out {std::move(output)} {};
