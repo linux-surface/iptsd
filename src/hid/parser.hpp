@@ -81,9 +81,7 @@ inline void parse(const gsl::span<u8> buffer, std::vector<Report> &reports)
 			if (!found)
 				reports.push_back(nr);
 		} else if (type == ItemType::Global) {
-			const auto tag = gsl::narrow<TagGlobal>((header & BITS_TAG) >> SHIFT_TAG);
-
-			switch (tag) {
+			switch (gsl::narrow<TagGlobal>((header & BITS_TAG) >> SHIFT_TAG)) {
 			case TagGlobal::ReportId:
 				state.set_report_id(casts::to<u8>(data));
 				break;
@@ -98,9 +96,7 @@ inline void parse(const gsl::span<u8> buffer, std::vector<Report> &reports)
 				break;
 			}
 		} else {
-			const auto tag = gsl::narrow<TagLocal>((header & BITS_TAG) >> SHIFT_TAG);
-
-			switch (tag) {
+			switch (gsl::narrow<TagLocal>((header & BITS_TAG) >> SHIFT_TAG)) {
 			case TagLocal::Usage:
 				state.set_usage(casts::to<u16>(data));
 				break;

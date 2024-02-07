@@ -258,7 +258,7 @@ private:
 	 */
 	void parse_stylus_v1(Reader &reader) const
 	{
-		StylusData stylus;
+		StylusData stylus {};
 
 		const auto stylus_report = reader.read<struct ipts_stylus_report>();
 		stylus.serial = stylus_report.serial;
@@ -301,7 +301,7 @@ private:
 	 */
 	void parse_stylus_v2(Reader &reader) const
 	{
-		StylusData stylus;
+		StylusData stylus {};
 
 		const auto stylus_report = reader.read<struct ipts_stylus_report>();
 		stylus.serial = stylus_report.serial;

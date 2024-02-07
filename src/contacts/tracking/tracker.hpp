@@ -91,9 +91,7 @@ private:
 	[[nodiscard]] usize find_new_index(usize min) const
 	{
 		while (true) {
-			const auto contact = Contact<T>::find_in_frame(min, m_last);
-
-			if (!contact.has_value())
+			if (!Contact<T>::find_in_frame(min, m_last).has_value())
 				return min;
 
 			min++;

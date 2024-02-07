@@ -81,6 +81,8 @@ public:
 			config.detection.neutral_value_algorithm = Algorithm::AVERAGE;
 		else if (this->contacts_neutral == "constant")
 			config.detection.neutral_value_algorithm = Algorithm::CONSTANT;
+		else
+			throw std::runtime_error {"Invalid neutral value algorithm"};
 
 		const f64 nval_offset = this->contacts_neutral_value;
 

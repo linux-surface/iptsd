@@ -33,7 +33,7 @@ struct Usage {
 template <>
 struct std::hash<iptsd::hid::Usage> {
 public:
-	usize operator()(const iptsd::hid::Usage &usage) const
+	usize operator()(const iptsd::hid::Usage &usage) const noexcept
 	{
 		using namespace iptsd;
 

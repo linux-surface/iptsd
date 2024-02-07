@@ -123,9 +123,8 @@ inline void merge(std::vector<Box> &clusters, std::vector<Box> &temp, const usiz
 	// Repeat the merging process until no new overlaps were detected
 	for (usize j = 0; j < iterations; j++) {
 		const usize size = clusters.size();
-		const bool found_overlap = impl::search(clusters, overlaps);
 
-		if (!found_overlap)
+		if (!impl::search(clusters, overlaps))
 			break;
 
 		for (usize i = 0; i < size; i++) {
