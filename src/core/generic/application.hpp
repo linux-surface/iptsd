@@ -100,47 +100,6 @@ public:
 		if (m_config.width == 0 || m_config.height == 0)
 			throw std::runtime_error {"Invalid config: The screen size is 0!"};
 
-		if (metadata.has_value()) {
-			const auto &u = metadata->unknown.unknown;
-
-			const u32 rows = metadata->size.rows;
-			const u32 cols = metadata->size.columns;
-
-			const u32 width = metadata->size.width;
-			const u32 height = metadata->size.height;
-
-			const f32 xx = metadata->transform.xx;
-			const f32 yx = metadata->transform.yx;
-			const f32 tx = metadata->transform.tx;
-			const f32 xy = metadata->transform.xy;
-			const f32 yy = metadata->transform.yy;
-			const f32 ty = metadata->transform.ty;
-
-			spdlog::info("Metadata:");
-			spdlog::info("rows={}, columns={}", rows, cols);
-			spdlog::info("width={}, height={}", width, height);
-			spdlog::info("transform=[{},{},{},{},{},{}]", xx, yx, tx, xy, yy, ty);
-			spdlog::info(
-				"unknown={}, [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]",
-				metadata->unknown_byte,
-				u[0],
-				u[1],
-				u[2],
-				u[3],
-				u[4],
-				u[5],
-				u[6],
-				u[7],
-				u[8],
-				u[9],
-				u[10],
-				u[11],
-				u[12],
-				u[13],
-				u[14],
-				u[15]);
-		}
-
 		m_parser.on_heatmap = [&](const auto &data) { this->process_heatmap(data); };
 		m_parser.on_stylus = [&](const auto &data) { this->process_stylus(data); };
 		m_parser.on_dft = [&](const auto &data) { this->process_dft(data); };
