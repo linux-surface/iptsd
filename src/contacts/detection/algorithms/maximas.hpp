@@ -12,7 +12,7 @@ namespace iptsd::contacts::detection::maximas {
 /*!
  * Searches for all local maxima in the given data.
  *
- * @param[in] heatmap The data to process.
+ * @param[in] data The data to process.
  * @param[in] threshold Only return local maxima whose value is above this threshold.
  * @param[out] maximas A reference to the vector where the found points will be stored.
  */

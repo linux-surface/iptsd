@@ -81,7 +81,7 @@ public:
 		return m_report_size;
 	}
 
-	/*
+	/*!
 	 * The usage tags of the HID report.
 	 */
 	[[nodiscard]] const std::unordered_set<Usage> &usages() const

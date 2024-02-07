@@ -102,7 +102,7 @@ private:
 	 *
 	 * @param[in] path The path to the config file.
 	 * @param[out] vendor The vendor ID the config is targeting.
-	 * @param[out] vendor The product ID the config is targeting.
+	 * @param[out] product The product ID the config is targeting.
 	 */
 	void load_device(const std::filesystem::path &path, u16 &vendor, u16 &product) const
 	{

@@ -53,8 +53,8 @@ public:
 			throw std::runtime_error {"This device is not an IPTS device!"};
 	};
 
-	/*
-	 *
+	/*!
+	 * The HID descriptor of the IPTS device.
 	 */
 	[[nodiscard]] const Descriptor &descriptor() const
 	{

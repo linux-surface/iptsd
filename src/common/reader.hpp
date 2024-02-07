@@ -89,7 +89,7 @@ public:
 	/*!
 	 * Reads an object from the current position.
 	 *
-	 * @tparam The type (and size) of the object to read.
+	 * @tparam T The type (and size) of the object to read.
 	 * @return The object that was read.
 	 */
 	template <class T>

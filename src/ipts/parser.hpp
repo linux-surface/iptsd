@@ -410,7 +410,7 @@ private:
 	 * of the stylus.
 	 *
 	 * After the data was parsed, the @ref on_dft callback will be invoked.
-
+	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
 	void parse_dft_window(Reader &reader) const
@@ -446,7 +446,7 @@ private:
 	 * Parses a pen metadata report.
 	 *
 	 * A pen metadata report precedes each DFT report.
-
+	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
 	void parse_pen_metadata(Reader &reader)

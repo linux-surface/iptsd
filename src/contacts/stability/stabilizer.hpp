@@ -63,7 +63,6 @@ private:
 	 * Stabilize a single contact.
 	 *
 	 * @param[in,out] contact The contact to stabilize.
-	 * @param[in] frame The previous frame.
 	 */
 	void stabilize_contact(Contact<T> &contact) const
 	{
