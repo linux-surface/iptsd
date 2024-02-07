@@ -5,6 +5,7 @@
 
 #include "data.hpp"
 #include "protocol.hpp"
+#include "protocol/hid.hpp"
 
 #include <common/casts.hpp>
 #include <common/reader.hpp>
@@ -48,7 +49,7 @@ public:
 	 */
 	void parse(const gsl::span<u8> data)
 	{
-		this->parse<struct ipts_header>(data);
+		this->parse<protocol::hid::ReportHeader>(data);
 	}
 
 	/*!
@@ -69,36 +70,64 @@ private:
 		Reader reader(data);
 		reader.skip(header);
 
-		this->parse_frame(reader);
+		this->parse_hid_frame(reader);
 	}
 
 	/*!
-	 * Parses the root HID frame.
+	 * Parses an IPTS HID frame.
 	 *
-	 * On newer devices, a touch data report will contain a single HID frame containing other
-	 * HID frames. On older devices this is emulated, by sending a single HID frame with a
-	 * custom data type. Instead of more HID frames, this frame will contain the raw data
-	 * from the IPTS device.
+	 * These are the top-level data structure in the data received from the device.
+	 * For more information, see @ref protocol::hid::Frame
 	 *
-	 * @param[in] reader The chunk of data allocated to the root frame.
+	 * @param[in] reader The chunk of data allocated to the HID frame.
 	 */
-	void parse_frame(Reader &reader)
+	void parse_hid_frame(Reader &reader)
 	{
-		const auto header = reader.read<struct ipts_hid_frame>();
-		Reader sub = reader.sub(header.size - sizeof(header));
+		const auto frame = reader.read<protocol::hid::Frame>();
+		Reader sub = reader.sub(frame.size - sizeof(frame));
 
-		// Check if we are dealing with GuC based or HID based IPTS
-		switch (header.type) {
-		case IPTS_HID_FRAME_TYPE_RAW:
+		switch (frame.type) {
+		case protocol::hid::FrameType::Hid:
+			this->parse_hid_frames(sub);
+			break;
+		case protocol::hid::FrameType::Heatmap:
+			this->parse_heatmap_frame(sub);
+			break;
+		case protocol::hid::FrameType::Metadata:
+			this->parse_metadata(sub);
+			break;
+		case protocol::hid::FrameType::Raw:
 			this->parse_raw(sub);
 			break;
-		case IPTS_HID_FRAME_TYPE_HID:
-			this->parse_hid(sub);
+		case protocol::hid::FrameType::Reports:
+			/*
+			 * On SP7 we receive the following data about once per second:
+			 * 16 00 00 00 00 00 00
+			 *   0b 00 00 00 00 ff 00
+			 *     74 00 04 00 00 00 00 00
+			 * This causes a parse error, because the "0b" should be "0f".
+			 * So let's just ignore these packets.
+			 */
+			if (reader.size() == 4)
+				return;
+
+			this->parse_reports(sub);
 			break;
 		default:
 			// TODO: Add handler for unknow data and wire up debug tools
 			break;
 		}
+	}
+
+	/*!
+	 * Parses a list of IPTS HID frames.
+	 *
+	 * @param[in] reader The chunk of data allocated to the HID frames.
+	 */
+	void parse_hid_frames(Reader &reader)
+	{
+		while (reader.size() > 0)
+			this->parse_hid_frame(reader);
 	}
 
 	/*!
@@ -123,49 +152,6 @@ private:
 			case IPTS_RAW_FRAME_TYPE_STYLUS:
 			case IPTS_RAW_FRAME_TYPE_HEATMAP:
 				this->parse_reports(sub);
-				break;
-			default:
-				// TODO: Add handler for unknow data and wire up debug tools
-				break;
-			}
-		}
-	}
-
-	/*!
-	 * Parses IPTS HID frames.
-	 *
-	 * This data is found on newer IPTS devices that natively support HID.
-	 * There can be multiple HID frames chained together. Each frame contains
-	 * a certain type of content, how it is structured depends on the frame type.
-	 *
-	 * @param[in] reader The chunk of data allocated to the HID frame.
-	 */
-	void parse_hid(Reader &reader)
-	{
-		while (reader.size() > 0) {
-			const auto frame = reader.read<struct ipts_hid_frame>();
-			Reader sub = reader.sub(frame.size - sizeof(frame));
-
-			switch (frame.type) {
-			case IPTS_HID_FRAME_TYPE_HEATMAP:
-				this->parse_heatmap_frame(sub);
-				break;
-			case IPTS_HID_FRAME_TYPE_REPORTS:
-				/*
-				 * On SP7 we receive the following data about once per second:
-				 * 16 00 00 00 00 00 00
-				 *   0b 00 00 00 00 ff 00
-				 *     74 00 04 00 00 00 00 00
-				 * This causes a parse error, because the "0b" should be "0f".
-				 * So let's just ignore these packets.
-				 */
-				if (reader.size() == 4)
-					return;
-
-				this->parse_reports(sub);
-				break;
-			case IPTS_HID_FRAME_TYPE_METADATA:
-				this->parse_metadata(sub);
 				break;
 			default:
 				// TODO: Add handler for unknow data and wire up debug tools
