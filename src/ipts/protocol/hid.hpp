@@ -26,6 +26,7 @@ enum class FrameType : u8 {
 	Heatmap = 0x1,
 
 	//! The HID frame contains a metadata frame.
+	//! These are only returned by a HID feature report and don't appear in normal data.
 	Metadata = 0x2,
 
 	//! The HID frame contains a legacy frame. See @ref protocol::legacy::Header

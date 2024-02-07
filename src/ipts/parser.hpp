@@ -7,6 +7,7 @@
 #include "protocol.hpp"
 #include "protocol/hid.hpp"
 #include "protocol/legacy.hpp"
+#include "protocol/metadata.hpp"
 
 #include <common/casts.hpp>
 #include <common/reader.hpp>
@@ -95,7 +96,7 @@ private:
 			this->parse_heatmap_frame(sub);
 			break;
 		case protocol::hid::FrameType::Metadata:
-			this->parse_metadata(sub);
+			this->parse_metadata_frame(sub);
 			break;
 		case protocol::hid::FrameType::Legacy:
 			this->parse_legacy_frame(sub);
@@ -162,21 +163,19 @@ private:
 	/*!
 	 * Parses an IPTS metadata frame.
 	 *
-	 * This data is only found on devices that natively support HID and has to be retrieved
-	 * through a HID feature report.
-	 *
-	 * Once the data is parsed, the @ref on_metadata calback is invoked.
+	 * Metadata frames are returned by a HID feature report on devices that natively support
+	 * HID. Once the data is parsed, the @ref on_metadata callback will be invoked.
 	 *
 	 * @param[in] reader The chunk of data allocated to the metadata frame.
 	 */
-	void parse_metadata(Reader &reader) const
+	void parse_metadata_frame(Reader &reader) const
 	{
 		Metadata m {};
 
-		m.size = reader.read<struct ipts_touch_metadata_size>();
+		m.dimensions = reader.read<protocol::metadata::Dimensions>();
 		m.unknown_byte = reader.read<u8>();
-		m.transform = reader.read<struct ipts_touch_metadata_transform>();
-		m.unknown = reader.read<struct ipts_touch_metadata_unknown>();
+		m.transform = reader.read<protocol::metadata::Transform>();
+		m.unknown = reader.read<protocol::metadata::Unknown>();
 
 		if (this->on_metadata)
 			this->on_metadata(m);

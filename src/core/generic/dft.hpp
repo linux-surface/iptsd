@@ -88,8 +88,8 @@ private:
 		u8 height = dft.dim.height;
 
 		if ((width == 0 || height == 0) && m_metadata.has_value()) {
-			width = casts::to<u8>(m_metadata->size.columns);
-			height = casts::to<u8>(m_metadata->size.rows);
+			width = casts::to<u8>(m_metadata->dimensions.columns);
+			height = casts::to<u8>(m_metadata->dimensions.rows);
 		}
 
 		m_real = dft.x[0].real[IPTS_DFT_NUM_COMPONENTS / 2] +

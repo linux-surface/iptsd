@@ -4,6 +4,7 @@
 #define IPTSD_IPTS_DATA_HPP
 
 #include "protocol.hpp"
+#include "protocol/metadata.hpp"
 
 #include <common/types.hpp>
 
@@ -48,10 +49,10 @@ struct DftWindow {
 };
 
 struct Metadata {
-	struct ipts_touch_metadata_size size {};
-	struct ipts_touch_metadata_transform transform {};
+	protocol::metadata::Dimensions dimensions {};
+	protocol::metadata::Transform transform {};
 	u8 unknown_byte = 0;
-	struct ipts_touch_metadata_unknown unknown {};
+	protocol::metadata::Unknown unknown {};
 };
 
 } // namespace iptsd::ipts

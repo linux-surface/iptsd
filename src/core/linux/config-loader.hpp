@@ -30,8 +30,8 @@ public:
 		: m_info {info}
 	{
 		if (metadata.has_value()) {
-			m_config.width = casts::to<f64>(metadata->size.width) / 1e3;
-			m_config.height = casts::to<f64>(metadata->size.height) / 1e3;
+			m_config.width = casts::to<f64>(metadata->dimensions.width) / 1e3;
+			m_config.height = casts::to<f64>(metadata->dimensions.height) / 1e3;
 			m_config.invert_x = metadata->transform.xx < 0;
 			m_config.invert_y = metadata->transform.yy < 0;
 		}
