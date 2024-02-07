@@ -8,6 +8,7 @@
 #include "protocol/hid.hpp"
 #include "protocol/legacy.hpp"
 #include "protocol/metadata.hpp"
+#include "protocol/report.hpp"
 
 #include <common/casts.hpp>
 #include <common/reader.hpp>
@@ -112,7 +113,7 @@ private:
 			if (reader.size() == 4)
 				return;
 
-			this->parse_reports(sub);
+			this->parse_report_frames(sub);
 			break;
 		default:
 			// TODO: Add handler for unknow data and wire up debug tools
@@ -150,7 +151,7 @@ private:
 			switch (group.type) {
 			case protocol::legacy::GroupType::Stylus:
 			case protocol::legacy::GroupType::Touch:
-				this->parse_reports(sub);
+				this->parse_report_frames(sub);
 				break;
 			default:
 				// TODO: Add handler for unknow data and wire up debug tools
@@ -181,45 +182,52 @@ private:
 	}
 
 	/*!
-	 * Parses IPTS reports.
+	 * Parses an IPTS report frame.
 	 *
-	 * Reports can be found on both types of devices (both HID-native and not).
-	 * They are found inside of a frame structure and describe different aspects
-	 * of the data family described by the frame. The frame contains no indication
-	 * about the amount of reports, only their combined size.
+	 * Report frames can be found inside of HID and legacy frames. They contain very specific
+	 * data from the touchscreen, such as stylus coordintes or capacitive heatmaps.
 	 *
-	 * @param[in] reader The chunk of data allocated to the list of reports.
+	 * @param[in] reader The chunk of data allocated to the report frame.
 	 */
-	void parse_reports(Reader &reader)
+	void parse_report_frame(Reader &reader)
 	{
-		while (reader.size() > 0) {
-			const auto report = reader.read<struct ipts_report>();
-			Reader sub = reader.sub(report.size);
+		const auto frame = reader.read<protocol::report::Frame>();
+		Reader sub = reader.sub(frame.size);
 
-			switch (report.type) {
-			case IPTS_REPORT_TYPE_STYLUS_V1:
-				this->parse_stylus_v1(sub);
-				break;
-			case IPTS_REPORT_TYPE_STYLUS_V2:
-				this->parse_stylus_v2(sub);
-				break;
-			case IPTS_REPORT_TYPE_DIMENSIONS:
-				this->parse_dimensions(sub);
-				break;
-			case IPTS_REPORT_TYPE_HEATMAP:
-				this->parse_heatmap_data(sub);
-				break;
-			case IPTS_REPORT_TYPE_PEN_METADATA:
-				this->parse_pen_metadata(sub);
-				break;
-			case IPTS_REPORT_TYPE_PEN_DFT_WINDOW:
-				this->parse_dft_window(sub);
-				break;
-			default:
-				// TODO: Add handler for unknow data and wire up debug tools
-				break;
-			}
+		switch (frame.type) {
+		case protocol::report::Type::StylusV1:
+			this->parse_stylus_v1(sub);
+			break;
+		case protocol::report::Type::StylusV2:
+			this->parse_stylus_v2(sub);
+			break;
+		case protocol::report::Type::HeatmapDimensions:
+			this->parse_dimensions(sub);
+			break;
+		case protocol::report::Type::HeatmapData:
+			this->parse_heatmap_data(sub);
+			break;
+		case protocol::report::Type::DftMetadata:
+			this->parse_pen_metadata(sub);
+			break;
+		case protocol::report::Type::DftWindow:
+			this->parse_dft_window(sub);
+			break;
+		default:
+			// TODO: Add handler for unknow data and wire up debug tools
+			break;
 		}
+	}
+
+	/*!
+	 * Parses a list of IPTS report frames.
+	 *
+	 * @param[in] reader The chunk of data allocated to the list of report frames.
+	 */
+	void parse_report_frames(Reader &reader)
+	{
+		while (reader.size() > 0)
+			this->parse_report_frame(reader);
 	}
 
 	/*!

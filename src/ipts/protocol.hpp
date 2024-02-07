@@ -26,24 +26,6 @@ constexpr u8 IPTS_HID_REPORT_USAGE_SET_MODE = 0xC8;
  */
 constexpr u8 IPTS_HID_REPORT_USAGE_METADATA = 0x63;
 
-constexpr u8 IPTS_REPORT_TYPE_TIMESTAMP                = 0x00;
-constexpr u8 IPTS_REPORT_TYPE_DIMENSIONS               = 0x03;
-constexpr u8 IPTS_REPORT_TYPE_HEATMAP                  = 0x25;
-constexpr u8 IPTS_REPORT_TYPE_STYLUS_V1                = 0x10;
-constexpr u8 IPTS_REPORT_TYPE_STYLUS_V2                = 0x60;
-constexpr u8 IPTS_REPORT_TYPE_FREQUENCY_NOISE          = 0x04;
-constexpr u8 IPTS_REPORT_TYPE_PEN_GENERAL              = 0x57;
-constexpr u8 IPTS_REPORT_TYPE_PEN_JNR_OUTPUT           = 0x58;
-constexpr u8 IPTS_REPORT_TYPE_PEN_NOISE_METRICS_OUTPUT = 0x59;
-constexpr u8 IPTS_REPORT_TYPE_PEN_DATA_SELECTION       = 0x5a;
-constexpr u8 IPTS_REPORT_TYPE_PEN_MAGNITUDE            = 0x5b;
-constexpr u8 IPTS_REPORT_TYPE_PEN_DFT_WINDOW           = 0x5c;
-constexpr u8 IPTS_REPORT_TYPE_PEN_MULTIPLE_REGION      = 0x5d;
-constexpr u8 IPTS_REPORT_TYPE_PEN_TOUCHED_ANTENNAS     = 0x5e;
-constexpr u8 IPTS_REPORT_TYPE_PEN_METADATA             = 0x5f;
-constexpr u8 IPTS_REPORT_TYPE_PEN_DETECTION            = 0x62;
-constexpr u8 IPTS_REPORT_TYPE_PEN_LIFT                 = 0x63;
-
 constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY = 0;
 constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_CONTACT   = 1;
 constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_BUTTON    = 2;
@@ -66,12 +48,6 @@ constexpr u16 IPTS_MAX_PRESSURE_V1 = 1024;
 constexpr u16 IPTS_MAX_PRESSURE_V2 = 4096;
 
 // clang-format on
-
-struct [[gnu::packed]] ipts_report {
-	u8 type;
-	u8 flags;
-	u16 size;
-};
 
 struct [[gnu::packed]] ipts_stylus_report {
 	u8 elements;
