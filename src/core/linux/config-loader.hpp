@@ -109,7 +109,7 @@ private:
 		const INIReader ini {path};
 
 		if (ini.ParseError() != 0)
-			throw std::runtime_error(fmt::format("Failed to parse {}", path.c_str()));
+			throw std::runtime_error {fmt::format("Failed to parse {}", path.c_str())};
 
 		vendor = 0;
 		product = 0;
@@ -128,7 +128,7 @@ private:
 		const INIReader ini {path};
 
 		if (ini.ParseError() != 0)
-			throw std::runtime_error(fmt::format("Failed to parse {}", path.c_str()));
+			throw std::runtime_error {fmt::format("Failed to parse {}", path.c_str())};
 
 		// clang-format off
 
@@ -198,7 +198,7 @@ private:
 		else if constexpr (std::is_same_v<T, std::string>)
 			value = ini.GetString(section, name, value);
 		else
-			throw std::runtime_error("Loading this type is not implemented!");
+			throw std::runtime_error {"Loading this type is not implemented!"};
 	}
 };
 

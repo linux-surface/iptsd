@@ -29,7 +29,7 @@ public:
 	void read(const gsl::span<u8> dest)
 	{
 		if (dest.size() > this->size())
-			throw std::runtime_error("Tried to read more data than available!");
+			throw std::runtime_error {"Tried to read more data than available!"};
 
 		const gsl::span<u8> src = this->subspan(dest.size());
 		std::copy(src.begin(), src.end(), dest.begin());
@@ -43,7 +43,7 @@ public:
 	void skip(const usize size)
 	{
 		if (size > this->size())
-			throw std::runtime_error("Tried to read more data than available!");
+			throw std::runtime_error {"Tried to read more data than available!"};
 
 		m_index += size;
 	}
@@ -67,7 +67,7 @@ public:
 	gsl::span<u8> subspan(const usize size)
 	{
 		if (size > this->size())
-			throw std::runtime_error("Tried to read more data than available!");
+			throw std::runtime_error {"Tried to read more data than available!"};
 
 		const gsl::span<u8> sub = m_data.subspan(m_index, size);
 		this->skip(size);

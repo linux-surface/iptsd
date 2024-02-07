@@ -83,7 +83,7 @@ typename DenseBase<Derived>::Scalar calculate(const DenseBase<Derived> &heatmap,
 	case Algorithm::CONSTANT:
 		return offset;
 	default:
-		throw std::runtime_error("Invalid neutral mode!");
+		throw std::runtime_error {"Invalid neutral mode!"};
 	}
 }
 

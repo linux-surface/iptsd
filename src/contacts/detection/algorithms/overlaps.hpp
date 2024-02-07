@@ -58,7 +58,7 @@ inline f64 overlap(const Box &a, const Box &b)
 	const f64 iou = casts::to<f64>(area_i) / casts::to<f64>(area_a + area_b - area_i);
 
 	if (iou < 0.0 || iou > 1.0)
-		throw std::runtime_error("Calculated invalid cluster overlap!");
+		throw std::runtime_error {"Calculated invalid cluster overlap!"};
 
 	return iou;
 }
@@ -160,7 +160,7 @@ inline void merge(std::vector<Box> &clusters, std::vector<Box> &temp, const usiz
 	}
 
 	if (iterations == 0)
-		throw std::runtime_error("Failed to merge overlapping clusters!");
+		throw std::runtime_error {"Failed to merge overlapping clusters!"};
 }
 
 } // namespace iptsd::contacts::detection::overlaps

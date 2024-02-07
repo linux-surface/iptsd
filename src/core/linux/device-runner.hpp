@@ -102,7 +102,7 @@ public:
 	bool run()
 	{
 		if (!m_application.has_value())
-			throw std::runtime_error("Init error: Application is null");
+			throw std::runtime_error {"Init error: Application is null"};
 
 		// Enable multitouch mode
 		m_ipts.set_mode(ipts::Mode::Multitouch);

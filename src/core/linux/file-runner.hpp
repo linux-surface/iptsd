@@ -83,7 +83,7 @@ public:
 	T &application()
 	{
 		if (!m_application.has_value())
-			throw std::runtime_error("Error: Application is null");
+			throw std::runtime_error {"Error: Application is null"};
 
 		return m_application.value();
 	}
@@ -107,7 +107,7 @@ public:
 	bool run()
 	{
 		if (!m_application.has_value() || !m_reader.has_value())
-			throw std::runtime_error("Error: Application / Reader are null");
+			throw std::runtime_error {"Error: Application / Reader are null"};
 
 		Reader local = m_reader.value();
 
