@@ -3,8 +3,6 @@
 #ifndef IPTSD_COMMON_CONSTANTS_HPP
 #define IPTSD_COMMON_CONSTANTS_HPP
 
-#include "types.hpp"
-
 #include <type_traits>
 
 template <class T>

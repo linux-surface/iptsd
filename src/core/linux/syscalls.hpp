@@ -11,11 +11,9 @@
 #include <sys/ioctl.h>
 
 #include <cerrno>
-#include <csignal>
-#include <cstdio>
+#include <csignal> // IWYU pragma: keep
 #include <fcntl.h>
 #include <filesystem>
-#include <string_view>
 #include <system_error>
 #include <unistd.h>
 

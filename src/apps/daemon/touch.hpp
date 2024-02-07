@@ -16,7 +16,6 @@
 #include <linux/input-event-codes.h>
 
 #include <algorithm>
-#include <climits>
 #include <cmath>
 #include <iterator>
 #include <memory>

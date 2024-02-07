@@ -4,7 +4,14 @@
 #define IPTSD_CONTACTS_DETECTION_DETECTOR_HPP
 
 #include "../contact.hpp"
-#include "algorithms.hpp"
+#include "algorithms/cluster.hpp"
+#include "algorithms/convolution.hpp"
+#include "algorithms/ellipse.hpp"
+#include "algorithms/gaussian.hpp"
+#include "algorithms/kernels.hpp"
+#include "algorithms/maximas.hpp"
+#include "algorithms/neutral.hpp"
+#include "algorithms/overlaps.hpp"
 #include "config.hpp"
 
 #include <common/casts.hpp>
@@ -14,7 +21,6 @@
 #include <gsl/gsl>
 
 #include <cmath>
-#include <iostream>
 #include <type_traits>
 #include <vector>
 

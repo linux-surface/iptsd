@@ -10,7 +10,6 @@
 #include <gsl/gsl>
 #include <spdlog/spdlog.h>
 
-#include <algorithm>
 #include <csignal>
 #include <cstdlib>
 #include <exception>

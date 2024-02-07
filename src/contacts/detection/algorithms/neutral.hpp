@@ -5,9 +5,6 @@
 
 #include <common/types.hpp>
 
-#include <type_traits>
-#include <unordered_map>
-
 namespace iptsd::contacts::detection::neutral {
 
 namespace impl {

@@ -5,8 +5,6 @@
 
 #include <common/types.hpp>
 
-#include <array>
-
 // clang-format off
 
 constexpr u16 IPTS_HID_REPORT_USAGE_PAGE_DIGITIZER = 0x000D;

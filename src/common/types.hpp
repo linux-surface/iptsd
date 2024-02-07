@@ -10,7 +10,6 @@
 #include <Eigen/Eigen>
 #include <gsl/gsl>
 
-#include <cmath>
 #include <cstddef>
 #include <cstdint>
 

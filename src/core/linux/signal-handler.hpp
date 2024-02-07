@@ -5,10 +5,8 @@
 
 #include "syscalls.hpp"
 
-#include <csignal>
 #include <exception>
 #include <functional>
-#include <type_traits>
 
 namespace iptsd::core::linux {
 

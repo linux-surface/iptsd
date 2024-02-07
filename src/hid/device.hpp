@@ -9,7 +9,6 @@
 
 #include <gsl/gsl>
 
-#include <functional>
 #include <vector>
 
 namespace iptsd::hid {

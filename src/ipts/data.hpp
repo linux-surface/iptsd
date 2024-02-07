@@ -9,6 +9,8 @@
 
 #include <gsl/gsl>
 
+#include <optional>
+
 namespace iptsd::ipts {
 
 struct StylusData {

@@ -9,8 +9,6 @@
 #include <common/constants.hpp>
 #include <common/types.hpp>
 
-#include <optional>
-
 namespace iptsd::contacts::detection {
 
 template <class T>

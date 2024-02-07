@@ -8,7 +8,6 @@
 #include <common/casts.hpp>
 #include <common/types.hpp>
 
-#include <limits>
 #include <vector>
 
 namespace iptsd::contacts::tracking::distances {

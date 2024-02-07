@@ -10,8 +10,6 @@
 #include <gsl/gsl>
 #include <gsl/util>
 
-#include <limits>
-#include <stdexcept>
 #include <type_traits>
 
 namespace iptsd::contacts::detection::gaussian {

@@ -17,7 +17,6 @@
 #include <cstdlib>
 #include <exception>
 #include <filesystem>
-#include <ratio>
 #include <string>
 
 namespace iptsd::apps::perf {

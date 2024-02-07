@@ -17,10 +17,7 @@
 
 #include <linux/hidraw.h>
 
-#include <algorithm>
 #include <filesystem>
-#include <optional>
-#include <set>
 #include <vector>
 
 namespace iptsd::core::linux {

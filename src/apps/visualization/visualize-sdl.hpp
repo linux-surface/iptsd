@@ -17,7 +17,6 @@
 #include <gsl/gsl>
 
 #include <cstring>
-#include <memory>
 #include <optional>
 
 namespace iptsd::apps::visualization {

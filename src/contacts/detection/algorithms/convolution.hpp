@@ -3,12 +3,11 @@
 #ifndef IPTSD_CONTACTS_DETECTION_ALGORITHMS_CONVOLUTION_HPP
 #define IPTSD_CONTACTS_DETECTION_ALGORITHMS_CONVOLUTION_HPP
 
-#include "optimized/convolution.hpp"
+#include "optimized/convolution.3x3-extend.hpp"
+#include "optimized/convolution.5x5-extend.hpp"
 
 #include <common/casts.hpp>
 #include <common/types.hpp>
-
-#include <type_traits>
 
 namespace iptsd::contacts::detection::convolution {
 

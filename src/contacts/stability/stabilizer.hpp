@@ -13,7 +13,6 @@
 #include <gsl/gsl>
 
 #include <algorithm>
-#include <deque>
 #include <iterator>
 #include <type_traits>
 #include <vector>

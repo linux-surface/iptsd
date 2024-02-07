@@ -9,7 +9,6 @@
 #include <hid/report.hpp>
 #include <hid/usage.hpp>
 
-#include <algorithm>
 #include <optional>
 #include <vector>
 

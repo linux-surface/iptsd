@@ -12,7 +12,6 @@
 #include <hid/report.hpp>
 
 #include <gsl/gsl>
-#include <gsl/narrow>
 
 #include <algorithm>
 #include <functional>

@@ -3,8 +3,6 @@
 #ifndef IPTSD_COMMON_CHRONO_HPP
 #define IPTSD_COMMON_CHRONO_HPP
 
-#include "types.hpp"
-
 #include <chrono>
 #include <ratio>
 

@@ -3,18 +3,15 @@
 #ifndef IPTSD_HID_REPORT_HPP
 #define IPTSD_HID_REPORT_HPP
 
-#include "spec.hpp"
 #include "usage.hpp"
 
 #include <common/casts.hpp>
 #include <common/types.hpp>
 
 #include <algorithm>
-#include <iterator>
 #include <optional>
 #include <stdexcept>
 #include <unordered_set>
-#include <vector>
 
 namespace iptsd::hid {
 
