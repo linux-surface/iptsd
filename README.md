@@ -1,24 +1,27 @@
 # IPTSD
 
-This is the userspace touch processing daemon for Microsoft Surface devices using Intel Precise Touch technology.
+This is the userspace touch processing daemon for Microsoft Surface devices using Intel Precise
+Touch technology.
 
-The daemon will read incoming HID reports containing raw capacitive touch data, stylus coordinates and DFT pen measurements, and create standard input events from it using uinput devices.
-
-At the moment, only systemd based distributions are properly supported. The daemon itself does not depend on the service manager in any ways, but it needs to know which hidraw device corresponds to the touchscreen. The easiest way to do this is with udev and a parameterized service file, which only systemd seems to support.
+The daemon will read incoming HID reports containing raw capacitive touch data, stylus coordinates
+and DFT pen measurements, and create standard input events from it using uinput devices.
 
 ### Installing
 
 IPTSD is included in the linux-surface repository. This is the recommended way of installing it.
 
-**Important:** Support on Debian based distributions only goes back to the latest LTS release (Debian 11 and Ubuntu 22.04).
+**Important:** Support on Debian based distributions only goes back to Debian 11 / Ubuntu 22.04.
 
-If you want to try out changes that are not yet released, GitHub Actions builds Arch Linux, Debian and Fedora packages for every commit. You'll need to be signed-in to Github, then go to https://github.com/linux-surface/iptsd/actions, select the latest successful workflow and download the artifact named `<your distro>-latest`.
+If you want to try out changes that are not yet released, GitHub Actions builds Arch Linux, Debian
+and Fedora packages for every commit. You'll need to be signed in to GitHub, then go to
+https://github.com/linux-surface/iptsd/actions, select the latest successful workflow and download
+the artifact named `<your distro>-latest`.
 
 ### Building
 
 To build IPTSD from source, you need to install the following dependencies:
 
- * A C and a C++ compiler
+ * A C++ compiler
  * meson
  * ninja
  * CLI11
@@ -27,18 +30,20 @@ To build IPTSD from source, you need to install the following dependencies:
  * inih / INIReader
  * gsl
  * spdlog
+ * cmake, because some of our dependencies don't ship pkgconfig files
 
 To build the plotting tools for visualizing data, you need to install a few more dependencies.
 
  * cairomm
  * SDL2
 
-Most of the dependencies can be downloaded and included automatically by meson, should your distribution not include them.
+Most of the dependencies can be downloaded and included automatically by meson, should your
+distribution not include them.
 
 ```bash
 $ git clone https://github.com/linux-surface/iptsd
 $ cd iptsd
-$ meson build
+$ meson setup build
 $ ninja -C build
 ```
 
@@ -54,7 +59,8 @@ You can then run iptsd with the device path as a launch argument:
 $ sudo ./build/src/iptsd /dev/hidrawN
 ```
 
-Alternatively, you can install the files you just built to the system. After a reboot, iptsd will be automatically started by udev:
+Alternatively, you can install the files you just built to the system. After a reboot, iptsd will
+get started by udev automatically:
 
 ```bash
 $ sudo ninja -C build install
@@ -70,4 +76,5 @@ $ sudo restorecon -vF /usr/lib/systemd/system/iptsd@.service
 $ sudo restorecon -vF /usr/local/bin/ipts*
 ```
 
-This is only neccessary when using `ninja install`. When you install one of the packages from GitHub Actions, or build your own package, everything will just work.
+This is only necessary when using `ninja install`. When you install one of the packages from
+GitHub Actions, or build your own package, everything will just work.
