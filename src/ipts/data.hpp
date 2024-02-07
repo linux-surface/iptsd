@@ -31,7 +31,6 @@ struct StylusData {
 
 struct Heatmap {
 	struct ipts_dimensions dim {};
-	struct ipts_timestamp time {};
 
 	gsl::span<u8> data {};
 };
@@ -42,7 +41,6 @@ struct DftWindow {
 	u8 type = 0;
 
 	struct ipts_dimensions dim {};
-	struct ipts_timestamp time {};
 
 	std::array<struct ipts_pen_dft_window_row, IPTS_DFT_MAX_ROWS> x {};
 	std::array<struct ipts_pen_dft_window_row, IPTS_DFT_MAX_ROWS> y {};

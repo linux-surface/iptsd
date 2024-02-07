@@ -38,7 +38,6 @@ public:
 
 private:
 	struct ipts_dimensions m_dim {};
-	struct ipts_timestamp m_time {};
 	struct ipts_pen_metadata m_pen_meta {};
 
 public:
@@ -207,9 +206,6 @@ private:
 			case IPTS_REPORT_TYPE_DIMENSIONS:
 				this->parse_dimensions(sub);
 				break;
-			case IPTS_REPORT_TYPE_TIMESTAMP:
-				this->parse_timestamp(sub);
-				break;
 			case IPTS_REPORT_TYPE_HEATMAP:
 				this->parse_heatmap_data(sub);
 				break;
@@ -335,16 +331,6 @@ private:
 	}
 
 	/*!
-	 * Parses a heatmap timestamp report.
-	 *
-	 * @param[in] reader The chunk of data allocated to the report.
-	 */
-	void parse_timestamp(Reader &reader)
-	{
-		m_time = reader.read<struct ipts_timestamp>();
-	}
-
-	/*!
 	 * Parses a heatmap report.
 	 *
 	 * This report contains the actual heatmap data. IPTS sends
@@ -363,7 +349,6 @@ private:
 
 		heatmap.data = reader.subspan<u8>(size);
 		heatmap.dim = m_dim;
-		heatmap.time = m_time;
 
 		if (this->on_heatmap)
 			this->on_heatmap(heatmap);
@@ -418,7 +403,6 @@ private:
 		}
 
 		dft.dim = m_dim;
-		dft.time = m_time;
 
 		if (!this->on_dft)
 			return;

@@ -110,12 +110,6 @@ struct [[gnu::packed]] ipts_dimensions {
 	u8 z_max;
 };
 
-struct [[gnu::packed]] ipts_timestamp {
-	u8 reserved[2]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-	u16 count;
-	u32 timestamp;
-};
-
 struct [[gnu::packed]] ipts_heatmap_header {
 	u8 reserved[5]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 	u32 size;
