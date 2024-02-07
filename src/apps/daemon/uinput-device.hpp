@@ -36,7 +36,7 @@ public:
 		try {
 			syscalls::ioctl(m_fd, UI_DEV_DESTROY);
 			syscalls::close(m_fd);
-		} catch (std::exception &) {
+		} catch (const std::exception & /* unused */) {
 			// ignored
 		}
 	}

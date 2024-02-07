@@ -55,7 +55,7 @@ public:
 		// register new handler
 		try {
 			syscalls::sigaction(Signal, &sig);
-		} catch (std::exception &e) {
+		} catch (const std::exception & /* unused */) {
 			s_seat.m_handler = {};
 			throw;
 		}
@@ -71,7 +71,7 @@ public:
 
 		try {
 			syscalls::sigaction(Signal, nullptr);
-		} catch (std::exception &) {
+		} catch (const std::exception & /* unused */) {
 			// ignored
 		}
 

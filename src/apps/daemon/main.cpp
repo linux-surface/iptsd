@@ -52,7 +52,7 @@ int main(const int argc, const char **argv)
 
 	try {
 		return iptsd::apps::daemon::run(argc, argv);
-	} catch (std::exception &e) {
+	} catch (const std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;
 	}

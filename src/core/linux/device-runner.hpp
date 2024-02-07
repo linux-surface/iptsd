@@ -128,7 +128,7 @@ public:
 					continue;
 
 				m_application->process(data);
-			} catch (std::exception &e) {
+			} catch (const std::exception &e) {
 				spdlog::warn(e.what());
 
 				// Sleep for a moment to let the device get back into normal state.
@@ -150,7 +150,7 @@ public:
 		try {
 			// Disable multitouch mode
 			m_ipts.set_mode(ipts::Mode::Singletouch);
-		} catch (std::exception &e) {
+		} catch (const std::exception &e) {
 			spdlog::error(e.what());
 		}
 

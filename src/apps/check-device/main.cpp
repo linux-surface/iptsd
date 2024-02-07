@@ -37,7 +37,7 @@ int run(const int argc, const char **argv)
 	try {
 		// Create a dummy application that reads from the device.
 		const core::linux::DeviceRunner<core::Application> dummy {path};
-	} catch (std::exception & /* unused */) {
+	} catch (const std::exception & /* unused */) {
 		spdlog::error("{} is not an IPTS device!", path.string());
 		return EXIT_FAILURE;
 	}
@@ -55,7 +55,7 @@ int main(const int argc, const char **argv)
 
 	try {
 		return iptsd::apps::check::run(argc, argv);
-	} catch (std::exception &e) {
+	} catch (const std::exception &e) {
 		spdlog::error(e.what());
 		return EXIT_FAILURE;
 	}

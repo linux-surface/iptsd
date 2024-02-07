@@ -49,7 +49,7 @@ public:
 	{
 		try {
 			syscalls::close(m_fd);
-		} catch (std::exception &) {
+		} catch (const std::exception & /* unused */) {
 			// ignored
 		}
 	}
