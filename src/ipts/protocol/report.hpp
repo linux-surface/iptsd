@@ -12,8 +12,8 @@ enum class Type : u8 {
 	HeatmapDimensions = 0x3,
 	HeatmapData = 0x25,
 
-	StylusV1 = 0x10,
-	StylusV2 = 0x60,
+	StylusMPP_1_0 = 0x10,
+	StylusMPP_1_51 = 0x60,
 
 	DftFrequencyNoise = 0x04,
 	DftGeneral = 0x57,

@@ -26,11 +26,6 @@ constexpr u8 IPTS_HID_REPORT_USAGE_SET_MODE = 0xC8;
  */
 constexpr u8 IPTS_HID_REPORT_USAGE_METADATA = 0x63;
 
-constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY = 0;
-constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_CONTACT   = 1;
-constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_BUTTON    = 2;
-constexpr u8 IPTS_STYLUS_REPORT_MODE_BIT_RUBBER    = 3;
-
 constexpr u8 IPTS_DFT_NUM_COMPONENTS = 9;
 constexpr u8 IPTS_DFT_MAX_ROWS       = 16;
 constexpr u8 IPTS_DFT_PRESSURE_ROWS  = 6;
@@ -39,41 +34,7 @@ constexpr u8 IPTS_DFT_ID_POSITION = 6;
 constexpr u8 IPTS_DFT_ID_BUTTON   = 9;
 constexpr u8 IPTS_DFT_ID_PRESSURE = 11;
 
-/*
- * Static limits for the data that is returned by IPTS
- */
-constexpr u16 IPTS_MAX_X           = 9600;
-constexpr u16 IPTS_MAX_Y           = 7200;
-constexpr u16 IPTS_MAX_PRESSURE_V1 = 1024;
-constexpr u16 IPTS_MAX_PRESSURE_V2 = 4096;
-
 // clang-format on
-
-struct [[gnu::packed]] ipts_stylus_report {
-	u8 elements;
-	u8 reserved[3]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-	u32 serial;
-};
-
-struct [[gnu::packed]] ipts_stylus_data_v2 {
-	u16 timestamp;
-	u16 mode;
-	u16 x;
-	u16 y;
-	u16 pressure;
-	u16 altitude;
-	u16 azimuth;
-	u8 reserved[2]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-};
-
-struct [[gnu::packed]] ipts_stylus_data_v1 {
-	u8 reserved[4]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-	u8 mode;
-	u16 x;
-	u16 y;
-	u16 pressure;
-	u8 reserved2;
-};
 
 struct [[gnu::packed]] ipts_dimensions {
 	u8 height;

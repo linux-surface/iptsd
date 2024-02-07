@@ -9,6 +9,7 @@
 #include "protocol/legacy.hpp"
 #include "protocol/metadata.hpp"
 #include "protocol/report.hpp"
+#include "protocol/stylus.hpp"
 
 #include <common/casts.hpp>
 #include <common/reader.hpp>
@@ -17,7 +18,6 @@
 #include <gsl/gsl>
 
 #include <array>
-#include <bitset>
 #include <functional>
 #include <optional>
 
@@ -195,11 +195,11 @@ private:
 		Reader sub = reader.sub(frame.size);
 
 		switch (frame.type) {
-		case protocol::report::Type::StylusV1:
-			this->parse_stylus_v1(sub);
+		case protocol::report::Type::StylusMPP_1_0:
+			this->parse_stylus_mpp_1_0(sub);
 			break;
-		case protocol::report::Type::StylusV2:
-			this->parse_stylus_v2(sub);
+		case protocol::report::Type::StylusMPP_1_51:
+			this->parse_stylus_mpp_1_51(sub);
 			break;
 		case protocol::report::Type::HeatmapDimensions:
 			this->parse_dimensions(sub);
@@ -231,91 +231,102 @@ private:
 	}
 
 	/*!
-	 * Parses a first generation stylus report.
+	 * Parses an MPP (Microsoft Pen Protocol) 1.0 stylus report.
 	 *
-	 * These reports are found on devices with a stylus that does not
-	 * support tilt information, and that only supports 1024 levels of pressure.
+	 * These support 1024 levels of pressure, and have no tilt information.
 	 *
-	 * The stylus report can contain multiple elements, each describing a different
-	 * sample of the stylus state and position from a 5 millisecond window.
-	 * For the last element, the @ref on_stylus callback will be invoked. The other
-	 * elements are dropped, to prevent jitter in the output. The 1024 pressure levels
-	 *  will be scaled to the same 4096 levels that newer devices support.
+	 * Stylus reports can contains multiple samples of the stylus state from a 5
+	 * millisecond window. Only the last sample is processed, the others are dropped to
+	 * prevent a jittering output.
 	 *
-	 * @param[in] reader The chunk of data allocated to the report.
+	 * @param[in] reader The chunk of data allocated to the report frame.
 	 */
-	void parse_stylus_v1(Reader &reader) const
+	void parse_stylus_mpp_1_0(Reader &reader) const
 	{
-		StylusData stylus {};
+		const auto report = reader.read<protocol::stylus::Report>();
 
-		const auto stylus_report = reader.read<struct ipts_stylus_report>();
-		stylus.serial = stylus_report.serial;
+		for (u8 i = 0; i < report.samples - 1; i++)
+			reader.skip(sizeof(protocol::stylus::SampleMPP_1_0));
 
-		for (u8 i = 0; i < stylus_report.elements - 1; i++)
-			reader.skip(sizeof(struct ipts_stylus_data_v1));
+		const auto sample = reader.read<protocol::stylus::SampleMPP_1_0>();
 
-		const auto data = reader.read<struct ipts_stylus_data_v1>();
+		if (!this->on_stylus)
+			return;
 
-		const std::bitset<8> mode {data.mode};
-		stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
-		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
-		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
+		StylusData data {};
+		data.serial = report.serial;
 
-		stylus.x = casts::to<f64>(data.x) / IPTS_MAX_X;
-		stylus.y = casts::to<f64>(data.y) / IPTS_MAX_Y;
-		stylus.pressure = casts::to<f64>(data.pressure) / IPTS_MAX_PRESSURE_V1;
-		stylus.azimuth = 0;
-		stylus.altitude = 0;
-		stylus.timestamp = 0;
+		data.proximity = sample.state.proximity;
+		data.button = sample.state.button;
+		data.rubber = sample.state.rubber;
 
-		stylus.contact = stylus.pressure > 0;
+		// sample.state.contact is always false when the stylus is in eraser mode
+		data.contact = sample.pressure > 0;
 
-		if (this->on_stylus)
-			this->on_stylus(stylus);
+		data.x = casts::to<f64>(sample.x);
+		data.y = casts::to<f64>(sample.y);
+		data.pressure = casts::to<f64>(sample.pressure);
+
+		data.x /= protocol::stylus::MAX_X;
+		data.y /= protocol::stylus::MAX_Y;
+		data.pressure /= protocol::stylus::MAX_PRESSURE_MPP_1_0;
+
+		data.altitude = 0;
+		data.azimuth = 0;
+		data.timestamp = 0;
+
+		this->on_stylus(data);
 	}
 
 	/*!
-	 * Parses a second generation stylus report.
+	 * Parses an MPP (Microsoft Pen Protocol) 1.51 stylus report.
 	 *
-	 * These reports are found on devices with a stylus with support for tilt
-	 * and 4096 levels of pressure.
+	 * These support 4096 levels of pressure, and have tilt information.
 	 *
-	 * The stylus report can contain multiple elements, each describing a different
-	 * sample of the stylus state and position from a 5 millisecond window.
-	 * For the last element, the @ref on_stylus callback will be invoked. The other
-	 * elements are dropped, to prevent jitter in the output.
+	 * Stylus reports can contains multiple samples of the stylus state from a 5
+	 * millisecond window. Only the last sample is processed, the others are dropped to
+	 * prevent a jittering output.
 	 *
-	 * @param[in] reader The chunk of data allocated to the report.
+	 * @param[in] reader The chunk of data allocated to the report frame.
 	 */
-	void parse_stylus_v2(Reader &reader) const
+	void parse_stylus_mpp_1_51(Reader &reader) const
 	{
-		StylusData stylus {};
+		const auto report = reader.read<protocol::stylus::Report>();
 
-		const auto stylus_report = reader.read<struct ipts_stylus_report>();
-		stylus.serial = stylus_report.serial;
+		for (u8 i = 0; i < report.samples - 1; i++)
+			reader.skip(sizeof(protocol::stylus::SampleMPP_1_51));
 
-		for (u8 i = 0; i < stylus_report.elements - 1; i++)
-			reader.skip(sizeof(struct ipts_stylus_data_v2));
+		const auto sample = reader.read<protocol::stylus::SampleMPP_1_51>();
 
-		const auto data = reader.read<struct ipts_stylus_data_v2>();
+		if (!this->on_stylus)
+			return;
 
-		const std::bitset<16> mode(data.mode);
-		stylus.proximity = mode[IPTS_STYLUS_REPORT_MODE_BIT_PROXIMITY];
-		stylus.button = mode[IPTS_STYLUS_REPORT_MODE_BIT_BUTTON];
-		stylus.rubber = mode[IPTS_STYLUS_REPORT_MODE_BIT_RUBBER];
+		StylusData data {};
+		data.serial = report.serial;
+		data.timestamp = sample.timestamp;
 
-		stylus.x = casts::to<f64>(data.x) / IPTS_MAX_X;
-		stylus.y = casts::to<f64>(data.y) / IPTS_MAX_Y;
-		stylus.pressure = casts::to<f64>(data.pressure) / IPTS_MAX_PRESSURE_V2;
-		stylus.timestamp = data.timestamp;
+		data.proximity = sample.state.proximity;
+		data.button = sample.state.button;
+		data.rubber = sample.state.rubber;
 
-		stylus.azimuth = casts::to<f64>(data.azimuth) / 18000.0 * M_PI;
-		stylus.altitude = casts::to<f64>(data.altitude) / 18000.0 * M_PI;
+		// sample.state.contact is always false when the stylus is in eraser mode
+		data.contact = sample.pressure > 0;
 
-		stylus.contact = stylus.pressure > 0;
+		data.x = casts::to<f64>(sample.x);
+		data.y = casts::to<f64>(sample.y);
+		data.pressure = casts::to<f64>(sample.pressure);
 
-		if (this->on_stylus)
-			this->on_stylus(stylus);
+		data.x /= protocol::stylus::MAX_X;
+		data.y /= protocol::stylus::MAX_Y;
+		data.pressure /= protocol::stylus::MAX_PRESSURE_MPP_1_51;
+
+		data.altitude = casts::to<f64>(sample.altitude);
+		data.azimuth = casts::to<f64>(sample.azimuth);
+
+		data.altitude /= 18000.0 / M_PI;
+		data.azimuth /= 18000.0 / M_PI;
+
+		this->on_stylus(data);
 	}
 
 	/*!
