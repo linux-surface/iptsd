@@ -320,7 +320,7 @@ template <class Derived, class DerivedData>
 void fit(std::vector<Parameters<typename DenseBase<Derived>::Scalar>> &params,
          const DenseBase<DerivedData> &data,
          DenseBase<Derived> &tmp,
-         usize iterations)
+         const usize iterations)
 {
 	using T = typename DenseBase<Derived>::Scalar;
 

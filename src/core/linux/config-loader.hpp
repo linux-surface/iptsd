@@ -104,7 +104,7 @@ private:
 	 * @param[out] vendor The vendor ID the config is targeting.
 	 * @param[out] vendor The product ID the config is targeting.
 	 */
-	void load_device(const std::filesystem::path &path, u16 &vendor, u16 &product)
+	void load_device(const std::filesystem::path &path, u16 &vendor, u16 &product) const
 	{
 		const INIReader ini {path};
 

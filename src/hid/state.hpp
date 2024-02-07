@@ -160,7 +160,7 @@ public:
 	 *
 	 * @param[in] tag The type of the report.
 	 */
-	[[nodiscard]] Report get_report(TagMain tag)
+	[[nodiscard]] Report get_report(const TagMain tag)
 	{
 		ReportType type {};
 

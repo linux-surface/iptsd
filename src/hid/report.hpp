@@ -47,10 +47,10 @@ private:
 	std::unordered_set<Usage> m_usages;
 
 public:
-	Report(ReportType type,
-	       std::optional<u8> report_id,
-	       u32 report_count,
-	       u32 report_size,
+	Report(const ReportType type,
+	       const std::optional<u8> report_id,
+	       const u32 report_count,
+	       const u32 report_size,
 	       const std::unordered_set<Usage> &usages)
 		: m_type {type},
 		  m_report_id {report_id},
@@ -95,7 +95,7 @@ public:
 	 * @param[in] value The usage tag to search for.
 	 * @return Whether the combination of Usage / Usage Page applies to this report.
 	 */
-	[[nodiscard]] bool find_usage(Usage value) const
+	[[nodiscard]] bool find_usage(const Usage value) const
 	{
 		return this->find_usage(value.page, value.value);
 	}
@@ -107,7 +107,7 @@ public:
 	 * @param[in] value The usage tag to search for.
 	 * @return Whether the combination of Usage / Usage Page applies to this report.
 	 */
-	[[nodiscard]] bool find_usage(u16 page, u16 value) const
+	[[nodiscard]] bool find_usage(const u16 page, const u16 value) const
 	{
 		return std::any_of(m_usages.cbegin(),
 		                   m_usages.cend(),

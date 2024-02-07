@@ -57,10 +57,10 @@ public:
 			for (Eigen::Index x = 0; x < cols; x++) {
 				const f64 value = m_heatmap(y, x);
 
-				const u8 max = std::numeric_limits<u8>::max();
+				constexpr u8 max = std::numeric_limits<u8>::max();
 				const u8 v = casts::to<u8>(std::round(value * max));
 
-				const u32 a = max;
+				constexpr u32 a = max;
 				const u32 r = v;
 				const u32 g = v;
 				const u32 b = v;
@@ -111,7 +111,7 @@ public:
 		const i32 cols = casts::to<i32>(m_argb.cols());
 		const i32 rows = casts::to<i32>(m_argb.rows());
 
-		const auto format = Cairo::FORMAT_ARGB32;
+		constexpr auto format = Cairo::FORMAT_ARGB32;
 		const auto stride = Cairo::ImageSurface::format_stride_for_width(format, cols);
 
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -155,7 +155,7 @@ public:
 		m_cairo->fill();
 	}
 
-	void draw_contacts()
+	void draw_contacts() const
 	{
 		const f64 diag = m_size.cast<f64>().hypotNorm();
 

@@ -31,8 +31,8 @@ public:
 
 public:
 	RecursionState(const DenseBase<Derived> &heatmap,
-	               T activation_threshold,
-	               T deactivation_threshold,
+	               const T activation_threshold,
+	               const T deactivation_threshold,
 	               Box &cluster,
 	               Image<bool> &visited)
 		: heatmap {heatmap},

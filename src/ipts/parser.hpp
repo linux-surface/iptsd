@@ -371,7 +371,7 @@ private:
 	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
-	void parse_heatmap_data(Reader &reader)
+	void parse_heatmap_data(Reader &reader) const
 	{
 		Heatmap heatmap {};
 
@@ -393,7 +393,7 @@ private:
 	 *
 	 * @param[in] reader The chunk of data allocated to the frame.
 	 */
-	void parse_heatmap_frame(Reader &reader)
+	void parse_heatmap_frame(Reader &reader) const
 	{
 		const auto header = reader.read<struct ipts_heatmap_header>();
 		Reader sub = reader.sub(header.size);
@@ -413,7 +413,7 @@ private:
 
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
-	void parse_dft_window(Reader &reader)
+	void parse_dft_window(Reader &reader) const
 	{
 		DftWindow dft {};
 		const auto window = reader.read<struct ipts_pen_dft_window>();

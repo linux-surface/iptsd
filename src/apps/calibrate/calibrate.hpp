@@ -156,7 +156,7 @@ public:
 		aspect_max = m_aspect[casts::to<usize>(std::round(max_idx))];
 	}
 
-	void write_file(const std::filesystem::path &out, f64 slack) const
+	void write_file(const std::filesystem::path &out, const f64 slack) const
 	{
 		std::ofstream writer {out};
 
