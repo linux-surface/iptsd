@@ -23,4 +23,4 @@ constexpr inline T One()
 		return T::Ones();
 }
 
-#endif // IPTSD_COMMON_TYPES_HPP
+#endif // IPTSD_COMMON_CONSTANTS_HPP

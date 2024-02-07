@@ -208,4 +208,4 @@ public:
 
 } // namespace iptsd::contacts::detection
 
-#endif // IPTSD_CONTACTS_BASIC_DETECTOR_HPP
+#endif // IPTSD_CONTACTS_DETECTION_DETECTOR_HPP
