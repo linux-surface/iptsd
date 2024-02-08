@@ -28,20 +28,4 @@ constexpr u8 IPTS_HID_REPORT_USAGE_METADATA = 0x63;
 
 // clang-format on
 
-struct [[gnu::packed]] ipts_dimensions {
-	u8 height;
-	u8 width;
-	u8 y_min;
-	u8 y_max;
-	u8 x_min;
-	u8 x_max;
-	u8 z_min;
-	u8 z_max;
-};
-
-struct [[gnu::packed]] ipts_heatmap_header {
-	u8 reserved[5]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-	u32 size;
-};
-
 #endif // IPTSD_IPTS_PROTOCOL_HPP

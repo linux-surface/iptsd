@@ -4,8 +4,8 @@
 #define IPTSD_IPTS_PARSER_HPP
 
 #include "data.hpp"
-#include "protocol.hpp"
 #include "protocol/dft.hpp"
+#include "protocol/heatmap.hpp"
 #include "protocol/hid.hpp"
 #include "protocol/legacy.hpp"
 #include "protocol/metadata.hpp"
@@ -39,7 +39,7 @@ public:
 	std::function<void(const Metadata &)> on_metadata;
 
 private:
-	struct ipts_dimensions m_dim {};
+	protocol::heatmap::Dimensions m_dim {};
 	protocol::dft::Metadata m_dft_meta {};
 
 public:
@@ -203,7 +203,7 @@ private:
 			this->parse_stylus_mpp_1_51(sub);
 			break;
 		case protocol::report::Type::HeatmapDimensions:
-			this->parse_dimensions(sub);
+			this->parse_heatmap_dimensions(sub);
 			break;
 		case protocol::report::Type::HeatmapData:
 			this->parse_heatmap_data(sub);
@@ -341,9 +341,9 @@ private:
 	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
-	void parse_dimensions(Reader &reader)
+	void parse_heatmap_dimensions(Reader &reader)
 	{
-		m_dim = reader.read<struct ipts_dimensions>();
+		m_dim = reader.read<protocol::heatmap::Dimensions>();
 
 		// On newer devices, z_max may be 0, lets use a sane value instead.
 		if (m_dim.z_max == 0)
@@ -351,13 +351,11 @@ private:
 	}
 
 	/*!
-	 * Parses a heatmap report.
+	 * Parses a heatmap report. The payload is the actual heatmap data.
 	 *
-	 * This report contains the actual heatmap data. IPTS sends
-	 * heatmaps "inverted", e.g. a contact is represented by a low
-	 * value, and no contact is represented by a high value.
-	 *
-	 * After the data was parsed, the @ref on_heatmap callback will be invoked.
+	 * The heatmaps contain measurements of the electrical resistance on the touchscreen.
+	 * Because your finger is conductive, putting it on the screen lowers the resistance.
+	 * So a touch is represented by a low value, and no touch is represented by a high value.
 	 *
 	 * @param[in] reader The chunk of data allocated to the report.
 	 */
@@ -365,7 +363,7 @@ private:
 	{
 		Heatmap heatmap {};
 
-		const usize size = casts::to<usize>(m_dim.width) * m_dim.height;
+		const usize size = casts::to<usize>(m_dim.rows) * m_dim.columns;
 
 		heatmap.data = reader.subspan<u8>(size);
 		heatmap.dim = m_dim;
@@ -377,14 +375,14 @@ private:
 	/*!
 	 * Parses a heatmap frame.
 	 *
-	 * On HID-native devices, the heatmap is not passed as a report. Instead it is passed
-	 * inside of a HID frame with a custom frame and header.
+	 * On HID-native devices, the heatmap is not passed as a report.
+	 * Instead, it is passed inside of a HID frame.
 	 *
 	 * @param[in] reader The chunk of data allocated to the frame.
 	 */
 	void parse_heatmap_frame(Reader &reader) const
 	{
-		const auto header = reader.read<struct ipts_heatmap_header>();
+		const auto header = reader.read<protocol::heatmap::Frame>();
 		Reader sub = reader.sub(header.size);
 
 		this->parse_heatmap_data(sub);

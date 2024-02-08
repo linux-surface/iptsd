@@ -158,15 +158,15 @@ private:
 	 */
 	void process_heatmap(const ipts::Heatmap &data)
 	{
-		const Eigen::Index rows = casts::to_eigen(data.dim.height);
-		const Eigen::Index cols = casts::to_eigen(data.dim.width);
+		const Eigen::Index rows = casts::to_eigen(data.dim.rows);
+		const Eigen::Index cols = casts::to_eigen(data.dim.columns);
 
 		if (rows == 0 || cols == 0)
 			return;
 
 		// Make sure the heatmap buffer has the right size
 		if (m_heatmap.rows() != rows || m_heatmap.cols() != cols)
-			m_heatmap.conservativeResize(data.dim.height, data.dim.width);
+			m_heatmap.conservativeResize(data.dim.rows, data.dim.columns);
 
 		// Map the buffer to an Eigen container
 		const Eigen::Map<const Image<u8>> mapped {data.data.data(), rows, cols};

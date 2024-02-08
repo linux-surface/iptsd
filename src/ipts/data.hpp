@@ -3,8 +3,8 @@
 #ifndef IPTSD_IPTS_DATA_HPP
 #define IPTSD_IPTS_DATA_HPP
 
-#include "protocol.hpp"
 #include "protocol/dft.hpp"
+#include "protocol/heatmap.hpp"
 #include "protocol/metadata.hpp"
 
 #include <common/types.hpp>
@@ -31,7 +31,7 @@ struct StylusData {
 };
 
 struct Heatmap {
-	struct ipts_dimensions dim {};
+	protocol::heatmap::Dimensions dim {};
 
 	gsl::span<u8> data {};
 };
@@ -41,7 +41,7 @@ struct DftWindow {
 	u8 rows = 0;
 	protocol::dft::Type type {};
 
-	struct ipts_dimensions dim {};
+	protocol::heatmap::Dimensions dim {};
 
 	std::array<protocol::dft::Row, protocol::dft::MAX_ROWS> x {};
 	std::array<protocol::dft::Row, protocol::dft::MAX_ROWS> y {};

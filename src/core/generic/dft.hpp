@@ -85,8 +85,8 @@ private:
 			return;
 		}
 
-		u8 width = dft.dim.width;
-		u8 height = dft.dim.height;
+		u8 width = dft.dim.columns;
+		u8 height = dft.dim.rows;
 
 		if ((width == 0 || height == 0) && m_metadata.has_value()) {
 			width = casts::to<u8>(m_metadata->dimensions.columns);
