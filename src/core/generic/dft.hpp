@@ -93,11 +93,12 @@ private:
 			height = casts::to<u8>(m_metadata->dimensions.rows);
 		}
 
+		m_group = dft.group;
+
 		m_real = dft.x[0].real[ipts::protocol::dft::NUM_COMPONENTS / 2] +
 		         dft.y[0].real[ipts::protocol::dft::NUM_COMPONENTS / 2];
 		m_imag = dft.x[0].imag[ipts::protocol::dft::NUM_COMPONENTS / 2] +
 		         dft.y[0].imag[ipts::protocol::dft::NUM_COMPONENTS / 2];
-		m_group = dft.group;
 
 		f64 x = this->interpolate_position(dft.x[0]);
 		f64 y = this->interpolate_position(dft.y[0]);
@@ -198,8 +199,8 @@ private:
 		if (dft.x.size() < ipts::protocol::dft::PRESSURE_ROWS)
 			return;
 
-		f64 p = this->interpolate_frequency(dft, ipts::protocol::dft::PRESSURE_ROWS);
-		p = 1 - p;
+		const f64 p =
+			1 - this->interpolate_frequency(dft, ipts::protocol::dft::PRESSURE_ROWS);
 
 		if (p > 0) {
 			m_stylus.contact = true;
@@ -235,6 +236,7 @@ private:
 
 		// get phase-aligned amplitudes of the three center components
 		const f64 amp = std::hypot(row.real.at(maxi), row.imag.at(maxi));
+
 		if (amp < casts::to<f64>(m_config.dft_position_min_amp))
 			return casts::to<f64>(NAN);
 
