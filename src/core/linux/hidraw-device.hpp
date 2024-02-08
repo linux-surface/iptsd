@@ -11,7 +11,6 @@
 #include <hid/parser.hpp>
 #include <hid/report.hpp>
 #include <ipts/parser.hpp>
-#include <ipts/protocol.hpp>
 
 #include <gsl/gsl>
 
