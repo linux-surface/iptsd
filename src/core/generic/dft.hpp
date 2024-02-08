@@ -225,26 +225,26 @@ private:
 		f64 mind = -0.5;
 		f64 maxd = 0.5;
 
-		if (gsl::at(row.real, maxi - 1) == 0 && gsl::at(row.imag, maxi - 1) == 0) {
+		if (row.real.at(maxi - 1) == 0 && row.imag.at(maxi - 1) == 0) {
 			maxi++;
 			mind = -1;
-		} else if (gsl::at(row.real, maxi + 1) == 0 && gsl::at(row.imag, maxi + 1) == 0) {
+		} else if (row.real.at(maxi + 1) == 0 && row.imag.at(maxi + 1) == 0) {
 			maxi--;
 			maxd = 1;
 		}
 
 		// get phase-aligned amplitudes of the three center components
-		const f64 amp = std::hypot(gsl::at(row.real, maxi), gsl::at(row.imag, maxi));
+		const f64 amp = std::hypot(row.real.at(maxi), row.imag.at(maxi));
 		if (amp < casts::to<f64>(m_config.dft_position_min_amp))
 			return casts::to<f64>(NAN);
 
-		const f64 sin = gsl::at(row.real, maxi) / amp;
-		const f64 cos = gsl::at(row.imag, maxi) / amp;
+		const f64 sin = row.real.at(maxi) / amp;
+		const f64 cos = row.imag.at(maxi) / amp;
 
 		std::array<f64, 3> x = {
-			sin * gsl::at(row.real, maxi - 1) + cos * gsl::at(row.imag, maxi - 1),
+			sin * row.real.at(maxi - 1) + cos * row.imag.at(maxi - 1),
 			amp,
-			sin * gsl::at(row.real, maxi + 1) + cos * gsl::at(row.imag, maxi + 1),
+			sin * row.real.at(maxi + 1) + cos * row.imag.at(maxi + 1),
 		};
 
 		// convert the amplitudes into something we can fit a parabola to
@@ -308,8 +308,8 @@ private:
 				const ipts::protocol::dft::Row &x = dft.x[maxi + i - 1];
 				const ipts::protocol::dft::Row &y = dft.y[maxi + i - 1];
 
-				real.at(i) += gsl::at(x.real, j) + gsl::at(y.real, j);
-				imag.at(i) += gsl::at(x.imag, j) + gsl::at(y.imag, j);
+				real.at(i) += x.real.at(j) + y.real.at(j);
+				imag.at(i) += x.imag.at(j) + y.imag.at(j);
 			}
 		}
 
