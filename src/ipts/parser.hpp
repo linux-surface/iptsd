@@ -377,7 +377,7 @@ private:
 
 		const usize size = casts::to<usize>(m_dim.width) * m_dim.height;
 
-		heatmap.data = reader.subspan(size);
+		heatmap.data = reader.subspan<u8>(size);
 		heatmap.dim = m_dim;
 		heatmap.time = m_time;
 
@@ -417,6 +417,7 @@ private:
 	{
 		DftWindow dft {};
 		const auto window = reader.read<struct ipts_pen_dft_window>();
+
 
 		for (usize i = 0; i < window.num_rows; i++)
 			dft.x.at(i) = reader.read<struct ipts_pen_dft_window_row>();

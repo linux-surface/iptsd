@@ -31,7 +31,7 @@ public:
 		if (dest.size() > this->size())
 			throw std::runtime_error {"Tried to read more data than available!"};
 
-		const gsl::span<u8> src = this->subspan(dest.size());
+		const gsl::span<u8> src = this->subspan<u8>(dest.size());
 		std::copy(src.begin(), src.end(), dest.begin());
 	}
 
@@ -64,15 +64,20 @@ public:
 	 * @param[in] size How many bytes to take.
 	 * @return The raw chunk of data.
 	 */
-	gsl::span<u8> subspan(const usize size)
+	template <class T>
+	gsl::span<T> subspan(const usize size)
 	{
 		if (size > this->size())
 			throw std::runtime_error {"Tried to read more data than available!"};
 
-		const gsl::span<u8> sub = m_data.subspan(m_index, size);
-		this->skip(size);
+		const usize bytes = size * sizeof(T);
+		const gsl::span<u8> sub = m_data.subspan(m_index, bytes);
 
-		return sub;
+		this->skip(bytes);
+
+		// We have to break type safety here, since all we have is a bytestream.
+		// NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+		return gsl::span<T> {reinterpret_cast<T *>(sub.data()), size};
 	}
 
 	/*!
@@ -83,7 +88,7 @@ public:
 	 */
 	Reader sub(const usize size)
 	{
-		return Reader {this->subspan(size)};
+		return Reader {this->subspan<u8>(size)};
 	}
 
 	/*!

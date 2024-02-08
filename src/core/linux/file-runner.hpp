@@ -131,7 +131,7 @@ public:
 				 */
 				Reader buffer = local.sub(casts::to<usize>(m_info.buffer_size));
 
-				m_application->process(buffer.subspan(casts::to<usize>(size)));
+				m_application->process(buffer.subspan<u8>(casts::to<usize>(size)));
 			} catch (const std::exception &e) {
 				spdlog::warn(e.what());
 			}
