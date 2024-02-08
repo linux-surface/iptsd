@@ -74,7 +74,7 @@ private:
 	 */
 	void handle_position(const ipts::DftWindow &dft)
 	{
-		if (dft.rows <= 1) {
+		if (dft.x.size() <= 1) {
 			this->lift();
 			return;
 		}
@@ -85,8 +85,8 @@ private:
 			return;
 		}
 
-		u8 width = dft.dim.columns;
-		u8 height = dft.dim.rows;
+		u8 width = dft.width;
+		u8 height = dft.height;
 
 		if ((width == 0 || height == 0) && m_metadata.has_value()) {
 			width = casts::to<u8>(m_metadata->dimensions.columns);
@@ -159,7 +159,7 @@ private:
 	 */
 	void handle_button(const ipts::DftWindow &dft)
 	{
-		if (dft.rows <= 0)
+		if (dft.x.empty())
 			return;
 
 		// The position and button signals must be from the same group,
@@ -195,7 +195,7 @@ private:
 	 */
 	void handle_pressure(const ipts::DftWindow &dft)
 	{
-		if (dft.rows < ipts::protocol::dft::PRESSURE_ROWS)
+		if (dft.x.size() < ipts::protocol::dft::PRESSURE_ROWS)
 			return;
 
 		f64 p = this->interpolate_frequency(dft, ipts::protocol::dft::PRESSURE_ROWS);
@@ -271,7 +271,7 @@ private:
 		u64 maxm = 0;
 
 		for (u8 i = 0; i < rows; i++) {
-			const u64 m = dft.x.at(i).magnitude + dft.y.at(i).magnitude;
+			const u64 m = dft.x[i].magnitude + dft.y[i].magnitude;
 
 			if (m > maxm) {
 				maxm = m;
@@ -305,8 +305,8 @@ private:
 			imag.at(i) = 0;
 
 			for (u8 j = 0; j < ipts::protocol::dft::NUM_COMPONENTS; j++) {
-				const ipts::protocol::dft::Row &x = dft.x.at(maxi + i - 1);
-				const ipts::protocol::dft::Row &y = dft.y.at(maxi + i - 1);
+				const ipts::protocol::dft::Row &x = dft.x[maxi + i - 1];
+				const ipts::protocol::dft::Row &y = dft.y[maxi + i - 1];
 
 				real.at(i) += gsl::at(x.real, j) + gsl::at(y.real, j);
 				imag.at(i) += gsl::at(x.imag, j) + gsl::at(y.imag, j);

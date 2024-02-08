@@ -4,7 +4,6 @@
 #define IPTSD_IPTS_DATA_HPP
 
 #include "protocol/dft.hpp"
-#include "protocol/heatmap.hpp"
 #include "protocol/metadata.hpp"
 
 #include <common/types.hpp>
@@ -42,13 +41,13 @@ struct Heatmap {
 
 struct DftWindow {
 	std::optional<u32> group = std::nullopt;
-	u8 rows = 0;
 	protocol::dft::Type type {};
 
-	protocol::heatmap::Dimensions dim {};
+	u8 width = 0;
+	u8 height = 0;
 
-	std::array<protocol::dft::Row, protocol::dft::MAX_ROWS> x {};
-	std::array<protocol::dft::Row, protocol::dft::MAX_ROWS> y {};
+	gsl::span<protocol::dft::Row> x {};
+	gsl::span<protocol::dft::Row> y {};
 };
 
 struct Metadata {
