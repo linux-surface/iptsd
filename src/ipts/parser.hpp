@@ -363,10 +363,12 @@ private:
 	{
 		Heatmap heatmap {};
 
-		const usize size = casts::to<usize>(m_dim.rows) * m_dim.columns;
+		heatmap.rows = m_dim.rows;
+		heatmap.columns = m_dim.columns;
+		heatmap.min = m_dim.z_min;
+		heatmap.max = m_dim.z_max;
 
-		heatmap.data = reader.subspan<u8>(size);
-		heatmap.dim = m_dim;
+		heatmap.data = reader.subspan<u8>(casts::to<usize>(m_dim.rows) * m_dim.columns);
 
 		if (this->on_heatmap)
 			this->on_heatmap(heatmap);

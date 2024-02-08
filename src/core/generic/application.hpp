@@ -158,24 +158,24 @@ private:
 	 */
 	void process_heatmap(const ipts::Heatmap &data)
 	{
-		const Eigen::Index rows = casts::to_eigen(data.dim.rows);
-		const Eigen::Index cols = casts::to_eigen(data.dim.columns);
+		const Eigen::Index rows = casts::to_eigen(data.rows);
+		const Eigen::Index cols = casts::to_eigen(data.columns);
 
 		if (rows == 0 || cols == 0)
 			return;
 
 		// Make sure the heatmap buffer has the right size
 		if (m_heatmap.rows() != rows || m_heatmap.cols() != cols)
-			m_heatmap.conservativeResize(data.dim.rows, data.dim.columns);
+			m_heatmap.conservativeResize(rows, cols);
 
 		// Map the buffer to an Eigen container
 		const Eigen::Map<const Image<u8>> mapped {data.data.data(), rows, cols};
 
-		const auto z_min = casts::to<f64>(data.dim.z_min);
-		const auto z_max = casts::to<f64>(data.dim.z_max);
+		const auto min = casts::to<f64>(data.min);
+		const auto max = casts::to<f64>(data.max);
 
 		// Normalize the heatmap to range [0, 1]
-		const auto norm = (mapped.cast<f64>() - z_min) / (z_max - z_min);
+		const auto norm = (mapped.cast<f64>() - min) / (max - min);
 
 		// IPTS sends inverted heatmaps
 		m_heatmap = 1.0 - norm;

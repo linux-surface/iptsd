@@ -31,7 +31,11 @@ struct StylusData {
 };
 
 struct Heatmap {
-	protocol::heatmap::Dimensions dim {};
+	u8 rows = 0;
+	u8 columns = 0;
+
+	u8 min = 0;
+	u8 max = 0;
 
 	gsl::span<u8> data {};
 };
