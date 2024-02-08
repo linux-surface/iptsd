@@ -430,8 +430,7 @@ private:
 
 		if (window.seq_num == m_pen_meta.seq_num &&
 		    window.data_type == m_pen_meta.data_type) {
-			const auto g = m_pen_meta.group_counter;
-			dft.group = g;
+			dft.group = casts::unpack(m_pen_meta.group_counter);
 		}
 
 		dft.dim = m_dim;

@@ -49,6 +49,19 @@ constexpr inline Eigen::Index to_eigen(const T value)
 	return to<Eigen::Index>(value);
 }
 
+/*!
+ * Prevents taking references to fields of a packed struct by forcing a copy.
+ *
+ * @tparam T The type of the packed field.
+ * @param[in] packed The value of the packed field.
+ * @return A copy of the value of the packed field.
+ */
+template <class T>
+constexpr inline T unpack(const T packed)
+{
+	return packed;
+}
+
 } // namespace iptsd::casts
 
 #endif // IPTSD_COMMON_CASTS_HPP
