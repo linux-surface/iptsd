@@ -3,14 +3,15 @@
 #ifndef IPTSD_HID_STATE_HPP
 #define IPTSD_HID_STATE_HPP
 
+#include "errors.hpp"
 #include "report.hpp"
 #include "spec.hpp"
 #include "usage.hpp"
 
+#include <common/error.hpp>
 #include <common/types.hpp>
 
 #include <optional>
-#include <stdexcept>
 #include <unordered_set>
 
 namespace iptsd::hid {
@@ -100,7 +101,7 @@ public:
 	void set_usage(const u16 usage)
 	{
 		if (!m_usage_page.has_value())
-			throw std::runtime_error {"HID Descriptor: Usage before Usage Page"};
+			throw common::Error<Error::UsageBeforePage> {};
 
 		m_usages.insert(Usage {m_usage_page.value(), usage});
 	}
@@ -123,7 +124,7 @@ public:
 	void set_usage_min(const u16 usage_min)
 	{
 		if (!m_usage_page.has_value())
-			throw std::runtime_error {"HID Descriptor: Usage before Usage Page"};
+			throw common::Error<Error::UsageBeforePage> {};
 
 		if (m_usage_max.has_value()) {
 			for (u16 i = usage_min; i < (m_usage_max.value() + 1); i++)
@@ -143,7 +144,7 @@ public:
 	void set_usage_max(const u16 usage_max)
 	{
 		if (!m_usage_page.has_value())
-			throw std::runtime_error {"HID Descriptor: Usage before Usage Page"};
+			throw common::Error<Error::UsageBeforePage> {};
 
 		if (m_usage_min.has_value()) {
 			for (u16 i = m_usage_min.value(); i < (usage_max + 1); i++)
@@ -175,14 +176,14 @@ public:
 			type = ReportType::Feature;
 			break;
 		default:
-			throw std::runtime_error {"HID Descriptor: Invalid descriptor type"};
+			throw common::Error<Error::InvalidReportType> {};
 		}
 
 		if (!m_report_size.has_value())
-			throw std::runtime_error {"HID Descriptor: Missing report size"};
+			throw common::Error<Error::MissingReportSize> {};
 
 		if (!m_report_count.has_value())
-			throw std::runtime_error {"HID Descriptior: Missing report count"};
+			throw common::Error<Error::MissingReportCount> {};
 
 		Report report {
 			type,

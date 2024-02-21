@@ -3,14 +3,15 @@
 #ifndef IPTSD_HID_REPORT_HPP
 #define IPTSD_HID_REPORT_HPP
 
+#include "errors.hpp"
 #include "usage.hpp"
 
 #include <common/casts.hpp>
+#include <common/error.hpp>
 #include <common/types.hpp>
 
 #include <algorithm>
 #include <optional>
-#include <stdexcept>
 #include <unordered_set>
 
 namespace iptsd::hid {
@@ -124,10 +125,10 @@ public:
 	void merge(const Report &other)
 	{
 		if (m_type != other.type())
-			throw std::runtime_error {"Cannot merge two reports of different types"};
+			throw common::Error<Error::ReportMergeTypes> {};
 
 		if (m_report_id != other.id())
-			throw std::runtime_error {"Cannot merge two reports with different IDs"};
+			throw common::Error<Error::ReportMergeIDs> {};
 
 		m_report_size += other.size();
 
