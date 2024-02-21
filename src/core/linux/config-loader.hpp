@@ -41,8 +41,8 @@ public:
 			m_config.invert_y = metadata->transform.yy < 0;
 		}
 
-		this->load_dir(common::buildopts::PresetDir, true);
-		this->load_dir("./etc/presets", true);
+		this->load_dir(common::buildopts::PresetDir);
+		this->load_dir("./etc/presets");
 
 		/*
 		 * Load configuration file from custom location.
@@ -55,10 +55,8 @@ public:
 			return;
 		}
 
-		if (std::filesystem::exists(common::buildopts::ConfigFile))
-			this->load_file(common::buildopts::ConfigFile);
-
-		this->load_dir(common::buildopts::ConfigDir, false);
+		this->load_file(common::buildopts::ConfigFile);
+		this->load_dir(common::buildopts::ConfigDir);
 
 		if (!m_loaded_config)
 			spdlog::info("No config file loaded, using default values.");
@@ -81,7 +79,7 @@ private:
 	 * @param[in] path The path to the directory.
 	 * @param[in] check_device If true, check if the config is meant for the current device.
 	 */
-	void load_dir(const std::filesystem::path &path, const bool check_device)
+	void load_dir(const std::filesystem::path &path)
 	{
 		if (!std::filesystem::exists(path))
 			return;
@@ -90,16 +88,14 @@ private:
 			if (!p.is_regular_file())
 				continue;
 
-			if (check_device) {
-				u16 vendor = 0;
-				u16 product = 0;
+			u16 vendor = m_info.vendor;
+			u16 product = m_info.product;
 
-				this->load_device(p.path(), vendor, product);
+			this->load_device(p.path(), vendor, product);
 
-				// Ignore this file if it is meant for a different device.
-				if (m_info.vendor != vendor || m_info.product != product)
-					continue;
-			}
+			// Ignore this file if it is meant for a different device.
+			if (m_info.vendor != vendor || m_info.product != product)
+				continue;
 
 			this->load_file(p.path());
 		}
@@ -114,13 +110,13 @@ private:
 	 */
 	void load_device(const std::filesystem::path &path, u16 &vendor, u16 &product) const
 	{
+		if (!std::filesystem::exists(path))
+			return;
+
 		const INIReader ini {path};
 
 		if (ini.ParseError() != 0)
 			throw common::Error<Error::ParsingFailed> {path.c_str()};
-
-		vendor = 0;
-		product = 0;
 
 		this->get(ini, "Device", "Vendor", vendor);
 		this->get(ini, "Device", "Product", product);
@@ -133,6 +129,9 @@ private:
 	 */
 	void load_file(const std::filesystem::path &path)
 	{
+		if (!std::filesystem::exists(path))
+			return;
+
 		spdlog::info("Loading config {}.", path.c_str());
 
 		const INIReader ini {path};
