@@ -7,6 +7,7 @@
 #include "descriptor.hpp"
 #include "parser.hpp"
 
+#include <common/error.hpp>
 #include <common/types.hpp>
 #include <hid/device.hpp>
 #include <hid/report.hpp>
@@ -17,10 +18,29 @@
 #include <functional>
 #include <memory>
 #include <optional>
-#include <stdexcept>
 #include <vector>
 
 namespace iptsd::ipts {
+namespace impl {
+
+enum class DeviceError {
+	InvalidDevice,
+	InvalidSetModeReport,
+};
+
+inline std::string format_as(DeviceError err)
+{
+	switch (err) {
+	case DeviceError::InvalidDevice:
+		return "ipts: This is not an IPTS device!";
+	case DeviceError::InvalidSetModeReport:
+		return "ipts: The report for switching modes on this device is invalid!";
+	default:
+		return "ipts: Invalid error code!";
+	}
+}
+
+} // namespace impl
 
 enum class Mode {
 	Singletouch = 0,
@@ -28,6 +48,9 @@ enum class Mode {
 };
 
 class Device {
+public:
+	using Error = impl::DeviceError;
+
 private:
 	// The (platform specific) HID device interface
 	std::shared_ptr<hid::Device> m_hid;
@@ -46,11 +69,11 @@ public:
 	{
 		// Check if the device can switch modes
 		if (!m_descriptor.find_modesetting_report().has_value())
-			throw std::runtime_error {"This device is not an IPTS device!"};
+			throw common::Error<Error::InvalidDevice> {};
 
 		// Check if the device can send touch data.
 		if (m_descriptor.find_touch_data_reports().empty())
-			throw std::runtime_error {"This device is not an IPTS device!"};
+			throw common::Error<Error::InvalidDevice> {};
 	};
 
 	/*!
@@ -116,11 +139,11 @@ public:
 	{
 		const std::optional<hid::Report> report = m_descriptor.find_modesetting_report();
 		if (!report.has_value())
-			throw std::runtime_error {"Could not find IPTS modesetting report"};
+			throw common::Error<Error::InvalidDevice> {};
 
 		const std::optional<u8> id = report->id();
 		if (!id.has_value())
-			throw std::runtime_error {"Found modesetting report, but no report ID"};
+			throw common::Error<Error::InvalidSetModeReport> {};
 
 		std::array<u8, 2> buffer {id.value(), gsl::narrow<u8>(mode)};
 		m_hid->set_feature(buffer);
