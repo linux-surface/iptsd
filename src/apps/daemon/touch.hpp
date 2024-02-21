@@ -61,7 +61,7 @@ private:
 public:
 	TouchDevice(const core::Config &config, const core::DeviceInfo &info) : m_config {config}
 	{
-		m_uinput->set_name("IPTS Touch");
+		m_uinput->set_name("Touchscreen");
 		m_uinput->set_vendor(info.vendor);
 		m_uinput->set_product(info.product);
 

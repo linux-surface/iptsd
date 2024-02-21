@@ -159,8 +159,11 @@ public:
 		setup.id.product = m_product;
 		setup.id.version = m_version;
 
+		const std::string name =
+			fmt::format("IPTSD Virtual {} {:04X}:{:04X}", m_name, m_vendor, m_product);
+
 		// NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-		m_name.copy(setup.name, m_name.length(), 0);
+		name.copy(setup.name, name.length(), 0);
 
 		syscalls::ioctl(m_fd, UI_DEV_SETUP, &setup);
 		syscalls::ioctl(m_fd, UI_DEV_CREATE);

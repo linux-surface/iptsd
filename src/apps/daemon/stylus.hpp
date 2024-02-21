@@ -42,7 +42,7 @@ private:
 public:
 	StylusDevice(const core::Config &config, const core::DeviceInfo &info)
 	{
-		m_uinput->set_name("IPTS Stylus");
+		m_uinput->set_name("Stylus");
 		m_uinput->set_vendor(info.vendor);
 		m_uinput->set_product(info.product);
 
