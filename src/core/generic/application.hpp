@@ -6,8 +6,10 @@
 #include "config.hpp"
 #include "device.hpp"
 #include "dft.hpp"
+#include "errors.hpp"
 
 #include <common/casts.hpp>
+#include <common/error.hpp>
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
 #include <ipts/data.hpp>
@@ -16,7 +18,6 @@
 #include <spdlog/spdlog.h>
 
 #include <functional>
-#include <stdexcept>
 #include <vector>
 
 namespace iptsd::core {
@@ -98,7 +99,7 @@ public:
 		  m_dft {config, metadata}
 	{
 		if (m_config.width == 0 || m_config.height == 0)
-			throw std::runtime_error {"Invalid config: The screen size is 0!"};
+			throw common::Error<Error::InvalidScreenSize> {};
 
 		m_parser.on_heatmap = [&](const auto &data) { this->process_heatmap(data); };
 		m_parser.on_stylus = [&](const auto &data) { this->process_stylus(data); };

@@ -3,6 +3,9 @@
 #ifndef IPTSD_CORE_GENERIC_CONFIG_HPP
 #define IPTSD_CORE_GENERIC_CONFIG_HPP
 
+#include "errors.hpp"
+
+#include <common/error.hpp>
 #include <common/types.hpp>
 #include <contacts/config.hpp>
 #include <ipts/parser.hpp>
@@ -82,7 +85,7 @@ public:
 		else if (this->contacts_neutral == "constant")
 			config.detection.neutral_value_algorithm = Algorithm::CONSTANT;
 		else
-			throw std::runtime_error {"Invalid neutral value algorithm"};
+			throw common::Error<Error::InvalidNeutralValueAlgorithm> {};
 
 		const f64 nval_offset = this->contacts_neutral_value;
 
