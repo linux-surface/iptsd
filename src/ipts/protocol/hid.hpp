@@ -10,7 +10,7 @@ namespace iptsd::ipts::protocol::hid {
 /*!
  * This header is prefixed to all data received from the device over HID.
  *
- * It is followed by a single HID frame that wraps the actual paylod of the report.
+ * It is followed by a single HID frame that wraps the actual payload of the report.
  */
 struct [[gnu::packed]] ReportHeader {
 	u8 id;

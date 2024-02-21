@@ -116,7 +116,7 @@ private:
 			this->parse_report_frames(sub);
 			break;
 		default:
-			// TODO: Add handler for unknow data and wire up debug tools
+			// TODO: Add handler for unknown data and wire up debug tools
 			break;
 		}
 	}
@@ -154,7 +154,7 @@ private:
 				this->parse_report_frames(sub);
 				break;
 			default:
-				// TODO: Add handler for unknow data and wire up debug tools
+				// TODO: Add handler for unknown data and wire up debug tools
 				break;
 			}
 		}
@@ -185,7 +185,7 @@ private:
 	 * Parses an IPTS report frame.
 	 *
 	 * Report frames can be found inside of HID and legacy frames. They contain very specific
-	 * data from the touchscreen, such as stylus coordintes or capacitive heatmaps.
+	 * data from the touchscreen, such as stylus coordinates or capacitive heatmaps.
 	 *
 	 * @param[in] reader The chunk of data allocated to the report frame.
 	 */
@@ -214,7 +214,7 @@ private:
 			this->parse_dft_window(sub);
 			break;
 		default:
-			// TODO: Add handler for unknow data and wire up debug tools
+			// TODO: Add handler for unknown data and wire up debug tools
 			break;
 		}
 	}

@@ -44,7 +44,7 @@ enum class GroupType : u16 {
  * Report groups are the payload of a legacy frame.
  *
  * They consist of a header, followed by a number of report frames as the payload.
- * The paylod frames all contain data related to the type of the group.
+ * The payload frames all contain data related to the type of the group.
  */
 struct [[gnu::packed]] ReportGroup {
 	//! The position of the report group within the legacy frame.

@@ -34,7 +34,7 @@ enum class Type : u8 {
  * Functionally they are equivalent to HID frames and legacy report groups, but in practice they
  * are different for ... reasons.
  *
- * A report frame consists of this header, follwed by a payload.
+ * A report frame consists of this header, followed by a payload.
  */
 struct [[gnu::packed]] Frame {
 	//! The type of the report frame. Determines the structure of the payload.
