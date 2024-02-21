@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <common/error.hpp>
 #include <common/types.hpp>
 #include <core/generic/application.hpp>
 #include <core/linux/device-runner.hpp>
+#include <ipts/device.hpp>
 
 #include <CLI/CLI.hpp>
 #include <gsl/gsl>
@@ -34,13 +36,11 @@ int run(const int argc, const char **argv)
 	if (quiet)
 		spdlog::set_level(spdlog::level::off);
 
-	try {
-		// Create a dummy application that reads from the device.
-		const core::linux::DeviceRunner<core::Application> dummy {path};
-	} catch (const std::exception & /* unused */) {
-		spdlog::error("{} is not an IPTS device!", path.string());
-		return EXIT_FAILURE;
-	}
+	/*
+	 * Create a dummy application that reads from the device.
+	 * If the device is not an IPTS device, this will fail and throw an exception.
+	 */
+	const core::linux::DeviceRunner<core::Application> dummy {path};
 
 	spdlog::info("{} is an IPTS device!", path.string());
 	return 0;
