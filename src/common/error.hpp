@@ -21,7 +21,13 @@ template <auto T>
 class Error : public std::runtime_error {
 public:
 	template <class... Args>
-	Error(Args... args) : std::runtime_error {msg(args...)} {};
+	Error(Args... args) : std::runtime_error {msg(args...)}
+	{
+		/*
+		 * GCC doesn't see this block as empty, so adding a semicolon to the end to force
+		 * clang-format to put it onto a single line makes GCC fail.
+		 */
+	}
 
 private:
 	template <class... Args>
