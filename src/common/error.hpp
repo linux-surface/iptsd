@@ -36,8 +36,20 @@ private:
 		/*
 		 * First run the error code through format, to get a string representation.
 		 * This representation might itself be a format string and accept parameters.
+		 *
+		 * NOTE:
+		 *
+		 * This was supposed to be fmt::format("{}", T), but version 9 of the fmt
+		 * library only uses the format_as method when it returns an integer type.
+		 *
+		 * Instead of wasting lines implementing the full blown fmt::formatter type,
+		 * we just call the format_as method here directly, just like fmt would do.
+		 *
+		 * That said I have no idea how this call actually works.
+		 * If you are reading this and wondering where format_as is defined, it is
+		 * next to the enum class holding the error codes.
 		 */
-		std::string error = fmt::format("{}", T);
+		std::string error = format_as(T);
 
 		/*
 		 * If we have any parameters, try to format the error string as if it were
