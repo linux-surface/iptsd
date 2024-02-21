@@ -3,8 +3,11 @@
 #ifndef IPTSD_CORE_LINUX_CONFIG_LOADER_HPP
 #define IPTSD_CORE_LINUX_CONFIG_LOADER_HPP
 
+#include "errors.hpp"
+
 #include <common/buildopts.hpp>
 #include <common/casts.hpp>
+#include <common/error.hpp>
 #include <common/types.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
@@ -14,7 +17,6 @@
 
 #include <filesystem>
 #include <optional>
-#include <stdexcept>
 #include <string>
 #include <type_traits>
 
@@ -109,7 +111,7 @@ private:
 		const INIReader ini {path};
 
 		if (ini.ParseError() != 0)
-			throw std::runtime_error {fmt::format("Failed to parse {}", path.c_str())};
+			throw common::Error<Error::ParsingFailed> {path.c_str()};
 
 		vendor = 0;
 		product = 0;
@@ -128,7 +130,7 @@ private:
 		const INIReader ini {path};
 
 		if (ini.ParseError() != 0)
-			throw std::runtime_error {fmt::format("Failed to parse {}", path.c_str())};
+			throw common::Error<Error::ParsingFailed> {path.c_str()};
 
 		// clang-format off
 
@@ -198,7 +200,7 @@ private:
 		else if constexpr (std::is_same_v<T, std::string>)
 			value = ini.GetString(section, name, value);
 		else
-			throw std::runtime_error {"Loading this type is not implemented!"};
+			throw common::Error<Error::ParsingTypeNotImplemented> {typeid(T).name()};
 	}
 };
 
