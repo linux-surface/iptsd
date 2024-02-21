@@ -22,6 +22,8 @@ inline std::string format_as(Error err)
 		return "contacts: Calculated invalid cluster overlap!";
 	case Error::FailedToMergeClusters:
 		return "contacts: Failed to merge overlapping clusters!";
+	default:
+		return "contacts: Invalid error code!";
 	}
 }
 
