@@ -3,7 +3,10 @@
 #ifndef IPTSD_CONTACTS_DETECTION_ALGORITHMS_OVERLAPS_HPP
 #define IPTSD_CONTACTS_DETECTION_ALGORITHMS_OVERLAPS_HPP
 
+#include "errors.hpp"
+
 #include <common/casts.hpp>
+#include <common/error.hpp>
 #include <common/types.hpp>
 
 #include <gsl/gsl>
@@ -58,7 +61,7 @@ inline f64 overlap(const Box &a, const Box &b)
 	const f64 iou = casts::to<f64>(area_i) / casts::to<f64>(area_a + area_b - area_i);
 
 	if (iou < 0.0 || iou > 1.0)
-		throw std::runtime_error {"Calculated invalid cluster overlap!"};
+		throw common::Error<Error::InvalidClusterOverlap> {};
 
 	return iou;
 }
@@ -159,7 +162,7 @@ inline void merge(std::vector<Box> &clusters, std::vector<Box> &temp, const usiz
 	}
 
 	if (iterations == 0)
-		throw std::runtime_error {"Failed to merge overlapping clusters!"};
+		throw common::Error<Error::FailedToMergeClusters> {};
 }
 
 } // namespace iptsd::contacts::detection::overlaps

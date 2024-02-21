@@ -3,6 +3,9 @@
 #ifndef IPTSD_CONTACTS_DETECTION_ALGORITHMS_NEUTRAL_HPP
 #define IPTSD_CONTACTS_DETECTION_ALGORITHMS_NEUTRAL_HPP
 
+#include "errors.hpp"
+
+#include <common/error.hpp>
 #include <common/types.hpp>
 
 namespace iptsd::contacts::detection::neutral {
@@ -83,7 +86,7 @@ typename DenseBase<Derived>::Scalar calculate(const DenseBase<Derived> &heatmap,
 	case Algorithm::CONSTANT:
 		return offset;
 	default:
-		throw std::runtime_error {"Invalid neutral mode!"};
+		throw common::Error<Error::InvalidNeutralMode> {};
 	}
 }
 
