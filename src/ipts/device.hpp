@@ -32,9 +32,9 @@ inline std::string format_as(DeviceError err)
 {
 	switch (err) {
 	case DeviceError::InvalidDevice:
-		return "ipts: This is not an IPTS device!";
+		return "ipts: {} is not an IPTS device!";
 	case DeviceError::InvalidSetModeReport:
-		return "ipts: The report for switching modes on this device is invalid!";
+		return "ipts: The report for switching modes on {} is invalid!";
 	default:
 		return "ipts: Invalid error code!";
 	}
@@ -69,11 +69,11 @@ public:
 	{
 		// Check if the device can switch modes
 		if (!m_descriptor.find_modesetting_report().has_value())
-			throw common::Error<Error::InvalidDevice> {};
+			throw common::Error<Error::InvalidDevice> {m_hid->name()};
 
 		// Check if the device can send touch data.
 		if (m_descriptor.find_touch_data_reports().empty())
-			throw common::Error<Error::InvalidDevice> {};
+			throw common::Error<Error::InvalidDevice> {m_hid->name()};
 	};
 
 	/*!
@@ -139,11 +139,11 @@ public:
 	{
 		const std::optional<hid::Report> report = m_descriptor.find_modesetting_report();
 		if (!report.has_value())
-			throw common::Error<Error::InvalidDevice> {};
+			throw common::Error<Error::InvalidDevice> {m_hid->name()};
 
 		const std::optional<u8> id = report->id();
 		if (!id.has_value())
-			throw common::Error<Error::InvalidSetModeReport> {};
+			throw common::Error<Error::InvalidSetModeReport> {m_hid->name()};
 
 		std::array<u8, 2> buffer {id.value(), gsl::narrow<u8>(mode)};
 		m_hid->set_feature(buffer);

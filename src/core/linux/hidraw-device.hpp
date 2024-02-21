@@ -24,6 +24,7 @@ namespace iptsd::core::linux {
 class HidrawDevice : public hid::Device {
 private:
 	int m_fd = -1;
+	std::filesystem::path m_path {};
 
 	struct hidraw_devinfo m_devinfo {};
 	struct hidraw_report_descriptor m_desc {};
@@ -31,7 +32,9 @@ private:
 	std::vector<hid::Report> m_reports {};
 
 public:
-	HidrawDevice(const std::filesystem::path &path) : m_fd {syscalls::open(path, O_RDWR)}
+	HidrawDevice(const std::filesystem::path &path)
+		: m_fd {syscalls::open(path, O_RDWR)},
+		  m_path {path}
 	{
 		u32 desc_size = 0;
 
@@ -51,6 +54,14 @@ public:
 		} catch (const std::exception & /* unused */) {
 			// ignored
 		}
+	}
+
+	/*!
+	 * The "name", aka. the path of the hidraw device node.
+	 */
+	std::string_view name() override
+	{
+		return m_path.c_str();
 	}
 
 	/*!

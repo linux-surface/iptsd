@@ -19,6 +19,7 @@ public:
 
 	virtual u16 vendor() = 0;
 	virtual u16 product() = 0;
+	virtual std::string_view name() = 0;
 	virtual const std::vector<Report> &descriptor() = 0;
 
 	virtual isize read(gsl::span<u8> buffer) = 0;
