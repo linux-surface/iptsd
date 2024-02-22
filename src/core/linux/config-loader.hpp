@@ -18,6 +18,7 @@
 
 #include <filesystem>
 #include <optional>
+#include <set>
 #include <string>
 #include <type_traits>
 
@@ -84,7 +85,13 @@ private:
 		if (!std::filesystem::exists(path))
 			return;
 
-		for (const auto &p : std::filesystem::directory_iterator(path)) {
+		std::set<std::filesystem::directory_entry> files {};
+
+		// Sort files by their filename
+		for (const auto &p : std::filesystem::directory_iterator(path))
+			files.insert(p);
+
+		for (const auto &p : files) {
 			if (!p.is_regular_file())
 				continue;
 
