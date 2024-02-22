@@ -119,7 +119,7 @@ public:
 			throw common::Error<Error::RunnerInitError> {};
 
 		// Enable multitouch mode
-		m_ipts.set_mode(ipts::Mode::Multitouch);
+		m_ipts.set_mode(ipts::Device::Mode::Multitouch);
 
 		// Signal the application that the data flow has started.
 		m_application->on_start();
@@ -162,7 +162,7 @@ public:
 
 		try {
 			// Disable multitouch mode
-			m_ipts.set_mode(ipts::Mode::Singletouch);
+			m_ipts.set_mode(ipts::Device::Mode::Singletouch);
 		} catch (const std::exception &e) {
 			spdlog::error(e.what());
 		}
