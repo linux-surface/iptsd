@@ -14,13 +14,16 @@ namespace iptsd {
 namespace impl {
 
 enum class ReaderError : u8 {
-	EndOfBuffer,
+	EndOfData,
+	InvalidRead,
 };
 
 inline std::string format_as(ReaderError err)
 {
 	switch (err) {
-	case ReaderError::EndOfBuffer:
+	case ReaderError::EndOfData:
+		return "common: Tried to read {} bytes but no data left!";
+	case ReaderError::InvalidRead:
 		return "common: Tried to read {} bytes with only {} bytes available!";
 	default:
 		return "Invalid error code!";
@@ -51,8 +54,11 @@ public:
 	 */
 	void read(const gsl::span<u8> dest)
 	{
+		if (this->size() == 0)
+			throw common::Error<Error::EndOfData> {dest.size()};
+
 		if (dest.size() > this->size())
-			throw common::Error<Error::EndOfBuffer> {dest.size(), this->size()};
+			throw common::Error<Error::InvalidRead> {dest.size(), this->size()};
 
 		const gsl::span<u8> src = this->subspan<u8>(dest.size());
 		std::copy(src.begin(), src.end(), dest.begin());
@@ -65,8 +71,11 @@ public:
 	 */
 	void skip(const usize size)
 	{
+		if (this->size() == 0)
+			throw common::Error<Error::EndOfData> {size};
+
 		if (size > this->size())
-			throw common::Error<Error::EndOfBuffer> {size, this->size()};
+			throw common::Error<Error::InvalidRead> {size, this->size()};
 
 		m_index += size;
 	}
@@ -90,8 +99,11 @@ public:
 	template <class T>
 	gsl::span<T> subspan(const usize size)
 	{
+		if (this->size() == 0)
+			throw common::Error<Error::EndOfData> {size};
+
 		if (size > this->size())
-			throw common::Error<Error::EndOfBuffer> {size, this->size()};
+			throw common::Error<Error::InvalidRead> {size, this->size()};
 
 		const usize bytes = size * sizeof(T);
 		const gsl::span<u8> sub = m_data.subspan(m_index, bytes);
