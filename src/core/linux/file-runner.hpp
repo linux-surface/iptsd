@@ -6,6 +6,7 @@
 #include "config-loader.hpp"
 
 #include <common/casts.hpp>
+#include <common/file.hpp>
 #include <common/reader.hpp>
 #include <core/generic/application.hpp>
 #include <ipts/data.hpp>
@@ -14,9 +15,7 @@
 
 #include <atomic>
 #include <filesystem>
-#include <fstream>
 #include <type_traits>
-#include <vector>
 
 namespace iptsd::core::linux {
 
@@ -27,7 +26,7 @@ private:
 
 private:
 	// The contents of the file.
-	std::vector<u8> m_file {};
+	Reader m_reader;
 
 	// Information about the device that produced the data.
 	DeviceInfo m_info {};
@@ -41,27 +40,19 @@ private:
 
 	// The application that is being executed.
 	std::optional<T> m_application = std::nullopt;
-	std::optional<Reader> m_reader = std::nullopt;
 
 public:
 	template <class... Args>
 	FileRunner(const std::filesystem::path &path, Args... args)
+		: m_reader {common::read_all_bytes(path)}
 	{
-		std::ifstream ifs {};
-		ifs.open(path, std::ios::in | std::ios::binary);
-
-		std::noskipws(ifs);
-		m_file = std::vector<u8> {std::istream_iterator<u8>(ifs),
-		                          std::istream_iterator<u8>()};
-
-		m_reader = Reader {m_file};
-		m_info = m_reader->read<DeviceInfo>();
+		m_info = m_reader.read<DeviceInfo>();
 
 		std::optional<ipts::Metadata> meta = std::nullopt;
 
-		const auto has_meta = m_reader->read<u8>();
+		const auto has_meta = m_reader.read<u8>();
 		if (has_meta)
-			meta = m_reader->read<ipts::Metadata>();
+			meta = m_reader.read<ipts::Metadata>();
 
 		const ConfigLoader loader {m_info, meta};
 		m_application.emplace(loader.config(), m_info, meta, args...);
@@ -105,30 +96,28 @@ public:
 	 */
 	bool run()
 	{
-		if (!m_application.has_value() || !m_reader.has_value())
+		if (!m_application.has_value())
 			throw common::Error<Error::RunnerInitError> {};
-
-		Reader local = m_reader.value();
 
 		// Signal the application that the data flow has started.
 		m_application->on_start();
 
-		while (!m_should_stop && local.size() > 0) {
+		while (!m_should_stop && m_reader.size() > 0) {
 			try {
 				/*
 				 * Abort if there is not enough data left.
 				 */
-				if (local.size() < (sizeof(u64) + m_info.buffer_size))
+				if (m_reader.size() < (sizeof(u64) + m_info.buffer_size))
 					break;
 
-				const auto size = local.read<u64>();
+				const auto size = m_reader.read<u64>();
 
 				/*
 				 * This is an error baked into the format.
 				 * The writer should simply write as many bytes as it just received,
 				 * instead of writing the entire buffer all the time.
 				 */
-				Reader buffer = local.sub(casts::to<usize>(m_info.buffer_size));
+				Reader buffer = m_reader.sub(casts::to<usize>(m_info.buffer_size));
 
 				m_application->process(buffer.subspan<u8>(casts::to<usize>(size)));
 			} catch (const std::exception &e) {
@@ -136,7 +125,7 @@ public:
 			}
 		}
 
-		if (!m_should_stop && local.size() > 0)
+		if (!m_should_stop && m_reader.size() > 0)
 			spdlog::warn("Leftover data at end of input");
 
 		// Signal the application that the data flow has stopped.
