@@ -128,7 +128,7 @@ public:
 		// clang-format off
 
 		const std::string filename =
-			fmt::format("{}/90-calibration-{:04X}-{:04X}.conf", common::buildopts::ConfigDir, vendor, product);
+			fmt::format("{}/91-calibration-{:04X}-{:04X}.conf", common::buildopts::ConfigDir, vendor, product);
 
 		spdlog::info("");
 		spdlog::info("To finish the calibration process, apply the determined values to iptsd.");
