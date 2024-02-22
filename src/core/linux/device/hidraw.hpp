@@ -102,7 +102,7 @@ public:
 	 * @param[in] buffer The target storage for the report.
 	 * @return The size of the report that was read in bytes.
 	 */
-	isize read(gsl::span<u8> buffer) override
+	usize read(gsl::span<u8> buffer) override
 	{
 		return syscalls::read(m_fd, buffer);
 	}
