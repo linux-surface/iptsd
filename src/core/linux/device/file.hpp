@@ -27,6 +27,9 @@ protected:
 	Reader m_data;
 	std::filesystem::path m_path {};
 
+	// The index at which the actual data starts.
+	usize m_start = 0;
+
 	struct hidraw_devinfo m_devinfo {};
 	struct hidraw_report_descriptor m_desc {};
 
@@ -41,9 +44,15 @@ public:
 		m_desc.size = m_data.read<u32>();
 
 		const gsl::span<u8> desc {&m_desc.value[0], m_desc.size};
-		m_data.read(desc);
 
+		m_data.read(desc);
 		hid::parse(desc, m_reports);
+
+		/*
+		 * We have to get the index after reading the header, so this actually
+		 * has to happen here, even if clang-tidy thinks it is smarter.
+		 */
+		m_start = m_data.index(); // NOLINT(cppcoreguidelines-prefer-member-initializer)
 	}
 
 	/*!
@@ -94,9 +103,15 @@ public:
 	 */
 	usize read(gsl::span<u8> buffer) override
 	{
-		const auto size = casts::to<usize>(m_data.read<u64>());
-		m_data.read(buffer.first(size));
-		return size;
+		try {
+			const auto size = casts::to<usize>(m_data.read<u64>());
+			m_data.read(buffer.first(size));
+			return size;
+		} catch (const common::Error<Reader::Error::EndOfData> & /* unused */) {
+			// We want to allow looping calls to the file based HID source
+			m_data.seek(m_start);
+			throw;
+		}
 	}
 
 	/*!
@@ -106,8 +121,14 @@ public:
 	 */
 	void get_feature(gsl::span<u8> report) override
 	{
-		const auto size = casts::to<usize>(m_data.read<u64>());
-		m_data.read(report.first(size));
+		try {
+			const auto size = casts::to<usize>(m_data.read<u64>());
+			m_data.read(report.first(size));
+		} catch (const common::Error<Reader::Error::EndOfData> & /* unused */) {
+			// We want to allow looping calls to the file based HID source
+			m_data.seek(m_start);
+			throw;
+		}
 	}
 
 	/*!
