@@ -22,7 +22,7 @@
 namespace iptsd::core::linux::device {
 
 class Hidraw : public hid::Device {
-private:
+protected:
 	int m_fd = -1;
 	std::filesystem::path m_path {};
 
