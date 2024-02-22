@@ -4,7 +4,7 @@
 
 #include <common/types.hpp>
 #include <core/linux/device/file.hpp>
-#include <core/linux/device-runner.hpp>
+#include <core/linux/runner.hpp>
 #include <core/linux/signal-handler.hpp>
 
 #include <CLI/CLI.hpp>
@@ -39,7 +39,7 @@ int run(const int argc, const char **argv)
 	CLI11_PARSE(app, argc, argv);
 
 	// Create a plotting application that reads from a file.
-	core::linux::DeviceRunner<VisualizePNG, core::linux::device::File> visualize {path, output};
+	core::linux::Runner<VisualizePNG, core::linux::device::File> visualize {path, output};
 
 	const auto _sigterm = core::linux::signal<SIGTERM>([&](int) { visualize.stop(); });
 	const auto _sigint = core::linux::signal<SIGINT>([&](int) { visualize.stop(); });
