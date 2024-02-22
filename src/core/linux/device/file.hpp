@@ -4,6 +4,7 @@
 #define IPTSD_CORE_LINUX_DEVICE_FILE_HPP
 
 #include <common/casts.hpp>
+#include <common/error.hpp>
 #include <common/file.hpp>
 #include <common/reader.hpp>
 #include <common/types.hpp>
