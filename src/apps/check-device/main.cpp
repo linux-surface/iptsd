@@ -2,6 +2,7 @@
 
 #include <common/error.hpp>
 #include <common/types.hpp>
+#include <core/linux/device/hidraw.hpp>
 #include <core/generic/application.hpp>
 #include <core/linux/device-runner.hpp>
 #include <ipts/device.hpp>
@@ -40,7 +41,7 @@ int run(const int argc, const char **argv)
 	 * Create a dummy application that reads from the device.
 	 * If the device is not an IPTS device, this will fail and throw an exception.
 	 */
-	const core::linux::DeviceRunner<core::Application> dummy {path};
+	const core::linux::DeviceRunner<core::Application, core::linux::device::Hidraw> dummy {path};
 
 	spdlog::info("{} is an IPTS device!", path.string());
 	return 0;
