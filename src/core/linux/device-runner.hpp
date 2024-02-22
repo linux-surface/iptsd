@@ -4,8 +4,8 @@
 #define IPTSD_CORE_LINUX_DEVICE_RUNNER_HPP
 
 #include "config-loader.hpp"
+#include "device/hidraw.hpp"
 #include "errors.hpp"
-#include "hidraw-device.hpp"
 
 #include <common/casts.hpp>
 #include <common/chrono.hpp>
@@ -25,7 +25,7 @@
 
 namespace iptsd::core::linux {
 
-template <class T, class Device = HidrawDevice>
+template <class T, class Device = device::Hidraw>
 class DeviceRunner {
 private:
 	static_assert(std::is_base_of_v<Application, T>);
