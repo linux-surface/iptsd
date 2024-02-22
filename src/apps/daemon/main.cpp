@@ -3,6 +3,7 @@
 #include "daemon.hpp"
 
 #include <common/types.hpp>
+#include <core/linux/device/hidraw.hpp>
 #include <core/linux/device-runner.hpp>
 #include <core/linux/signal-handler.hpp>
 
@@ -32,7 +33,7 @@ int run(const int argc, const char **argv)
 	CLI11_PARSE(app, argc, argv);
 
 	// Create a daemon application that reads from a device.
-	core::linux::DeviceRunner<Daemon> daemon {path};
+	core::linux::DeviceRunner<Daemon, core::linux::device::Hidraw> daemon {path};
 
 	const auto _sigterm = core::linux::signal<SIGTERM>([&](int) { daemon.stop(); });
 	const auto _sigint = core::linux::signal<SIGINT>([&](int) { daemon.stop(); });

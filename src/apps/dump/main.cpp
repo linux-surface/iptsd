@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include "dump.hpp"
-
 #include <common/types.hpp>
+#include <core/linux/device/capture.hpp>
 #include <core/linux/device-runner.hpp>
 #include <core/linux/signal-handler.hpp>
 
@@ -29,16 +28,10 @@ int run(const int argc, const char **argv)
 		->type_name("FILE")
 		->required();
 
-	std::filesystem::path output {};
-	app.add_option("OUTPUT", output)
-		->description("The file in which the data will be saved.")
-		->type_name("FILE")
-		->required();
-
 	CLI11_PARSE(app, argc, argv);
 
 	// Create a dumping application that reads from a device.
-	core::linux::DeviceRunner<Dump> dump {path, output};
+	core::linux::DeviceRunner<core::Application, core::linux::device::Capture> dump {path};
 
 	const auto _sigterm = core::linux::signal<SIGTERM>([&](int) { dump.stop(); });
 	const auto _sigint = core::linux::signal<SIGINT>([&](int) { dump.stop(); });
