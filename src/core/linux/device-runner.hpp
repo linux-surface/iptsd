@@ -25,14 +25,15 @@
 
 namespace iptsd::core::linux {
 
-template <class T>
+template <class T, class Device = HidrawDevice>
 class DeviceRunner {
 private:
 	static_assert(std::is_base_of_v<Application, T>);
+	static_assert(std::is_base_of_v<hid::Device, Device>);
 
 private:
 	// The hidraw device serving as the source of data.
-	std::shared_ptr<HidrawDevice> m_device;
+	std::shared_ptr<hid::Device> m_device;
 
 	// The IPTS touchscreen interface
 	ipts::Device m_ipts;
@@ -53,7 +54,7 @@ private:
 public:
 	template <class... Args>
 	DeviceRunner(const std::filesystem::path &path, Args... args)
-		: m_device {std::make_shared<HidrawDevice>(path)},
+		: m_device {std::make_shared<Device>(path)},
 		  m_ipts {m_device}
 	{
 		DeviceInfo info {};
