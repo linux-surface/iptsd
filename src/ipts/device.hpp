@@ -42,14 +42,15 @@ inline std::string format_as(DeviceError err)
 
 } // namespace impl
 
-enum class Mode : u8 {
-	Singletouch = 0,
-	Multitouch = 1,
-};
-
 class Device {
 public:
 	using Error = impl::DeviceError;
+
+public:
+	enum class Mode : u8 {
+		Singletouch = 0,
+		Multitouch = 1,
+	};
 
 private:
 	// The (platform specific) HID device interface
