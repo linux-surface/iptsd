@@ -5,6 +5,7 @@
 
 #include "errors.hpp"
 
+#include <common/casts.hpp>
 #include <common/error.hpp>
 #include <common/types.hpp>
 
@@ -46,33 +47,33 @@ inline int open(const std::filesystem::path &file, const int args)
 }
 
 template <class T>
-inline isize read(const int fd, gsl::span<T> dest)
+inline usize read(const int fd, gsl::span<T> dest)
 {
 	const isize ret = ::read(fd, dest.data(), dest.size_bytes());
 	if (ret == -1)
 		throw common::Error<Error::SyscallReadFailed> {impl::last_error()};
 
-	return ret;
+	return casts::to_unsigned(ret);
 }
 
 template <class T>
-inline isize read(const int fd, T &dest)
+inline usize read(const int fd, T &dest)
 {
 	return read(fd, gsl::span {&dest, 1});
 }
 
 template <class T>
-inline isize write(const int fd, const gsl::span<T> data)
+inline usize write(const int fd, const gsl::span<T> data)
 {
 	const isize ret = ::write(fd, data.data(), data.size_bytes());
 	if (ret == -1)
 		throw common::Error<Error::SyscallWriteFailed> {impl::last_error()};
 
-	return ret;
+	return casts::to_unsigned(ret);
 }
 
 template <class T>
-inline isize write(const int fd, const T &data)
+inline usize write(const int fd, const T &data)
 {
 	return write(fd, gsl::span {&data, 1});
 }

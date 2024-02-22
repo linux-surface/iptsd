@@ -22,7 +22,7 @@ public:
 	virtual std::string_view name() = 0;
 	virtual const std::vector<Report> &descriptor() = 0;
 
-	virtual isize read(gsl::span<u8> buffer) = 0;
+	virtual usize read(gsl::span<u8> buffer) = 0;
 	virtual void get_feature(gsl::span<u8> report) = 0;
 	virtual void set_feature(gsl::span<u8> report) = 0;
 };

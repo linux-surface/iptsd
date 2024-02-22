@@ -125,9 +125,8 @@ public:
 			}
 
 			try {
-				const isize size = m_device->read(m_buffer);
-				const gsl::span<u8> data {m_buffer.data(),
-				                          casts::to_unsigned(size)};
+				const usize size = m_device->read(m_buffer);
+				const gsl::span<u8> data {m_buffer.data(), size};
 
 				// Does this report contain touch data?
 				if (!m_ipts.is_touch_data(m_buffer))
