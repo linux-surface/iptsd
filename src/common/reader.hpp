@@ -34,6 +34,7 @@ public:
 	using Error = impl::ReaderError;
 
 private:
+	std::vector<u8> m_buffer {};
 	gsl::span<u8> m_data;
 
 	// The current position in the data.
@@ -41,6 +42,7 @@ private:
 
 public:
 	Reader(const gsl::span<u8> data) : m_data {data} {};
+	Reader(std::vector<u8> buffer) : m_buffer {std::move(buffer)}, m_data {m_buffer} {};
 
 	/*!
 	 * Fills a buffer with the data at the current position.
