@@ -4,7 +4,6 @@
 #define IPTSD_CORE_LINUX_DEVICE_RUNNER_HPP
 
 #include "config-loader.hpp"
-#include "device/hidraw.hpp"
 #include "errors.hpp"
 
 #include <common/casts.hpp>
@@ -25,10 +24,17 @@
 
 namespace iptsd::core::linux {
 
-template <class T, class Device = device::Hidraw>
-class DeviceRunner {
+/*!
+ * The application runner is responsible for connecting a generic application with the
+ * hardware and platform specific implementation details.
+ *
+ * @tparam App The application type that is being run.
+ * @tparam Device The type that implements the HID data source.
+ */
+template <class App, class Device>
+class Runner {
 private:
-	static_assert(std::is_base_of_v<Application, T>);
+	static_assert(std::is_base_of_v<Application, App>);
 	static_assert(std::is_base_of_v<hid::Device, Device>);
 
 private:
@@ -49,11 +55,11 @@ private:
 	 */
 
 	// The application that is being executed.
-	std::optional<T> m_application = std::nullopt;
+	std::optional<App> m_application = std::nullopt;
 
 public:
 	template <class... Args>
-	DeviceRunner(const std::filesystem::path &path, Args... args)
+	Runner(const std::filesystem::path &path, Args... args)
 		: m_device {std::make_shared<Device>(path)},
 		  m_ipts {m_device}
 	{
@@ -82,7 +88,7 @@ public:
 	 *
 	 * @return A reference to the application instance that is being run.
 	 */
-	T &application()
+	App &application()
 	{
 		if (!m_application.has_value())
 			throw common::Error<Error::RunnerInitError> {};
@@ -101,9 +107,10 @@ public:
 	}
 
 	/*!
-	 * Starts reading from the device in an endless loop.
+	 * Starts reading from the device, until the device signals that no more data is available.
 	 *
 	 * Touch data that is read will be passed to the application that is being executed.
+	 * Depending on the HID data source, this method can be called multiple times in a row.
 	 */
 	bool run()
 	{

@@ -2,7 +2,7 @@
 
 #include <common/types.hpp>
 #include <core/linux/device/capture.hpp>
-#include <core/linux/device-runner.hpp>
+#include <core/linux/runner.hpp>
 #include <core/linux/signal-handler.hpp>
 
 #include <CLI/CLI.hpp>
@@ -31,7 +31,7 @@ int run(const int argc, const char **argv)
 	CLI11_PARSE(app, argc, argv);
 
 	// Create a dumping application that reads from a device.
-	core::linux::DeviceRunner<core::Application, core::linux::device::Capture> dump {path};
+	core::linux::Runner<core::Application, core::linux::device::Capture> dump {path};
 
 	const auto _sigterm = core::linux::signal<SIGTERM>([&](int) { dump.stop(); });
 	const auto _sigint = core::linux::signal<SIGINT>([&](int) { dump.stop(); });
