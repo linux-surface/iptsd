@@ -3,6 +3,8 @@
 #ifndef IPTSD_CORE_LINUX_DEVICE_FILE_HPP
 #define IPTSD_CORE_LINUX_DEVICE_FILE_HPP
 
+#include "errors.hpp"
+
 #include <common/casts.hpp>
 #include <common/error.hpp>
 #include <common/file.hpp>
@@ -108,9 +110,9 @@ public:
 			m_data.read(buffer.first(size));
 			return size;
 		} catch (const common::Error<Reader::Error::EndOfData> & /* unused */) {
-			// We want to allow looping calls to the file based HID source
+			// Allow looping calls to the file based HID source
 			m_data.seek(m_start);
-			throw;
+			throw common::Error<Error::EndOfData> {};
 		}
 	}
 
@@ -125,9 +127,9 @@ public:
 			const auto size = casts::to<usize>(m_data.read<u64>());
 			m_data.read(report.first(size));
 		} catch (const common::Error<Reader::Error::EndOfData> & /* unused */) {
-			// We want to allow looping calls to the file based HID source
+			// Allow looping calls to the file based HID source
 			m_data.seek(m_start);
-			throw;
+			throw common::Error<Error::EndOfData> {};
 		}
 	}
 

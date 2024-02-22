@@ -4,6 +4,7 @@
 #define IPTSD_CORE_LINUX_DEVICE_RUNNER_HPP
 
 #include "config-loader.hpp"
+#include "device/errors.hpp"
 #include "errors.hpp"
 
 #include <common/casts.hpp>
@@ -140,7 +141,7 @@ public:
 					continue;
 
 				m_application->process(data);
-			} catch (const common::Error<Reader::Error::EndOfData> & /* unused */) {
+			} catch (const common::Error<device::Error::EndOfData> & /* unused */) {
 				break;
 			} catch (const std::exception &e) {
 				spdlog::warn(e.what());
