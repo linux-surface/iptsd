@@ -133,6 +133,8 @@ public:
 					continue;
 
 				m_application->process(data);
+			} catch (const common::Error<Reader::Error::EndOfData> & /* unused */) {
+				break;
 			} catch (const std::exception &e) {
 				spdlog::warn(e.what());
 
@@ -146,8 +148,6 @@ public:
 			// Reset error count.
 			errors = 0;
 		}
-
-		spdlog::info("Stopping");
 
 		// Signal the application that the data flow has stopped.
 		m_application->on_stop();
