@@ -3,6 +3,7 @@
 #include "visualize-sdl.hpp"
 
 #include <common/types.hpp>
+#include <core/linux/device/hidraw.hpp>
 #include <core/linux/device-runner.hpp>
 #include <core/linux/signal-handler.hpp>
 
@@ -32,7 +33,7 @@ int run(const int argc, const char **argv)
 	CLI11_PARSE(app, argc, argv);
 
 	// Create a plotting application that reads from a file.
-	core::linux::DeviceRunner<VisualizeSDL> visualize {path};
+	core::linux::DeviceRunner<VisualizeSDL, core::linux::device::Hidraw> visualize {path};
 
 	const auto _sigterm = core::linux::signal<SIGTERM>([&](int) { visualize.stop(); });
 	const auto _sigint = core::linux::signal<SIGINT>([&](int) { visualize.stop(); });
