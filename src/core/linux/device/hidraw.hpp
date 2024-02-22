@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#ifndef IPTSD_CORE_LINUX_HIDRAW_DEVICE_HPP
-#define IPTSD_CORE_LINUX_HIDRAW_DEVICE_HPP
+#ifndef IPTSD_CORE_LINUX_DEVICE_HIDRAW_HPP
+#define IPTSD_CORE_LINUX_DEVICE_HIDRAW_HPP
 
-#include "syscalls.hpp"
+#include "../syscalls.hpp"
 
 #include <common/casts.hpp>
 #include <common/types.hpp>
@@ -19,9 +19,9 @@
 #include <filesystem>
 #include <vector>
 
-namespace iptsd::core::linux {
+namespace iptsd::core::linux::device {
 
-class HidrawDevice : public hid::Device {
+class Hidraw : public hid::Device {
 private:
 	int m_fd = -1;
 	std::filesystem::path m_path {};
@@ -32,7 +32,7 @@ private:
 	std::vector<hid::Report> m_reports {};
 
 public:
-	HidrawDevice(const std::filesystem::path &path)
+	Hidraw(const std::filesystem::path &path)
 		: m_fd {syscalls::open(path, O_RDWR)},
 		  m_path {path}
 	{
@@ -47,7 +47,7 @@ public:
 		hid::parse(gsl::span<u8> {&m_desc.value[0], desc_size}, m_reports);
 	}
 
-	~HidrawDevice() override
+	~Hidraw() override
 	{
 		try {
 			syscalls::close(m_fd);
@@ -128,6 +128,6 @@ public:
 	}
 };
 
-} // namespace iptsd::core::linux
+} // namespace iptsd::core::linux::device
 
-#endif // IPTSD_CORE_LINUX_HIDRAW_DEVICE_HPP
+#endif // IPTSD_CORE_LINUX_DEVICE_HIDRAW_HPP
