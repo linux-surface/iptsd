@@ -34,8 +34,6 @@ protected:
 	struct hidraw_devinfo m_devinfo {};
 	struct hidraw_report_descriptor m_desc {};
 
-	hid::Descriptor m_reports {};
-
 public:
 	File(const std::filesystem::path &path)
 		: m_data {common::read_all_bytes(path)},
@@ -43,11 +41,7 @@ public:
 	{
 		m_devinfo = m_data.read<struct hidraw_devinfo>();
 		m_desc.size = m_data.read<u32>();
-
-		const gsl::span<u8> desc {&m_desc.value[0], m_desc.size};
-
-		m_data.read(desc);
-		hid::parse(desc, m_reports);
+		m_data.read(gsl::span<u8> {&m_desc.value[0], m_desc.size});
 
 		/*
 		 * We have to get the index after reading the header, so this actually
@@ -89,11 +83,11 @@ public:
 	}
 
 	/*!
-	 * The HID descriptor of the device.
+	 * The binary HID descriptor of the device.
 	 */
-	const hid::Descriptor &descriptor() override
+	gsl::span<u8> raw_descriptor() override
 	{
-		return m_reports;
+		return gsl::span<u8> {&m_desc.value[0], m_desc.size};
 	}
 
 	/*!
