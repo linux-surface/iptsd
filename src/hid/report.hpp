@@ -3,137 +3,93 @@
 #ifndef IPTSD_HID_REPORT_HPP
 #define IPTSD_HID_REPORT_HPP
 
-#include "errors.hpp"
-#include "usage.hpp"
+#include "field.hpp"
 
-#include <common/casts.hpp>
-#include <common/error.hpp>
 #include <common/types.hpp>
 
-#include <algorithm>
 #include <optional>
-#include <unordered_set>
+#include <vector>
 
 namespace iptsd::hid {
 
-/*
- * The type of a report.
- */
-enum class ReportType : u8 {
-	// Data that is coming from the device
-	Input,
-
-	// Data that is sent to the device
-	Output,
-
-	// Data that can be queried and modified
-	Feature,
-};
-
-/*
- * Describes the type, size and purpose of a HID report.
+/*!
+ * A report is data that is sent between the host and a device.
+ *
+ * The structure of this data, as well as how it should be interpreted, are defined by the
+ * report descriptor using an 8 bit Report ID.
  */
 class Report {
-private:
-	// The type of the report
-	ReportType m_type;
+public:
+	enum class Type : u8 {
+		//! An input report is data that is sent from the device to device.
+		//! It can contain everything from keypresses to mouse positions.
+		Input,
 
-	// The ID of the HID report. Input reports can have no ID.
-	std::optional<u8> m_report_id;
+		//! An output report is data that is sent from the host to the device.
+		//! For example it could be used to set the state of one of multiple LEDs.
+		Output,
 
-	// The size of the report
-	u64 m_report_size;
-
-	// The usage values describing the report
-	std::unordered_set<Usage> m_usages;
+		//! Feature reports are a configuration option on the device.
+		//! The host can either read the current value, or set a new one.
+		Feature,
+	};
 
 public:
-	Report(const ReportType type,
-	       const std::optional<u8> report_id,
-	       const u32 report_count,
-	       const u32 report_size,
-	       const std::unordered_set<Usage> &usages)
-		: m_type {type},
-		  m_report_id {report_id},
-		  m_report_size {casts::to<u64>(report_count) * report_size},
-		  m_usages {usages} {};
-
 	/*!
-	 * The type of the HID report.
-	 */
-	[[nodiscard]] ReportType type() const
-	{
-		return m_type;
-	}
-
-	/*!
-	 * The ID of the HID report.
-	 */
-	[[nodiscard]] std::optional<u8> id() const
-	{
-		return m_report_id;
-	}
-
-	/*!
-	 * The total size of the HID report in bits.
-	 */
-	[[nodiscard]] u64 size() const
-	{
-		return m_report_size;
-	}
-
-	/*!
-	 * The usage tags of the HID report.
-	 */
-	[[nodiscard]] const std::unordered_set<Usage> &usages() const
-	{
-		return m_usages;
-	}
-
-	/*!
-	 * Checks if the report contains a certain usage tag.
+	 * The type of the report indicates the direction in which data is flowing.
 	 *
-	 * @param[in] value The usage tag to search for.
-	 * @return Whether the combination of Usage / Usage Page applies to this report.
+	 * See also @ref Report::Type.
 	 */
-	[[nodiscard]] bool find_usage(const Usage value) const
+	Type type {};
+
+	/*!
+	 * The Report ID is used to identify the report when communicating with the device.
+	 * It is stored as a single byte in front of the report data.
+	 * However, the report ID is optional.
+	 */
+	std::optional<u8> report_id = std::nullopt;
+
+	/*!
+	 * A HID report groups together multiple fields.
+	 * Every field has its own size and purpose (defined by the Usage tag).
+	 */
+	std::vector<Field> fields {};
+
+public:
+	/*!
+	 * The combined size of all report fields, in bits.
+	 */
+	[[nodiscard]] usize bits() const
 	{
-		return this->find_usage(value.page, value.value);
+		usize sum = 0;
+
+		for (const Field &field : this->fields)
+			sum += field.bits();
+
+		return sum;
 	}
 
 	/*!
-	 * Checks if the report contains a certain usage tag.
-	 *
-	 * @param[in] page The usage page tag to search for.
-	 * @param[in] value The usage tag to search for.
-	 * @return Whether the combination of Usage / Usage Page applies to this report.
+	 * The combined size of all report fields, in bytes.
 	 */
-	[[nodiscard]] bool find_usage(const u16 page, const u16 value) const
+	[[nodiscard]] usize bytes() const
 	{
-		return std::any_of(m_usages.cbegin(),
-		                   m_usages.cend(),
-		                   [&](const Usage &usage) -> bool {
-					   return usage.page == page && usage.value == value;
-				   });
+		const f64 frac = casts::to<f64>(this->bits()) / 8;
+		return casts::to<usize>(std::ceil(frac));
 	}
 
 	/*!
-	 * Combines two reports sharing the same ID and type.
+	 * Searches for a field with the given Usage tag.
 	 *
-	 * @param[in] other The report to combine with this one.
+	 * @param[in] page The Usage Page to look for (upper 16 bits of the Usage tag).
+	 * @param[in] id The Usage ID to look for (lower 16 bits of the Usage tag).
+	 * @return Whether a field with a matching Usage tag was found.
 	 */
-	void merge(const Report &other)
+	[[nodiscard]] bool has_usage(const u16 page, const u16 id) const
 	{
-		if (m_type != other.type())
-			throw common::Error<Error::ReportMergeTypes> {};
-
-		if (m_report_id != other.id())
-			throw common::Error<Error::ReportMergeIDs> {};
-
-		m_report_size += other.size();
-
-		for (const Usage &usage : other.usages())
-			m_usages.insert(usage);
+		return std::any_of(this->fields.begin(), this->fields.end(), [&](const Field &f) {
+			return f.has_usage(page, id);
+		});
 	}
 };
 

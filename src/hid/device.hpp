@@ -3,13 +3,11 @@
 #ifndef IPTSD_HID_DEVICE_HPP
 #define IPTSD_HID_DEVICE_HPP
 
-#include "report.hpp"
+#include "descriptor.hpp"
 
 #include <common/types.hpp>
 
 #include <gsl/gsl>
-
-#include <vector>
 
 namespace iptsd::hid {
 
@@ -20,7 +18,7 @@ public:
 	virtual u16 vendor() = 0;
 	virtual u16 product() = 0;
 	virtual std::string_view name() = 0;
-	virtual const std::vector<Report> &descriptor() = 0;
+	virtual const Descriptor &descriptor() = 0;
 
 	virtual usize read(gsl::span<u8> buffer) = 0;
 	virtual void get_feature(gsl::span<u8> report) = 0;
