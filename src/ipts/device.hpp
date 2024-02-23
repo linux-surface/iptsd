@@ -92,12 +92,12 @@ public:
 	 */
 	[[nodiscard]] usize buffer_size() const
 	{
-		u64 size = 0;
+		usize size = 0;
 
 		for (const hid::Report &report : m_touch_data_reports)
-			size = std::max(size, report.size());
+			size = std::max(size, report.bytes());
 
-		return casts::to<usize>(size / 8);
+		return size;
 	}
 
 	/*!
@@ -113,11 +113,11 @@ public:
 		if (!report.has_value())
 			return std::nullopt;
 
-		const std::optional<u8> id = report->id();
+		const std::optional<u8> id = report->report_id;
 		if (!id.has_value())
 			return std::nullopt;
 
-		std::vector<u8> buffer((report->size() / 8) + 1);
+		std::vector<u8> buffer(report->bytes() + 1);
 		buffer[0] = id.value();
 
 		m_hid->get_feature(buffer);
@@ -142,7 +142,7 @@ public:
 		if (!report.has_value())
 			throw common::Error<Error::InvalidDevice> {m_hid->name()};
 
-		const std::optional<u8> id = report->id();
+		const std::optional<u8> id = report->report_id;
 		if (!id.has_value())
 			throw common::Error<Error::InvalidSetModeReport> {m_hid->name()};
 
@@ -164,7 +164,7 @@ public:
 		return std::any_of(
 			m_touch_data_reports.cbegin(),
 			m_touch_data_reports.cend(),
-			[&](const hid::Report &report) { return report.id() == buffer[0]; });
+			[&](const hid::Report &report) { return report.report_id == buffer[0]; });
 	}
 };
 

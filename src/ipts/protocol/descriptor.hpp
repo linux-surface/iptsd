@@ -27,9 +27,9 @@ constexpr u8 USAGE_METADATA = 0x63;
  */
 inline bool is_touch_data(const hid::Report &report)
 {
-	return report.type() == hid::ReportType::Input &&
-	       report.find_usage(USAGE_PAGE_DIGITIZER, USAGE_SCAN_TIME) &&
-	       report.find_usage(USAGE_PAGE_DIGITIZER, USAGE_GESTURE_DATA);
+	return report.type == hid::Report::Type::Input &&
+	       report.has_usage(USAGE_PAGE_DIGITIZER, USAGE_SCAN_TIME) &&
+	       report.has_usage(USAGE_PAGE_DIGITIZER, USAGE_GESTURE_DATA);
 }
 
 /*!
@@ -40,8 +40,8 @@ inline bool is_touch_data(const hid::Report &report)
  */
 inline bool is_set_mode(const hid::Report &report)
 {
-	return report.type() == hid::ReportType::Feature && report.size() == 8 &&
-	       report.find_usage(USAGE_PAGE_VENDOR, USAGE_SET_MODE);
+	return report.type == hid::Report::Type::Feature && report.bytes() == 1 &&
+	       report.has_usage(USAGE_PAGE_VENDOR, USAGE_SET_MODE);
 }
 
 /*!
@@ -52,8 +52,8 @@ inline bool is_set_mode(const hid::Report &report)
  */
 inline bool is_metadata(const hid::Report &report)
 {
-	return report.type() == hid::ReportType::Feature &&
-	       report.find_usage(USAGE_PAGE_DIGITIZER, USAGE_METADATA);
+	return report.type == hid::Report::Type::Feature &&
+	       report.has_usage(USAGE_PAGE_DIGITIZER, USAGE_METADATA);
 }
 
 } // namespace iptsd::ipts::protocol::descriptor

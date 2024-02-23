@@ -20,7 +20,6 @@
 #include <linux/hidraw.h>
 
 #include <filesystem>
-#include <vector>
 
 namespace iptsd::core::linux::device {
 
@@ -35,7 +34,7 @@ protected:
 	struct hidraw_devinfo m_devinfo {};
 	struct hidraw_report_descriptor m_desc {};
 
-	std::vector<hid::Report> m_reports {};
+	hid::Descriptor m_reports {};
 
 public:
 	File(const std::filesystem::path &path)
@@ -92,7 +91,7 @@ public:
 	/*!
 	 * The HID descriptor of the device.
 	 */
-	const std::vector<hid::Report> &descriptor() override
+	const hid::Descriptor &descriptor() override
 	{
 		return m_reports;
 	}
