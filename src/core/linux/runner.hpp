@@ -67,14 +67,13 @@ public:
 		DeviceInfo info {};
 		info.vendor = m_device->vendor();
 		info.product = m_device->product();
-		info.buffer_size = m_ipts.buffer_size();
 
 		const std::optional<const ipts::Metadata> meta = m_ipts.metadata();
 
 		const ConfigLoader loader {info, meta};
 		m_application.emplace(loader.config(), info, meta, args...);
 
-		m_buffer.resize(casts::to<usize>(info.buffer_size));
+		m_buffer.resize(m_ipts.buffer_size());
 
 		const u16 vendor = info.vendor;
 		const u16 product = info.product;
