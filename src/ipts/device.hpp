@@ -52,6 +52,11 @@ public:
 		Multitouch = 1,
 	};
 
+	enum class Type : u8 {
+		Touchscreen,
+		Touchpad,
+	};
+
 private:
 	// The (platform specific) HID device interface
 	std::shared_ptr<hid::Device> m_hid;
@@ -83,6 +88,32 @@ public:
 	[[nodiscard]] const Descriptor &descriptor() const
 	{
 		return m_descriptor;
+	}
+
+	/*!
+	 * What kind of device this is.
+	 *
+	 * IPTS supports touchscreens as well as touchpads. Touchpads need to be handled a bit
+	 * differently, since there is no stylus, and instead two buttons for left and right click.
+	 *
+	 * The devices contain fallback reports in their HID descriptor that get used if no
+	 * userspace processing is running. By searching for them we can determine the device type.
+	 *
+	 * @return The type of the IPTS device we are connected to.
+	 */
+	[[nodiscard]] Type type() const
+	{
+		const bool is_touchscreen = m_descriptor.is_touchscreen();
+		const bool is_touchpad = m_descriptor.is_touchpad();
+
+		// If both are true, or both are false, something is wrong.
+		if (is_touchpad == is_touchscreen)
+			throw common::Error<Error::InvalidDevice> {m_hid->name()};
+
+		if (is_touchpad)
+			return Type::Touchpad;
+
+		return Type::Touchscreen;
 	}
 
 	/*!
