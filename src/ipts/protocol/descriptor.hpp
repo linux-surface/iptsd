@@ -4,6 +4,7 @@
 #define IPTSD_IPTS_PROTOCOL_DESCRIPTOR_HPP
 
 #include <common/types.hpp>
+#include <hid/collection.hpp>
 #include <hid/report.hpp>
 
 namespace iptsd::ipts::protocol::descriptor {
@@ -13,6 +14,9 @@ namespace hid = iptsd::hid;
 
 constexpr u16 USAGE_PAGE_DIGITIZER = 0x000D;
 constexpr u16 USAGE_PAGE_VENDOR = 0xFF00;
+
+constexpr u8 USAGE_TOUCHSCREEN = 0x04;
+constexpr u8 USAGE_TOUCHPAD = 0x05;
 
 constexpr u8 USAGE_SCAN_TIME = 0x56;
 constexpr u8 USAGE_GESTURE_DATA = 0x61;
@@ -54,6 +58,28 @@ inline bool is_metadata(const hid::Report &report)
 {
 	return report.type == hid::Report::Type::Feature &&
 	       report.has_usage(USAGE_PAGE_DIGITIZER, USAGE_METADATA);
+}
+
+/*!
+ * Checks if a given collection indicates that this device is a touchscreen.
+ *
+ * @param[in] report The collection to check.
+ * @return Whether the presence of the collection makes the device a touchscreen.
+ */
+inline bool is_touchscreen(const hid::Collection &collection)
+{
+	return collection.has_usage(USAGE_PAGE_DIGITIZER, USAGE_TOUCHSCREEN);
+}
+
+/*!
+ * Checks if a given collection indicates that this device is a touchpad.
+ *
+ * @param[in] report The collection to check.
+ * @return Whether the presence of the collection makes the device a touchpad.
+ */
+inline bool is_touchpad(const hid::Collection &collection)
+{
+	return collection.has_usage(USAGE_PAGE_DIGITIZER, USAGE_TOUCHPAD);
 }
 
 } // namespace iptsd::ipts::protocol::descriptor

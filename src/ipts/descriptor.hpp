@@ -57,6 +57,22 @@ public:
 	{
 		return m_hid_descriptor.find_report(protocol::descriptor::is_metadata);
 	}
+
+	/*!
+	 * Whether the HID descriptor indicates that this device is a touchscreen.
+	 */
+	[[nodiscard]] bool is_touchscreen() const
+	{
+		return m_hid_descriptor.has_collection(protocol::descriptor::is_touchscreen);
+	}
+
+	/*!
+	 * Whether the HID descriptor indicates that this device is a touchpad.
+	 */
+	[[nodiscard]] bool is_touchpad() const
+	{
+		return m_hid_descriptor.has_collection(protocol::descriptor::is_touchpad);
+	}
 };
 
 } // namespace iptsd::ipts
