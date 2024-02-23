@@ -4,6 +4,7 @@
 #define IPTSD_CORE_GENERIC_DEVICE_HPP
 
 #include <common/types.hpp>
+#include <ipts/device.hpp>
 
 namespace iptsd::core {
 
@@ -14,6 +15,7 @@ namespace iptsd::core {
 struct DeviceInfo {
 	u16 vendor;
 	u16 product;
+	ipts::Device::Type type;
 };
 
 } // namespace iptsd::core
