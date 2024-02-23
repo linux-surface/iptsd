@@ -80,6 +80,15 @@ public:
 		const u16 product = info.product;
 
 		spdlog::info("Connected to device {:04X}:{:04X}", vendor, product);
+
+		switch (m_ipts.type()) {
+		case ipts::Device::Type::Touchscreen:
+			spdlog::info("Running in Touchscreen mode");
+			break;
+		case ipts::Device::Type::Touchpad:
+			spdlog::info("Running in Touchpad mode");
+			break;
+		}
 	}
 
 	/*!
