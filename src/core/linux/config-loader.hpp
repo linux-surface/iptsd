@@ -32,14 +32,13 @@ private:
 	bool m_loaded_config = false;
 
 public:
-	ConfigLoader(const DeviceInfo &info, const std::optional<const ipts::Metadata> &metadata)
-		: m_info {info}
+	ConfigLoader(const DeviceInfo &info) : m_info {info}
 	{
-		if (metadata.has_value()) {
-			m_config.width = casts::to<f64>(metadata->dimensions.width) / 1e3;
-			m_config.height = casts::to<f64>(metadata->dimensions.height) / 1e3;
-			m_config.invert_x = metadata->transform.xx < 0;
-			m_config.invert_y = metadata->transform.yy < 0;
+		if (m_info.meta.has_value()) {
+			m_config.width = casts::to<f64>(m_info.meta->dimensions.width) / 1e3;
+			m_config.height = casts::to<f64>(m_info.meta->dimensions.height) / 1e3;
+			m_config.invert_x = m_info.meta->transform.xx < 0;
+			m_config.invert_y = m_info.meta->transform.yy < 0;
 		}
 
 		this->load_dir(common::buildopts::PresetDir);

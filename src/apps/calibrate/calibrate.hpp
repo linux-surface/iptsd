@@ -20,7 +20,6 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <optional>
 #include <string>
 #include <vector>
 
@@ -44,10 +43,8 @@ private:
 	f64 m_diagonal;
 
 public:
-	Calibrate(const core::Config &config,
-	          const core::DeviceInfo &info,
-	          const std::optional<const ipts::Metadata> &metadata)
-		: core::Application(config, info, metadata),
+	Calibrate(const core::Config &config, const core::DeviceInfo &info)
+		: core::Application(config, info),
 		  m_diagonal {std::hypot(config.width, config.height)} {};
 
 	void on_start() override
