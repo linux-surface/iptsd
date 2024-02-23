@@ -39,10 +39,8 @@ protected:
 	Cairo::RefPtr<Cairo::Context> m_cairo {};
 
 public:
-	Visualize(const core::Config &config,
-	          const core::DeviceInfo &info,
-	          const std::optional<const ipts::Metadata> &metadata)
-		: core::Application(config, info, metadata) {};
+	Visualize(const core::Config &config, const core::DeviceInfo &info)
+		: core::Application(config, info) {};
 
 	void on_contacts(const std::vector<contacts::Contact<f64>> & /* unused */) override
 	{

@@ -52,13 +52,6 @@ protected:
 	DeviceInfo m_info;
 
 	/*
-	 * The IPTS device metadata. This does not exist on all devices.
-	 * This needs to be queried by the application runner
-	 * and passed to the application during construction.
-	 */
-	std::optional<const ipts::Metadata> m_metadata = std::nullopt;
-
-	/*
 	 * Parses incoming data and returns heatmap, stylus and DFT data.
 	 */
 	ipts::Parser m_parser {};
@@ -89,14 +82,11 @@ protected:
 	DftStylus m_dft;
 
 public:
-	Application(const Config &config,
-	            const DeviceInfo &info,
-	            const std::optional<const ipts::Metadata> &metadata)
+	Application(const Config &config, const DeviceInfo &info)
 		: m_config {config},
 		  m_info {info},
-		  m_metadata {metadata},
 		  m_finder {config.contacts()},
-		  m_dft {config, metadata}
+		  m_dft {config, info}
 	{
 		if (m_config.width == 0 || m_config.height == 0)
 			throw common::Error<Error::InvalidScreenSize> {};
