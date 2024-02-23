@@ -67,6 +67,7 @@ public:
 		DeviceInfo info {};
 		info.vendor = m_device->vendor();
 		info.product = m_device->product();
+		info.type = m_ipts.type();
 
 		const std::optional<const ipts::Metadata> meta = m_ipts.metadata();
 
@@ -80,7 +81,7 @@ public:
 
 		spdlog::info("Connected to device {:04X}:{:04X}", vendor, product);
 
-		switch (m_ipts.type()) {
+		switch (info.type) {
 		case ipts::Device::Type::Touchscreen:
 			spdlog::info("Running in Touchscreen mode");
 			break;
