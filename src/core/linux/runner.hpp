@@ -68,11 +68,10 @@ public:
 		info.vendor = m_device->vendor();
 		info.product = m_device->product();
 		info.type = m_ipts.type();
+		info.meta = m_ipts.metadata();
 
-		const std::optional<const ipts::Metadata> meta = m_ipts.metadata();
-
-		const ConfigLoader loader {info, meta};
-		m_application.emplace(loader.config(), info, meta, args...);
+		const ConfigLoader loader {info};
+		m_application.emplace(loader.config(), info, args...);
 
 		m_buffer.resize(m_ipts.buffer_size());
 

@@ -13,7 +13,6 @@
 #include <gsl/gsl>
 
 #include <algorithm>
-#include <optional>
 #include <utility>
 #include <vector>
 
@@ -35,10 +34,8 @@ private:
 	bool m_had_heatmap {};
 
 public:
-	Perf(const core::Config &config,
-	     const core::DeviceInfo &info,
-	     const std::optional<const ipts::Metadata> &metadata)
-		: core::Application(config, info, metadata) {};
+	Perf(const core::Config &config, const core::DeviceInfo &info)
+		: core::Application(config, info) {};
 
 	void on_contacts(const std::vector<contacts::Contact<f64>> & /* unused */) override
 	{

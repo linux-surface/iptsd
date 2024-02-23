@@ -4,7 +4,10 @@
 #define IPTSD_CORE_GENERIC_DEVICE_HPP
 
 #include <common/types.hpp>
+#include <ipts/data.hpp>
 #include <ipts/device.hpp>
+
+#include <optional>
 
 namespace iptsd::core {
 
@@ -16,6 +19,7 @@ struct DeviceInfo {
 	u16 vendor = 0;
 	u16 product = 0;
 	ipts::Device::Type type {};
+	std::optional<ipts::Metadata> meta = std::nullopt;
 };
 
 } // namespace iptsd::core

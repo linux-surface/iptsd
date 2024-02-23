@@ -4,6 +4,7 @@
 #define IPTSD_CORE_GENERIC_DFT_HPP
 
 #include "config.hpp"
+#include "device.hpp"
 
 #include <common/casts.hpp>
 #include <ipts/data.hpp>
@@ -19,7 +20,7 @@ namespace iptsd::core {
 class DftStylus {
 private:
 	Config m_config;
-	std::optional<const ipts::Metadata> m_metadata;
+	DeviceInfo m_info;
 
 	// The current state of the DFT stylus.
 	ipts::StylusData m_stylus;
@@ -43,9 +44,9 @@ private:
 	std::optional<bool> m_mppv2_in_contact = std::nullopt;
 
 public:
-	DftStylus(Config config, const std::optional<const ipts::Metadata> &metadata)
+	DftStylus(Config config, const DeviceInfo &info)
 		: m_config {std::move(config)},
-		  m_metadata {metadata} {};
+		  m_info {info} {};
 
 	/*!
 	 * Loads a DFT window and calculates stylus properties from it.
@@ -108,9 +109,9 @@ private:
 		u8 width = dft.width;
 		u8 height = dft.height;
 
-		if ((width == 0 || height == 0) && m_metadata.has_value()) {
-			width = casts::to<u8>(m_metadata->dimensions.columns);
-			height = casts::to<u8>(m_metadata->dimensions.rows);
+		if ((width == 0 || height == 0) && m_info.meta.has_value()) {
+			width = casts::to<u8>(m_info.meta->dimensions.columns);
+			height = casts::to<u8>(m_info.meta->dimensions.rows);
 		}
 
 		m_group = dft.group;

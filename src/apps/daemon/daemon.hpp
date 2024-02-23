@@ -14,7 +14,6 @@
 
 #include <spdlog/spdlog.h>
 
-#include <optional>
 #include <vector>
 
 namespace iptsd::apps::daemon {
@@ -28,10 +27,8 @@ private:
 	StylusDevice m_stylus;
 
 public:
-	Daemon(const core::Config &config,
-	       const core::DeviceInfo &info,
-	       const std::optional<const ipts::Metadata> &metadata)
-		: core::Application(config, info, metadata),
+	Daemon(const core::Config &config, const core::DeviceInfo &info)
+		: core::Application(config, info),
 		  m_touch {config, info},
 		  m_stylus {config, info} {};
 
