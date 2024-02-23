@@ -13,9 +13,9 @@ namespace iptsd::core {
  * that is processed by an application.
  */
 struct DeviceInfo {
-	u16 vendor;
-	u16 product;
-	ipts::Device::Type type;
+	u16 vendor = 0;
+	u16 product = 0;
+	ipts::Device::Type type {};
 };
 
 } // namespace iptsd::core
