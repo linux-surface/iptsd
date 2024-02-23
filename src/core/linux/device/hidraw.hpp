@@ -28,8 +28,6 @@ protected:
 	struct hidraw_devinfo m_devinfo {};
 	struct hidraw_report_descriptor m_desc {};
 
-	hid::Descriptor m_reports {};
-
 public:
 	Hidraw(const std::filesystem::path &path)
 		: m_fd {syscalls::open(path, O_RDWR)},
@@ -42,8 +40,6 @@ public:
 
 		m_desc.size = desc_size;
 		syscalls::ioctl(m_fd, HIDIOCGRDESC, &m_desc);
-
-		hid::parse(gsl::span<u8> {&m_desc.value[0], desc_size}, m_reports);
 	}
 
 	~Hidraw() override
@@ -88,11 +84,11 @@ public:
 	}
 
 	/*!
-	 * The HID descriptor of the device.
+	 * The binary HID descriptor of the device.
 	 */
-	const hid::Descriptor &descriptor() override
+	gsl::span<u8> raw_descriptor() override
 	{
-		return m_reports;
+		return gsl::span<u8> {&m_desc.value[0], m_desc.size};
 	}
 
 	/*!
