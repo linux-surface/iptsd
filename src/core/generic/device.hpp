@@ -20,6 +20,16 @@ struct DeviceInfo {
 	u16 product = 0;
 	ipts::Device::Type type {};
 	std::optional<ipts::Metadata> meta = std::nullopt;
+
+	[[nodiscard]] bool is_touchscreen() const
+	{
+		return this->type == ipts::Device::Type::Touchscreen;
+	}
+
+	[[nodiscard]] bool is_touchpad() const
+	{
+		return this->type == ipts::Device::Type::Touchpad;
+	}
 };
 
 } // namespace iptsd::core
