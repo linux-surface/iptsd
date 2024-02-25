@@ -169,11 +169,6 @@ private:
 	 */
 	void handle_button(const ipts::DftWindow &dft)
 	{
-		// Only use this for pen v1.
-		if (m_config.mpp_version != Config::MPPVersion::V1) {
-			return;
-		}
-
 		if (dft.x.empty())
 			return;
 
@@ -199,7 +194,10 @@ private:
 			rubber = val > 0;
 		}
 
-		m_stylus.button = button;
+		// Only set the button value if we're using a v1 pen.
+		if (m_config.mpp_version == Config::MPPVersion::V1) {
+			m_stylus.button = button;
+		}
 		m_stylus.rubber = rubber;
 	}
 
@@ -227,7 +225,9 @@ private:
 
 
 	/*!
-	 * Determines the current button state from the 0x0a frame.
+	 * Determines the current button state from the 0x0a frame, it can
+	 * only be used for MPP v2 pens. The eraser is still obtained from the
+     * phase using the button frame.
 	 */
 	void handle_dft_0x0a(const ipts::DftWindow &dft)
 	{
@@ -250,16 +250,12 @@ private:
 		if (mag_4 < threshold && mag_5 < threshold) {
 			// Not enough signal, lets disable the button
 			m_stylus.button = false;
-			m_stylus.rubber = false;
 			return;
 		}
 
 		// One of them is above the threshold, if 5 is higher than 4, button
 		// is held.
 		m_stylus.button = mag_4 < mag_5;
-
-		// This needs a todo still :)
-		m_stylus.rubber = false;
 	}
 
 	/*!
