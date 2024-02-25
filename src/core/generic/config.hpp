@@ -17,6 +17,14 @@ namespace iptsd::core {
 
 class Config {
 public:
+	// Enum to denote which Pen Protocol is being used.
+	enum class MPPVersion {
+		// Used for Microsoft Pen Protocol v1 compliant pens.
+		V1,
+		// Used for Microsoft Pen Protocol v2 compliant pens.
+		V2,
+	};
+
 	// [Config]
 	bool invert_x = false;
 	bool invert_y = false;
@@ -49,6 +57,7 @@ public:
 	// [Stylus]
 	bool stylus_disable = false;
 	f64 stylus_tip_distance = 0;
+	MPPVersion mpp_version = MPPVersion::V1;
 
 	// [DFT]
 	usize dft_position_min_amp = 50;

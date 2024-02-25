@@ -161,6 +161,7 @@ private:
 
 		this->get(ini, "Stylus", "Disable", m_config.stylus_disable);
 		this->get(ini, "Stylus", "TipDistance", m_config.stylus_tip_distance);
+		this->get(ini, "Stylus", "MPPVersion", m_config.mpp_version);
 
 		this->get(ini, "DFT", "PositionMinAmp", m_config.dft_position_min_amp);
 		this->get(ini, "DFT", "PositionMinMag", m_config.dft_position_min_mag);
@@ -199,6 +200,19 @@ private:
 			value = gsl::narrow_cast<T>(ini.GetReal(section, name, value));
 		else if constexpr (std::is_same_v<T, std::string>)
 			value = ini.GetString(section, name, value);
+		else if constexpr (std::is_same_v<T, Config::MPPVersion>) {
+			// Parse the pen protocol verison by first reading into a string.
+			const auto mpp_version = ini.GetString(section, name, "");
+			if (!mpp_version.empty()) {
+				if (mpp_version == "v1") {
+					value = Config::MPPVersion::V1;
+				} else if (mpp_version == "v2") {
+					value = Config::MPPVersion::V2;
+				} else {
+					throw common::Error<Error::ParsingInvalidValue> {"Stylus mpp_version was not 'v1' or 'v2', got: " + mpp_version};
+				}
+			}
+		}
 		else
 			throw common::Error<Error::ParsingTypeNotImplemented> {typeid(T).name()};
 	}
