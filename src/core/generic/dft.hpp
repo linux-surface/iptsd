@@ -28,6 +28,12 @@ private:
 	i32 m_imag = 0;
 	std::optional<u32> m_group = std::nullopt;
 
+	// This is a bit of a hack, for the MPP v2 button detection we only
+	// care about the first 0x0a dft window, but there's two in the frame,
+	// here we keep track of the group when 0x0a was encountered, this
+	// allows comparing against this group and only using the first 0x0a
+	// frame.
+	std::optional<u32> m_dft_0x0a_group = std::nullopt;
 public:
 	DftStylus(Config config, const std::optional<const ipts::Metadata> &metadata)
 		: m_config {std::move(config)},
@@ -49,6 +55,9 @@ public:
 			break;
 		case ipts::protocol::dft::Type::Pressure:
 			this->handle_pressure(dft);
+			break;
+		case ipts::protocol::dft::Type::Dft0x0a:
+			this->handle_dft_0x0a(dft);
 			break;
 		default:
 			// Ignored
@@ -160,6 +169,11 @@ private:
 	 */
 	void handle_button(const ipts::DftWindow &dft)
 	{
+		// Only use this for pen v1.
+		if (m_config.mpp_version != Config::MPPVersion::V1) {
+			return;
+		}
+
 		if (dft.x.empty())
 			return;
 
@@ -209,6 +223,43 @@ private:
 			m_stylus.contact = false;
 			m_stylus.pressure = 0;
 		}
+	}
+
+
+	/*!
+	 * Determines the current button state from the 0x0a frame.
+	 */
+	void handle_dft_0x0a(const ipts::DftWindow &dft)
+	{
+		if (m_config.mpp_version != Config::MPPVersion::V2) {
+			return;
+		}
+
+		// Second time we see the 0x0a frame in this group, skip it.
+		if (!dft.group.has_value() || m_dft_0x0a_group == dft.group)
+			return;
+
+		m_dft_0x0a_group = dft.group;
+
+		// Now, we can process the frame to determine button state.
+		// First, collapse x and y, they convey the same information.
+		const auto mag_4 = dft.x[4].magnitude + dft.y[4].magnitude;
+		const auto mag_5 = dft.x[5].magnitude + dft.y[5].magnitude;
+		const auto threshold = 2 * m_config.dft_button_min_mag;
+
+		if (mag_4 < threshold && mag_5 < threshold) {
+			// Not enough signal, lets disable the button
+			m_stylus.button = false;
+			m_stylus.rubber = false;
+			return;
+		}
+
+		// One of them is above the threshold, if 5 is higher than 4, button
+		// is held.
+		m_stylus.button = mag_4 < mag_5;
+
+		// This needs a todo still :)
+		m_stylus.rubber = false;
 	}
 
 	/*!

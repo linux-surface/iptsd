@@ -16,6 +16,8 @@
 #include <common/reader.hpp>
 #include <common/types.hpp>
 
+#include <spdlog/spdlog.h>
+
 #include <gsl/gsl>
 
 #include <functional>
@@ -71,7 +73,6 @@ private:
 	{
 		Reader reader(data);
 		reader.skip(header);
-
 		this->parse_hid_frame(reader);
 	}
 
