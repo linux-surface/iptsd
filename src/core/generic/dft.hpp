@@ -34,6 +34,7 @@ private:
 	// allows comparing against this group and only using the first 0x0a
 	// frame.
 	std::optional<u32> m_dft_0x0a_group = std::nullopt;
+
 public:
 	DftStylus(Config config, const std::optional<const ipts::Metadata> &metadata)
 		: m_config {std::move(config)},
@@ -223,11 +224,10 @@ private:
 		}
 	}
 
-
 	/*!
 	 * Determines the current button state from the 0x0a frame, it can
 	 * only be used for MPP v2 pens. The eraser is still obtained from the
-     * phase using the button frame.
+	 * phase using the button frame.
 	 */
 	void handle_dft_0x0a(const ipts::DftWindow &dft)
 	{

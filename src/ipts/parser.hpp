@@ -16,8 +16,6 @@
 #include <common/reader.hpp>
 #include <common/types.hpp>
 
-#include <spdlog/spdlog.h>
-
 #include <gsl/gsl>
 
 #include <functional>
