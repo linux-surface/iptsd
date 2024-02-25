@@ -27,7 +27,7 @@ struct [[gnu::packed]] Report {
 	std::array<u8, 3> reserved;
 
 	//! Something like a serial number of the stylus.
-	//! Doesn't appear to be reliably with multiple styli though.
+	//! Doesn't appear to be reliable with multiple styli though.
 	u32 serial;
 };
 static_assert(sizeof(Report) == 8);
@@ -46,7 +46,7 @@ struct [[gnu::packed]] State {
 	bool proximity : 1;
 
 	//! Whether the stylus tip is making contact with the display.
-	//! Will always be 0 in rubber mode. Use pressure for reliably contact detection.
+	//! Will always be 0 in rubber mode. Use pressure for reliable contact detection.
 	bool contact : 1;
 
 	//! Whether the side button of the stylus is being pressed.
