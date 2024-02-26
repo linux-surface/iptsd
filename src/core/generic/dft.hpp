@@ -35,9 +35,13 @@ private:
 	// frame.
 	std::optional<u32> m_dft_0x0a_group = std::nullopt;
 
-	// Boolean to track whether the pen is in contact, used by the method
-	// that processes the pressure frame.
-	bool m_mppv2_in_contact {false};
+	// Boolean to track whether the pen is in contact according to mpp v2.
+	// This is used to override the contact state in the pressure frame handling.
+	std::optional<bool> m_mppv2_in_contact = std::nullopt;
+
+	// Boolean to track whether the button is held according to mpp v2.
+	// This is used to override the button state in the button frame handling.
+	std::optional<bool> m_mppv2_button = std::nullopt;
 
 public:
 	DftStylus(Config config, const std::optional<const ipts::Metadata> &metadata)
@@ -202,10 +206,12 @@ private:
 			rubber = val > 0;
 		}
 
-		// Only set the button value if we're using a v1 pen.
-		if (m_config.stylus_mpp_version == Config::MPPVersion::V1) {
-			m_stylus.button = button;
-		}
+		// Check if the v2 version of the protocol detect the button state, if so
+		// overwrite the state that was calculated here.
+		if (m_mppv2_button.has_value())
+			button = m_mppv2_button.value();
+
+		m_stylus.button = button;
 		m_stylus.rubber = rubber;
 	}
 
@@ -226,7 +232,8 @@ private:
 			m_stylus.contact = true;
 			m_stylus.pressure = std::clamp(p, 0.0, 1.0);
 		} else {
-			m_stylus.contact = false || m_mppv2_in_contact; // NOLINT
+			m_stylus.contact =
+				m_mppv2_in_contact.has_value() ? m_mppv2_in_contact.value() : false;
 			m_stylus.pressure = 0;
 		}
 	}
@@ -238,12 +245,10 @@ private:
 	 */
 	void handle_dft_0x0a(const ipts::DftWindow &dft)
 	{
-		if (m_config.stylus_mpp_version != Config::MPPVersion::V2) {
-			return;
-		}
+		// Clearing the state in case we can't determine it.
+		m_mppv2_button = std::nullopt;
 
 		if (dft.x.size() <= 5) { // not sure if this can happen?
-			m_stylus.button = false;
 			return;
 		}
 
@@ -260,14 +265,13 @@ private:
 		const auto threshold = 2 * m_config.dft_button_min_mag;
 
 		if (mag_4 < threshold && mag_5 < threshold) {
-			// Not enough signal, lets disable the button
-			m_stylus.button = false;
+			// Not enough signal to make a decision.
 			return;
 		}
 
 		// One of them is above the threshold, if 5 is higher than 4, button
 		// is held.
-		m_stylus.button = mag_4 < mag_5;
+		m_mppv2_button = mag_4 < mag_5;
 	}
 
 	/*!
@@ -276,12 +280,8 @@ private:
 	 */
 	void handle_position2(const ipts::DftWindow &dft)
 	{
-		if (m_config.stylus_mpp_version != Config::MPPVersion::V2) {
-			return;
-		}
-
-		// Set to false in case we return early.
-		m_mppv2_in_contact = false;
+		// Clearing the state in case we can't determine it.
+		m_mppv2_in_contact = std::nullopt;
 
 		if (dft.x.size() <= 3) { // not sure if this can happen?
 			return;
@@ -290,8 +290,9 @@ private:
 		const auto mag_2 = dft.x[2].magnitude + dft.y[2].magnitude;
 		const auto mag_3 = dft.x[3].magnitude + dft.y[3].magnitude;
 
-		const auto threshold = 2 * m_config.dft_contact_min_mag;
+		const auto threshold = 2 * m_config.dft_mpp2_contact_min_mag;
 		if (mag_2 < threshold && mag_3 < threshold) {
+			// Not enough signal to make a decision.
 			return;
 		}
 
@@ -423,6 +424,9 @@ private:
 		m_stylus.contact = false;
 		m_stylus.button = false;
 		m_stylus.rubber = false;
+
+		m_mppv2_in_contact = std::nullopt;
+		m_mppv2_button = std::nullopt;
 	}
 };
 

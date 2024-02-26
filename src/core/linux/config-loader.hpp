@@ -171,7 +171,6 @@ private:
 
 		this->get(ini, "Stylus", "Disable", m_config.stylus_disable);
 		this->get(ini, "Stylus", "TipDistance", m_config.stylus_tip_distance);
-		this->get(ini, "Stylus", "MPPVersion", m_config.stylus_mpp_version);
 
 		this->get(ini, "DFT", "PositionMinAmp", m_config.dft_position_min_amp);
 		this->get(ini, "DFT", "PositionMinMag", m_config.dft_position_min_mag);
@@ -181,6 +180,8 @@ private:
 		this->get(ini, "DFT", "FreqMinMag", m_config.dft_freq_min_mag);
 		this->get(ini, "DFT", "TiltMinMag", m_config.dft_tilt_min_mag);
 		this->get(ini, "DFT", "TiltDistance", m_config.dft_tilt_distance);
+		this->get(ini, "DFT", "Mpp2ContactMinMag", m_config.dft_mpp2_contact_min_mag);
+		this->get(ini, "DFT", "Mpp2ButtonMinMag", m_config.dft_mpp2_button_min_mag);
 
 		// Legacy options that are kept for compatibility
 		this->get(ini, "DFT", "TipDistance", m_config.stylus_tip_distance);
@@ -212,21 +213,7 @@ private:
 			value = gsl::narrow_cast<T>(ini.GetReal(section, name, value));
 		else if constexpr (std::is_same_v<T, std::string>)
 			value = ini.GetString(section, name, value);
-		else if constexpr (std::is_same_v<T, Config::MPPVersion>) {
-			// Parse the pen protocol verison by first reading into a string.
-			const auto mpp_version = ini.GetString(section, name, "");
-			if (!mpp_version.empty()) {
-				if (mpp_version == "v1") {
-					value = Config::MPPVersion::V1;
-				} else if (mpp_version == "v2") {
-					value = Config::MPPVersion::V2;
-				} else {
-					throw common::Error<Error::ParsingInvalidValue> {
-						"Stylus mpp_version was not 'v1' or 'v2', got: " +
-						mpp_version};
-				}
-			}
-		} else
+		else
 			throw common::Error<Error::ParsingTypeNotImplemented> {typeid(T).name()};
 	}
 };
