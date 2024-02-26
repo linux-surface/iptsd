@@ -15,6 +15,7 @@ constexpr u8 PRESSURE_ROWS = 6;
 
 enum class Type : u8 {
 	Position = 6,
+	Position2 = 7,
 	Button = 9,
 	Pressure = 11,
 	Dft0x0a = 0x0a,

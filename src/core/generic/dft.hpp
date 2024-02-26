@@ -35,6 +35,10 @@ private:
 	// frame.
 	std::optional<u32> m_dft_0x0a_group = std::nullopt;
 
+	// Boolean to track whether the pen is in contact, used by the method
+	// that processes the pressure frame.
+	bool m_mppv2_in_contact {false};
+
 public:
 	DftStylus(Config config, const std::optional<const ipts::Metadata> &metadata)
 		: m_config {std::move(config)},
@@ -56,6 +60,9 @@ public:
 			break;
 		case ipts::protocol::dft::Type::Pressure:
 			this->handle_pressure(dft);
+			break;
+		case ipts::protocol::dft::Type::Position2:
+			this->handle_position2(dft);
 			break;
 		case ipts::protocol::dft::Type::Dft0x0a:
 			this->handle_dft_0x0a(dft);
@@ -219,7 +226,7 @@ private:
 			m_stylus.contact = true;
 			m_stylus.pressure = std::clamp(p, 0.0, 1.0);
 		} else {
-			m_stylus.contact = false;
+			m_stylus.contact = false || m_mppv2_in_contact; // NOLINT
 			m_stylus.pressure = 0;
 		}
 	}
@@ -232,6 +239,11 @@ private:
 	void handle_dft_0x0a(const ipts::DftWindow &dft)
 	{
 		if (m_config.mpp_version != Config::MPPVersion::V2) {
+			return;
+		}
+
+		if (dft.x.size() <= 5) { // not sure if this can happen?
+			m_stylus.button = false;
 			return;
 		}
 
@@ -256,6 +268,35 @@ private:
 		// One of them is above the threshold, if 5 is higher than 4, button
 		// is held.
 		m_stylus.button = mag_4 < mag_5;
+	}
+
+	/*!
+	 * Determines whether the pen is making contact with the screen, it can
+	 * only be used for MPP v2 pens.
+	 */
+	void handle_position2(const ipts::DftWindow &dft)
+	{
+		if (m_config.mpp_version != Config::MPPVersion::V2) {
+			return;
+		}
+
+		// Set to false in case we return early.
+		m_mppv2_in_contact = false;
+
+		if (dft.x.size() <= 3) { // not sure if this can happen?
+			return;
+		}
+
+		const auto mag_2 = dft.x[2].magnitude + dft.y[2].magnitude;
+		const auto mag_3 = dft.x[3].magnitude + dft.y[3].magnitude;
+
+		const auto threshold = 2 * m_config.dft_contact_min_mag;
+		if (mag_2 < threshold && mag_3 < threshold) {
+			return;
+		}
+
+		// The pen switches the row from two to three when there's contact.
+		m_mppv2_in_contact = mag_2 < mag_3;
 	}
 
 	/*!
