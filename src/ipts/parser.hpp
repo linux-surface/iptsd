@@ -71,6 +71,7 @@ private:
 	{
 		Reader reader(data);
 		reader.skip(header);
+
 		this->parse_hid_frame(reader);
 	}
 

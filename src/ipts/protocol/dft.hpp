@@ -14,11 +14,11 @@ constexpr u8 MAX_ROWS = 16;
 constexpr u8 PRESSURE_ROWS = 6;
 
 enum class Type : u8 {
-	Position = 6,
-	Position2 = 7,
-	Button = 9,
-	Pressure = 11,
-	Dft0x0a = 0x0a,
+	Position = 0x6,
+	PositionMPP_2 = 0x7,
+	Button = 0x9,
+	BinaryMPP_2 = 0xA,
+	Pressure = 0xB,
 };
 
 struct [[gnu::packed]] Metadata {

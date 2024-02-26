@@ -65,11 +65,11 @@ public:
 		case ipts::protocol::dft::Type::Pressure:
 			this->handle_pressure(dft);
 			break;
-		case ipts::protocol::dft::Type::Position2:
-			this->handle_position2(dft);
+		case ipts::protocol::dft::Type::PositionMPP_2:
+			this->handle_position_mpp_2(dft);
 			break;
-		case ipts::protocol::dft::Type::Dft0x0a:
-			this->handle_dft_0x0a(dft);
+		case ipts::protocol::dft::Type::BinaryMPP_2:
+			this->handle_dft_binary_mpp_2(dft);
 			break;
 		default:
 			// Ignored
@@ -243,7 +243,7 @@ private:
 	 * only be used for MPP v2 pens. The eraser is still obtained from the
 	 * phase using the button frame.
 	 */
-	void handle_dft_0x0a(const ipts::DftWindow &dft)
+	void handle_dft_binary_mpp_2(const ipts::DftWindow &dft)
 	{
 		// Clearing the state in case we can't determine it.
 		m_mppv2_button = std::nullopt;
@@ -278,7 +278,7 @@ private:
 	 * Determines whether the pen is making contact with the screen, it can
 	 * only be used for MPP v2 pens.
 	 */
-	void handle_position2(const ipts::DftWindow &dft)
+	void handle_position_mpp_2(const ipts::DftWindow &dft)
 	{
 		// Clearing the state in case we can't determine it.
 		m_mppv2_in_contact = std::nullopt;
