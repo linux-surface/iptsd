@@ -57,7 +57,7 @@ public:
 	// [Stylus]
 	bool stylus_disable = false;
 	f64 stylus_tip_distance = 0;
-	MPPVersion mpp_version = MPPVersion::V1;
+	MPPVersion stylus_mpp_version = MPPVersion::V1;
 
 	// [DFT]
 	usize dft_position_min_amp = 50;

@@ -171,7 +171,7 @@ private:
 
 		this->get(ini, "Stylus", "Disable", m_config.stylus_disable);
 		this->get(ini, "Stylus", "TipDistance", m_config.stylus_tip_distance);
-		this->get(ini, "Stylus", "MPPVersion", m_config.mpp_version);
+		this->get(ini, "Stylus", "MPPVersion", m_config.stylus_mpp_version);
 
 		this->get(ini, "DFT", "PositionMinAmp", m_config.dft_position_min_amp);
 		this->get(ini, "DFT", "PositionMinMag", m_config.dft_position_min_mag);

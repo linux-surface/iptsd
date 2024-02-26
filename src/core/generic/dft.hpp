@@ -203,7 +203,7 @@ private:
 		}
 
 		// Only set the button value if we're using a v1 pen.
-		if (m_config.mpp_version == Config::MPPVersion::V1) {
+		if (m_config.stylus_mpp_version == Config::MPPVersion::V1) {
 			m_stylus.button = button;
 		}
 		m_stylus.rubber = rubber;
@@ -238,7 +238,7 @@ private:
 	 */
 	void handle_dft_0x0a(const ipts::DftWindow &dft)
 	{
-		if (m_config.mpp_version != Config::MPPVersion::V2) {
+		if (m_config.stylus_mpp_version != Config::MPPVersion::V2) {
 			return;
 		}
 
@@ -276,7 +276,7 @@ private:
 	 */
 	void handle_position2(const ipts::DftWindow &dft)
 	{
-		if (m_config.mpp_version != Config::MPPVersion::V2) {
+		if (m_config.stylus_mpp_version != Config::MPPVersion::V2) {
 			return;
 		}
 
