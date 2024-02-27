@@ -27,6 +27,8 @@ private:
 	Config m_config {};
 	DeviceInfo m_info;
 
+	bool m_loaded_config = false;
+
 public:
 	ConfigLoader(const DeviceInfo &info, const std::optional<const ipts::Metadata> &metadata)
 		: m_info {info}
@@ -52,11 +54,13 @@ public:
 			return;
 		}
 
-		if (std::filesystem::exists(common::buildopts::ConfigFile)) {
+		if (std::filesystem::exists(common::buildopts::ConfigFile))
 			this->load_file(common::buildopts::ConfigFile);
-		}
 
 		this->load_dir(common::buildopts::ConfigDir, false);
+
+		if (!m_loaded_config)
+			spdlog::info("No config file loaded, using default values.");
 	}
 
 	/*!
@@ -181,6 +185,7 @@ private:
 		this->get(ini, "Contacts", "SizeThreshold", m_config.contacts_size_thresh_max);
 
 		// clang-format on
+		m_loaded_config = true;
 	}
 
 	/*!
