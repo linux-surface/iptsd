@@ -9,7 +9,6 @@ namespace iptsd::core::linux {
 
 enum class Error {
 	ParsingFailed,
-	ParsingInvalidValue,
 	ParsingTypeNotImplemented,
 	RunnerInitError,
 
@@ -26,8 +25,6 @@ inline std::string format_as(Error err)
 	switch (err) {
 	case Error::ParsingFailed:
 		return "core: linux: Failed to parse INI file {}!";
-	case Error::ParsingInvalidValue:
-		return "core: linux: Parsing encountered invalid value {}!";
 	case Error::ParsingTypeNotImplemented:
 		return "core: linux: Parsing not implemented for type {}!";
 	case Error::RunnerInitError:

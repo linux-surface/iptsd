@@ -29,11 +29,10 @@ private:
 	std::optional<u32> m_group = std::nullopt;
 
 	// This is a bit of a hack, for the MPP v2 button detection we only
-	// care about the first 0x0a dft window, but there's two in the frame,
-	// here we keep track of the group when 0x0a was encountered, this
-	// allows comparing against this group and only using the first 0x0a
-	// frame.
-	std::optional<u32> m_dft_0x0a_group = std::nullopt;
+	// care about the first binary (0x0a) dft window, but there's two in the
+	// frame, here we keep track of the group when 0x0a was encountered,
+	// this allows comparing against this group and only using the first frame.
+	std::optional<u32> m_mppv2_binary_group = std::nullopt;
 
 	// Boolean to track whether the pen is in contact according to mpp v2.
 	// This is used to override the contact state in the pressure frame handling.
@@ -232,8 +231,7 @@ private:
 			m_stylus.contact = true;
 			m_stylus.pressure = std::clamp(p, 0.0, 1.0);
 		} else {
-			m_stylus.contact =
-				m_mppv2_in_contact.has_value() ? m_mppv2_in_contact.value() : false;
+			m_stylus.contact = m_mppv2_in_contact.value_or(false);
 			m_stylus.pressure = 0;
 		}
 	}
@@ -245,24 +243,23 @@ private:
 	 */
 	void handle_dft_binary_mpp_2(const ipts::DftWindow &dft)
 	{
-		// Clearing the state in case we can't determine it.
-		m_mppv2_button = std::nullopt;
-
 		if (dft.x.size() <= 5) { // not sure if this can happen?
 			return;
 		}
 
-		// Second time we see the 0x0a frame in this group, skip it.
-		if (!dft.group.has_value() || m_dft_0x0a_group == dft.group)
+		// Second time we see this dft window in this group, skip it.
+		if (!dft.group.has_value() || m_mppv2_binary_group == dft.group)
 			return;
+		m_mppv2_binary_group = dft.group;
 
-		m_dft_0x0a_group = dft.group;
+		// Clearing the state in case we can't determine it.
+		m_mppv2_button = std::nullopt;
 
 		// Now, we can process the frame to determine button state.
 		// First, collapse x and y, they convey the same information.
 		const auto mag_4 = dft.x[4].magnitude + dft.y[4].magnitude;
 		const auto mag_5 = dft.x[5].magnitude + dft.y[5].magnitude;
-		const auto threshold = 2 * m_config.dft_button_min_mag;
+		const auto threshold = 2 * m_config.dft_mpp2_button_min_mag;
 
 		if (mag_4 < threshold && mag_5 < threshold) {
 			// Not enough signal to make a decision.
