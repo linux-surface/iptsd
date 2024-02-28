@@ -28,19 +28,19 @@ private:
 	i32 m_imag = 0;
 	std::optional<u32> m_group = std::nullopt;
 
-	// This is a bit of a hack, for the MPP v2 button detection we only
-	// care about the first binary (0x0a) dft window, but there's two in the
-	// frame, here we keep track of the group when 0x0a was encountered,
-	// this allows comparing against this group and only using the first frame.
+	// For the MPP v2 button detection we only care about the first binary
+	// (0x0a) dft window, but there's two in the group, we keep track of the
+	// group when 0x0a was encountered, this allows comparing against this
+	// value to use only the first window in the group.
 	std::optional<u32> m_mppv2_binary_group = std::nullopt;
+
+	// Boolean to track whether a button is held according to mpp v2.
+	// This is used instead of the button threshold detection.
+	std::optional<bool> m_mppv2_button_or_eraser = std::nullopt;
 
 	// Boolean to track whether the pen is in contact according to mpp v2.
 	// This is used to override the contact state in the pressure frame handling.
 	std::optional<bool> m_mppv2_in_contact = std::nullopt;
-
-	// Boolean to track whether the button is held according to mpp v2.
-	// This is used to override the button state in the button frame handling.
-	std::optional<bool> m_mppv2_button = std::nullopt;
 
 public:
 	DftStylus(Config config, const std::optional<const ipts::Metadata> &metadata)
@@ -191,8 +191,10 @@ private:
 		bool button = false;
 		bool rubber = false;
 
-		if (dft.x[0].magnitude > m_config.dft_button_min_mag &&
-		    dft.y[0].magnitude > m_config.dft_button_min_mag) {
+		// If mppv2 has decided on a button state use that, else use the magnitude decision.
+		if (m_mppv2_button_or_eraser.value_or(
+			    dft.x[0].magnitude > m_config.dft_button_min_mag &&
+			    dft.y[0].magnitude > m_config.dft_button_min_mag)) {
 			const i32 real = dft.x[0].real[ipts::protocol::dft::NUM_COMPONENTS / 2] +
 			                 dft.y[0].real[ipts::protocol::dft::NUM_COMPONENTS / 2];
 			const i32 imag = dft.x[0].imag[ipts::protocol::dft::NUM_COMPONENTS / 2] +
@@ -204,11 +206,6 @@ private:
 			button = val < 0;
 			rubber = val > 0;
 		}
-
-		// Check if the v2 version of the protocol detect the button state, if so
-		// overwrite the state that was calculated here.
-		if (m_mppv2_button.has_value())
-			button = m_mppv2_button.value();
 
 		m_stylus.button = button;
 		m_stylus.rubber = rubber;
@@ -253,7 +250,7 @@ private:
 		m_mppv2_binary_group = dft.group;
 
 		// Clearing the state in case we can't determine it.
-		m_mppv2_button = std::nullopt;
+		m_mppv2_button_or_eraser = std::nullopt;
 
 		// Now, we can process the frame to determine button state.
 		// First, collapse x and y, they convey the same information.
@@ -268,7 +265,7 @@ private:
 
 		// One of them is above the threshold, if 5 is higher than 4, button
 		// is held.
-		m_mppv2_button = mag_4 < mag_5;
+		m_mppv2_button_or_eraser = mag_4 < mag_5;
 	}
 
 	/*!
@@ -423,7 +420,7 @@ private:
 		m_stylus.rubber = false;
 
 		m_mppv2_in_contact = std::nullopt;
-		m_mppv2_button = std::nullopt;
+		m_mppv2_button_or_eraser = std::nullopt;
 	}
 };
 
