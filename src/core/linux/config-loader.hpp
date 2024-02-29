@@ -172,7 +172,6 @@ private:
 		this->get(ini, "DFT", "PositionMinAmp", m_config.dft_position_min_amp);
 		this->get(ini, "DFT", "PositionMinMag", m_config.dft_position_min_mag);
 		this->get(ini, "DFT", "PositionExp", m_config.dft_position_exp);
-		this->get(ini, "DFT", "ContactMinMag", m_config.dft_contact_min_mag);
 		this->get(ini, "DFT", "ButtonMinMag", m_config.dft_button_min_mag);
 		this->get(ini, "DFT", "FreqMinMag", m_config.dft_freq_min_mag);
 		this->get(ini, "DFT", "TiltMinMag", m_config.dft_tilt_min_mag);
