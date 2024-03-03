@@ -14,6 +14,7 @@
 
 #include <INIReader.h>
 #include <fmt/format.h>
+#include <spdlog/spdlog.h>
 
 #include <filesystem>
 #include <optional>
