@@ -28,6 +28,20 @@ private:
 	i32 m_imag = 0;
 	std::optional<u32> m_group = std::nullopt;
 
+	// For the MPP v2 button detection we only care about the first binary
+	// (0x0a) dft window, but there's two in the group, we keep track of the
+	// group when 0x0a was encountered, this allows comparing against this
+	// value to use only the first window in the group.
+	std::optional<u32> m_mppv2_binary_group = std::nullopt;
+
+	// Boolean to track whether a button is held according to mpp v2.
+	// This is used instead of the button threshold detection.
+	std::optional<bool> m_mppv2_button_or_eraser = std::nullopt;
+
+	// Boolean to track whether the pen is in contact according to mpp v2.
+	// This is used to override the contact state in the pressure frame handling.
+	std::optional<bool> m_mppv2_in_contact = std::nullopt;
+
 public:
 	DftStylus(Config config, const std::optional<const ipts::Metadata> &metadata)
 		: m_config {std::move(config)},
@@ -49,6 +63,12 @@ public:
 			break;
 		case ipts::protocol::dft::Type::Pressure:
 			this->handle_pressure(dft);
+			break;
+		case ipts::protocol::dft::Type::PositionMPP_2:
+			this->handle_position_mpp_2(dft);
+			break;
+		case ipts::protocol::dft::Type::BinaryMPP_2:
+			this->handle_dft_binary_mpp_2(dft);
 			break;
 		default:
 			// Ignored
@@ -171,8 +191,10 @@ private:
 		bool button = false;
 		bool rubber = false;
 
-		if (dft.x[0].magnitude > m_config.dft_button_min_mag &&
-		    dft.y[0].magnitude > m_config.dft_button_min_mag) {
+		// If mppv2 has decided on a button state use that, else use the magnitude decision.
+		if (m_mppv2_button_or_eraser.value_or(
+			    dft.x[0].magnitude > m_config.dft_button_min_mag &&
+			    dft.y[0].magnitude > m_config.dft_button_min_mag)) {
 			const i32 real = dft.x[0].real[ipts::protocol::dft::NUM_COMPONENTS / 2] +
 			                 dft.y[0].real[ipts::protocol::dft::NUM_COMPONENTS / 2];
 			const i32 imag = dft.x[0].imag[ipts::protocol::dft::NUM_COMPONENTS / 2] +
@@ -206,9 +228,70 @@ private:
 			m_stylus.contact = true;
 			m_stylus.pressure = std::clamp(p, 0.0, 1.0);
 		} else {
-			m_stylus.contact = false;
+			m_stylus.contact = m_mppv2_in_contact.value_or(false);
 			m_stylus.pressure = 0;
 		}
+	}
+
+	/*!
+	 * Determines the current button state from the 0x0a frame, it can
+	 * only be used for MPP v2 pens. The eraser is still obtained from the
+	 * phase using the button frame.
+	 */
+	void handle_dft_binary_mpp_2(const ipts::DftWindow &dft)
+	{
+		if (dft.x.size() <= 5) { // not sure if this can happen?
+			return;
+		}
+
+		// Second time we see this dft window in this group, skip it.
+		if (!dft.group.has_value() || m_mppv2_binary_group == dft.group)
+			return;
+		m_mppv2_binary_group = dft.group;
+
+		// Clearing the state in case we can't determine it.
+		m_mppv2_button_or_eraser = std::nullopt;
+
+		// Now, we can process the frame to determine button state.
+		// First, collapse x and y, they convey the same information.
+		const auto mag_4 = dft.x[4].magnitude + dft.y[4].magnitude;
+		const auto mag_5 = dft.x[5].magnitude + dft.y[5].magnitude;
+		const auto threshold = 2 * m_config.dft_mpp2_button_min_mag;
+
+		if (mag_4 < threshold && mag_5 < threshold) {
+			// Not enough signal to make a decision.
+			return;
+		}
+
+		// One of them is above the threshold, if 5 is higher than 4, button
+		// is held.
+		m_mppv2_button_or_eraser = mag_4 < mag_5;
+	}
+
+	/*!
+	 * Determines whether the pen is making contact with the screen, it can
+	 * only be used for MPP v2 pens.
+	 */
+	void handle_position_mpp_2(const ipts::DftWindow &dft)
+	{
+		// Clearing the state in case we can't determine it.
+		m_mppv2_in_contact = std::nullopt;
+
+		if (dft.x.size() <= 3) { // not sure if this can happen?
+			return;
+		}
+
+		const auto mag_2 = dft.x[2].magnitude + dft.y[2].magnitude;
+		const auto mag_3 = dft.x[3].magnitude + dft.y[3].magnitude;
+
+		const auto threshold = 2 * m_config.dft_mpp2_contact_min_mag;
+		if (mag_2 < threshold && mag_3 < threshold) {
+			// Not enough signal to make a decision.
+			return;
+		}
+
+		// The pen switches the row from two to three when there's contact.
+		m_mppv2_in_contact = mag_2 < mag_3;
 	}
 
 	/*!
@@ -335,6 +418,9 @@ private:
 		m_stylus.contact = false;
 		m_stylus.button = false;
 		m_stylus.rubber = false;
+
+		m_mppv2_in_contact = std::nullopt;
+		m_mppv2_button_or_eraser = std::nullopt;
 	}
 };
 

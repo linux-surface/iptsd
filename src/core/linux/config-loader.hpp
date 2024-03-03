@@ -27,6 +27,8 @@ private:
 	Config m_config {};
 	DeviceInfo m_info;
 
+	bool m_loaded_config = false;
+
 public:
 	ConfigLoader(const DeviceInfo &info, const std::optional<const ipts::Metadata> &metadata)
 		: m_info {info}
@@ -56,6 +58,9 @@ public:
 			this->load_file(common::buildopts::ConfigFile);
 
 		this->load_dir(common::buildopts::ConfigDir, false);
+
+		if (!m_loaded_config)
+			spdlog::info("No config file loaded, using default values.");
 	}
 
 	/*!
@@ -127,6 +132,8 @@ private:
 	 */
 	void load_file(const std::filesystem::path &path)
 	{
+		spdlog::info("Loading config {}.", path.c_str());
+
 		const INIReader ini {path};
 
 		if (ini.ParseError() != 0)
@@ -169,12 +176,15 @@ private:
 		this->get(ini, "DFT", "FreqMinMag", m_config.dft_freq_min_mag);
 		this->get(ini, "DFT", "TiltMinMag", m_config.dft_tilt_min_mag);
 		this->get(ini, "DFT", "TiltDistance", m_config.dft_tilt_distance);
+		this->get(ini, "DFT", "Mpp2ContactMinMag", m_config.dft_mpp2_contact_min_mag);
+		this->get(ini, "DFT", "Mpp2ButtonMinMag", m_config.dft_mpp2_button_min_mag);
 
 		// Legacy options that are kept for compatibility
 		this->get(ini, "DFT", "TipDistance", m_config.stylus_tip_distance);
 		this->get(ini, "Contacts", "SizeThreshold", m_config.contacts_size_thresh_max);
 
 		// clang-format on
+		m_loaded_config = true;
 	}
 
 	/*!
