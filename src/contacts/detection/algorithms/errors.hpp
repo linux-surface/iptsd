@@ -3,11 +3,13 @@
 #ifndef IPTSD_CONTACTS_DETECTION_ALGORITHMS_ERRORS_HPP
 #define IPTSD_CONTACTS_DETECTION_ALGORITHMS_ERRORS_HPP
 
+#include <common/types.hpp>
+
 #include <string>
 
 namespace iptsd::contacts::detection {
 
-enum class Error {
+enum class Error : u8 {
 	InvalidNeutralMode,
 	InvalidClusterOverlap,
 	FailedToMergeClusters,

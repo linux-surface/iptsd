@@ -17,7 +17,7 @@
 namespace iptsd::casts {
 
 template <class To, class From>
-constexpr inline To to(const From value)
+constexpr To to(const From value)
 {
 	static_assert(!std::is_same_v<From, f64> || !std::is_same_v<To, f32>,
 	              "f64 to f32 cannot be narrowed safely. Please use gsl::narrow_cast!");
@@ -32,19 +32,19 @@ constexpr inline To to(const From value)
 }
 
 template <class T>
-constexpr inline std::make_signed_t<T> to_signed(const T value)
+constexpr std::make_signed_t<T> to_signed(const T value)
 {
 	return to<std::make_signed_t<T>>(value);
 }
 
 template <class T>
-constexpr inline std::make_unsigned_t<T> to_unsigned(const T value)
+constexpr std::make_unsigned_t<T> to_unsigned(const T value)
 {
 	return to<std::make_unsigned_t<T>>(value);
 }
 
 template <class T>
-constexpr inline Eigen::Index to_eigen(const T value)
+constexpr Eigen::Index to_eigen(const T value)
 {
 	return to<Eigen::Index>(value);
 }
@@ -57,7 +57,7 @@ constexpr inline Eigen::Index to_eigen(const T value)
  * @return A copy of the value of the packed field.
  */
 template <class T>
-constexpr inline T unpack(const T packed)
+constexpr T unpack(const T packed)
 {
 	return packed;
 }

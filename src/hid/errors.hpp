@@ -3,11 +3,13 @@
 #ifndef IPTSD_HID_ERRORS_HPP
 #define IPTSD_HID_ERRORS_HPP
 
+#include <common/types.hpp>
+
 #include <string>
 
 namespace iptsd::hid {
 
-enum class Error {
+enum class Error : u8 {
 	ReportMergeTypes,
 	ReportMergeIDs,
 	UsageBeforePage,

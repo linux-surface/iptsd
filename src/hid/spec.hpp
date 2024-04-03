@@ -18,7 +18,7 @@ constexpr static u8 SHIFT_SIZE = 0;
 /*
  * 6.2.2.2 Short Items
  */
-enum class ItemType {
+enum class ItemType : u8 {
 	Main = 0,
 	Global = 1,
 	Local = 2,
@@ -28,7 +28,7 @@ enum class ItemType {
 /*
  * 6.2.2.4 Main Items
  */
-enum class TagMain {
+enum class TagMain : u8 {
 	Input = 0b1000,
 	Output = 0b1001,
 	Feature = 0b1011,
@@ -36,14 +36,14 @@ enum class TagMain {
 	EndCollection = 0b1100,
 };
 
-enum class TagGlobal {
+enum class TagGlobal : u8 {
 	UsagePage = 0b0000,
 	ReportSize = 0b0111,
 	ReportId = 0b1000,
 	ReportCount = 0b1001,
 };
 
-enum class TagLocal {
+enum class TagLocal : u8 {
 	Usage = 0b0000,
 	UsageMinimum = 0b0001,
 	UsageMaximum = 0b0010,

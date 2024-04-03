@@ -19,7 +19,7 @@ namespace iptsd::hid {
 /*
  * The type of a report.
  */
-enum class ReportType {
+enum class ReportType : u8 {
 	// Data that is coming from the device
 	Input,
 

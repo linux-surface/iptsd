@@ -32,6 +32,7 @@ struct [[gnu::packed]] Header {
 };
 static_assert(sizeof(Header) == 12);
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class GroupType : u16 {
 	//! The group contains report frames with stylus data.
 	Stylus = 0x6,

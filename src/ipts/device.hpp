@@ -23,7 +23,7 @@
 namespace iptsd::ipts {
 namespace impl {
 
-enum class DeviceError {
+enum class DeviceError : u8 {
 	InvalidDevice,
 	InvalidSetModeReport,
 };
@@ -42,7 +42,7 @@ inline std::string format_as(DeviceError err)
 
 } // namespace impl
 
-enum class Mode {
+enum class Mode : u8 {
 	Singletouch = 0,
 	Multitouch = 1,
 };

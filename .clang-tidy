@@ -21,6 +21,7 @@
 		"-readability-redundant-access-specifiers",
 		"-readability-function-cognitive-complexity",
 		"-readability-braces-around-statements",
+		"-readability-redundant-member-init",
 	],
 	"HeaderFilterRegex": "src/.*hpp",
 	"FormatStyle": "file",

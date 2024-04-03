@@ -51,7 +51,7 @@ typename DenseBase<Derived>::Scalar statistical_mode(const DenseBase<Derived> &d
 /*
  * The algorithm that will be used to calculate the neutral value.
  */
-enum class Algorithm {
+enum class Algorithm : u8 {
 	// The most common element (statistical mode) will be used.
 	MODE,
 

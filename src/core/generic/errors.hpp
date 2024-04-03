@@ -3,11 +3,13 @@
 #ifndef IPTSD_CORE_GENERIC_ERRORS_HPP
 #define IPTSD_CORE_GENERIC_ERRORS_HPP
 
+#include <common/types.hpp>
+
 #include <string>
 
 namespace iptsd::core {
 
-enum class Error {
+enum class Error : u8 {
 	InvalidScreenSize,
 	InvalidNeutralValueAlgorithm,
 };

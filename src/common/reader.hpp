@@ -13,7 +13,7 @@
 namespace iptsd {
 namespace impl {
 
-enum class ReaderError {
+enum class ReaderError : u8 {
 	EndOfBuffer,
 };
 
