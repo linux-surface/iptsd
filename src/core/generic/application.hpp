@@ -139,10 +139,21 @@ protected:
 	 */
 	virtual void on_stylus(const ipts::StylusData & /* unused */) {};
 
+	bool prev = false;
+
 	/*!
 	 * For running application specific code that further processes touchpad samples.
 	 */
-	virtual void on_touchpad(const ipts::TouchpadSample & /* unused */) {};
+	virtual void on_touchpad(const ipts::TouchpadSample &sample)
+	{
+		if (!prev && sample.button)
+			spdlog::info("Button pressed!");
+
+		if (prev && !sample.button)
+			spdlog::info("Button released!");
+
+		prev = sample.button;
+	}
 
 private:
 	/*!
