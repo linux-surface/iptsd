@@ -29,6 +29,13 @@ struct StylusData {
 	u32 serial = 0;
 };
 
+struct TouchpadSample {
+	bool contact = false;
+	bool button = false;
+
+	f64 pressure = 0;
+};
+
 struct Heatmap {
 	u8 rows = 0;
 	u8 columns = 0;

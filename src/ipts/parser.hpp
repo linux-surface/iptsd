@@ -11,6 +11,7 @@
 #include "protocol/metadata.hpp"
 #include "protocol/report.hpp"
 #include "protocol/stylus.hpp"
+#include "protocol/touchpad.hpp"
 
 #include <common/casts.hpp>
 #include <common/reader.hpp>
@@ -33,6 +34,9 @@ public:
 
 	// The callback that is invoked when a DFT window was parsed.
 	std::function<void(const DftWindow &)> on_dft;
+
+	// The callback that is invoked when a touchpad sample was parsed.
+	std::function<void(const TouchpadSample &)> on_touchpad;
 
 	// The callback that is invoked when a metadata report was parsed.
 	std::function<void(const Metadata &)> on_metadata;
@@ -212,6 +216,9 @@ private:
 			break;
 		case protocol::report::Type::DftWindow:
 			this->parse_dft_window(sub);
+			break;
+		case protocol::report::Type::Touchpad:
+			this->parse_touchpad(sub);
 			break;
 		default:
 			// TODO: Add handler for unknown data and wire up debug tools
@@ -430,6 +437,33 @@ private:
 	void parse_dft_metadata(Reader &reader)
 	{
 		m_dft_meta = reader.read<protocol::dft::Metadata>();
+	}
+
+	/*!
+	 * Parses a touchpad report.
+	 *
+	 * Touchpad reports can contain multiple samples of the touchpad state.
+	 * Only the last sample will be emitted to the caller, the others are dropped
+	 * to prevent jittering outputs.
+	 *
+	 * @param[in] reader The chunk of data allocated to the report frame.
+	 */
+	void parse_touchpad(Reader &reader) const
+	{
+		TouchpadSample touchpad {};
+
+		while (reader.size() > 0) {
+			const auto sample = reader.read<protocol::touchpad::Sample>();
+
+			touchpad.pressure = casts::to<f64>(sample.pressure);
+			touchpad.pressure /= protocol::touchpad::MAX_PRESSURE;
+
+			touchpad.contact = touchpad.pressure > 0;
+			touchpad.button = sample.button;
+		}
+
+		if (this->on_touchpad)
+			this->on_touchpad(touchpad);
 	}
 };
 
