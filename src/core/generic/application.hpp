@@ -94,6 +94,7 @@ public:
 		m_parser.on_heatmap = [&](const auto &data) { this->process_heatmap(data); };
 		m_parser.on_stylus = [&](const auto &data) { this->process_stylus(data); };
 		m_parser.on_dft = [&](const auto &data) { this->process_dft(data); };
+		m_parser.on_touchpad = [&](const auto &data) { this->on_touchpad(data); };
 	}
 
 	virtual ~Application() = default;
@@ -137,6 +138,11 @@ protected:
 	 * For running application specific code that futher processes stylus inputs.
 	 */
 	virtual void on_stylus(const ipts::StylusData & /* unused */) {};
+
+	/*!
+	 * For running application specific code that further processes touchpad samples.
+	 */
+	virtual void on_touchpad(const ipts::TouchpadSample & /* unused */) {};
 
 private:
 	/*!
