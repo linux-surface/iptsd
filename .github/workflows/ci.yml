@@ -39,7 +39,7 @@
 		},
 		"check": {
 			"name": "Check code quality",
-			"container": "fedora:39",
+			"container": "fedora:40",
 			"runs-on": "ubuntu-latest",
 			"needs": [
 				"checkout",
