@@ -35,10 +35,10 @@ public:
 	ConfigLoader(const DeviceInfo &info) : m_info {info}
 	{
 		if (m_info.meta.has_value()) {
-			m_config.width = casts::to<f64>(m_info.meta->dimensions.width) / 1e3;
-			m_config.height = casts::to<f64>(m_info.meta->dimensions.height) / 1e3;
-			m_config.invert_x = m_info.meta->transform.xx < 0;
-			m_config.invert_y = m_info.meta->transform.yy < 0;
+			m_config.width = m_info.meta->width;
+			m_config.height = m_info.meta->height;
+			m_config.invert_x = m_info.meta->invert_x;
+			m_config.invert_y = m_info.meta->invert_y;
 		}
 
 		this->load_dir(common::buildopts::PresetDir);

@@ -8,6 +8,7 @@
 
 #include <common/casts.hpp>
 #include <ipts/data.hpp>
+#include <ipts/metadata.hpp>
 #include <ipts/protocol/dft.hpp>
 
 #include <algorithm>
@@ -110,8 +111,8 @@ private:
 		u8 height = dft.height;
 
 		if ((width == 0 || height == 0) && m_info.meta.has_value()) {
-			width = casts::to<u8>(m_info.meta->dimensions.columns);
-			height = casts::to<u8>(m_info.meta->dimensions.rows);
+			width = m_info.meta->columns;
+			height = m_info.meta->rows;
 		}
 
 		m_group = dft.group;

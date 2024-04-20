@@ -4,8 +4,8 @@
 #define IPTSD_CORE_GENERIC_DEVICE_HPP
 
 #include <common/types.hpp>
-#include <ipts/data.hpp>
 #include <ipts/device.hpp>
+#include <ipts/metadata.hpp>
 
 #include <optional>
 

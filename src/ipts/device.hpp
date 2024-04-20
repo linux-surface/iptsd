@@ -3,8 +3,8 @@
 #ifndef IPTSD_IPTS_DEVICE_HPP
 #define IPTSD_IPTS_DEVICE_HPP
 
-#include "data.hpp"
 #include "descriptor.hpp"
+#include "metadata.hpp"
 #include "parser.hpp"
 
 #include <common/error.hpp>

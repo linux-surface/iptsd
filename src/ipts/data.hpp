@@ -4,7 +4,6 @@
 #define IPTSD_IPTS_DATA_HPP
 
 #include "protocol/dft.hpp"
-#include "protocol/metadata.hpp"
 
 #include <common/types.hpp>
 
@@ -48,13 +47,6 @@ struct DftWindow {
 
 	gsl::span<protocol::dft::Row> x {};
 	gsl::span<protocol::dft::Row> y {};
-};
-
-struct Metadata {
-	protocol::metadata::Dimensions dimensions {};
-	protocol::metadata::Transform transform {};
-	u8 unknown_byte = 0;
-	protocol::metadata::Unknown unknown {};
 };
 
 } // namespace iptsd::ipts

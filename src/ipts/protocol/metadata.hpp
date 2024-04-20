@@ -48,6 +48,23 @@ struct [[gnu::packed]] Unknown {
 };
 static_assert(sizeof(Unknown) == 64);
 
+/*!
+ * The contents of a metadata frame.
+ *
+ * Metadata frames are returned by a HID feature report. They are wrapped in a
+ * standard HID frame, but without the report header.
+ */
+struct [[gnu::packed]] Frame {
+	protocol::metadata::Dimensions dimensions;
+
+	//! Set to 1 in all known data. Could be a counter for how much data is following?
+	u8 unknown_byte;
+
+	protocol::metadata::Transform transform;
+	protocol::metadata::Unknown unknown;
+};
+static_assert(sizeof(Frame) == 105);
+
 } // namespace iptsd::ipts::protocol::metadata
 
 #endif // IPTSD_IPTS_PROTOCOL_METADATA

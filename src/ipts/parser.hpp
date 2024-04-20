@@ -4,6 +4,7 @@
 #define IPTSD_IPTS_PARSER_HPP
 
 #include "data.hpp"
+#include "metadata.hpp"
 #include "protocol/dft.hpp"
 #include "protocol/heatmap.hpp"
 #include "protocol/hid.hpp"
@@ -170,15 +171,23 @@ private:
 	 */
 	void parse_metadata_frame(Reader &reader) const
 	{
-		Metadata m {};
+		Metadata meta {};
 
-		m.dimensions = reader.read<protocol::metadata::Dimensions>();
-		m.unknown_byte = reader.read<u8>();
-		m.transform = reader.read<protocol::metadata::Transform>();
-		m.unknown = reader.read<protocol::metadata::Unknown>();
+		const auto frame = reader.read<protocol::metadata::Frame>();
+
+		// These are both u8 in the heatmap dimension report
+		meta.rows = casts::to<u8>(frame.dimensions.rows);
+		meta.columns = casts::to<u8>(frame.dimensions.columns);
+
+		// Use floating points (cm) instead of fixed point (mm * 100)
+		meta.width = casts::to<f64>(frame.dimensions.width) / 1000;
+		meta.height = casts::to<f64>(frame.dimensions.height) / 1000;
+
+		meta.invert_x = frame.transform.xx < 0;
+		meta.invert_y = frame.transform.yy < 0;
 
 		if (this->on_metadata)
-			this->on_metadata(m);
+			this->on_metadata(meta);
 	}
 
 	/*!
