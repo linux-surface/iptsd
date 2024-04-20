@@ -265,8 +265,6 @@ private:
 			return;
 
 		samples::Stylus stylus {};
-		stylus.serial = report.serial;
-
 		stylus.proximity = sample.state.proximity;
 		stylus.button = sample.state.button;
 		stylus.rubber = sample.state.rubber;
@@ -313,7 +311,6 @@ private:
 			return;
 
 		samples::Stylus stylus {};
-		stylus.serial = report.serial;
 		stylus.timestamp = sample.timestamp;
 
 		stylus.proximity = sample.state.proximity;

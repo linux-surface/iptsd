@@ -20,9 +20,6 @@ struct Stylus {
 	//! Whether the stylus is in eraser mode.
 	bool rubber = false;
 
-	//! A serial number for identifying the pen.
-	u32 serial = 0;
-
 	//! The time at which this sample was generated.
 	u16 timestamp = 0;
 
