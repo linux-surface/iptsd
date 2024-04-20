@@ -206,6 +206,9 @@ private:
 	 */
 	void process_stylus(const ipts::samples::Stylus &data)
 	{
+		if (!m_info.is_touchscreen())
+			return;
+
 		ipts::samples::Stylus corrected = data;
 
 		// Correct position based on tip-transmitter distance
@@ -227,6 +230,9 @@ private:
 	 */
 	void process_dft(const ipts::samples::DftWindow &data)
 	{
+		if (!m_info.is_touchscreen())
+			return;
+
 		m_dft.input(data);
 		this->process_stylus(m_dft.get_stylus());
 	}
@@ -241,6 +247,9 @@ private:
 	 */
 	void process_button(const ipts::samples::Button &data)
 	{
+		if (!m_info.is_touchpad())
+			return;
+
 		this->on_button(data);
 	}
 
