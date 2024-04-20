@@ -93,7 +93,7 @@ public:
 		if (m_config.width == 0 || m_config.height == 0)
 			throw common::Error<Error::InvalidScreenSize> {};
 
-		m_parser.on_heatmap = [&](const auto &data) { this->process_heatmap(data); };
+		m_parser.on_touch = [&](const auto &data) { this->process_touch(data); };
 		m_parser.on_stylus = [&](const auto &data) { this->process_stylus(data); };
 		m_parser.on_dft = [&](const auto &data) { this->process_dft(data); };
 	}
@@ -133,7 +133,7 @@ protected:
 	/*!
 	 * For running application specific code that further processes touch inputs.
 	 */
-	virtual void on_contacts(const std::vector<contacts::Contact<f64>> & /* unused */) {};
+	virtual void on_touch(const std::vector<contacts::Contact<f64>> & /* unused */) {};
 
 	/*!
 	 * For running application specific code that futher processes stylus inputs.
@@ -149,7 +149,7 @@ private:
 	 *
 	 * @param[in] data The data to process.
 	 */
-	void process_heatmap(const ipts::samples::Touch &data)
+	void process_touch(const ipts::samples::Touch &data)
 	{
 		const Eigen::Index rows = casts::to_eigen(data.rows);
 		const Eigen::Index cols = casts::to_eigen(data.columns);
@@ -189,7 +189,7 @@ private:
 		}
 
 		// Hand off the found contacts to the handler code.
-		this->on_contacts(m_contacts);
+		this->on_touch(m_contacts);
 	}
 
 	/*!

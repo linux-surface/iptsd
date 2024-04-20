@@ -42,7 +42,7 @@ public:
 	Visualize(const core::Config &config, const core::DeviceInfo &info)
 		: core::Application(config, info) {};
 
-	void on_contacts(const std::vector<contacts::Contact<f64>> & /* unused */) override
+	void on_touch(const std::vector<contacts::Contact<f64>> & /* unused */) override
 	{
 		const Eigen::Index cols = m_heatmap.cols();
 		const Eigen::Index rows = m_heatmap.rows();

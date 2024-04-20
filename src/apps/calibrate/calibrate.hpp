@@ -53,7 +53,7 @@ public:
 		spdlog::info("Aspect:  0.000 (Min: 0.000; Max: 0.000)");
 	}
 
-	void on_contacts(const std::vector<contacts::Contact<f64>> &contacts) override
+	void on_touch(const std::vector<contacts::Contact<f64>> &contacts) override
 	{
 		// Calculate size and aspect of all stable contacts
 		for (const contacts::Contact<f64> &contact : contacts) {

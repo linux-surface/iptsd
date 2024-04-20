@@ -32,7 +32,7 @@ public:
 	std::function<void(const samples::Stylus &)> on_stylus;
 
 	// The callback that is invoked when a capacitive heatmap was parsed.
-	std::function<void(const samples::Touch &)> on_heatmap;
+	std::function<void(const samples::Touch &)> on_touch;
 
 	// The callback that is invoked when a DFT window was parsed.
 	std::function<void(const samples::DftWindow &)> on_dft;
@@ -368,17 +368,17 @@ private:
 	 */
 	void parse_heatmap_data(Reader &reader) const
 	{
-		samples::Touch heatmap {};
+		samples::Touch touch {};
 
-		heatmap.rows = m_dim.rows;
-		heatmap.columns = m_dim.columns;
-		heatmap.min = m_dim.z_min;
-		heatmap.max = m_dim.z_max;
+		touch.rows = m_dim.rows;
+		touch.columns = m_dim.columns;
+		touch.min = m_dim.z_min;
+		touch.max = m_dim.z_max;
 
-		heatmap.heatmap = reader.subspan<u8>(casts::to<usize>(m_dim.rows) * m_dim.columns);
+		touch.heatmap = reader.subspan<u8>(casts::to<usize>(m_dim.rows) * m_dim.columns);
 
-		if (this->on_heatmap)
-			this->on_heatmap(heatmap);
+		if (this->on_touch)
+			this->on_touch(touch);
 	}
 
 	/*!
