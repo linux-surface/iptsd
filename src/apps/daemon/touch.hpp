@@ -43,6 +43,15 @@ private:
 	// The daemon configuration.
 	core::Config m_config;
 
+	// Information about the device that the daemon is reading from.
+	core::DeviceInfo m_info;
+
+	// How far a contact can be outside of the touch area and still get registered.
+	f64 m_overshoot = 0;
+
+	// Whether all inputs will be lifted once a palm is registered.
+	bool m_disable_on_palm = false;
+
 	// The indices of the contacts in the current frame.
 	std::set<usize> m_current {};
 
@@ -59,17 +68,40 @@ private:
 	bool m_enabled = true;
 
 public:
-	TouchDevice(const core::Config &config, const core::DeviceInfo &info) : m_config {config}
+	TouchDevice(const core::Config &config, const core::DeviceInfo &info)
+		: m_config {config},
+		  m_info {info}
 	{
-		m_uinput->set_name("Touchscreen");
+		if (info.is_touchscreen())
+			m_uinput->set_name("Touchscreen");
+		else
+			m_uinput->set_name("Touchpad");
+
 		m_uinput->set_vendor(info.vendor);
 		m_uinput->set_product(info.product);
 
 		m_uinput->set_evbit(EV_ABS);
 		m_uinput->set_evbit(EV_KEY);
 
-		m_uinput->set_propbit(INPUT_PROP_DIRECT);
 		m_uinput->set_keybit(BTN_TOUCH);
+
+		if (info.is_touchpad()) {
+			m_uinput->set_keybit(BTN_TOOL_FINGER);
+			m_uinput->set_keybit(BTN_TOOL_DOUBLETAP);
+			m_uinput->set_keybit(BTN_TOOL_TRIPLETAP);
+			m_uinput->set_keybit(BTN_TOOL_QUADTAP);
+			m_uinput->set_keybit(BTN_TOOL_QUINTTAP);
+
+			m_uinput->set_propbit(INPUT_PROP_POINTER);
+
+			m_overshoot = config.touchpad_overshoot;
+			m_disable_on_palm = config.touchpad_disable_on_palm;
+		} else {
+			m_uinput->set_propbit(INPUT_PROP_DIRECT);
+
+			m_overshoot = config.touchscreen_overshoot;
+			m_disable_on_palm = config.touchscreen_disable_on_palm;
+		}
 
 		const f64 diag = std::hypot(config.width, config.height);
 
@@ -98,7 +130,7 @@ public:
 	 */
 	void update(const std::vector<contacts::Contact<f64>> &contacts)
 	{
-		// If the touchscreen is disabled ignore all inputs.
+		// If the touch device is disabled ignore all inputs.
 		if (!m_enabled)
 			return;
 
@@ -114,7 +146,7 @@ public:
 	}
 
 	/*!
-	 * Disables the touchscreen and lifts all contacts.
+	 * Disables the touch device and lifts all contacts.
 	 */
 	void disable()
 	{
@@ -130,7 +162,7 @@ public:
 	}
 
 	/*!
-	 * Enables the touchscreen.
+	 * Enables the touch device.
 	 */
 	void enable()
 	{
@@ -138,9 +170,9 @@ public:
 	}
 
 	/*!
-	 * Whether the touchscreen is disabled or enabled.
+	 * Whether the touch device is disabled or enabled.
 	 *
-	 * @return true if the touchscreen is enabled.
+	 * @return true if the touch device is enabled.
 	 */
 	[[nodiscard]] bool enabled() const
 	{
@@ -148,7 +180,7 @@ public:
 	}
 
 	/*!
-	 * Whether the touchscreen is currently active.
+	 * Whether the touch device is currently active.
 	 *
 	 * @return true if there are any active inputs.
 	 */
@@ -189,14 +221,14 @@ private:
 	}
 
 	/*!
-	 * Checks if the touchscreen should be disabled because of a palm on the screen.
+	 * Checks if the touch device should be disabled because of a palm.
 	 *
 	 * @param[in] contacts All currently active contacts.
 	 * @return true if all contacts should be lifted.
 	 */
 	[[nodiscard]] bool is_blocked(const std::vector<contacts::Contact<f64>> &contacts) const
 	{
-		if (!m_config.touchscreen_disable_on_palm)
+		if (!m_disable_on_palm)
 			return false;
 
 		return std::any_of(contacts.cbegin(), contacts.cend(), [&](const auto &c) {
@@ -213,8 +245,8 @@ private:
 	{
 		bool reset_singletouch = true;
 
-		const f64 ox = m_config.touchscreen_overshoot / m_config.width;
-		const f64 oy = m_config.touchscreen_overshoot / m_config.height;
+		const f64 ox = m_overshoot / m_config.width;
+		const f64 oy = m_overshoot / m_config.height;
 
 		for (const contacts::Contact<f64> &contact : contacts) {
 			// Ignore contacts without an index
@@ -366,6 +398,14 @@ private:
 	void lift_singletouch() const
 	{
 		m_uinput->emit(EV_KEY, BTN_TOUCH, 0);
+
+		if (m_info.is_touchpad()) {
+			m_uinput->emit(EV_KEY, BTN_TOOL_FINGER, 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_DOUBLETAP, 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_TRIPLETAP, 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_QUADTAP, 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_QUINTTAP, 0);
+		}
 	}
 
 	/*!
@@ -384,6 +424,15 @@ private:
 		const i32 y = casts::to<i32>(std::round(mean.y() * MAX_Y));
 
 		m_uinput->emit(EV_KEY, BTN_TOUCH, 1);
+
+		if (m_info.is_touchpad()) {
+			m_uinput->emit(EV_KEY, BTN_TOOL_FINGER, m_current.size() == 1 ? 1 : 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_DOUBLETAP, m_current.size() == 2 ? 1 : 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_TRIPLETAP, m_current.size() == 3 ? 1 : 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_QUADTAP, m_current.size() == 4 ? 1 : 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_QUINTTAP, m_current.size() >= 5 ? 1 : 0);
+		}
+
 		m_uinput->emit(EV_ABS, ABS_X, x);
 		m_uinput->emit(EV_ABS, ABS_Y, y);
 	}

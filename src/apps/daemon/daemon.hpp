@@ -20,7 +20,7 @@ namespace iptsd::apps::daemon {
 
 class Daemon : public core::Application {
 private:
-	// The touchscreen device.
+	// The touch device.
 	TouchDevice m_touch;
 
 	// The stylus device.
@@ -34,20 +34,26 @@ public:
 
 	void on_start() override
 	{
-		if (m_config.touchscreen_disable)
+		if (m_config.touchpad_disable && m_info.is_touchpad())
+			spdlog::warn("Touchpad is disabled!");
+
+		if (m_config.touchscreen_disable && m_info.is_touchscreen())
 			spdlog::warn("Touchscreen is disabled!");
 
-		if (m_config.stylus_disable)
+		if (m_config.stylus_disable && m_info.is_touchpad())
 			spdlog::warn("Stylus is disabled!");
 	}
 
 	void on_touch(const std::vector<contacts::Contact<f64>> &contacts) override
 	{
-		if (m_config.touchscreen_disable)
+		if (m_config.touchpad_disable && m_info.is_touchpad())
+			return;
+
+		if (m_config.touchscreen_disable && m_info.is_touchscreen())
 			return;
 
 		// Enable the touchscreen if it was disabled by a stylus that is no longer active.
-		if (m_config.touchscreen_disable_on_stylus) {
+		if (m_config.touchscreen_disable_on_stylus && m_info.is_touchscreen()) {
 			if (!m_stylus.active() && !m_touch.enabled())
 				m_touch.enable();
 		}
@@ -60,8 +66,10 @@ public:
 		if (m_config.stylus_disable)
 			return;
 
-		if (m_config.touchscreen_disable_on_stylus && m_touch.enabled())
-			m_touch.disable();
+		if (m_config.touchscreen_disable_on_stylus && m_info.is_touchscreen()) {
+			if (m_touch.enabled())
+				m_touch.disable();
+		}
 
 		m_stylus.update(stylus);
 	}
