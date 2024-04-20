@@ -10,6 +10,7 @@
 #include <contacts/contact.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
+#include <ipts/samples/button.hpp>
 
 #include <gsl/gsl>
 
@@ -86,6 +87,7 @@ public:
 		m_uinput->set_keybit(BTN_TOUCH);
 
 		if (info.is_touchpad()) {
+			m_uinput->set_keybit(BTN_LEFT);
 			m_uinput->set_keybit(BTN_TOOL_FINGER);
 			m_uinput->set_keybit(BTN_TOOL_DOUBLETAP);
 			m_uinput->set_keybit(BTN_TOOL_TRIPLETAP);
@@ -93,6 +95,7 @@ public:
 			m_uinput->set_keybit(BTN_TOOL_QUINTTAP);
 
 			m_uinput->set_propbit(INPUT_PROP_POINTER);
+			m_uinput->set_propbit(INPUT_PROP_BUTTONPAD);
 
 			m_overshoot = config.touchpad_overshoot;
 			m_disable_on_palm = config.touchpad_disable_on_palm;
@@ -142,6 +145,21 @@ public:
 		else
 			this->process(contacts);
 
+		this->sync();
+	}
+
+	/*!
+	 * Passes a sample of the touchpad button to the linux kernel.
+	 *
+	 * @param[in] button The state of the touchpad button (pressed / released).
+	 */
+	void update(const ipts::samples::Button &button)
+	{
+		// If the touch device is disabled ignore all inputs.
+		if (!m_enabled)
+			return;
+
+		m_uinput->emit(EV_KEY, BTN_LEFT, button.active ? 1 : 0);
 		this->sync();
 	}
 
@@ -400,6 +418,7 @@ private:
 		m_uinput->emit(EV_KEY, BTN_TOUCH, 0);
 
 		if (m_info.is_touchpad()) {
+			m_uinput->emit(EV_KEY, BTN_LEFT, 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_FINGER, 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_DOUBLETAP, 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_TRIPLETAP, 0);

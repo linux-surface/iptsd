@@ -10,6 +10,7 @@
 #include <contacts/contact.hpp>
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
+#include <ipts/samples/button.hpp>
 #include <ipts/samples/stylus.hpp>
 
 #include <spdlog/spdlog.h>
@@ -65,6 +66,14 @@ public:
 		}
 
 		m_touch->update(contacts);
+	}
+
+	void on_button(const ipts::samples::Button &button) override
+	{
+		if (!m_touch.has_value())
+			return;
+
+		m_touch->update(button);
 	}
 
 	void on_stylus(const ipts::samples::Stylus &stylus) override
