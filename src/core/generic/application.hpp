@@ -13,6 +13,7 @@
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
 #include <ipts/parser.hpp>
+#include <ipts/samples/button.hpp>
 #include <ipts/samples/dft.hpp>
 #include <ipts/samples/stylus.hpp>
 #include <ipts/samples/touch.hpp>
@@ -96,6 +97,7 @@ public:
 		m_parser.on_touch = [&](const auto &data) { this->process_touch(data); };
 		m_parser.on_stylus = [&](const auto &data) { this->process_stylus(data); };
 		m_parser.on_dft = [&](const auto &data) { this->process_dft(data); };
+		m_parser.on_button = [&](const auto &data) { this->process_button(data); };
 	}
 
 	virtual ~Application() = default;
@@ -139,6 +141,11 @@ protected:
 	 * For running application specific code that futher processes stylus inputs.
 	 */
 	virtual void on_stylus(const ipts::samples::Stylus & /* unused */) {};
+
+	/*!
+	 * For running application specific code that further processes button clicks.
+	 */
+	virtual void on_button(const ipts::samples::Button & /* unused */) {};
 
 private:
 	/*!
@@ -222,6 +229,19 @@ private:
 	{
 		m_dft.input(data);
 		this->process_stylus(m_dft.get_stylus());
+	}
+
+	/*!
+	 * Handles incoming button clicks.
+	 *
+	 * A button sample describes the state of the left / right click button on
+	 * IPTS touchpads.
+	 *
+	 * @param[in] data The data to process.
+	 */
+	void process_button(const ipts::samples::Button &data)
+	{
+		this->on_button(data);
 	}
 
 	/*!
