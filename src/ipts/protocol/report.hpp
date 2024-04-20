@@ -27,6 +27,8 @@ enum class Type : u8 {
 	DftMetadata = 0x5F,
 	DftDetection = 0x62,
 	DftLift = 0x63,
+
+	Button = 0x90,
 };
 
 /*!

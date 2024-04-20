@@ -4,6 +4,7 @@
 #define IPTSD_IPTS_PARSER_HPP
 
 #include "metadata.hpp"
+#include "protocol/button.hpp"
 #include "protocol/dft.hpp"
 #include "protocol/heatmap.hpp"
 #include "protocol/hid.hpp"
@@ -11,6 +12,7 @@
 #include "protocol/metadata.hpp"
 #include "protocol/report.hpp"
 #include "protocol/stylus.hpp"
+#include "samples/button.hpp"
 #include "samples/dft.hpp"
 #include "samples/stylus.hpp"
 #include "samples/touch.hpp"
@@ -36,6 +38,9 @@ public:
 
 	// The callback that is invoked when a DFT window was parsed.
 	std::function<void(const samples::DftWindow &)> on_dft;
+
+	// The callback that is invoked when a button sample was parsed.
+	std::function<void(const samples::Button &)> on_button;
 
 	// The callback that is invoked when a metadata report was parsed.
 	std::function<void(const Metadata &)> on_metadata;
@@ -223,6 +228,9 @@ private:
 			break;
 		case protocol::report::Type::DftWindow:
 			this->parse_dft_window(sub);
+			break;
+		case protocol::report::Type::Button:
+			this->parse_button(sub);
 			break;
 		default:
 			// TODO: Add handler for unknown data and wire up debug tools
@@ -438,6 +446,34 @@ private:
 	void parse_dft_metadata(Reader &reader)
 	{
 		m_dft_meta = reader.read<protocol::dft::Metadata>();
+	}
+
+	/*!
+	 * Parses a button report.
+	 *
+	 * Button reports can contain multiple samples of the button state.
+	 * Only the last sample will be emitted to the caller, the others are dropped
+	 * to prevent jittering outputs.
+	 *
+	 * These reports are combined with heatmap data to create IPTS-driven touchpads.
+	 *
+	 * @param[in] reader The chunk of data allocated to the report frame.
+	 */
+	void parse_button(Reader &reader) const
+	{
+		samples::Button button {};
+
+		while (reader.size() > 0) {
+			const auto sample = reader.read<protocol::button::Sample>();
+
+			button.pressure = sample.pressure;
+			button.pressure /= protocol::button::MAX_PRESSURE;
+
+			button.active = sample.button;
+		}
+
+		if (this->on_button)
+			this->on_button(button);
 	}
 };
 
