@@ -7,7 +7,6 @@
 #include "config.hpp"
 
 #include <common/casts.hpp>
-#include <common/constants.hpp>
 #include <common/types.hpp>
 
 #include <gsl/gsl>
@@ -170,7 +169,7 @@ private:
 
 		const Vector2<T> thresh = m_config.orientation_threshold.value();
 
-		const T max = current.normalized ? One<T>() : gsl::narrow_cast<T>(M_PI);
+		const T max = current.normalized ? casts::to<T>(1) : gsl::narrow_cast<T>(M_PI);
 
 		// The angle difference in both directions.
 		const T d1 = std::abs(current.orientation - last.orientation);

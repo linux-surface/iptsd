@@ -6,7 +6,6 @@
 #include "../contact.hpp"
 #include "config.hpp"
 
-#include <common/constants.hpp>
 #include <common/types.hpp>
 
 #include <type_traits>

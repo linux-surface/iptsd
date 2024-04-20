@@ -3,7 +3,6 @@
 #ifndef IPTSD_CONTACTS_VALIDATION_CONFIG_HPP
 #define IPTSD_CONTACTS_VALIDATION_CONFIG_HPP
 
-#include <common/constants.hpp>
 #include <common/types.hpp>
 
 #include <optional>

@@ -2,7 +2,6 @@
 
 #include <common/buildopts.hpp>
 #include <common/casts.hpp>
-#include <common/constants.hpp>
 #include <common/types.hpp>
 
 namespace iptsd::contacts::detection::convolution::impl {
@@ -58,7 +57,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 	{
 		// x = 0
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, 0, 0) * k(-2, -2); // extended
 			v += d(i, 0, 0) * k(-1, -2); // extended
@@ -95,7 +94,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = 1
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -1, 0) * k(-2, -2); // extended
 			v += d(i, -1, 0) * k(-1, -2); // extended
@@ -133,7 +132,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 		// 1 < x < n - 2
 		const auto limit = i + rows - 4;
 		while (i < limit) {
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, 0) * k(-2, -2); // extended
 			v += d(i, -1, 0) * k(-1, -2); // extended
@@ -170,7 +169,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = n - 2
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, 0) * k(-2, -2); // extended
 			v += d(i, -1, 0) * k(-1, -2); // extended
@@ -207,7 +206,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = n - 1
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, 0) * k(-2, -2); // extended
 			v += d(i, -1, 0) * k(-1, -2); // extended
@@ -247,7 +246,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 	{
 		// x = 0
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, 0, -1) * k(-2, -2); // extended
 			v += d(i, 0, -1) * k(-1, -2); // extended
@@ -284,7 +283,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = 1
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -1, -1) * k(-2, -2); // extended
 			v += d(i, -1, -1) * k(-1, -2); // extended
@@ -322,7 +321,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 		// 1 < x < n - 2
 		const auto limit = i + rows - 4;
 		while (i < limit) {
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -1) * k(-2, -2); // extended
 			v += d(i, -1, -1) * k(-1, -2); // extended
@@ -359,7 +358,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = n - 2
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -1) * k(-2, -2); // extended
 			v += d(i, -1, -1) * k(-1, -2); // extended
@@ -396,7 +395,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = n - 1
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -1) * k(-2, -2); // extended
 			v += d(i, -1, -1) * k(-1, -2); // extended
@@ -436,7 +435,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 	while (i < rows * (cols - 2)) {
 		// x = 0
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, 0, -2) * k(-2, -2); // extended
 			v += d(i, 0, -2) * k(-1, -2); // extended
@@ -473,7 +472,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = 1
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -1, -2) * k(-2, -2); // extended
 			v += d(i, -1, -2) * k(-1, -2);
@@ -511,7 +510,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 		// 1 < x < n - 2
 		const auto limit = i + rows - 4;
 		while (i < limit) {
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -2) * k(-2, -2);
 			v += d(i, -1, -2) * k(-1, -2);
@@ -548,7 +547,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = n - 2
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -2) * k(-2, -2);
 			v += d(i, -1, -2) * k(-1, -2);
@@ -585,7 +584,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = n - 1
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -2) * k(-2, -2);
 			v += d(i, -1, -2) * k(-1, -2);
@@ -625,7 +624,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 	{
 		// x = 0
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, 0, -2) * k(-2, -2); // extended
 			v += d(i, 0, -2) * k(-1, -2); // extended
@@ -662,7 +661,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = 1
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -1, -2) * k(-2, -2); // extended
 			v += d(i, -1, -2) * k(-1, -2);
@@ -700,7 +699,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 		// 1 < x < n - 2
 		const auto limit = i + rows - 4;
 		while (i < limit) {
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -2) * k(-2, -2);
 			v += d(i, -1, -2) * k(-1, -2);
@@ -737,7 +736,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = n - 2
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -2) * k(-2, -2);
 			v += d(i, -1, -2) * k(-1, -2);
@@ -774,7 +773,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = n - 1
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -2) * k(-2, -2);
 			v += d(i, -1, -2) * k(-1, -2);
@@ -814,7 +813,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 	{
 		// x = 0
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, 0, -2) * k(-2, -2); // extended
 			v += d(i, 0, -2) * k(-1, -2); // extended
@@ -851,7 +850,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = 1
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -1, -2) * k(-2, -2); // extended
 			v += d(i, -1, -2) * k(-1, -2);
@@ -889,7 +888,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 		// 1 < x < n - 2
 		const auto limit = i + rows - 4;
 		while (i < limit) {
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -2) * k(-2, -2);
 			v += d(i, -1, -2) * k(-1, -2);
@@ -926,7 +925,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = n - 2
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -2) * k(-2, -2);
 			v += d(i, -1, -2) * k(-1, -2);
@@ -963,7 +962,7 @@ void run_5x5(const DenseBase<DerivedData> &in,
 
 		// x = n - 1
 		{
-			auto v = Zero<T>();
+			auto v = casts::to<T>(0);
 
 			v += d(i, -2, -2) * k(-2, -2);
 			v += d(i, -1, -2) * k(-1, -2);

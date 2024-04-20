@@ -30,6 +30,8 @@ void run_generic(const DenseBase<DerivedData> &in,
 {
 	using T = typename DenseBase<DerivedKernel>::Scalar;
 
+	constexpr isize size_zero = 0;
+
 	const Eigen::Index cols = in.cols();
 	const Eigen::Index rows = in.rows();
 
@@ -47,13 +49,13 @@ void run_generic(const DenseBase<DerivedData> &in,
 
 			for (Eigen::Index oy = 0; oy < rows; oy++) {
 				const isize sy = casts::to_signed(oy + ky) - dy;
-				const isize cy = std::clamp(sy, Zero<isize>(), rows - 1);
+				const isize cy = std::clamp(sy, size_zero, rows - 1);
 
 				const Eigen::Index iy = casts::to_eigen(cy);
 
 				for (Eigen::Index ox = 0; ox < cols; ox++) {
 					const isize sx = casts::to_signed(ox + kx) - dx;
-					const isize cx = std::clamp(sx, Zero<isize>(), cols - 1);
+					const isize cx = std::clamp(sx, size_zero, cols - 1);
 
 					const Eigen::Index ix = casts::to_eigen(cx);
 

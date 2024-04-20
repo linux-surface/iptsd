@@ -4,7 +4,6 @@
 #define IPTSD_CONTACTS_DETECTION_ALGORITHMS_GAUSSIAN_HPP
 
 #include <common/casts.hpp>
-#include <common/constants.hpp>
 #include <common/types.hpp>
 
 #include <gsl/gsl>
@@ -222,7 +221,7 @@ void update_weight_maps(std::vector<Parameters<typename DenseBase<Derived>::Scal
 			for (Eigen::Index x = bmin.x(); x <= bmax.x(); x++) {
 				const T t = total(y, x);
 
-				if (t > Zero<T>())
+				if (t > casts::to<T>(0))
 					p.weights(y - bmin.y(), x - bmin.x()) /= t;
 			}
 		}
@@ -250,7 +249,7 @@ bool ge_solve(Matrix6<T> a, Vector6<T> b, Vector6<T> &x)
 		{
 			// step 1: find element with largest absolute value in column
 			Eigen::Index r = 0;
-			T v = Zero<T>();
+			T v = casts::to<T>(0);
 
 			for (Eigen::Index i = c; i < 6; ++i) {
 				const T vi = std::abs(a(c, i));

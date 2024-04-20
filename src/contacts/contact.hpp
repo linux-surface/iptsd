@@ -3,7 +3,7 @@
 #ifndef IPTSD_CONTACTS_CONTACT_HPP
 #define IPTSD_CONTACTS_CONTACT_HPP
 
-#include <common/constants.hpp>
+#include <common/casts.hpp>
 #include <common/types.hpp>
 
 #include <optional>
@@ -22,21 +22,21 @@ public:
 	 *
 	 * Range: [0, 1] if normalized, [0, <input dimensions>] if not.
 	 */
-	Vector2<T> mean {Zero<T>(), Zero<T>()};
+	Vector2<T> mean = Vector2<T>::Zero();
 
 	/*
 	 * The size of the contact (diameter of major and minor axis).
 	 *
 	 * Range: [0, 1] if normalized, [0, <hypot of input dimensions>] if not.
 	 */
-	Vector2<T> size {Zero<T>(), Zero<T>()};
+	Vector2<T> size = Vector2<T>::Zero();
 
 	/*
 	 * The orientation of the contact.
 	 *
 	 * Range: [0, 1) if normalized, [0, pi) if not.
 	 */
-	T orientation = Zero<T>();
+	T orientation = casts::to<T>(0);
 
 	/*
 	 * Whether the stored values are normalized.

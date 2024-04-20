@@ -6,7 +6,6 @@
 #include "algorithms/neutral.hpp"
 
 #include <common/casts.hpp>
-#include <common/constants.hpp>
 #include <common/types.hpp>
 
 namespace iptsd::contacts::detection {
@@ -31,7 +30,7 @@ public:
 	 * An offset that is added to the calculated neutral value.
 	 * If neutral_value_algorithm is set to CONSTANT, this defines the neutral value.
 	 */
-	T neutral_value_offset = Zero<T>();
+	T neutral_value_offset = casts::to<T>(0);
 
 	/*
 	 * How many frames to wait before recalculating the neutral value.

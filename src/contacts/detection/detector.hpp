@@ -15,7 +15,6 @@
 #include "config.hpp"
 
 #include <common/casts.hpp>
-#include <common/constants.hpp>
 #include <common/types.hpp>
 
 #include <gsl/gsl>
@@ -36,7 +35,7 @@ private:
 	Config<T> m_config;
 
 	// The diagonal of the heatmap.
-	T m_input_diagonal = Zero<T>();
+	T m_input_diagonal = casts::to<T>(0);
 
 	// The heatmap with the neutral value subtracted.
 	Image<T> m_img_neutral {};
@@ -66,7 +65,7 @@ private:
 	usize m_counter = 0;
 
 	// The cached neutral value of the heatmap.
-	T m_neutral = Zero<T>();
+	T m_neutral = casts::to<T>(0);
 
 public:
 	Detector(Config<T> config) : m_config {std::move(config)} {};
@@ -119,7 +118,7 @@ public:
 		m_counter = (m_counter + 1) % m_config.neutral_value_backoff;
 
 		// Subtract the neutral value from the whole heatmap
-		m_img_neutral = (heatmap - m_neutral).max(Zero<T>());
+		m_img_neutral = (heatmap - m_neutral).max(casts::to<T>(0));
 
 		// Blur the heatmap slightly
 		convolution::run(m_img_neutral, m_kernel_blur, m_img_blurred);
