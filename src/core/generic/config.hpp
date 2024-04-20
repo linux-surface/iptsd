@@ -30,6 +30,11 @@ public:
 	bool touchscreen_disable_on_stylus = false;
 	f64 touchscreen_overshoot = 0.5;
 
+	// [Touchpad]
+	bool touchpad_disable = false;
+	bool touchpad_disable_on_palm = false;
+	f64 touchpad_overshoot = 0.5;
+
 	// [Contacts]
 	std::string contacts_neutral = "mode";
 	f64 contacts_neutral_value = 0;

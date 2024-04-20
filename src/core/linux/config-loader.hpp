@@ -157,6 +157,10 @@ private:
 		this->get(ini, "Touchscreen", "DisableOnStylus", m_config.touchscreen_disable_on_stylus);
 		this->get(ini, "Touchscreen", "Overshoot", m_config.touchscreen_overshoot);
 
+		this->get(ini, "Touchpad", "Disable", m_config.touchpad_disable);
+		this->get(ini, "Touchpad", "DisableOnPalm", m_config.touchpad_disable_on_palm);
+		this->get(ini, "Touchpad", "Overshoot", m_config.touchpad_overshoot);
+
 		this->get(ini, "Contacts", "Neutral", m_config.contacts_neutral);
 		this->get(ini, "Contacts", "NeutralValue", m_config.contacts_neutral_value);
 		this->get(ini, "Contacts", "ActivationThreshold", m_config.contacts_activation_threshold);
