@@ -10,7 +10,6 @@
 #include <common/types.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
-#include <ipts/data.hpp>
 
 #include <SDL.h>
 #include <cairomm/cairomm.h>

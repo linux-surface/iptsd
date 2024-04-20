@@ -3,7 +3,6 @@
 #ifndef IPTSD_IPTS_PARSER_HPP
 #define IPTSD_IPTS_PARSER_HPP
 
-#include "data.hpp"
 #include "metadata.hpp"
 #include "protocol/dft.hpp"
 #include "protocol/heatmap.hpp"
@@ -12,6 +11,9 @@
 #include "protocol/metadata.hpp"
 #include "protocol/report.hpp"
 #include "protocol/stylus.hpp"
+#include "samples/dft.hpp"
+#include "samples/stylus.hpp"
+#include "samples/touch.hpp"
 
 #include <common/casts.hpp>
 #include <common/reader.hpp>
@@ -27,13 +29,13 @@ namespace iptsd::ipts {
 class Parser {
 public:
 	// The callback that is invoked when stylus data was parsed.
-	std::function<void(const StylusData &)> on_stylus;
+	std::function<void(const samples::Stylus &)> on_stylus;
 
 	// The callback that is invoked when a capacitive heatmap was parsed.
-	std::function<void(const Heatmap &)> on_heatmap;
+	std::function<void(const samples::Touch &)> on_heatmap;
 
 	// The callback that is invoked when a DFT window was parsed.
-	std::function<void(const DftWindow &)> on_dft;
+	std::function<void(const samples::DftWindow &)> on_dft;
 
 	// The callback that is invoked when a metadata report was parsed.
 	std::function<void(const Metadata &)> on_metadata;
@@ -262,29 +264,29 @@ private:
 		if (!this->on_stylus)
 			return;
 
-		StylusData data {};
-		data.serial = report.serial;
+		samples::Stylus stylus {};
+		stylus.serial = report.serial;
 
-		data.proximity = sample.state.proximity;
-		data.button = sample.state.button;
-		data.rubber = sample.state.rubber;
+		stylus.proximity = sample.state.proximity;
+		stylus.button = sample.state.button;
+		stylus.rubber = sample.state.rubber;
 
 		// sample.state.contact is always false when the stylus is in eraser mode
-		data.contact = sample.pressure > 0;
+		stylus.contact = sample.pressure > 0;
 
-		data.x = casts::to<f64>(sample.x);
-		data.y = casts::to<f64>(sample.y);
-		data.pressure = casts::to<f64>(sample.pressure);
+		stylus.x = casts::to<f64>(sample.x);
+		stylus.y = casts::to<f64>(sample.y);
+		stylus.pressure = casts::to<f64>(sample.pressure);
 
-		data.x /= protocol::stylus::MAX_X;
-		data.y /= protocol::stylus::MAX_Y;
-		data.pressure /= protocol::stylus::MAX_PRESSURE_MPP_1_0;
+		stylus.x /= protocol::stylus::MAX_X;
+		stylus.y /= protocol::stylus::MAX_Y;
+		stylus.pressure /= protocol::stylus::MAX_PRESSURE_MPP_1_0;
 
-		data.altitude = 0;
-		data.azimuth = 0;
-		data.timestamp = 0;
+		stylus.altitude = 0;
+		stylus.azimuth = 0;
+		stylus.timestamp = 0;
 
-		this->on_stylus(data);
+		this->on_stylus(stylus);
 	}
 
 	/*!
@@ -310,32 +312,32 @@ private:
 		if (!this->on_stylus)
 			return;
 
-		StylusData data {};
-		data.serial = report.serial;
-		data.timestamp = sample.timestamp;
+		samples::Stylus stylus {};
+		stylus.serial = report.serial;
+		stylus.timestamp = sample.timestamp;
 
-		data.proximity = sample.state.proximity;
-		data.button = sample.state.button;
-		data.rubber = sample.state.rubber;
+		stylus.proximity = sample.state.proximity;
+		stylus.button = sample.state.button;
+		stylus.rubber = sample.state.rubber;
 
 		// sample.state.contact is always false when the stylus is in eraser mode
-		data.contact = sample.pressure > 0;
+		stylus.contact = sample.pressure > 0;
 
-		data.x = casts::to<f64>(sample.x);
-		data.y = casts::to<f64>(sample.y);
-		data.pressure = casts::to<f64>(sample.pressure);
+		stylus.x = casts::to<f64>(sample.x);
+		stylus.y = casts::to<f64>(sample.y);
+		stylus.pressure = casts::to<f64>(sample.pressure);
 
-		data.x /= protocol::stylus::MAX_X;
-		data.y /= protocol::stylus::MAX_Y;
-		data.pressure /= protocol::stylus::MAX_PRESSURE_MPP_1_51;
+		stylus.x /= protocol::stylus::MAX_X;
+		stylus.y /= protocol::stylus::MAX_Y;
+		stylus.pressure /= protocol::stylus::MAX_PRESSURE_MPP_1_51;
 
-		data.altitude = casts::to<f64>(sample.altitude);
-		data.azimuth = casts::to<f64>(sample.azimuth);
+		stylus.altitude = casts::to<f64>(sample.altitude);
+		stylus.azimuth = casts::to<f64>(sample.azimuth);
 
-		data.altitude /= 18000.0 / M_PI;
-		data.azimuth /= 18000.0 / M_PI;
+		stylus.altitude /= 18000.0 / M_PI;
+		stylus.azimuth /= 18000.0 / M_PI;
 
-		this->on_stylus(data);
+		this->on_stylus(stylus);
 	}
 
 	/*!
@@ -369,14 +371,14 @@ private:
 	 */
 	void parse_heatmap_data(Reader &reader) const
 	{
-		Heatmap heatmap {};
+		samples::Touch heatmap {};
 
 		heatmap.rows = m_dim.rows;
 		heatmap.columns = m_dim.columns;
 		heatmap.min = m_dim.z_min;
 		heatmap.max = m_dim.z_max;
 
-		heatmap.data = reader.subspan<u8>(casts::to<usize>(m_dim.rows) * m_dim.columns);
+		heatmap.heatmap = reader.subspan<u8>(casts::to<usize>(m_dim.rows) * m_dim.columns);
 
 		if (this->on_heatmap)
 			this->on_heatmap(heatmap);
@@ -410,7 +412,7 @@ private:
 	 */
 	void parse_dft_window(Reader &reader) const
 	{
-		DftWindow dft {};
+		samples::DftWindow dft {};
 		const auto window = reader.read<protocol::dft::Window>();
 
 		dft.x = reader.subspan<protocol::dft::Row>(window.num_rows);

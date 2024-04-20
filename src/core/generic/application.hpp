@@ -12,8 +12,10 @@
 #include <common/error.hpp>
 #include <common/types.hpp>
 #include <contacts/finder.hpp>
-#include <ipts/data.hpp>
 #include <ipts/parser.hpp>
+#include <ipts/samples/dft.hpp>
+#include <ipts/samples/stylus.hpp>
+#include <ipts/samples/touch.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -136,7 +138,7 @@ protected:
 	/*!
 	 * For running application specific code that futher processes stylus inputs.
 	 */
-	virtual void on_stylus(const ipts::StylusData & /* unused */) {};
+	virtual void on_stylus(const ipts::samples::Stylus & /* unused */) {};
 
 private:
 	/*!
@@ -147,7 +149,7 @@ private:
 	 *
 	 * @param[in] data The data to process.
 	 */
-	void process_heatmap(const ipts::Heatmap &data)
+	void process_heatmap(const ipts::samples::Touch &data)
 	{
 		const Eigen::Index rows = casts::to_eigen(data.rows);
 		const Eigen::Index cols = casts::to_eigen(data.columns);
@@ -160,7 +162,7 @@ private:
 			m_heatmap.conservativeResize(rows, cols);
 
 		// Map the buffer to an Eigen container
-		const Eigen::Map<const Image<u8>> mapped {data.data.data(), rows, cols};
+		const Eigen::Map<const Image<u8>> mapped {data.heatmap.data(), rows, cols};
 
 		const auto min = casts::to<f64>(data.min);
 		const auto max = casts::to<f64>(data.max);
@@ -195,9 +197,9 @@ private:
 	 *
 	 * @param[in] data The data to process.
 	 */
-	void process_stylus(const ipts::StylusData &data)
+	void process_stylus(const ipts::samples::Stylus &data)
 	{
-		ipts::StylusData corrected = data;
+		ipts::samples::Stylus corrected = data;
 
 		// Correct position based on tip-transmitter distance
 		const Vector2<f64> off = this->calculate_offset(data.altitude, data.azimuth);
@@ -216,7 +218,7 @@ private:
 	 *
 	 * @param[in] data The DFT window to process.
 	 */
-	void process_dft(const ipts::DftWindow &data)
+	void process_dft(const ipts::samples::DftWindow &data)
 	{
 		m_dft.input(data);
 		this->process_stylus(m_dft.get_stylus());

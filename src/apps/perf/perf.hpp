@@ -8,7 +8,6 @@
 #include <contacts/finder.hpp>
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
-#include <ipts/data.hpp>
 
 #include <gsl/gsl>
 

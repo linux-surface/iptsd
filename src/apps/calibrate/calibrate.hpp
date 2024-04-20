@@ -11,7 +11,6 @@
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
-#include <ipts/data.hpp>
 
 #include <spdlog/spdlog.h>
 

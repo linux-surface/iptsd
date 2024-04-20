@@ -8,7 +8,6 @@
 #include <common/casts.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
-#include <ipts/data.hpp>
 
 #include <cairomm/cairomm.h>
 #include <gsl/gsl>

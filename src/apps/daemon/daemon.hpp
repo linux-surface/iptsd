@@ -10,7 +10,7 @@
 #include <contacts/contact.hpp>
 #include <core/generic/application.hpp>
 #include <core/generic/config.hpp>
-#include <ipts/data.hpp>
+#include <ipts/samples/stylus.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -53,7 +53,7 @@ public:
 		m_touch.update(contacts);
 	}
 
-	void on_stylus(const ipts::StylusData &stylus) override
+	void on_stylus(const ipts::samples::Stylus &stylus) override
 	{
 		if (m_config.stylus_disable)
 			return;

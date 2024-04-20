@@ -9,7 +9,7 @@
 #include <common/types.hpp>
 #include <core/generic/config.hpp>
 #include <core/generic/device.hpp>
-#include <ipts/data.hpp>
+#include <ipts/samples/stylus.hpp>
 
 #include <gsl/gsl>
 
@@ -36,8 +36,8 @@ private:
 	// Whether the stylus is currently in proximity and sending data.
 	bool m_active = false;
 
-	// The last stylus event that was processed.
-	ipts::StylusData m_last;
+	// The last known state of the stylus.
+	ipts::samples::Stylus m_last;
 
 public:
 	StylusDevice(const core::Config &config, const core::DeviceInfo &info)
@@ -79,7 +79,7 @@ public:
 	 *
 	 * @param[in] data The current state of the stylus.
 	 */
-	void update(const ipts::StylusData &data)
+	void update(const ipts::samples::Stylus &data)
 	{
 		m_active = data.proximity;
 

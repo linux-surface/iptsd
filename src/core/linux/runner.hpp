@@ -11,7 +11,6 @@
 #include <common/chrono.hpp>
 #include <common/error.hpp>
 #include <core/generic/application.hpp>
-#include <ipts/data.hpp>
 #include <ipts/device.hpp>
 
 #include <spdlog/spdlog.h>
