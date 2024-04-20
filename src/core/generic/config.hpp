@@ -24,11 +24,11 @@ public:
 	f64 width = 0;
 	f64 height = 0;
 
-	// [Touch]
-	bool touch_disable = false;
-	bool touch_disable_on_palm = false;
-	bool touch_disable_on_stylus = false;
-	f64 touch_overshoot = 0.5;
+	// [Touchscreen]
+	bool touchscreen_disable = false;
+	bool touchscreen_disable_on_palm = false;
+	bool touchscreen_disable_on_stylus = false;
+	f64 touchscreen_overshoot = 0.5;
 
 	// [Contacts]
 	std::string contacts_neutral = "mode";

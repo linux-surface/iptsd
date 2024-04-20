@@ -152,10 +152,10 @@ private:
 		this->get(ini, "Config", "Width", m_config.width);
 		this->get(ini, "Config", "Height", m_config.height);
 
-		this->get(ini, "Touch", "Disable", m_config.touch_disable);
-		this->get(ini, "Touch", "DisableOnPalm", m_config.touch_disable_on_palm);
-		this->get(ini, "Touch", "DisableOnStylus", m_config.touch_disable_on_stylus);
-		this->get(ini, "Touch", "Overshoot", m_config.touch_overshoot);
+		this->get(ini, "Touchscreen", "Disable", m_config.touchscreen_disable);
+		this->get(ini, "Touchscreen", "DisableOnPalm", m_config.touchscreen_disable_on_palm);
+		this->get(ini, "Touchscreen", "DisableOnStylus", m_config.touchscreen_disable_on_stylus);
+		this->get(ini, "Touchscreen", "Overshoot", m_config.touchscreen_overshoot);
 
 		this->get(ini, "Contacts", "Neutral", m_config.contacts_neutral);
 		this->get(ini, "Contacts", "NeutralValue", m_config.contacts_neutral_value);
@@ -188,6 +188,10 @@ private:
 		// Legacy options that are kept for compatibility
 		this->get(ini, "DFT", "TipDistance", m_config.stylus_tip_distance);
 		this->get(ini, "Contacts", "SizeThreshold", m_config.contacts_size_thresh_max);
+		this->get(ini, "Touch", "Disable", m_config.touchscreen_disable);
+		this->get(ini, "Touch", "DisableOnPalm", m_config.touchscreen_disable_on_palm);
+		this->get(ini, "Touch", "DisableOnStylus", m_config.touchscreen_disable_on_stylus);
+		this->get(ini, "Touch", "Overshoot", m_config.touchscreen_overshoot);
 
 		// clang-format on
 		m_loaded_config = true;

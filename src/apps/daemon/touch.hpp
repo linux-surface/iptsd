@@ -196,7 +196,7 @@ private:
 	 */
 	[[nodiscard]] bool is_blocked(const std::vector<contacts::Contact<f64>> &contacts) const
 	{
-		if (!m_config.touch_disable_on_palm)
+		if (!m_config.touchscreen_disable_on_palm)
 			return false;
 
 		return std::any_of(contacts.cbegin(), contacts.cend(), [&](const auto &c) {
@@ -213,8 +213,8 @@ private:
 	{
 		bool reset_singletouch = true;
 
-		const f64 ox = m_config.touch_overshoot / m_config.width;
-		const f64 oy = m_config.touch_overshoot / m_config.height;
+		const f64 ox = m_config.touchscreen_overshoot / m_config.width;
+		const f64 oy = m_config.touchscreen_overshoot / m_config.height;
 
 		for (const contacts::Contact<f64> &contact : contacts) {
 			// Ignore contacts without an index
