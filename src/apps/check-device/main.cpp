@@ -23,16 +23,16 @@ namespace {
 
 int run(const int argc, const char **argv)
 {
-	CLI::App app {"Utility for checking if a hidraw device is an IPTS touch device."};
+	CLI::App app {"Utility for checking if a hidraw device is an IPTS touch device"};
 
 	std::filesystem::path path {};
 	app.add_option("DEVICE", path)
-		->description("The hidraw device node to check.")
+		->description("The hidraw device node to check")
 		->type_name("FILE")
 		->required();
 
 	bool quiet = false;
-	app.add_flag("-q,--quiet", quiet)->description("Disable output of device information.");
+	app.add_flag("-q,--quiet", quiet)->description("Disable output of device information");
 
 	const std::set<std::string> allowed_types {"any", "touchscreen", "touchpad"};
 	const std::map<std::string, std::optional<ipts::Device::Type>> type_map = {
@@ -43,7 +43,7 @@ int run(const int argc, const char **argv)
 
 	std::string type = "any";
 	app.add_option("-t,--type", type)
-		->description("Whether to look for a specific type of device.")
+		->description("Whether to look for a specific type of device")
 		->transform(CLI::IsMember(allowed_types));
 
 	app.get_formatter()->column_width(45);

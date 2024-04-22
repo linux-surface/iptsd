@@ -22,17 +22,17 @@ namespace {
 
 int run(const int argc, const char **argv)
 {
-	CLI::App app {"Utility for rendering captured touchscreen inputs to PNG frames."};
+	CLI::App app {"Utility for rendering captured touchscreen inputs to PNG frames"};
 
 	std::filesystem::path path {};
 	app.add_option("DATA", path)
-		->description("A binary data file containing touch reports.")
+		->description("A binary data file containing touch reports")
 		->type_name("FILE")
 		->required();
 
 	std::filesystem::path output {};
 	app.add_option("OUTPUT", output)
-		->description("The directory where the rendered frames are saved.")
+		->description("The directory where the rendered frames are saved")
 		->type_name("DIR")
 		->required();
 

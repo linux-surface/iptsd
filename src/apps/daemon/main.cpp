@@ -22,11 +22,11 @@ namespace {
 
 int run(const int argc, const char **argv)
 {
-	CLI::App app {"Daemon to translate touchscreen inputs to Linux input events."};
+	CLI::App app {"Daemon to translate touchscreen inputs to Linux input events"};
 
 	std::filesystem::path path {};
 	app.add_option("DEVICE", path)
-		->description("The hidraw device node of the touchscreen.")
+		->description("The hidraw device node of the touchscreen")
 		->type_name("FILE")
 		->required();
 

@@ -20,11 +20,11 @@ namespace {
 
 int run(const int argc, const char **argv)
 {
-	CLI::App app {"Utility for saving raw reports from your touchscreen to a binary file."};
+	CLI::App app {"Utility for saving raw reports from your touchscreen to a binary file"};
 
 	std::filesystem::path path {};
 	app.add_option("DEVICE", path)
-		->description("The hidraw device node of the touchscreen.")
+		->description("The hidraw device node of the touchscreen")
 		->type_name("FILE")
 		->required();
 

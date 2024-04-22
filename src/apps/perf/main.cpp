@@ -25,17 +25,17 @@ namespace {
 
 int run(const int argc, const char **argv)
 {
-	CLI::App app {"Utility for performance testing of iptsd."};
+	CLI::App app {"Utility for performance testing of iptsd"};
 
 	std::filesystem::path path {};
 	app.add_option("DATA", path)
-		->description("A binary data file containing touch reports.")
+		->description("A binary data file containing touch reports")
 		->type_name("FILE")
 		->required();
 
 	usize runs {};
 	app.add_option("RUNS", runs)
-		->description("How many times data will be processed.")
+		->description("How many times data will be processed")
 		->check(CLI::PositiveNumber)
 		->default_val(10);
 
