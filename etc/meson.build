@@ -5,7 +5,7 @@ install_subdir(
 )
 
 install_data(
-	'iptsd-find-hidraw',
+	'scripts/iptsd-find-hidraw',
 	install_dir: bindir,
 	install_mode: 'rwxr-xr-x',
 )
