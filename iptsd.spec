@@ -69,6 +69,7 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %{_bindir}/iptsd-dump
 %{_bindir}/iptsd-find-hidraw
 %{_bindir}/iptsd-find-service
+%{_bindir}/iptsd-foreach
 %{_bindir}/iptsd-perf
 %{_bindir}/iptsd-plot
 %{_bindir}/iptsd-show

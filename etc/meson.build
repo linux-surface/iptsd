@@ -10,6 +10,12 @@ install_data(
 	install_mode: 'rwxr-xr-x',
 )
 
+install_data(
+	'scripts/iptsd-foreach',
+	install_dir: bindir,
+	install_mode: 'rwxr-xr-x',
+)
+
 conf = configuration_data()
 conf.set('bindir', bindir)
 conf.set('datadir', datadir)

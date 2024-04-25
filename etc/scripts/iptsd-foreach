@@ -1,0 +1,184 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+set -euo pipefail
+
+function spdlog() {
+	local level="${1}" messages=("${@:2}")
+
+	case "${level}" in
+	info)
+		level="$(printf "%s%s%s" "\033[32m" "info" "\e[0m")"
+		;;
+	warn)
+		level="$(printf "%s%s%s" "\033[33m\033[1m" "warning" "\e[0m")"
+		;;
+	error)
+		level="$(printf "%s%s%s" "\033[31m\033[1m" "error" "\e[0m")"
+		;;
+	esac
+
+	echo -e "[$(date '+%H:%M:%S.%3N')] [${level}]" "${messages[@]}" >&2
+}
+
+function print-if-executable() {
+	local file="${1}"
+
+	if [ -x "${file}" ]; then
+		echo "${file}"
+		return 0
+	fi
+
+	return 1
+}
+
+function find-program() {
+	local name="${1}" script_dir="${2}" project_dir="${3:-}"
+
+	# If the calling script is installed to /usr, the program should be right next to it
+	if print-if-executable "${script_dir}/${name}"; then
+		return 0
+	fi
+
+	# Otherwise the script might be called from the cloned git repository
+	if [ -n "${project_dir}" ] && [ -f "${project_dir}/meson_options.txt" ]; then
+		local -r file="$(find "${project_dir}" -type f -executable -name "${name}" | head -n1)"
+
+		if print-if-executable "${file}"; then
+			spdlog info "Located ${name} at ./$(realpath --relative-to="${PWD}" "${file}")"
+			return 0
+		fi
+	fi
+
+	# Fall back to looking in PATH
+	if print-if-executable "$(command -v "${name}" || true)"; then
+		spdlog warn "Located ${name} using PATH"
+		spdlog warn "This script is designed to not use PATH, something might be wrong"
+		return 0
+	fi
+
+	return 1
+}
+
+function run-iptsd-foreach() {
+	local -r script_dir="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+	local -r project_dir="$(realpath "${script_dir}/../..")"
+
+	local device_index=""
+	local device_type="any"
+	local xargs_procs="1"
+	local tmux_socket=""
+	local show_help=""
+
+	while getopts ":t:i:pmh" args; do
+		case "${args}" in
+		i)
+			device_index="${OPTARG}"
+			;;
+		t)
+			device_type="${OPTARG}"
+			;;
+		p)
+			xargs_procs="0"
+			;;
+		m)
+			xargs_procs="0"
+			tmux_socket="$(mktemp -u)"
+			;;
+		*)
+			show_help="1"
+			;;
+		esac
+	done
+
+	shift $((OPTIND - 1))
+
+	if (("$#" == 0)); then
+		show_help="1"
+	fi
+
+	if [ -n "${show_help}" ]; then
+		echo "Usage: iptsd-foreach [OPTIONS] -- COMMAND"
+		echo "Run commands on all IPTS devices"
+		echo ""
+		echo "The string that is passed as COMMAND is executed in a bash shell."
+		echo "Every occurence of {} will be replaced with the selected device."
+		echo ""
+		echo "Options:"
+		echo "  -h                                   Print this help message and exit"
+		echo "  -t  TEXT:{any,touchscreen,touchpad}  Selects all devices with the given type"
+		echo "  -i  INTEGER                          Selects a single device by its index"
+		echo "  -p                                   Run all commands in parallel"
+		echo "  -m                                   Like -p, but runs every instance in seperate tmux windows"
+
+		return 0
+	fi
+
+	if [ -n "${tmux_socket}" ] && [ ! -x "$(command -v tmux)" ]; then
+		spdlog error "tmux is not installed"
+		return 1
+	fi
+
+	local -r check_device="$(find-program "iptsd-check-device" "${script_dir}" "${project_dir}")"
+
+	if [ -z "${check_device}" ]; then
+		spdlog error "Could not locate iptsd-check-device"
+		return 1
+	fi
+
+	local devices=()
+
+	while read -rd $'\n' device; do
+		if [ ! -r "${device}" ]; then
+			spdlog warn "Can't read from ${device}, is the program running as root?"
+			continue
+		fi
+
+		if ! "${check_device}" --quiet --type="${device_type}" "${device}"; then
+			continue
+		fi
+
+		devices+=("${device}")
+	done <<<"$(find /dev -maxdepth 1 | grep -E "hidraw[0-9]+" | sort)"
+
+	# If no devices were found, exit
+	if (("${#devices[@]}" == 0)); then
+		spdlog info "No devices found"
+		return 0
+	fi
+
+	if [ -n "${device_index}" ]; then
+		if (("${#devices[@]}" <= "${device_index}")) || (("${device_index}" < 0)); then
+			spdlog error "Device index is out of range"
+			return 1
+		fi
+
+		devices=("${devices[${device_index}]}")
+	fi
+
+	# Ignore the tmux option if there is only one device
+	if (("${#devices[@]}" == 1)); then
+		tmux_socket=""
+	fi
+
+	local xargs_cmd=("bash" "-c" "$*")
+
+	if [ -n "${tmux_socket}" ]; then
+		xargs_cmd=("tmux" "-S" "${tmux_socket}" "new-window" "-n" "{}" "${xargs_cmd[@]}")
+		tmux -S "${tmux_socket}" new-session -d -n iptsd
+	fi
+
+	# Run the supplied commands on all devices
+	echo -n "${devices[@]}" | xargs -d ' ' -P "${xargs_procs}" -i "${xargs_cmd[@]}"
+
+	if [ -n "${tmux_socket}" ]; then
+		tmux -S "${tmux_socket}" kill-window -t 0
+		tmux -S "${tmux_socket}" attach
+	fi
+
+	return 0
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+	run-iptsd-foreach "$@"
+fi
