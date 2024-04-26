@@ -49,6 +49,13 @@ if service_manager.contains('systemd')
 
 		install_data(unit, install_dir: unitdir)
 		install_data(rule, install_dir: rulesdir)
+
+		install_data(
+			'scripts/iptsd-systemd',
+			install_dir: bindir,
+			install_mode: 'rwxr-xr-x',
+		)
+
 		install_data(
 			'systemd/iptsd-find-service',
 			install_dir: bindir,

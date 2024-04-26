@@ -1,0 +1,53 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+set -euo pipefail
+
+function run-iptsd-systemd() {
+	local -r script_dir="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
+	source "${script_dir}/iptsd-foreach"
+
+	local foreach_args=()
+	local show_help=""
+
+	while getopts ":t:i:h" args; do
+		case "${args}" in
+		i)
+			foreach_args+=("-i" "${OPTARG}")
+			;;
+		t)
+			foreach_args+=("-t" "${OPTARG}")
+			;;
+		*)
+			show_help="1"
+			;;
+		esac
+	done
+
+	shift $((OPTIND - 1))
+
+	if (("$#" == 0)); then
+		show_help="1"
+	fi
+
+	if [ -n "${show_help}" ]; then
+		echo "Usage: iptsd-systemd [OPTIONS] -- COMMAND"
+		echo "Run systemctl commands for all instances of iptsd"
+		echo ""
+		echo "Options:"
+		echo "  -h                                   Print this help message and exit"
+		echo "  -t  TEXT:{any,touchscreen,touchpad}  Selects all devices with the given type"
+		echo "  -i  INTEGER                          Selects a single device by its index"
+
+		return 0
+	fi
+
+	# shellcheck disable=SC2016
+	run-iptsd-foreach "${foreach_args[@]}" -- \
+		systemctl "$@" 'iptsd@$(systemd-escape --path "{}").service'
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+	run-iptsd-systemd "$@"
+fi
