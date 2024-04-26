@@ -168,8 +168,22 @@ function run-iptsd-foreach() {
 		tmux -S "${tmux_socket}" new-session -d -n iptsd
 	fi
 
+	# Save existing traps
+	local -r saved_traps="$(trap)"
+
+	# Ignore SIGINT and SIGTERM, these have to be handled by xargs / iptsd
+	trap -- "" SIGINT
+	trap -- "" SIGTERM
+
 	# Run the supplied commands on all devices
 	echo -n "${devices[@]}" | xargs -d ' ' -P "${xargs_procs}" -i "${xargs_cmd[@]}"
+
+	# Restore SIGINT and SIGTERM to their defaults
+	trap -- - SIGINT
+	trap -- - SIGTERM
+
+	# Restore previous traps
+	eval "${saved_traps}"
 
 	if [ -n "${tmux_socket}" ]; then
 		tmux -S "${tmux_socket}" kill-window -t 0
