@@ -16,40 +16,20 @@
 		"BRANCH_STAGING": "u/staging",
 	},
 	"jobs": {
-		"checkout": {
-			"name": "Prepare workspace",
+		"check": {
+			"name": "Check code quality",
+			"container": "fedora:40",
 			"runs-on": "ubuntu-latest",
 			"steps": [
+				{
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
 				{
 					"name": "Checkout code",
 					"uses": "actions/checkout@v4",
 					"with": {
 						"fetch-depth": 0,
-					},
-				},
-				{
-					"name": "Archive workspace",
-					"uses": "actions/upload-artifact@v4",
-					"with": {
-						"name": "workspace",
-						"path": ".",
-					},
-				},
-			],
-		},
-		"check": {
-			"name": "Check code quality",
-			"container": "fedora:40",
-			"runs-on": "ubuntu-latest",
-			"needs": [
-				"checkout",
-			],
-			"steps": [
-				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
-					"with": {
-						"name": "workspace",
 					},
 				},
 				{
@@ -83,10 +63,10 @@
 			],
 			"steps": [
 				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
+					"name": "Checkout code",
+					"uses": "actions/checkout@v4",
 					"with": {
-						"name": "workspace",
+						"fetch-depth": 0,
 					},
 				},
 				{
@@ -128,10 +108,10 @@
 			],
 			"steps": [
 				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
+					"name": "Checkout code",
+					"uses": "actions/checkout@v4",
 					"with": {
-						"name": "workspace",
+						"fetch-depth": 0,
 					},
 				},
 				{
@@ -173,10 +153,14 @@
 			],
 			"steps": [
 				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
+				{
+					"name": "Checkout code",
+					"uses": "actions/checkout@v4",
 					"with": {
-						"name": "workspace",
+						"fetch-depth": 0,
 					},
 				},
 				{
@@ -218,10 +202,14 @@
 			],
 			"steps": [
 				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
+				{
+					"name": "Checkout code",
+					"uses": "actions/checkout@v4",
 					"with": {
-						"name": "workspace",
+						"fetch-depth": 0,
 					},
 				},
 				{
@@ -263,10 +251,14 @@
 			],
 			"steps": [
 				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
+				{
+					"name": "Checkout code",
+					"uses": "actions/checkout@v4",
 					"with": {
-						"name": "workspace",
+						"fetch-depth": 0,
 					},
 				},
 				{
@@ -373,10 +365,10 @@
 			],
 			"steps": [
 				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
+					"name": "Checkout code",
+					"uses": "actions/checkout@v4",
 					"with": {
-						"name": "workspace",
+						"fetch-depth": 0,
 					},
 				},
 				{
@@ -406,10 +398,10 @@
 			],
 			"steps": [
 				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
+					"name": "Checkout code",
+					"uses": "actions/checkout@v4",
 					"with": {
-						"name": "workspace",
+						"fetch-depth": 0,
 					},
 				},
 				{
@@ -439,10 +431,14 @@
 			],
 			"steps": [
 				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
+				{
+					"name": "Checkout code",
+					"uses": "actions/checkout@v4",
 					"with": {
-						"name": "workspace",
+						"fetch-depth": 0,
 					},
 				},
 				{
@@ -472,10 +468,14 @@
 			],
 			"steps": [
 				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
+				{
+					"name": "Checkout code",
+					"uses": "actions/checkout@v4",
 					"with": {
-						"name": "workspace",
+						"fetch-depth": 0,
 					},
 				},
 				{
@@ -505,10 +505,14 @@
 			],
 			"steps": [
 				{
-					"name": "Restore workspace",
-					"uses": "actions/download-artifact@v4",
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
+				{
+					"name": "Checkout code",
+					"uses": "actions/checkout@v4",
 					"with": {
-						"name": "workspace",
+						"fetch-depth": 0,
 					},
 				},
 				{
