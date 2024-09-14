@@ -22,6 +22,10 @@
 			"runs-on": "ubuntu-latest",
 			"steps": [
 				{
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
+				{
 					"name": "Checkout code",
 					"uses": "actions/checkout@v4",
 					"with": {
@@ -141,15 +145,15 @@
 			],
 			"steps": [
 				{
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
+				{
 					"name": "Checkout code",
 					"uses": "actions/checkout@v4",
 					"with": {
 						"fetch-depth": 0,
 					},
-				},
-				{
-					"name": "Install build dependencies",
-					"run": "dnf -y install tree && tree -a .",
 				},
 				{
 					"name": "Install build dependencies",
@@ -189,6 +193,10 @@
 				"check",
 			],
 			"steps": [
+				{
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
 				{
 					"name": "Checkout code",
 					"uses": "actions/checkout@v4",
@@ -234,6 +242,10 @@
 				"check",
 			],
 			"steps": [
+				{
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
 				{
 					"name": "Checkout code",
 					"uses": "actions/checkout@v4",
@@ -411,6 +423,10 @@
 			],
 			"steps": [
 				{
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
+				{
 					"name": "Checkout code",
 					"uses": "actions/checkout@v4",
 					"with": {
@@ -444,6 +460,10 @@
 			],
 			"steps": [
 				{
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
+				{
 					"name": "Checkout code",
 					"uses": "actions/checkout@v4",
 					"with": {
@@ -476,6 +496,10 @@
 				"release",
 			],
 			"steps": [
+				{
+					"name": "Install git",
+					"run": "dnf install -y git",
+				},
 				{
 					"name": "Checkout code",
 					"uses": "actions/checkout@v4",
