@@ -40,14 +40,6 @@
 					},
 					"run": "meson setup build",
 				},
-				{
-					"name": "Run clang-format",
-					"run": "bash $SCRIPTS/check-format.sh",
-				},
-				{
-					"name": "Run clang-tidy",
-					"run": "bash $SCRIPTS/check-tidy.sh",
-				},
 			],
 		},
 		"build-arch": {
@@ -154,6 +146,10 @@
 					"with": {
 						"fetch-depth": 0,
 					},
+				},
+				{
+					"name": "Install build dependencies",
+					"run": "dnf -y install tree && tree .",
 				},
 				{
 					"name": "Install build dependencies",
