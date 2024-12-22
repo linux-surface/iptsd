@@ -118,8 +118,10 @@ private:
 			 * This causes a parse error, because the "0b" should be "0f".
 			 * So let's just ignore these packets.
 			 */
-			if (reader.size() == 4)
+			if (reader.size() == 4) {
+				reader.skip(reader.size());
 				return;
+			}
 
 			this->parse_report_frames(sub);
 			break;
