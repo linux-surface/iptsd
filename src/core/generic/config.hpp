@@ -65,6 +65,7 @@ public:
 	usize dft_mpp2_button_min_mag = 50000;
 	usize dft_mpp2_contact_min_mag = 50000;
 	f64 dft_tilt_distance = 0.6;
+	bool dft_allow_split_events = false;
 
 public:
 	/*!

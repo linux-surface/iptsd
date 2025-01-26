@@ -188,6 +188,7 @@ private:
 		this->get(ini, "DFT", "TiltDistance", m_config.dft_tilt_distance);
 		this->get(ini, "DFT", "Mpp2ContactMinMag", m_config.dft_mpp2_contact_min_mag);
 		this->get(ini, "DFT", "Mpp2ButtonMinMag", m_config.dft_mpp2_button_min_mag);
+		this->get(ini, "DFT", "AllowSplitEvents", m_config.dft_allow_split_events);
 
 		// Legacy options that are kept for compatibility
 		this->get(ini, "DFT", "TipDistance", m_config.stylus_tip_distance);

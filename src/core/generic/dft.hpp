@@ -54,12 +54,20 @@ public:
 	 * Loads a DFT window and calculates stylus properties from it.
 	 *
 	 * @param[in] dft The dft window received from the IPTS hardware.
+	 * @return Whether an event should be emitted by this packet.
 	 */
-	void input(const ipts::samples::DftWindow &dft)
+	bool input(const ipts::samples::DftWindow &dft)
 	{
 		switch (dft.type) {
 		case ipts::protocol::dft::Type::Position:
 			this->handle_position(dft);
+			/* This event type is the most important one. It is the first and
+			 * the last one to arrive. It sets both proximity and lift. It is
+			 * also guaranteed to come regularly whenever we have (or just lost)
+			 * proximity. For all these reasons it MUST ALWAYS be let through
+			 * and it is chosen as THE synchronising event.
+			 */
+			return true;
 			break;
 		case ipts::protocol::dft::Type::Button:
 			this->handle_button(dft);
@@ -77,6 +85,8 @@ public:
 			// Ignored
 			break;
 		}
+		// Do not emit an event by default.
+		return false;
 	}
 
 	/*!

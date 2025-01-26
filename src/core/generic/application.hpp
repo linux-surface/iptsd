@@ -233,8 +233,15 @@ private:
 		if (!m_info.is_touchscreen())
 			return;
 
-		m_dft.input(data);
-		this->process_stylus(m_dft.get_stylus());
+		/* Since all DFT packets update only some of the stylus data, sending an
+		 * event each time a DFT packet arrives causes resending of some stale
+		 * info as though it is current. As a result, the same coordinates,
+		 * pressure, etc. are reported to the system several times. This confuses
+		 * the smoothing algorithms in some software (e.g. Krita), which is why
+		 * we hold off reporting new data to the system until ALL of it is updated.
+		 */
+		if (m_dft.input(data) || m_config.dft_allow_split_events)
+			this->process_stylus(m_dft.get_stylus());
 	}
 
 	/*!
