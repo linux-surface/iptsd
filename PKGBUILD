@@ -22,6 +22,10 @@ makedepends=(
 	'udev'
 )
 
+backup=(
+	'etc/iptsd.conf'
+)
+
 build() {
 	cd $startdir
 
