@@ -50,7 +50,7 @@ $ ninja -C build
 To run iptsd, you need to determine the ID of the hidraw device of your touchscreen:
 
 ```bash
-$ sudo ./etc/iptsd-find-hidraw
+$ sudo ./etc/scripts/iptsd-find-hidraw
 ```
 
 You can then run iptsd with the device path as a launch argument:
