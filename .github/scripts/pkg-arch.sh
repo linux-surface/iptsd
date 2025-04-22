@@ -12,7 +12,8 @@ case "$1" in
 install)
 	# Setup build environment
 	pacman -Syu --noconfirm
-	pacman -S --noconfirm sudo binutils fakeroot base-devel git
+	pacman -S --noconfirm sudo binutils fakeroot base-devel git meson \
+		libgl libx11 libxext libxcursor libxi libxfixes libxrandr libcairomm-1.0.so \
 	;;
 build)
 	# Fix permissions (can't makepkg as
