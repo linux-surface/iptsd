@@ -24,7 +24,7 @@ build)
 	export COMPRESSZST=(zstd -c -T0 --ultra -20 -)
 
 	# Build
-	su nobody --pty -p -s /bin/bash -c 'makepkg -sf --noconfirm'
+	runuser -u nobody -- makepkg -sf --noconfirm
 	;;
 sign)
 	if [ -z "$GPG_KEY" ] || [ -z "$GPG_KEY_ID" ]; then
