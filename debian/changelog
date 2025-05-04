@@ -1,3 +1,9 @@
+iptsd (3.0.1-1) unstable; urgency=medium
+
+  * iptsd v3.0.1
+
+ -- Maximilian Luz <luzmaximilian@gmail.com>  Sun, 04 May 2025 17:14:00 +0200
+
 iptsd (3-1) unstable; urgency=medium
 
   * iptsd v3
