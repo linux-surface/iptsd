@@ -21,11 +21,23 @@ namespace iptsd::apps::daemon {
 
 class Daemon : public core::Application {
 private:
+	// Put this enum here as this class is the only one that needs to quickly reference it
+	enum class DisableOnStylus : u8 {
+		Off = 0,
+		Connected,
+		Active,
+		Contact,
+	};
+
+private:
 	// The touch device.
 	std::optional<TouchDevice> m_touch = std::nullopt;
 
 	// The stylus device.
 	std::optional<StylusDevice> m_stylus = std::nullopt;
+
+	// The state of the config setting Touchscreen.DisableOnStylus
+	DisableOnStylus m_disable_on_stylus = DisableOnStylus::Connected;
 
 public:
 	Daemon(const core::Config &config, const core::DeviceInfo &info)
@@ -40,6 +52,16 @@ public:
 
 		if (m_info.is_touchscreen() && !m_config.stylus_disable)
 			m_stylus.emplace(config, info);
+
+		if (m_config.touchscreen_disable_on_stylus == "active")
+			m_disable_on_stylus = DisableOnStylus::Active;
+		else if (m_config.touchscreen_disable_on_stylus == "contact")
+			m_disable_on_stylus = DisableOnStylus::Contact;
+		else if (m_config.touchscreen_disable_on_stylus == "true" ||
+		         m_config.touchscreen_disable_on_stylus == "connected")
+			m_disable_on_stylus = DisableOnStylus::Connected;
+		else
+			m_disable_on_stylus = DisableOnStylus::Off;
 	}
 
 	void on_start() override
@@ -60,9 +82,18 @@ public:
 			return;
 
 		// Enable the touchscreen if it was disabled by a stylus that is no longer active.
-		if (m_config.touchscreen_disable_on_stylus && m_stylus.has_value()) {
-			if (!m_stylus->active() && !m_touch->enabled())
-				m_touch->enable();
+		if (m_disable_on_stylus != DisableOnStylus::Off && m_stylus.has_value()) {
+			if ((m_disable_on_stylus == DisableOnStylus::Active &&
+			     !m_stylus->active()) ||
+			    (m_disable_on_stylus == DisableOnStylus::Contact &&
+			     !m_stylus->contact()) ||
+			    // stylus cant report a state after its disconnected (obviously), so
+			    // just check if its active for reenabling after connection (this was
+			    // the old behavior)
+			    (m_disable_on_stylus == DisableOnStylus::Connected &&
+			     !m_stylus->active()))
+				if (!m_touch->enabled())
+					m_touch->enable();
 		}
 
 		m_touch->update(contacts);
@@ -81,9 +112,14 @@ public:
 		if (!m_stylus.has_value())
 			return;
 
-		if (m_config.touchscreen_disable_on_stylus && m_touch.has_value()) {
-			if (m_touch->enabled())
-				m_touch->disable();
+		if (m_disable_on_stylus != DisableOnStylus::Off && m_touch.has_value()) {
+			if ((m_disable_on_stylus == DisableOnStylus::Active &&
+			     m_stylus->active()) ||
+			    (m_disable_on_stylus == DisableOnStylus::Contact &&
+			     m_stylus->contact()) ||
+			    (m_disable_on_stylus == DisableOnStylus::Connected))
+				if (m_touch->enabled())
+					m_touch->disable();
 		}
 
 		m_stylus->update(stylus);
