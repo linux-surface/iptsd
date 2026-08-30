@@ -2,3 +2,11 @@ SUBSYSTEM=="hidraw", ACTION=="add", TAG+="systemd", \
 	PROGRAM="@bindir@/iptsd-check-device --quiet $env{DEVNAME}", \
 	PROGRAM="/bin/systemd-escape --path $env{DEVNAME}", \
 	ENV{SYSTEMD_WANTS}+="iptsd@$result.service"
+
+# Hide the raw Intel Touch Host Controller (ithc) input nodes from libinput.
+# On Tiger Lake devices (e.g. Surface Pro 7+/8) these duplicate the calibrated
+# nodes iptsd publishes above ("IPTSD Virtual Touchscreen"/"IPTSD Virtual
+# Stylus") and report a 16:9 geometry on panels that are actually 3:2, causing
+# duplicate touch events and distorted coordinates near the edges.
+SUBSYSTEM=="input", ATTRS{name}=="Intel Touch Host Controller*", \
+	ENV{ID_INPUT}="", ENV{ID_INPUT_TOUCHSCREEN}="", ENV{ID_INPUT_TABLET}=""
