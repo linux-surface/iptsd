@@ -52,6 +52,8 @@ public:
 	f64 contacts_aspect_max = 2.5;
 	usize contacts_peak_suppression_radius = 0;
 	f64 contacts_peak_suppression_factor = 0;
+	usize contacts_retain_frames = 0;
+	f64 contacts_retain_distance = 2;
 
 	// [Stylus]
 	bool stylus_disable = false;
@@ -106,6 +108,10 @@ public:
 		config.detection.peak_suppression_radius = this->contacts_peak_suppression_radius;
 
 		const f64 diagonal = std::hypot(this->width, this->height);
+
+		config.tracking.retain_frames = this->contacts_retain_frames;
+		config.tracking.retain_distance = this->contacts_retain_distance;
+		config.tracking.retain_scale = Vector2<f64> {this->width, this->height};
 
 		config.validation.track_validity = true;
 		config.validation.size_limits = Vector2<f64> {

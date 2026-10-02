@@ -177,6 +177,8 @@ private:
 		this->get(ini, "Contacts", "AspectMax", m_config.contacts_aspect_max);
 		this->get(ini, "Contacts", "PeakSuppressionRadius", m_config.contacts_peak_suppression_radius);
 		this->get(ini, "Contacts", "PeakSuppressionFactor", m_config.contacts_peak_suppression_factor);
+		this->get(ini, "Contacts", "RetainFrames", m_config.contacts_retain_frames);
+		this->get(ini, "Contacts", "RetainDistance", m_config.contacts_retain_distance);
 
 		this->get(ini, "Stylus", "Disable", m_config.stylus_disable);
 		this->get(ini, "Stylus", "TipDistance", m_config.stylus_tip_distance);

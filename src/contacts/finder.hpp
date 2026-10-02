@@ -28,7 +28,7 @@ private:
 	detection::Detector<T, TFit> m_detector;
 
 	// Tracks contacts over multiple frames.
-	tracking::Tracker<T> m_tracker {};
+	tracking::Tracker<T> m_tracker;
 
 	// Stabilizes size and movement of contacts.
 	stability::Stabilizer<T> m_stabilizer;
@@ -39,6 +39,7 @@ private:
 public:
 	Finder(const Config<T> &config)
 		: m_detector {config.detection},
+		  m_tracker {config.tracking},
 		  m_stabilizer {config.stability},
 		  m_validator {config.validation} {};
 

@@ -5,6 +5,7 @@
 
 #include "detection/config.hpp"
 #include "stability/config.hpp"
+#include "tracking/config.hpp"
 #include "validation/config.hpp"
 
 #include <common/types.hpp>
@@ -19,6 +20,9 @@ public:
 public:
 	// The configuration options for the detection phase.
 	detection::Config<T> detection {};
+
+	// The configuration options for the tracking phase.
+	tracking::Config<T> tracking {};
 
 	// The configuration options for the validation phase.
 	validation::Config<T> validation {};
