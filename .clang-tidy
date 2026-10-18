@@ -22,10 +22,12 @@
 		"-readability-function-cognitive-complexity",
 		"-readability-braces-around-statements",
 		"-readability-redundant-member-init",
+		"-readability-trivial-switch",
 	],
 	"HeaderFilterRegex": "src/.*hpp",
 	"FormatStyle": "file",
 	"CheckOptions": {
 		"bugprone-empty-catch.IgnoreCatchWithKeywords": "ignored",
+		"cppcoreguidelines-pro-bounds-avoid-unchecked-container-access.ExcludeClasses": "::std::map;::std::unordered_map;::std::flat_map;::std::array;::gsl::span;::Eigen::DenseCoeffsBase",
 	},
 }
