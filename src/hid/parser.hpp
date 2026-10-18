@@ -15,6 +15,7 @@
 
 #include <optional>
 #include <stack>
+#include <utility>
 
 namespace iptsd::hid {
 namespace impl {
@@ -132,7 +133,7 @@ private:
 
 		// Global
 		case protocol::item::Tag::UsagePage:
-			m_global.usage_page = payload << 16;
+			m_global.usage_page = payload << 16U;
 			break;
 		case protocol::item::Tag::LocalMinimum:
 			m_global.logical_min = payload;
@@ -187,6 +188,7 @@ private:
 		case protocol::item::Tag::StringMinimum:
 		case protocol::item::Tag::StringMaximum:
 		case protocol::item::Tag::Delimiter:
+		default:
 			break;
 		}
 	}
@@ -260,7 +262,7 @@ private:
 		m_collection_stack.pop();
 
 		parent.collections.push_back(m_collection);
-		m_collection = parent;
+		m_collection = std::move(parent);
 	}
 
 	/*!

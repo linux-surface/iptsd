@@ -52,6 +52,7 @@ public:
 		std::filesystem::create_directories(m_output);
 	}
 
+protected:
 	void on_data(const gsl::span<u8> data) override
 	{
 		Visualize::on_data(data);

@@ -36,10 +36,10 @@ void calculate(const std::vector<Contact<typename DenseBase<Derived>::Scalar>> &
 
 	// Calculate the distances between current and previous inputs
 	for (Eigen::Index iy = 0; iy < sy; iy++) {
-		const Contact<T> &cy = y[casts::to_unsigned(iy)];
+		const Contact<T> &cy = y.at(casts::to_unsigned(iy));
 
 		for (Eigen::Index ix = 0; ix < sx; ix++) {
-			const Contact<T> &cx = x[casts::to_unsigned(ix)];
+			const Contact<T> &cx = x.at(casts::to_unsigned(ix));
 
 			out(iy, ix) = gsl::narrow_cast<T>((cx.mean - cy.mean).hypotNorm());
 		}

@@ -72,7 +72,7 @@ private:
 	T m_neutral = casts::to<T>(0);
 
 public:
-	Detector(Config<T> config) : m_config {std::move(config)} {};
+	explicit Detector(Config<T> config) : m_config {std::move(config)} {};
 
 	/*!
 	 * Search for contacts in a capacitive heatmap.
@@ -219,10 +219,12 @@ public:
 				orientation /= gsl::narrow_cast<TFit>(M_PI);
 			}
 
-			contacts.push_back(Contact<T> {mean.template cast<T>(),
-			                               size.template cast<T>(),
-			                               gsl::narrow_cast<T>(orientation),
-			                               m_config.normalize});
+			contacts.push_back(Contact<T> {
+				mean.template cast<T>(),
+				size.template cast<T>(),
+				gsl::narrow_cast<T>(orientation),
+				m_config.normalize,
+			});
 		}
 	}
 };

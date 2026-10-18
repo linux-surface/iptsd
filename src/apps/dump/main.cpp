@@ -18,7 +18,7 @@
 namespace iptsd::apps::dump {
 namespace {
 
-int run(const int argc, const char **argv)
+int run(const int argc, const char *const *argv)
 {
 	CLI::App app {"Utility for saving raw reports from your touchscreen to a binary file"};
 
@@ -45,7 +45,7 @@ int run(const int argc, const char **argv)
 } // namespace
 } // namespace iptsd::apps::dump
 
-int main(const int argc, const char **argv)
+int main(const int argc, const char *const *argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 

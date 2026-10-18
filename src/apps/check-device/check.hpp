@@ -12,6 +12,8 @@
 
 #include <gsl/gsl>
 
+#include <string_view>
+
 namespace iptsd::apps::check {
 namespace impl {
 
@@ -19,7 +21,7 @@ enum class CheckError : u8 {
 	WrongDeviceType,
 };
 
-inline std::string format_as(CheckError err)
+inline std::string_view format_as(CheckError err)
 {
 	switch (err) {
 	case CheckError::WrongDeviceType:

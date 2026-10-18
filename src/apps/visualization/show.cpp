@@ -20,7 +20,7 @@
 namespace iptsd::apps::visualization::show {
 namespace {
 
-int run(const int argc, const char **argv)
+int run(const int argc, const char *const *argv)
 {
 	CLI::App app {"Utility for rendering touchscreen inputs in real time"};
 
@@ -47,7 +47,7 @@ int run(const int argc, const char **argv)
 } // namespace
 } // namespace iptsd::apps::visualization::show
 
-int main(const int argc, const char **argv)
+int main(const int argc, const char *const *argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 

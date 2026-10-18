@@ -26,7 +26,7 @@ private:
 	std::vector<Contact<T>> m_last {};
 
 public:
-	Validator(Config<T> config) : m_config {std::move(config)} {};
+	explicit Validator(Config<T> config) : m_config {std::move(config)} {};
 
 	/*!
 	 * Resets the validator by clearing the stored copy of the last frame.

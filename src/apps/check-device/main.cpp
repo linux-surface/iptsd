@@ -21,7 +21,7 @@
 namespace iptsd::apps::check {
 namespace {
 
-int run(const int argc, const char **argv)
+int run(const int argc, const char *const *argv)
 {
 	CLI::App app {"Utility for checking if a hidraw device is an IPTS touch device"};
 
@@ -68,7 +68,7 @@ int run(const int argc, const char **argv)
 } // namespace
 } // namespace iptsd::apps::check
 
-int main(const int argc, const char **argv)
+int main(const int argc, const char *const *argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 

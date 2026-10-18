@@ -20,7 +20,7 @@
 namespace iptsd::apps::visualization::plot {
 namespace {
 
-int run(const int argc, const char **argv)
+int run(const int argc, const char *const *argv)
 {
 	CLI::App app {"Utility for rendering captured touchscreen inputs to PNG frames"};
 
@@ -53,7 +53,7 @@ int run(const int argc, const char **argv)
 } // namespace
 } // namespace iptsd::apps::visualization::plot
 
-int main(const int argc, const char **argv)
+int main(const int argc, const char *const *argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 

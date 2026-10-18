@@ -54,16 +54,16 @@ public:
 			spdlog::warn("Stylus is disabled!");
 	}
 
+protected:
 	void on_touch(const std::vector<contacts::Contact<f64>> &contacts) override
 	{
 		if (!m_touch.has_value())
 			return;
 
 		// Enable the touchscreen if it was disabled by a stylus that is no longer active.
-		if (m_config.touchscreen_disable_on_stylus && m_stylus.has_value()) {
-			if (!m_stylus->active() && !m_touch->enabled())
-				m_touch->enable();
-		}
+		if (m_config.touchscreen_disable_on_stylus && m_stylus.has_value() &&
+		    !m_stylus->active() && !m_touch->enabled())
+			m_touch->enable();
 
 		m_touch->update(contacts);
 	}
@@ -81,10 +81,9 @@ public:
 		if (!m_stylus.has_value())
 			return;
 
-		if (m_config.touchscreen_disable_on_stylus && m_touch.has_value()) {
-			if (m_touch->enabled())
-				m_touch->disable();
-		}
+		if (m_config.touchscreen_disable_on_stylus && m_touch.has_value() &&
+		    m_touch->enabled())
+			m_touch->disable();
 
 		m_stylus->update(stylus);
 	}

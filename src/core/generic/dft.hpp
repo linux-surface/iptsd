@@ -355,7 +355,7 @@ private:
 			return casts::to<f64>(NAN);
 
 		// find critical point of fitted parabola
-		const f64 d = (x[0] - x[2]) / (2 * (x[0] - 2 * x[1] + x[2]));
+		const f64 d = (x[0] - x[2]) / (2 * (x[0] - (2 * x[1]) + x[2]));
 
 		return row.first + maxi + std::clamp(d, mind, maxd);
 	}
@@ -419,7 +419,7 @@ private:
 		const i32 ia = imag[0] - imag[2];
 		const i32 ib = (2 * imag[1]) - imag[0] - imag[2];
 
-		const f64 d = (ra * rb + ia * ib) / casts::to<f64>((rb * rb) + (ib * ib));
+		const f64 d = ((ra * rb) + (ia * ib)) / casts::to<f64>((rb * rb) + (ib * ib));
 
 		return (maxi + std::clamp(d, mind, maxd)) / (rows - 1);
 	}

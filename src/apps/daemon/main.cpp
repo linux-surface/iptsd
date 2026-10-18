@@ -20,7 +20,7 @@
 namespace iptsd::apps::daemon {
 namespace {
 
-int run(const int argc, const char **argv)
+int run(const int argc, const char *const *argv)
 {
 	CLI::App app {"Daemon to translate touchscreen inputs to Linux input events"};
 
@@ -47,7 +47,7 @@ int run(const int argc, const char **argv)
 } // namespace
 } // namespace iptsd::apps::daemon
 
-int main(const int argc, const char **argv)
+int main(const int argc, const char *const *argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 

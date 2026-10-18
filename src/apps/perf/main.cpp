@@ -23,7 +23,7 @@
 namespace iptsd::apps::perf {
 namespace {
 
-int run(const int argc, const char **argv)
+int run(const int argc, const char *const *argv)
 {
 	CLI::App app {"Utility for performance testing of iptsd"};
 
@@ -96,7 +96,7 @@ int run(const int argc, const char **argv)
 } // namespace
 } // namespace iptsd::apps::perf
 
-int main(const int argc, const char **argv)
+int main(const int argc, const char *const *argv)
 {
 	spdlog::set_pattern("[%X.%e] [%^%l%$] %v");
 

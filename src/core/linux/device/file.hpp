@@ -35,7 +35,7 @@ protected:
 	struct hidraw_report_descriptor m_desc {};
 
 public:
-	File(const std::filesystem::path &path)
+	explicit File(const std::filesystem::path &path)
 		: m_data {common::read_all_bytes(path)},
 		  m_path {path}
 	{

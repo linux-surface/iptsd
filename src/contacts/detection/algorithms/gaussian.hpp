@@ -150,8 +150,8 @@ bool extract_params(const Vector6<T> &chi, T &scale, Vector2<T> &mean, Matrix2<T
 	if (std::abs(d) <= EPS<T>)
 		return false;
 
-	mean.x() = (prec(1, 1) * chi[3] - prec(1, 0) * chi[4]) / d;
-	mean.y() = (prec(0, 0) * chi[4] - prec(0, 1) * chi[3]) / d;
+	mean.x() = ((prec(1, 1) * chi[3]) - (prec(1, 0) * chi[4])) / d;
+	mean.y() = ((prec(0, 0) * chi[4]) - (prec(0, 1) * chi[3])) / d;
 
 	const T vtmv = mean.transpose() * prec * mean;
 	scale = std::exp(chi[5] + (vtmv / casts::to<T>(2)));

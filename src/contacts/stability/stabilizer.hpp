@@ -30,7 +30,7 @@ private:
 	std::vector<Contact<T>> m_last {};
 
 public:
-	Stabilizer(Config<T> config) : m_config {std::move(config)} {};
+	explicit Stabilizer(Config<T> config) : m_config {std::move(config)} {};
 
 	/*!
 	 * Resets the stabilizer by clearing the stored previous frames.

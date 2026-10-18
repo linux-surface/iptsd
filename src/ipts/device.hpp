@@ -18,6 +18,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <string_view>
 #include <vector>
 
 namespace iptsd::ipts {
@@ -28,7 +29,7 @@ enum class DeviceError : u8 {
 	InvalidSetModeReport,
 };
 
-inline std::string format_as(DeviceError err)
+inline std::string_view format_as(DeviceError err)
 {
 	switch (err) {
 	case DeviceError::InvalidDevice:
@@ -68,7 +69,7 @@ private:
 	std::vector<hid::Report> m_touch_data_reports;
 
 public:
-	Device(std::shared_ptr<hid::Device> hid)
+	explicit Device(std::shared_ptr<hid::Device> hid)
 		: m_hid {std::move(hid)},
 		  m_descriptor {m_hid->descriptor()},
 		  m_touch_data_reports {m_descriptor.find_touch_data_reports()}
@@ -149,7 +150,7 @@ public:
 			return std::nullopt;
 
 		std::vector<u8> buffer(report->bytes() + 1);
-		buffer[0] = id.value();
+		buffer.at(0) = id.value();
 
 		m_hid->get_feature(buffer);
 

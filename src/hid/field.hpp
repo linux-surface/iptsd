@@ -77,7 +77,7 @@ public:
 	 */
 	[[nodiscard]] bool has_usage(const u16 page, const u16 id) const
 	{
-		const u32 combined = (casts::to<u32>(page) << 16) | id;
+		const u32 combined = (casts::to<u32>(page) << 16U) | id;
 
 		if (this->usage == combined)
 			return true;

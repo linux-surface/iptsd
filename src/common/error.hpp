@@ -6,6 +6,7 @@
 #include <fmt/format.h>
 
 #include <stdexcept>
+#include <string>
 
 namespace iptsd::common {
 
@@ -21,7 +22,7 @@ template <auto T>
 class Error : public std::runtime_error {
 public:
 	template <class... Args>
-	Error(Args... args) : std::runtime_error {msg(std::move(args)...)}
+	explicit Error(Args... args) : std::runtime_error {msg(std::move(args)...)}
 	{
 		/*
 		 * GCC doesn't see this block as empty, so adding a semicolon to the end to force
@@ -49,7 +50,7 @@ private:
 		 * If you are reading this and wondering where format_as is defined, it is
 		 * next to the enum class holding the error codes.
 		 */
-		std::string error = format_as(T);
+		std::string error {format_as(T)};
 
 		/*
 		 * If we have any parameters, try to format the error string as if it were

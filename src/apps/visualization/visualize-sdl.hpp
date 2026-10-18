@@ -62,6 +62,7 @@ public:
 		m_cairo = Cairo::Context::create(m_tex);
 	}
 
+protected:
 	void on_data(const gsl::span<u8> data) override
 	{
 		Visualize::on_data(data);
@@ -97,6 +98,7 @@ public:
 		m_last_draw = now;
 	}
 
+public:
 	void on_stop() override
 	{
 		SDL_DestroyTexture(m_rtex);

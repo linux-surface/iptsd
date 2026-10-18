@@ -59,7 +59,7 @@ private:
 
 public:
 	template <class... Args>
-	Runner(const std::filesystem::path &path, Args... args)
+	explicit Runner(const std::filesystem::path &path, Args... args)
 		: m_device {std::make_shared<Device>(path)},
 		  m_ipts {m_device}
 	{

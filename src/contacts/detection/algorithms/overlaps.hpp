@@ -81,11 +81,11 @@ inline bool search(const std::vector<Box> &clusters, std::vector<Vector2<usize>>
 	overlaps.clear();
 
 	for (usize i = 0; i < size; i++) {
-		const Box &a = clusters[i];
+		const Box &a = clusters.at(i);
 
 		// We only need to check all clusters, only the ones that weren't checked yet.
 		for (usize j = i + 1; j < size; j++) {
-			const Box &b = clusters[j];
+			const Box &b = clusters.at(j);
 
 			// Ignore clusters that overlap by less than 50%
 			if (overlap(a, b) < 0.5)
@@ -131,7 +131,7 @@ inline void merge(std::vector<Box> &clusters, std::vector<Box> &temp, const usiz
 			break;
 
 		for (usize i = 0; i < size; i++) {
-			Box &cluster = clusters[i];
+			Box &cluster = clusters.at(i);
 			bool drop_cluster = false;
 
 			for (const Vector2<usize> &pair : overlaps) {
@@ -148,7 +148,7 @@ inline void merge(std::vector<Box> &clusters, std::vector<Box> &temp, const usiz
 				if (a != i)
 					continue;
 
-				cluster = cluster.merged(clusters[b]);
+				cluster = cluster.merged(clusters.at(b));
 			}
 
 			if (drop_cluster)
