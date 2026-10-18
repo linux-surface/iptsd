@@ -21,13 +21,13 @@ conf.set('bindir', bindir)
 conf.set('datadir', datadir)
 conf.set('sysconfdir', sysconfdir)
 
-configure_file(
+unit = configure_file(
 	input: 'systemd/iptsd@.service.in',
 	output: 'iptsd@.service',
 	configuration: conf,
 )
 
-configure_file(
+rule = configure_file(
 	input: 'udev/50-iptsd.rules.in',
 	output: '50-iptsd.rules',
 	configuration: conf,
@@ -43,9 +43,6 @@ if service_manager.contains('systemd')
 		udev = dependency('udev')
 		udevdir = udev.get_variable(pkgconfig: 'udevdir')
 		rulesdir = join_paths(udevdir, 'rules.d')
-
-		unit = join_paths(meson.current_build_dir(), 'iptsd@.service')
-		rule = join_paths(meson.current_build_dir(), '50-iptsd.rules')
 
 		install_data(unit, install_dir: unitdir)
 		install_data(rule, install_dir: rulesdir)
