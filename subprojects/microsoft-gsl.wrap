@@ -1,13 +1,14 @@
 [wrap-file]
-directory = GSL-4.2.0
-source_url = https://github.com/microsoft/GSL/archive/v4.2.0.zip
-source_filename = GSL-4.2.0.zip
-source_hash = f694e7b0f3debc0c55fe138efb5dd9f5c402989c0dc04e8a74afc9c155cb66b9
-patch_filename = microsoft-gsl_4.2.0-1_patch.zip
-patch_url = https://wrapdb.mesonbuild.com/v2/microsoft-gsl_4.2.0-1/get_patch
-patch_hash = d08afc6735731bb3dd10d84395423feebb6865ef6c9e78e522c8764fb9f0d9d1
-source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/microsoft-gsl_4.2.0-1/GSL-4.2.0.zip
-wrapdb_version = 4.2.0-1
+directory = GSL-4.2.2
+source_url = https://github.com/microsoft/GSL/archive/v4.2.2.zip
+source_filename = GSL-4.2.2.zip
+source_hash = 6d3e29f88f0eaefea3bdb33a4eb30807667f33ca2bd7ed208d7862976af48c2e
+source_fallback_url = https://wrapdb.mesonbuild.com/v2/microsoft-gsl_4.2.2-1/get_source/GSL-4.2.2.zip
+patch_filename = microsoft-gsl_4.2.2-1_patch.zip
+patch_url = https://wrapdb.mesonbuild.com/v2/microsoft-gsl_4.2.2-1/get_patch
+patch_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/microsoft-gsl_4.2.2-1/microsoft-gsl_4.2.2-1_patch.zip
+patch_hash = acb6204d924124654384808febeff21b52086b01acae4800aee370b2ed289199
+wrapdb_version = 4.2.2-1
 
 [provide]
-microsoft_gsl = microsoft_gsl_dep
+dependency_names = msft_gsl
