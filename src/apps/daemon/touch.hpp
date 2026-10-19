@@ -170,6 +170,10 @@ public:
 	{
 		m_enabled = false;
 
+		// Device disable ends a click even if its release report never arrives.
+		if (m_info.is_touchpad())
+			m_uinput->emit(EV_KEY, BTN_LEFT, 0);
+
 		// Lift all currently active contacts.
 		this->lift_all();
 		this->sync();
@@ -417,8 +421,9 @@ private:
 	{
 		m_uinput->emit(EV_KEY, BTN_TOUCH, 0);
 
+		// Contact lifetime is independent of the reported button state.
+		// Only button samples (or device disable) may release a held click.
 		if (m_info.is_touchpad()) {
-			m_uinput->emit(EV_KEY, BTN_LEFT, 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_FINGER, 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_DOUBLETAP, 0);
 			m_uinput->emit(EV_KEY, BTN_TOOL_TRIPLETAP, 0);
