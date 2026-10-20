@@ -27,7 +27,7 @@ public:
 	// [Touchscreen]
 	bool touchscreen_disable = false;
 	bool touchscreen_disable_on_palm = false;
-	bool touchscreen_disable_on_stylus = false;
+	std::string touchscreen_disable_on_stylus = "false";
 	f64 touchscreen_overshoot = 0.5;
 
 	// [Touchpad]

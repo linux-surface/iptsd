@@ -36,6 +36,9 @@ private:
 	// Whether the stylus is currently in proximity and sending data.
 	bool m_active = false;
 
+	// Whether the stylus is making contact with the screen
+	bool m_contact = false;
+
 	// The last known state of the stylus.
 	ipts::samples::Stylus m_last;
 
@@ -106,6 +109,8 @@ public:
 
 			m_uinput->emit(EV_ABS, ABS_TILT_X, tilt.x());
 			m_uinput->emit(EV_ABS, ABS_TILT_Y, tilt.y());
+
+			m_contact = data.contact;
 		} else {
 			this->lift();
 		}
@@ -156,6 +161,16 @@ public:
 		return m_active;
 	}
 
+	/*!
+	 * Whether the stylus is currently making contact with the screen.
+	 *
+	 * @return true if, well, it speaks for itself.
+	 */
+	[[nodiscard]] bool contact() const
+	{
+		return m_contact;
+	}
+
 private:
 	/*!
 	 * Calculates the tilt of the stylus on X and Y axis.
@@ -187,8 +202,9 @@ private:
 	/*!
 	 * Lifts the stylus input.
 	 */
-	void lift() const
+	void lift()
 	{
+		m_contact = false;
 		m_uinput->emit(EV_KEY, BTN_TOUCH, 0);
 		m_uinput->emit(EV_KEY, BTN_TOOL_PEN, 0);
 		m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, 0);
