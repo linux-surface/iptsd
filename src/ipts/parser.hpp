@@ -47,6 +47,7 @@ public:
 
 private:
 	protocol::heatmap::Dimensions m_dim {};
+	// NOLINTNEXTLINE(bugprone-invalid-enum-default-initialization)
 	protocol::dft::Metadata m_dft_meta {};
 
 public:

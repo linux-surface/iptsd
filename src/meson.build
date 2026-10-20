@@ -56,13 +56,13 @@ dependency_options = [
 # Dependencies
 cli11 = dependency(
 	'CLI11',
-	fallback: ['cli11', 'CLI11_dep'],
+	fallback: 'cli11',
 	default_options: dependency_options,
 )
 
 eigen = dependency(
 	'eigen3',
-	fallback: ['eigen', 'eigen_dep'],
+	fallback: 'eigen',
 	default_options: dependency_options,
 	include_type: 'system',
 )

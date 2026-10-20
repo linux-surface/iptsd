@@ -15,6 +15,7 @@ namespace iptsd::ipts::samples {
 
 struct DftWindow {
 	std::optional<u32> group = std::nullopt;
+	// NOLINTNEXTLINE(bugprone-invalid-enum-default-initialization)
 	protocol::dft::Type type {};
 
 	u8 width = 0;

@@ -53,6 +53,7 @@ public:
 		spdlog::info("Aspect:  0.000 (Min: 0.000; Max: 0.000)");
 	}
 
+protected:
 	void on_touch(const std::vector<contacts::Contact<f64>> &contacts) override
 	{
 		// Calculate size and aspect of all stable contacts
@@ -103,6 +104,7 @@ public:
 		spdlog::info("Aspect:  {:.3f} (Min: {:.3f}; Max: {:.3f})", avg_a, min_a, max_a);
 	}
 
+public:
 	void on_stop() override
 	{
 		const clock::duration now = clock::now().time_since_epoch();
@@ -153,11 +155,11 @@ public:
 		const f64 min_idx = std::max(size - 1, 0.0) * 0.01;
 		const f64 max_idx = std::max(size - 1, 0.0) * 0.99;
 
-		size_min = m_size[casts::to<usize>(std::round(min_idx))];
-		size_max = m_size[casts::to<usize>(std::round(max_idx))];
+		size_min = m_size.at(casts::to<usize>(std::round(min_idx)));
+		size_max = m_size.at(casts::to<usize>(std::round(max_idx)));
 
-		aspect_min = m_aspect[casts::to<usize>(std::round(min_idx))];
-		aspect_max = m_aspect[casts::to<usize>(std::round(max_idx))];
+		aspect_min = m_aspect.at(casts::to<usize>(std::round(min_idx)));
+		aspect_max = m_aspect.at(casts::to<usize>(std::round(max_idx)));
 	}
 
 	void write_file(const std::filesystem::path &out, const f64 slack) const

@@ -37,7 +37,7 @@ private:
 	validation::Validator<T> m_validator;
 
 public:
-	Finder(const Config<T> &config)
+	explicit Finder(const Config<T> &config)
 		: m_detector {config.detection},
 		  m_stabilizer {config.stability},
 		  m_validator {config.validation} {};

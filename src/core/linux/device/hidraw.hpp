@@ -29,7 +29,7 @@ protected:
 	struct hidraw_report_descriptor m_desc {};
 
 public:
-	Hidraw(const std::filesystem::path &path)
+	explicit Hidraw(const std::filesystem::path &path)
 		: m_fd {syscalls::open(path, O_RDWR)},
 		  m_path {path}
 	{

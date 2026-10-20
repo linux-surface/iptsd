@@ -1,10 +1,10 @@
 [wrap-file]
-directory = CLI11-2.6.1
-source_url = https://github.com/CLIUtils/CLI11/archive/refs/tags/v2.6.1.tar.gz
-source_filename = CLI11-2.6.1.tar.gz
-source_hash = 377691f3fac2b340f12a2f79f523c780564578ba3d6eaf5238e9f35895d5ba95
-source_fallback_url = https://github.com/mesonbuild/wrapdb/releases/download/cli11_2.6.1-1/CLI11-2.6.1.tar.gz
-wrapdb_version = 2.6.1-1
+directory = CLI11-2.7.2
+source_url = https://github.com/CLIUtils/CLI11/archive/refs/tags/v2.7.2.tar.gz
+source_filename = CLI11-2.7.2.tar.gz
+source_hash = 46eef3101da70852ec7af026e09d485ccee81813331c8c6052d39344443b83da
+source_fallback_url = https://wrapdb.mesonbuild.com/v2/cli11_2.7.2-1/get_source/CLI11-2.7.2.tar.gz
+wrapdb_version = 2.7.2-1
 
 [provide]
 dependency_names = CLI11

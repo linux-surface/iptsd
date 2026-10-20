@@ -32,7 +32,7 @@ private:
 	std::ofstream m_writer {};
 
 public:
-	Capture(const std::filesystem::path &path) : Hidraw(path)
+	explicit Capture(const std::filesystem::path &path) : Hidraw(path)
 	{
 		const clock::duration now = clock::now().time_since_epoch();
 		const usize unix = chrono::duration_cast<seconds<usize>>(now).count();

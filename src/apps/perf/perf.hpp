@@ -36,6 +36,7 @@ public:
 	Perf(const core::Config &config, const core::DeviceInfo &info)
 		: core::Application(config, info) {};
 
+protected:
 	void on_touch(const std::vector<contacts::Contact<f64>> & /* unused */) override
 	{
 		m_had_touch = true;
@@ -67,6 +68,7 @@ public:
 		}
 	}
 
+public:
 	/*!
 	 * Resets the contact finder.
 	 *

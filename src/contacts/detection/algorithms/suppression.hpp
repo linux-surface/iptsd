@@ -58,7 +58,7 @@ void darken_around_maximas(const DenseBase<Derived> &in,
 	const isize r2 = r * r;
 
 	std::vector<std::pair<isize, isize>> offsets;
-	offsets.reserve(static_cast<size_t>((2 * r + 1) * (2 * r + 1)));
+	offsets.reserve(static_cast<size_t>(((2 * r) + 1) * ((2 * r) + 1)));
 
 	for (isize dy = -r; dy <= r; ++dy) {
 		for (isize dx = -r; dx <= r; ++dx) {

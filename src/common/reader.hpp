@@ -9,6 +9,7 @@
 #include <gsl/gsl>
 
 #include <algorithm>
+#include <string_view>
 
 namespace iptsd {
 namespace impl {
@@ -19,7 +20,7 @@ enum class ReaderError : u8 {
 	InvalidSeek,
 };
 
-inline std::string format_as(ReaderError err)
+inline std::string_view format_as(ReaderError err)
 {
 	switch (err) {
 	case ReaderError::EndOfData:
@@ -47,8 +48,10 @@ private:
 	usize m_index = 0;
 
 public:
-	Reader(const gsl::span<u8> data) : m_data {data} {};
-	Reader(std::vector<u8> buffer) : m_buffer {std::move(buffer)}, m_data {m_buffer} {};
+	explicit Reader(const gsl::span<u8> data) : m_data {data} {};
+	explicit Reader(std::vector<u8> buffer)
+		: m_buffer {std::move(buffer)},
+		  m_data {m_buffer} {};
 
 	/*!
 	 * The current position of the reader inside the data.
@@ -159,6 +162,8 @@ public:
 	template <class T>
 	T read()
 	{
+		// The value is a placeholder that gets overwritten below.
+		// NOLINTNEXTLINE(bugprone-invalid-enum-default-initialization)
 		T value {};
 
 		// We have to break type safety here, since all we have is a bytestream.

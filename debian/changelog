@@ -1,3 +1,9 @@
+iptsd (3.1.1-1) unstable; urgency=medium
+
+  * iptsd v3.1.1
+
+ -- Maximilian Luz <luzmaximilian@gmail.com>  Sun, 18 Oct 2026 20:02:59 +0200
+
 iptsd (3.1.0-1) unstable; urgency=medium
 
   * iptsd v3.1.0
@@ -14,7 +20,7 @@ iptsd (3-1) unstable; urgency=medium
 
   * iptsd v3
 
- -- Dorian Stoll <dorian.stoll@tmsp.io>  Sat, 14 Sep 2024 22:227:00 +0200
+ -- Dorian Stoll <dorian.stoll@tmsp.io>  Sat, 14 Sep 2024 22:27:00 +0200
 
 iptsd (2-1) unstable; urgency=medium
 

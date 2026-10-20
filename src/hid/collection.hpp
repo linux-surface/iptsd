@@ -39,7 +39,7 @@ public:
 	 */
 	[[nodiscard]] bool has_usage(const u16 usage_page, const u16 usage_id) const
 	{
-		return this->usage == ((casts::to<u32>(usage_page) << 16) | usage_id);
+		return this->usage == ((casts::to<u32>(usage_page) << 16U) | usage_id);
 	}
 
 	/*!

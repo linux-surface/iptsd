@@ -20,7 +20,7 @@ private:
 	hid::Descriptor m_hid_descriptor;
 
 public:
-	Descriptor(hid::Descriptor desc) : m_hid_descriptor {std::move(desc)} {};
+	explicit Descriptor(hid::Descriptor desc) : m_hid_descriptor {std::move(desc)} {};
 
 	/*!
 	 * Searches for all reports that contain touch data in the HID descriptor.

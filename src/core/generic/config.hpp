@@ -86,7 +86,7 @@ public:
 		config.detection.activation_threshold = athresh / 255.0;
 		config.detection.deactivation_threshold = dthresh / 255.0;
 
-		using Algorithm = contacts::detection::neutral::Algorithm;
+		using contacts::detection::neutral::Algorithm;
 
 		if (this->contacts_neutral == "mode")
 			config.detection.neutral_value_algorithm = Algorithm::MODE;

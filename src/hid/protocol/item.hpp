@@ -77,7 +77,7 @@ struct [[gnu::packed]] Header {
 	 */
 	[[nodiscard]] Type type() const
 	{
-		return gsl::narrow<Type>(gsl::narrow<u8>(this->tag) & 0b000011);
+		return gsl::narrow<Type>(gsl::narrow<u8>(this->tag) & 0b000011U);
 	}
 };
 static_assert(sizeof(Header) == 1);

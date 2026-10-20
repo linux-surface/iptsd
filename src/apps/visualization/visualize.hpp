@@ -42,6 +42,7 @@ public:
 	Visualize(const core::Config &config, const core::DeviceInfo &info)
 		: core::Application(config, info) {};
 
+protected:
 	void on_touch(const std::vector<contacts::Contact<f64>> & /* unused */) override
 	{
 		const Eigen::Index cols = m_heatmap.cols();
@@ -63,7 +64,7 @@ public:
 				const u32 g = v;
 				const u32 b = v;
 
-				m_argb(y, x) = (a << 24) + (r << 16) + (g << 8) + b;
+				m_argb(y, x) = (a << 24U) + (r << 16U) + (g << 8U) + b;
 			}
 		}
 	}
@@ -83,6 +84,7 @@ public:
 		m_history.pop_front();
 	}
 
+public:
 	void draw()
 	{
 		// Draw the raw heatmap
@@ -187,8 +189,8 @@ public:
 			const Vector2<f64> size = (contact.size.array() * diag).matrix();
 
 			// Center the text at the mean point of the contact
-			m_cairo->move_to(mean.x() - (extends.x_bearing + extends.width / 2),
-			                 mean.y() - (extends.y_bearing + extends.height / 2));
+			m_cairo->move_to(mean.x() - (extends.x_bearing + (extends.width / 2)),
+			                 mean.y() - (extends.y_bearing + (extends.height / 2)));
 			m_cairo->save();
 
 			m_cairo->show_text(index);
@@ -287,8 +289,8 @@ public:
 			return;
 
 		for (usize i = 0; i < m_history.size() - 1; i++) {
-			const ipts::samples::Stylus &from = m_history[i];
-			const ipts::samples::Stylus &to = m_history[i + 1];
+			const ipts::samples::Stylus &from = m_history.at(i);
+			const ipts::samples::Stylus &to = m_history.at(i + 1);
 
 			if (!from.proximity || !to.proximity)
 				continue;

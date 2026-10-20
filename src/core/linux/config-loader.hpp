@@ -32,7 +32,7 @@ private:
 	bool m_loaded_config = false;
 
 public:
-	ConfigLoader(const DeviceInfo &info) : m_info {info}
+	explicit ConfigLoader(const DeviceInfo &info) : m_info {info}
 	{
 		if (m_info.meta.has_value()) {
 			m_config.width = m_info.meta->width;

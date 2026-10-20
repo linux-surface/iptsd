@@ -5,7 +5,7 @@
 
 #include <common/types.hpp>
 
-#include <string>
+#include <string_view>
 
 namespace iptsd::core::linux::device {
 
@@ -13,7 +13,7 @@ enum class Error : u8 {
 	EndOfData,
 };
 
-inline std::string format_as(Error err)
+inline std::string_view format_as(Error err)
 {
 	switch (err) {
 	case Error::EndOfData:
