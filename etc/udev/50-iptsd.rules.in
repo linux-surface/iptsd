@@ -1,4 +1,8 @@
-SUBSYSTEM=="hidraw", ACTION=="add", TAG+="systemd", \
+# Match every event except "remove", not just "add": udev rebuilds device
+# properties on each event, so a "change" event (e.g. "udevadm trigger")
+# would otherwise drop the systemd tag and SYSTEMD_WANTS, and systemd
+# would stop iptsd while the hidraw device is still present.
+SUBSYSTEM=="hidraw", ACTION!="remove", TAG+="systemd", \
 	PROGRAM="@bindir@/iptsd-check-device --quiet $env{DEVNAME}", \
 	PROGRAM="/bin/systemd-escape --path $env{DEVNAME}", \
 	ENV{SYSTEMD_WANTS}+="iptsd@$result.service"
