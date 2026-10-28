@@ -92,4 +92,5 @@ If you have issues with iptsd not detecting a particular gesture or contact, you
 
 
 [1]*The prefix number in the `XX-calibration.conf` filename sets the priority of the config file. Higher number = higher priority, the highest priority file will override lower ones. If you don't care and just want one config file, you can just overwrite the existing calibration config file.*
+
 [2]*Check that the configuration file with the highest priority[1] is the configuration file you want applied.*
