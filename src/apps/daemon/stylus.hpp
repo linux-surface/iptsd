@@ -39,6 +39,18 @@ private:
 	// The last known state of the stylus.
 	ipts::samples::Stylus m_last;
 
+	// Debounce state for the rubber (eraser) flag. Some pens (especially
+	// third-party MPP styli) produce single-frame flickers in the eraser /
+	// button phase detection, which must not lift the pen (see update()).
+	bool m_rubber_stable = false;
+	bool m_rubber_candidate = false;
+	u32 m_rubber_count = 0;
+
+	// Same debounce scheme for the side button flag.
+	bool m_button_stable = false;
+	bool m_button_candidate = false;
+	u32 m_button_count = 0;
+
 public:
 	StylusDevice(const core::Config &config, const core::DeviceInfo &info)
 	{
@@ -83,9 +95,49 @@ public:
 	{
 		m_active = data.proximity;
 
+		// Debounce the rubber flag: a flip only counts once it has been
+		// seen in 2 consecutive updates. Single-frame flickers (which some
+		// third-party MPP pens produce constantly, see #195) are ignored.
+		if (data.rubber != m_rubber_stable) {
+			if (data.rubber == m_rubber_candidate) {
+				m_rubber_count++;
+			} else {
+				m_rubber_candidate = data.rubber;
+				m_rubber_count = 1;
+			}
+			if (m_rubber_count >= 2) {
+				m_rubber_stable = data.rubber;
+				m_rubber_count = 0;
+			}
+		} else {
+			m_rubber_candidate = data.rubber;
+			m_rubber_count = 0;
+		}
+		const bool rubber = m_rubber_stable;
+
 		// Switching tools within one frame causes issues, lift the stylus for one frame.
-		if (m_last.rubber != data.rubber)
+		if (rubber != m_last.rubber)
 			m_active = false;
+
+		// Debounce the side button flag with the same scheme, so that
+		// single-frame flaps cannot reach applications either (flapping
+		// BTN_STYLUS is interpreted as clicks by some applications).
+		if (data.button != m_button_stable) {
+			if (data.button == m_button_candidate) {
+				m_button_count++;
+			} else {
+				m_button_candidate = data.button;
+				m_button_count = 1;
+			}
+			if (m_button_count >= 2) {
+				m_button_stable = data.button;
+				m_button_count = 0;
+			}
+		} else {
+			m_button_candidate = data.button;
+			m_button_count = 0;
+		}
+		const bool button = m_button_stable;
 
 		if (m_active) {
 			const Vector2<i32> tilt = calculate_tilt(data.altitude, data.azimuth);
@@ -95,9 +147,9 @@ public:
 			const i32 pressure = casts::to<i32>(std::round(data.pressure * MAX_P));
 
 			m_uinput->emit(EV_KEY, BTN_TOUCH, data.contact ? 1 : 0);
-			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, !data.rubber ? 1 : 0);
-			m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, data.rubber ? 1 : 0);
-			m_uinput->emit(EV_KEY, BTN_STYLUS, data.button ? 1 : 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_PEN, !rubber ? 1 : 0);
+			m_uinput->emit(EV_KEY, BTN_TOOL_RUBBER, rubber ? 1 : 0);
+			m_uinput->emit(EV_KEY, BTN_STYLUS, button ? 1 : 0);
 
 			m_uinput->emit(EV_ABS, ABS_X, x);
 			m_uinput->emit(EV_ABS, ABS_Y, y);
@@ -111,6 +163,11 @@ public:
 		}
 
 		m_last = data;
+
+		// Store the debounced states so that the lift-on-tool-switch
+		// comparison above only fires on committed flips.
+		m_last.rubber = rubber;
+		m_last.button = button;
 
 		this->sync();
 	}
