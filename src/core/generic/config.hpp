@@ -94,6 +94,8 @@ public:
 			config.detection.neutral_value_algorithm = Algorithm::AVERAGE;
 		else if (this->contacts_neutral == "constant")
 			config.detection.neutral_value_algorithm = Algorithm::CONSTANT;
+		else if (this->contacts_neutral == "adaptive")
+			config.detection.neutral_value_algorithm = Algorithm::ADAPTIVE;
 		else
 			throw common::Error<Error::InvalidNeutralValueAlgorithm> {};
 

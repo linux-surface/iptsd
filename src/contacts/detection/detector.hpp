@@ -20,7 +20,9 @@
 
 #include <gsl/gsl>
 
+#include <algorithm>
 #include <cmath>
+#include <limits>
 #include <type_traits>
 #include <vector>
 
@@ -71,6 +73,12 @@ private:
 	// The cached neutral value of the heatmap.
 	T m_neutral = casts::to<T>(0);
 
+	// Resting patterns per heatmap row, used when the neutral algorithm is ADAPTIVE.
+	std::vector<std::vector<std::vector<T>>> m_templates {};
+
+	// Scratch buffer for computing row distances.
+	std::vector<T> m_scratch {};
+
 public:
 	explicit Detector(Config<T> config) : m_config {std::move(config)} {};
 
@@ -103,6 +111,7 @@ public:
 			m_img_blurred.conservativeResize(rows, cols);
 			m_img_span.conservativeResize(rows, cols);
 			m_fitting_temp.conservativeResize(rows, cols);
+			m_templates.assign(casts::to<usize>(rows), {});
 
 			if (m_config.normalize)
 				m_input_diagonal = std::hypot(dimensions.x(), dimensions.y());
@@ -112,18 +121,22 @@ public:
 		m_clusters.clear();
 		m_fitting_params.clear();
 
-		// Recalculate the neutral value if neccessary
-		if (m_counter == 0) {
-			m_neutral = neutral::calculate(heatmap,
-			                               m_config.neutral_value_algorithm,
-			                               m_config.neutral_value_offset);
+		if (m_config.neutral_value_algorithm == neutral::Algorithm::ADAPTIVE) {
+			this->subtract_adaptive(heatmap);
+		} else {
+			// Recalculate the neutral value if neccessary
+			if (m_counter == 0) {
+				m_neutral = neutral::calculate(heatmap,
+				                               m_config.neutral_value_algorithm,
+				                               m_config.neutral_value_offset);
+			}
+
+			// Update counter
+			m_counter = (m_counter + 1) % m_config.neutral_value_backoff;
+
+			// Subtract the neutral value from the whole heatmap
+			m_img_neutral = (heatmap - m_neutral).max(casts::to<T>(0));
 		}
-
-		// Update counter
-		m_counter = (m_counter + 1) % m_config.neutral_value_backoff;
-
-		// Subtract the neutral value from the whole heatmap
-		m_img_neutral = (heatmap - m_neutral).max(casts::to<T>(0));
 
 		// Blur the heatmap slightly
 		convolution::run(m_img_neutral, m_kernel_blur, m_img_blurred);
@@ -225,6 +238,75 @@ public:
 				gsl::narrow_cast<T>(orientation),
 				m_config.normalize,
 			});
+		}
+	}
+
+private:
+	/*!
+	 * Subtracts a learned resting pattern from every row of the heatmap.
+	 *
+	 * Each row keeps up to MaxTemplates resting patterns. For every frame the pattern
+	 * with the smallest median absolute difference is chosen; a fingertip only covers
+	 * a few columns, so it barely affects the median and the right pattern is still
+	 * found. Rows that match no pattern start a new one. Patterns adapt slowly, but
+	 * only in cells that are close to them, so contacts are never absorbed.
+	 *
+	 * @param[in] heatmap The current heatmap.
+	 */
+	template <int Rows, int Cols>
+	void subtract_adaptive(const ImageBase<T, Rows, Cols> &heatmap)
+	{
+		constexpr usize MaxTemplates = 4;
+		const T match = casts::to<T>(6.0 / 255.0);
+		const T quiet = m_config.activation_threshold / casts::to<T>(2);
+		const T rate = casts::to<T>(0.02);
+
+		const Eigen::Index cols = heatmap.cols();
+		m_scratch.resize(casts::to<usize>(cols));
+
+		for (Eigen::Index y = 0; y < heatmap.rows(); y++) {
+			auto &templates = m_templates.at(casts::to<usize>(y));
+
+			// Find the closest resting pattern by median absolute difference.
+			usize best = 0;
+			T best_dist = std::numeric_limits<T>::max();
+
+			for (usize k = 0; k < templates.size(); k++) {
+				for (Eigen::Index x = 0; x < cols; x++)
+					m_scratch.at(casts::to<usize>(x)) =
+						std::abs(heatmap(y, x) -
+						         templates.at(k).at(casts::to<usize>(x)));
+
+				const auto mid = m_scratch.begin() + (cols / 2);
+				std::nth_element(m_scratch.begin(), mid, m_scratch.end());
+
+				if (*mid < best_dist) {
+					best_dist = *mid;
+					best = k;
+				}
+			}
+
+			// Start a new pattern if none matches.
+			if (best_dist > match && templates.size() < MaxTemplates) {
+				templates.emplace_back(casts::to<usize>(cols));
+				for (Eigen::Index x = 0; x < cols; x++)
+					templates.back().at(casts::to<usize>(x)) = heatmap(y, x);
+				best = templates.size() - 1;
+			}
+
+			auto &pattern = templates.at(best);
+
+			for (Eigen::Index x = 0; x < cols; x++) {
+				T &base = pattern.at(casts::to<usize>(x));
+				const T diff = heatmap(y, x) - base;
+
+				m_img_neutral(y, x) = std::max(diff - m_config.neutral_value_offset,
+				                               casts::to<T>(0));
+
+				// Adapt slowly, but never towards a contact.
+				if (diff < quiet)
+					base += diff * rate;
+			}
 		}
 	}
 };
