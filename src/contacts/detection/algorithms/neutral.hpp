@@ -60,6 +60,11 @@ enum class Algorithm : u8 {
 
 	// A constant value will be used.
 	CONSTANT,
+
+	// Every heatmap row learns up to a few resting patterns and subtracts the one
+	// that matches best (see Detector::subtract_adaptive). For sensors whose rows
+	// switch between resting levels, like the top edge of the Surface Pro 7.
+	ADAPTIVE,
 };
 
 /*!
@@ -84,6 +89,7 @@ typename DenseBase<Derived>::Scalar calculate(const DenseBase<Derived> &heatmap,
 	case Algorithm::AVERAGE:
 		return heatmap.mean() + offset;
 	case Algorithm::CONSTANT:
+	case Algorithm::ADAPTIVE:
 		return offset;
 	default:
 		throw common::Error<Error::InvalidNeutralMode> {};
