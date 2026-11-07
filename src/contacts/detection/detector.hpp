@@ -265,7 +265,7 @@ private:
 		m_scratch.resize(casts::to<usize>(cols));
 
 		for (Eigen::Index y = 0; y < heatmap.rows(); y++) {
-			auto &templates = m_templates[casts::to<usize>(y)];
+			auto &templates = m_templates.at(casts::to<usize>(y));
 
 			// Find the closest resting pattern by median absolute difference.
 			usize best = 0;
@@ -273,10 +273,11 @@ private:
 
 			for (usize k = 0; k < templates.size(); k++) {
 				for (Eigen::Index x = 0; x < cols; x++)
-					m_scratch[casts::to<usize>(x)] =
-						std::abs(heatmap(y, x) - templates[k][casts::to<usize>(x)]);
+					m_scratch.at(casts::to<usize>(x)) =
+						std::abs(heatmap(y, x) -
+						         templates.at(k).at(casts::to<usize>(x)));
 
-				auto mid = m_scratch.begin() + (cols / 2);
+				const auto mid = m_scratch.begin() + (cols / 2);
 				std::nth_element(m_scratch.begin(), mid, m_scratch.end());
 
 				if (*mid < best_dist) {
@@ -289,14 +290,14 @@ private:
 			if (best_dist > match && templates.size() < MaxTemplates) {
 				templates.emplace_back(casts::to<usize>(cols));
 				for (Eigen::Index x = 0; x < cols; x++)
-					templates.back()[casts::to<usize>(x)] = heatmap(y, x);
+					templates.back().at(casts::to<usize>(x)) = heatmap(y, x);
 				best = templates.size() - 1;
 			}
 
-			auto &pattern = templates[best];
+			auto &pattern = templates.at(best);
 
 			for (Eigen::Index x = 0; x < cols; x++) {
-				T &base = pattern[casts::to<usize>(x)];
+				T &base = pattern.at(casts::to<usize>(x));
 				const T diff = heatmap(y, x) - base;
 
 				m_img_neutral(y, x) = std::max(diff - m_config.neutral_value_offset,
