@@ -125,6 +125,16 @@ public:
 		// Subtract the neutral value from the whole heatmap
 		m_img_neutral = (heatmap - m_neutral).max(casts::to<T>(0));
 
+		// Idle fast path: when nobody is touching, this is the common case by
+		// far. Blur, local maxima search, recursive descent and ellipse
+		// fitting are the bulk of the per-frame cost, and none of them can
+		// produce a contact from an input whose maximum stays below the
+		// deactivation threshold (blurring only ever lowers the maximum).
+		// Detection stops here, but callers still track the empty result so
+		// contacts that just lifted are released properly.
+		if (m_img_neutral.maxCoeff() < m_config.deactivation_threshold)
+			return;
+
 		// Blur the heatmap slightly
 		convolution::run(m_img_neutral, m_kernel_blur, m_img_blurred);
 
