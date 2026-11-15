@@ -23,6 +23,7 @@
 
 #include <gsl/gsl>
 
+#include <algorithm>
 #include <functional>
 #include <optional>
 
@@ -234,6 +235,9 @@ private:
 			break;
 		case protocol::report::Type::Button:
 			this->parse_button(sub);
+			break;
+		case protocol::report::Type::ForceButton:
+			this->parse_force_button(sub);
 			break;
 		default:
 			// TODO: Add handler for unknown data and wire up debug tools
@@ -474,6 +478,30 @@ private:
 
 			button.active = sample.button;
 		}
+
+		if (this->on_button)
+			this->on_button(button);
+	}
+
+	/*!
+	 * Parses a button report from a touchpad that measures force.
+	 *
+	 * @param[in] reader The chunk of data allocated to the report frame.
+	 */
+	void parse_force_button(Reader &reader) const
+	{
+		// Leave reports of an unknown layout alone.
+		if (reader.size() != sizeof(protocol::button::ForceSample))
+			return;
+
+		const auto sample = reader.read<protocol::button::ForceSample>();
+
+		samples::Button button {};
+
+		button.pressure = sample.pressure;
+		button.pressure = std::min(button.pressure / protocol::button::MAX_PRESSURE, 1.0);
+
+		button.active = sample.button;
 
 		if (this->on_button)
 			this->on_button(button);
