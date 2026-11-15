@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <map>
 #include <type_traits>
 #include <vector>
 
@@ -29,6 +30,9 @@ private:
 	// The last frame.
 	std::vector<Contact<T>> m_last {};
 
+	// Where the contacts that have not left their slop yet first appeared, by index.
+	std::map<usize, Vector2<T>> m_anchors {};
+
 public:
 	explicit Stabilizer(Config<T> config) : m_config {std::move(config)} {};
 
@@ -38,6 +42,7 @@ public:
 	void reset()
 	{
 		m_last.clear();
+		m_anchors.clear();
 	}
 
 	/*!
@@ -51,6 +56,9 @@ public:
 		for (Contact<T> &contact : frame)
 			this->stabilize_contact(contact);
 
+		if (m_config.position_slop.has_value())
+			this->apply_slop(frame);
+
 		m_last.clear();
 
 		// Save a copy of the new data
@@ -58,6 +66,50 @@ public:
 	}
 
 private:
+	/*!
+	 * Keeps new contacts where they first appeared until they have moved out of the slop.
+	 *
+	 * While a finger lands, the area it covers grows and its center shifts, by more than
+	 * applications allow a tap to move. Holding the position until the contact has clearly
+	 * moved turns that shift into no movement at all, without delaying anything.
+	 *
+	 * @param[in,out] frame The list of contacts to stabilize.
+	 */
+	void apply_slop(std::vector<Contact<T>> &frame)
+	{
+		const Vector2<T> slop = m_config.position_slop.value();
+
+		// Forget the contacts that are gone.
+		for (auto it = m_anchors.begin(); it != m_anchors.end();) {
+			if (Contact<T>::find_in_frame(it->first, frame).has_value())
+				++it;
+			else
+				it = m_anchors.erase(it);
+		}
+
+		for (Contact<T> &contact : frame) {
+			if (!contact.index.has_value())
+				continue;
+
+			const usize index = contact.index.value();
+
+			// A contact that was not in the last frame is new.
+			if (!Contact<T>::find_in_frame(index, m_last).has_value())
+				m_anchors.insert_or_assign(index, contact.mean);
+
+			const auto anchor = m_anchors.find(index);
+			if (anchor == m_anchors.end())
+				continue;
+
+			const Vector2<T> delta = (contact.mean - anchor->second).array() / slop.array();
+
+			if (std::hypot(delta.x(), delta.y()) < 1)
+				contact.mean = anchor->second;
+			else
+				m_anchors.erase(anchor);
+		}
+	}
+
 	/*!
 	 * Stabilize a single contact.
 	 *

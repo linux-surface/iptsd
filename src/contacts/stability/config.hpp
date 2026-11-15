@@ -31,6 +31,12 @@ public:
 	 * exceed.
 	 */
 	std::optional<Vector2<T>> orientation_threshold = std::nullopt;
+
+	/*
+	 * How far a new contact has to move away from where it first appeared before its
+	 * position starts to change, on each axis. Until then it stays where it appeared.
+	 */
+	std::optional<Vector2<T>> position_slop = std::nullopt;
 };
 
 } // namespace iptsd::contacts::stability
