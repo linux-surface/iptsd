@@ -29,6 +29,7 @@ enum class Type : u8 {
 	DftLift = 0x63,
 
 	Button = 0x90,
+	ForceButton = 0x96,
 };
 
 /*!
