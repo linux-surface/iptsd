@@ -102,6 +102,18 @@ public:
 	}
 
 	/*!
+	 * Enables a miscellaneous event for this device.
+	 *
+	 * Must be called before @ref create().
+	 *
+	 * @param[in] msc The msc event to enable (e.g. MSC_TIMESTAMP).
+	 */
+	void set_mscbit(const i32 msc) const
+	{
+		syscalls::ioctl(m_fd, UI_SET_MSCBIT, msc);
+	}
+
+	/*!
 	 * Sets a property of the device.
 	 *
 	 * Must be called before @ref create().

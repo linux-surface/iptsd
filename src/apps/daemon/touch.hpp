@@ -17,6 +17,7 @@
 #include <linux/input-event-codes.h>
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <iterator>
 #include <memory>
@@ -83,6 +84,8 @@ public:
 
 		m_uinput->set_evbit(EV_ABS);
 		m_uinput->set_evbit(EV_KEY);
+		m_uinput->set_evbit(EV_MSC);
+		m_uinput->set_mscbit(MSC_TIMESTAMP);
 
 		m_uinput->set_keybit(BTN_TOUCH);
 
@@ -144,6 +147,11 @@ public:
 			this->lift_all();
 		else
 			this->process(contacts);
+
+		const auto now = std::chrono::steady_clock::now().time_since_epoch();
+		const auto us = std::chrono::duration_cast<std::chrono::microseconds>(now).count();
+		const auto ts = static_cast<i32>(static_cast<u32>(us));
+		m_uinput->emit(EV_MSC, MSC_TIMESTAMP, ts);
 
 		this->sync();
 	}
