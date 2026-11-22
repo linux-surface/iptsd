@@ -1,0 +1,14 @@
+# libinput quirks for Surface Laptop Studio 2 (IPTSD Virtual Touchpad).
+#
+# iptsd emits ABS_MT_TOUCH_MAJOR/MINOR scaled to DIAGONAL=12000 over ~144 mm
+# (~83 units/mm) and does not emit ABS_MT_PRESSURE, so libinput needs explicit
+# size thresholds for thumb and palm rejection.
+
+[Microsoft Surface Laptop Studio 2 Touchpad (IPTSD)]
+MatchName=IPTSD Virtual Touchpad 045E:0C46
+MatchUdevType=touchpad
+AttrSizeHint=120x77
+AttrInputProp=+INPUT_PROP_PRESSUREPAD
+AttrTouchSizeRange=20:10
+AttrThumbSizeThreshold=1350
+AttrPalmSizeThreshold=1750

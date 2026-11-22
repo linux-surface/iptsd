@@ -5,6 +5,11 @@ install_subdir(
 )
 
 install_data(
+	'libinput/40-iptsd-surface-laptop-studio-2.quirks',
+	install_dir: join_paths(datadir, 'libinput'),
+)
+
+install_data(
 	'scripts/iptsd-find-hidraw',
 	install_dir: bindir,
 	install_mode: 'rwxr-xr-x',
