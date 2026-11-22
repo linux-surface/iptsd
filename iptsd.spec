@@ -77,3 +77,4 @@ kernel driver, and sends them back to the kernel using uinput devices.
 %{_unitdir}/iptsd@.service
 %{_udevrulesdir}/50-iptsd.rules
 %{_datadir}/iptsd/*
+%{_datadir}/libinput/40-iptsd-surface-laptop-studio-2.quirks

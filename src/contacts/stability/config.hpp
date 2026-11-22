@@ -3,7 +3,10 @@
 #ifndef IPTSD_CONTACTS_STABILITY_CONFIG_HPP
 #define IPTSD_CONTACTS_STABILITY_CONFIG_HPP
 
+#include <common/casts.hpp>
 #include <common/types.hpp>
+
+#include <gsl/gsl>
 
 #include <optional>
 #include <type_traits>
@@ -31,6 +34,21 @@ public:
 	 * exceed.
 	 */
 	std::optional<Vector2<T>> orientation_threshold = std::nullopt;
+
+	/*
+	 * Optional One-Euro low-pass filter on contact position (replaces the hard
+	 * PositionThresholdMin deadzone freeze with adaptive speed-based smoothing).
+	 */
+	bool one_euro_enabled = false;
+	T one_euro_min_cutoff = gsl::narrow_cast<T>(1.5);
+	T one_euro_beta = gsl::narrow_cast<T>(0.4);
+	T one_euro_d_cutoff = casts::to<T>(1);
+
+	/*
+	 * Physical dimensions (width, height in cm) used to compute speed in cm/s
+	 * for the One-Euro filter.
+	 */
+	Vector2<T> physical_size = Vector2<T>::Ones();
 };
 
 } // namespace iptsd::contacts::stability
