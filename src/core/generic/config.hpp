@@ -56,6 +56,7 @@ public:
 	// [Stylus]
 	bool stylus_disable = false;
 	f64 stylus_tip_distance = 0;
+	f64 stylus_pressure_offset = 0;
 
 	// [DFT]
 	usize dft_position_min_amp = 50;

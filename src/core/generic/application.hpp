@@ -216,6 +216,9 @@ private:
 		corrected.x += off.x();
 		corrected.y += off.y();
 
+		if (data.pressure > 0)
+			corrected.pressure += m_config.stylus_pressure_offset;
+
 		// Hand off the stylus data to the handler code.
 		this->on_stylus(corrected);
 	}
