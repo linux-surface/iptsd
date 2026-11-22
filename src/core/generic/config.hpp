@@ -52,6 +52,10 @@ public:
 	f64 contacts_aspect_max = 2.5;
 	usize contacts_peak_suppression_radius = 0;
 	f64 contacts_peak_suppression_factor = 0;
+	bool contacts_one_euro_filter = false;
+	f64 contacts_one_euro_min_cutoff = 1.5;
+	f64 contacts_one_euro_beta = 0.4;
+	f64 contacts_one_euro_d_cutoff = 1.0;
 
 	// [Stylus]
 	bool stylus_disable = false;
@@ -128,6 +132,14 @@ public:
 		config.stability.orientation_threshold = Vector2<f64> {
 			this->contacts_orientation_thresh_min / 180,
 			this->contacts_orientation_thresh_max / 180,
+		};
+		config.stability.one_euro_enabled = this->contacts_one_euro_filter;
+		config.stability.one_euro_min_cutoff = this->contacts_one_euro_min_cutoff;
+		config.stability.one_euro_beta = this->contacts_one_euro_beta;
+		config.stability.one_euro_d_cutoff = this->contacts_one_euro_d_cutoff;
+		config.stability.physical_size = Vector2<f64> {
+			this->width,
+			this->height,
 		};
 
 		return config;

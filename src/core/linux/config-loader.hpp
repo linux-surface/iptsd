@@ -177,6 +177,10 @@ private:
 		this->get(ini, "Contacts", "AspectMax", m_config.contacts_aspect_max);
 		this->get(ini, "Contacts", "PeakSuppressionRadius", m_config.contacts_peak_suppression_radius);
 		this->get(ini, "Contacts", "PeakSuppressionFactor", m_config.contacts_peak_suppression_factor);
+		this->get(ini, "Contacts", "OneEuroFilter", m_config.contacts_one_euro_filter);
+		this->get(ini, "Contacts", "OneEuroMinCutoff", m_config.contacts_one_euro_min_cutoff);
+		this->get(ini, "Contacts", "OneEuroBeta", m_config.contacts_one_euro_beta);
+		this->get(ini, "Contacts", "OneEuroDCutoff", m_config.contacts_one_euro_d_cutoff);
 
 		this->get(ini, "Stylus", "Disable", m_config.stylus_disable);
 		this->get(ini, "Stylus", "TipDistance", m_config.stylus_tip_distance);
