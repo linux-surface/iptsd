@@ -303,8 +303,9 @@ private:
 				m_img_neutral(y, x) = std::max(diff - m_config.neutral_value_offset,
 				                               casts::to<T>(0));
 
-				// Adapt slowly, but never towards a contact.
-				if (diff < quiet)
+				// Adapt slowly and only to small changes: a contact or a short
+				// dip must not move the pattern.
+				if (std::abs(diff) < quiet)
 					base += diff * rate;
 			}
 		}
