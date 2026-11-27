@@ -230,3 +230,15 @@ if tools.contains('show')
 		warning('Debug tool "show" is enabled but cairomm was not found!')
 	endif
 endif
+
+test(
+	'detector-adaptive',
+	executable(
+		'test-detector-adaptive',
+		'tests/detector-adaptive.cpp',
+		cpp_args: optflags,
+		dependencies: default_deps,
+		include_directories: includes,
+		build_by_default: false,
+	),
+)
